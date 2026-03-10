@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Bell, PanelLeft, Search, Sun, Moon, X, Plus } from 'lucide-react';
+import { Bell, PanelLeft, Search, Sun, Moon, X, Plus, CheckCheck } from 'lucide-react';
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,9 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
   DropdownMenuSeparator, DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
+import {
+  Popover, PopoverContent, PopoverTrigger,
+} from '@/components/ui/popover';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -23,7 +26,7 @@ import logoImg from '@/assets/logo.png';
 export function Topbar() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
-  const { unreadCount } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllRead } = useNotifications();
   const { resolvedTheme, setTheme } = useTheme();
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
@@ -36,10 +39,10 @@ export function Topbar() {
 
   const results = query.trim().length > 0
     ? ACTIVITIES.filter(a =>
-        a.name.toLowerCase().includes(query.toLowerCase()) ||
-        a.category.toLowerCase().includes(query.toLowerCase()) ||
-        a.type.toLowerCase().includes(query.toLowerCase())
-      )
+      a.name.toLowerCase().includes(query.toLowerCase()) ||
+      a.category.toLowerCase().includes(query.toLowerCase()) ||
+      a.type.toLowerCase().includes(query.toLowerCase())
+    )
     : [];
 
   const showDropdown = focused && query.trim().length > 0;
@@ -53,6 +56,17 @@ export function Topbar() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  const formatTime = (dateStr: string) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h`;
+    return `${Math.floor(hours / 24)}d`;
+  };
+
+  const recentNotifications = notifications.slice(0, 5);
 
   return (
     <header className="sticky top-0 z-30 flex h-12 items-center gap-2 border-b border-border bg-background/95 backdrop-blur-sm px-3 sm:px-4">
@@ -146,16 +160,77 @@ export function Topbar() {
           {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
 
-        <Button variant="ghost" size="icon"
-          className="h-8 w-8 relative text-muted-foreground hover:text-foreground rounded-lg"
-          onClick={() => navigate(ROUTES.NOTIFICATIONS)}>
-          <Bell className="h-4 w-4" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-label-xs font-bold text-destructive-foreground ring-2 ring-background">
-              {unreadCount}
-            </span>
-          )}
-        </Button>
+        {/* Notification Popover — dropdown from top */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon"
+              className="h-8 w-8 relative text-muted-foreground hover:text-foreground rounded-lg">
+              <Bell className="h-4 w-4" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-label-xs font-bold text-destructive-foreground ring-2 ring-background">
+                  {unreadCount}
+                </span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-[360px] p-0 animate-fade-in" sideOffset={8}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Bell className="h-4 w-4 text-primary" />
+                <h3 className="text-[13px] font-bold text-foreground">{t('notifications.title')}</h3>
+                {unreadCount > 0 && (
+                  <Badge variant="default" className="text-[9px] h-4 px-1.5">{unreadCount}</Badge>
+                )}
+              </div>
+              {unreadCount > 0 && (
+                <Button variant="ghost" size="sm" onClick={markAllRead} className="h-7 text-[11px] gap-1 text-muted-foreground hover:text-foreground">
+                  <CheckCheck className="h-3 w-3" /> {t('notifications.markAllRead')}
+                </Button>
+              )}
+            </div>
+            <div className="max-h-[320px] overflow-y-auto">
+              {recentNotifications.length === 0 ? (
+                <div className="py-10 text-center">
+                  <Bell className="h-5 w-5 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-[12px] text-muted-foreground">{t('notifications.noNotifications')}</p>
+                </div>
+              ) : (
+                <div className="py-1">
+                  {recentNotifications.map(n => {
+                    const isRead = !!n.read_at;
+                    const title = (n.data as any)?.title || n.type;
+                    const message = (n.data as any)?.message || '';
+                    return (
+                      <button key={n.id}
+                        className={cn(
+                          'flex items-start gap-3 w-full px-4 py-3 text-left transition-colors',
+                          isRead ? 'hover:bg-muted/30' : 'bg-primary/[0.03] hover:bg-primary/[0.05]'
+                        )}
+                        onClick={() => markAsRead(n.id)}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-[12px] font-medium leading-tight truncate">{title}</p>
+                            {!isRead && <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
+                          </div>
+                          {message && (
+                            <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-1">{message}</p>
+                          )}
+                          <span className="text-[10px] text-muted-foreground/60 mt-1 block">{formatTime(n.created_at)} {t('notifications.timeAgo')}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-border px-4 py-2.5">
+              <Button variant="ghost" size="sm" className="w-full h-8 text-[12px] text-primary hover:text-primary"
+                onClick={() => navigate(ROUTES.NOTIFICATIONS)}>
+                {t('notifications.viewAll')}
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
 
         <Separator orientation="vertical" className="h-4 mx-0.5 hidden sm:block" />
 
