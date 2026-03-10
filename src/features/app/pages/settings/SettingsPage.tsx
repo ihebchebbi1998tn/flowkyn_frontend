@@ -1,5 +1,5 @@
 /**
- * @fileoverview Settings page — composed from modular section components.
+ * @fileoverview Settings page — wider layout, professional UI.
  */
 
 import { useState } from 'react';
@@ -50,7 +50,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <motion.div className="max-w-[720px] mx-auto space-y-6"
+    <motion.div className="max-w-[900px] mx-auto space-y-6"
       initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
       {/* Header */}
@@ -80,7 +80,7 @@ export default function SettingsPage() {
         notifMarketing={notifMarketing} setNotifMarketing={setNotifMarketing}
       />
 
-      {/* Workspace — kept inline (small enough) */}
+      {/* Workspace */}
       <Section icon={Building2} title={t('settings.workspace')} desc={t('settings.workspaceDesc')}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <FieldGroup label={t('settings.workspaceName')}>
