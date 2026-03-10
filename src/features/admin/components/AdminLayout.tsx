@@ -1,0 +1,147 @@
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard, Users, Building2, Gamepad2, ScrollText,
+  Settings, LogOut, Shield, ChevronLeft, ChevronRight, Moon, Sun, MessageSquare,
+} from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { useAdminAuth } from '@/context/AdminAuthContext';
+import { useTheme } from '@/context/ThemeContext';
+import { ADMIN_ROUTES } from '@/constants/adminRoutes';
+import { cn } from '@/lib/utils';
+import logoImg from '@/assets/logo.png';
+
+const NAV_ITEMS = [
+  { key: 'dashboard', path: ADMIN_ROUTES.DASHBOARD, icon: LayoutDashboard },
+  { key: 'users', path: ADMIN_ROUTES.USERS, icon: Users },
+  { key: 'organizations', path: ADMIN_ROUTES.ORGANIZATIONS, icon: Building2 },
+  { key: 'games', path: ADMIN_ROUTES.GAMES, icon: Gamepad2 },
+  { key: 'contacts', path: ADMIN_ROUTES.CONTACTS, icon: MessageSquare },
+  { key: 'auditLogs', path: ADMIN_ROUTES.AUDIT_LOGS, icon: ScrollText },
+  { key: 'settings', path: ADMIN_ROUTES.SETTINGS, icon: Settings },
+];
+
+const LABELS: Record<string, string> = {
+  dashboard: 'Dashboard',
+  users: 'Users',
+  organizations: 'Organizations',
+  games: 'Game Sessions',
+  contacts: 'Contact Messages',
+  auditLogs: 'Audit Logs',
+  settings: 'Settings',
+};
+
+export function AdminLayout() {
+  const { user, logout } = useAdminAuth();
+  const { resolvedTheme, setTheme } = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
+
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
+
+  const handleLogout = () => {
+    logout();
+    navigate(ADMIN_ROUTES.LOGIN);
+  };
+
+  return (
+    <div className="flex h-screen bg-background overflow-hidden">
+      {/* Sidebar */}
+      <aside className={cn(
+        "flex flex-col border-r border-border bg-card transition-all duration-300 shrink-0",
+        collapsed ? "w-[68px]" : "w-[240px]"
+      )}>
+        {/* Logo */}
+        <div className="flex items-center justify-between h-14 px-3 border-b border-border">
+          <Link to={ADMIN_ROUTES.DASHBOARD} className="flex items-center gap-2.5 min-w-0">
+            <img src={logoImg} alt="Flowkyn" className="h-8 w-8 object-contain shrink-0" />
+            {!collapsed && (
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-[14px] font-bold tracking-tight text-foreground">Flowkyn</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary">Admin</span>
+              </div>
+            )}
+          </Link>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+          >
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
+          {NAV_ITEMS.map(({ key, path, icon: Icon }) => {
+            const active = isActive(path);
+            return (
+              <Link
+                key={key}
+                to={path}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg text-[13px] font-medium transition-all duration-150 px-3 py-2.5",
+                  collapsed && "justify-center px-2",
+                  active
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                )}
+                title={collapsed ? LABELS[key] : undefined}
+              >
+                <Icon className={cn("h-[18px] w-[18px] shrink-0", active && "text-primary")} strokeWidth={active ? 2.2 : 1.8} />
+                {!collapsed && <span>{LABELS[key]}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <Separator />
+
+        {/* Footer */}
+        <div className="p-2 space-y-1">
+          <button
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            className={cn(
+              "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-[13px] text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors",
+              collapsed && "justify-center px-2"
+            )}
+          >
+            {resolvedTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {!collapsed && <span>{resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+          </button>
+
+          {user && (
+            <div className={cn("flex items-center gap-2 rounded-lg p-2", collapsed && "flex-col")}>
+              <Avatar className="h-8 w-8 shrink-0">
+                <AvatarFallback className="bg-primary/15 text-primary text-[11px] font-bold">
+                  {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                </AvatarFallback>
+              </Avatar>
+              {!collapsed && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] font-semibold text-foreground truncate">{user.name}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
+                </div>
+              )}
+              <button onClick={handleLogout}
+                className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors shrink-0"
+                title="Logout"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="p-6 sm:p-8 max-w-[1400px] mx-auto">
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  );
+}
