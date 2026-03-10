@@ -40,7 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    setIsLoading(true);
+    // Don't set isLoading here — it causes the entire app to re-render and "reload"
+    // The Login page manages its own isLoading state
     try {
       const result = await authApi.login(email, password);
       localStorage.setItem('access_token', result.access_token);
@@ -51,24 +52,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData = await authApi.me();
         setUser(userData);
       }
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      // Re-throw so Login.tsx can handle the error UI
+      throw err;
     }
   }, []);
 
   const register = useCallback(async (data: { email: string; password: string; name: string; lang?: string }) => {
-    setIsLoading(true);
     try {
       await authApi.register(data);
       // Backend sends verification email — no auto-login
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      throw err;
     }
   }, []);
 
   const logout = useCallback(() => {
     trackEvent(TRACK.LOGOUT, {});
-    authApi.logout().catch(() => {}); // best-effort server call
+    authApi.logout().catch(() => { }); // best-effort server call
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setUser(null);
