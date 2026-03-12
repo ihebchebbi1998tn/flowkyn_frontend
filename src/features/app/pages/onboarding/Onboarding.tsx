@@ -13,14 +13,14 @@
  * The celebration screen is also extracted to CelebrationScreen.tsx.
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import {
   Building2, Briefcase, Target, Globe, ArrowRight, ArrowLeft,
-  Check, Sparkles,
+  Check, Sparkles, AlertCircle, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
@@ -50,6 +50,8 @@ export default function Onboarding() {
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [onboardingError, setOnboardingError] = useState<string>('');
+  const navigationTimeoutRef = useRef<NodeJS.Timeout>();
 
   const [data, setData] = useState<OnboardingData>({
     orgName: '',
@@ -103,6 +105,7 @@ export default function Onboarding() {
   /** Submit all onboarding data to the backend */
   const handleComplete = async () => {
     setIsSubmitting(true);
+    setOnboardingError('');
     try {
       i18n.changeLanguage(data.language);
       localStorage.setItem('i18nextLng', data.language);
@@ -116,11 +119,13 @@ export default function Onboarding() {
         goals: data.goals.length > 0 ? data.goals : undefined,
       });
 
+      if (!org?.id) throw new Error('Failed to create organization');
+
       // Cache org ID for EventForm auto-population
-      if (org?.id) localStorage.setItem('flowkyn_org_id', org.id);
+      localStorage.setItem('flowkyn_org_id', org.id);
 
       // 2. Upload logo (if provided)
-      if (data.logoFile && org?.id) {
+      if (data.logoFile) {
         await organizationsApi.uploadLogo(org.id, data.logoFile);
       }
 
@@ -132,21 +137,27 @@ export default function Onboarding() {
       if (updatedUser) setUser(updatedUser);
       trackEvent(TRACK.ONBOARDING_COMPLETED, { orgName: data.orgName, industry: data.industry });
 
+      // Show celebration and navigate on SUCCESS only
       setShowCelebration(true);
-      setTimeout(() => navigate(ROUTES.DASHBOARD), 2800);
-    } catch (error) {
+      navigationTimeoutRef.current = setTimeout(() => navigate(ROUTES.DASHBOARD), 2800);
+    } catch (error: any) {
       console.error('Onboarding completion failed:', error);
-      // Partial success is better than blocking
-      if (user) {
-        const updatedUser = { ...user, onboarding_completed: true };
-        setUser(updatedUser);
-      }
-      setShowCelebration(true);
-      setTimeout(() => navigate(ROUTES.DASHBOARD), 2800);
+      const errorMessage = error?.response?.data?.message || error?.message || 'Setup failed. Please try again.';
+      setOnboardingError(errorMessage);
+      // Do NOT navigate on failure
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Cleanup timeout on unmount to prevent navigation after component unmounts
+  useEffect(() => {
+    return () => {
+      if (navigationTimeoutRef.current) {
+        clearTimeout(navigationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // ── Celebration ───────────────────────────────────────────────────────────
 
@@ -200,6 +211,19 @@ export default function Onboarding() {
       {/* Content */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="w-full max-w-2xl">
+          {/* Error Banner */}
+          {onboardingError && (
+            <div className="mb-6 flex items-start gap-3 p-4 rounded-lg border border-destructive/30 bg-destructive/5">
+              <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-[13px] font-medium text-destructive">{onboardingError}</p>
+                <p className="text-[11px] text-destructive/60 mt-1">Please check your information and try again.</p>
+              </div>
+              <button onClick={() => setOnboardingError('')} className="text-muted-foreground hover:text-foreground">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
           {/* Step indicators */}
           <div className="flex items-center justify-center gap-3 mb-8">
             {STEP_ICONS.map((_, i) => (

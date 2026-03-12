@@ -5,13 +5,13 @@
  * can join, see who's waiting, copy the invite link, and enter the game.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import {
   Users, Clock, Gamepad2, ArrowRight, Copy, CheckCircle,
-  Link2, Wifi, User, Sparkles, Shield, Loader2,
+  Link2, Wifi, User, Sparkles, Shield, Loader2, AlertCircle, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,19 +47,35 @@ export default function EventLobby() {
   const [hasJoined, setHasJoined] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
+  const [joinError, setJoinError] = useState<string>('');
 
   const joinLink = `${window.location.origin}/join/${id}`;
   const participants = participantsData?.data ?? [];
+
+  const copyLinkTimeoutRef = useRef<NodeJS.Timeout>();
 
   const copyLink = () => {
     navigator.clipboard.writeText(joinLink);
     trackEvent(TRACK.EVENT_LINK_COPIED, { eventId: id });
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    
+    // Clear previous timeout
+    if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
+    
+    // Set new timeout
+    copyLinkTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
+    };
+  }, []);
 
   const handleJoinAsGuest = async () => {
     if (!guestName.trim() || !id) return;
+    setJoinError('');
     try {
       const result = await joinAsGuest.mutateAsync({
         eventId: id,
@@ -74,20 +90,33 @@ export default function EventLobby() {
       trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: id, guestName });
       setHasJoined(true);
       setShowGuestForm(false);
-    } catch {}
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to join as guest. Please try again.';
+      setJoinError(errorMessage);
+      console.error('Guest join error:', err);
+    }
   };
 
   const handleJoinAsUser = async () => {
     if (!id) return;
+    setJoinError('');
     try {
       if (inviteToken) {
+        if (!/^[A-Za-z0-9_-]+$/.test(inviteToken)) {
+          setJoinError('Invalid invitation token. Please check the link.');
+          return;
+        }
         await acceptInvitation.mutateAsync({ eventId: id, token: inviteToken });
       } else {
         await joinEvent.mutateAsync(id);
       }
       trackEvent(TRACK.EVENT_JOINED, { eventId: id, viaInvitation: !!inviteToken });
       setHasJoined(true);
-    } catch {}
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to join event. Please try again.';
+      setJoinError(errorMessage);
+      console.error('Event join error:', err);
+    }
   };
 
   const handleCountdownComplete = useCallback(() => {
@@ -139,6 +168,18 @@ export default function EventLobby() {
             <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
 
             <div className="relative p-6 sm:p-8 space-y-6">
+              {/* Error Banner */}
+              {joinError && (
+                <div className="flex items-start gap-3 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+                  <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-[12px] font-medium text-destructive">{joinError}</p>
+                  </div>
+                  <button onClick={() => setJoinError('')} className="text-muted-foreground hover:text-foreground">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
               {/* Header */}
               <div className="flex items-start gap-4">
                 <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">

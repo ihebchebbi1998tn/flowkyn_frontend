@@ -24,6 +24,12 @@ const statusStyles: Record<string, string> = {
   active: 'border-primary/20 text-primary bg-primary/5',
   paused: 'border-warning/20 text-warning bg-warning/5', 
   finished: 'border-success/20 text-success bg-success/5',
+  pending: 'border-muted-foreground/20 text-muted-foreground bg-muted/5',
+  error: 'border-destructive/20 text-destructive bg-destructive/5',
+};
+
+const getStatusStyle = (status: string): string => {
+  return statusStyles[status] || statusStyles.pending; // Fallback to pending style
 };
 
 export function RecentActivity({ sessions }: RecentActivityProps) {

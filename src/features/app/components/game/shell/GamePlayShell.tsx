@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -37,16 +37,20 @@ export function GamePlayShell({
   const [copied, setCopied] = useState(false);
   const [showLink, setShowLink] = useState(false);
   const [mobileSheet, setMobileSheet] = useState<MobileTab | null>(null);
+  const copyLinkTimeoutRef = useRef<NodeJS.Timeout>();
 
   const joinedCount = participants.filter(p => p.status === 'joined').length;
   const pendingCount = participants.filter(p => p.status === 'pending').length;
   const totalInvited = participants.length;
-  const joinLink = `https://flowkyn.app/join/${eventId}`;
+  const joinLink = `${window.location.origin}/join/${eventId}`;
   const joinPct = totalInvited > 0 ? Math.round((joinedCount / totalInvited) * 100) : 0;
 
   useEffect(() => {
     const timer = setInterval(() => setElapsed(e => e + 1), 1000);
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
+    };
   }, []);
 
   const formatTime = (s: number) => {
@@ -57,8 +61,9 @@ export function GamePlayShell({
 
   const copyLink = () => {
     navigator.clipboard.writeText(joinLink);
+    if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    copyLinkTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
   };
 
   const leaderboard = <LeaderboardSidebar participants={participants} />;
