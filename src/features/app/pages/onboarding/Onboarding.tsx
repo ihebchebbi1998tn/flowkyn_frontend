@@ -234,9 +234,6 @@ export default function Onboarding() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="text-center mb-8">
-                <div className="mx-auto h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                  <StepIcon className="h-6 w-6 text-primary" />
-                </div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
                   {t(`onboarding.steps.${stepKey}.title`)}
                 </h1>
