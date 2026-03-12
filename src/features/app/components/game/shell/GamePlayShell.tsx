@@ -63,6 +63,14 @@ export function GamePlayShell({
   const joinLink = `${window.location.origin}/join/${eventId}`;
   const joinPct = totalInvited > 0 ? Math.round((joinedCount / totalInvited) * 100) : 0;
 
+  const isLobby = joinedCount === 0 || pendingCount > 0;
+  const sessionStatusLabel =
+    gameType === 'sync'
+      ? (isLobby
+          ? t('gamePlay.shell.statusWaiting', 'Waiting for your team')
+          : t('gamePlay.shell.statusLive', 'Live team session'))
+      : t('gamePlay.shell.statusAsync', 'Async check‑in session');
+
   useEffect(() => {
     const timer = setInterval(() => setElapsed(e => e + 1), 1000);
     return () => {
@@ -80,8 +88,8 @@ export function GamePlayShell({
     );
     
     newlyJoined.forEach(p => {
-      toast.success(`${p.name} joined the lobby! 🎉`, {
-        description: t('gamePlay.shell.readyToPlay', 'Ready to play!'),
+      toast.success(`${p.name} joined the session! 🎉`, {
+        description: t('gamePlay.shell.readyToConnect', 'Ready to connect!'),
         icon: '👋',
       });
       prevJoinedIds.current.add(p.id);
@@ -109,7 +117,7 @@ export function GamePlayShell({
   const leaderboard = <LeaderboardSidebar participants={participants} />;
 
   return (
-    <div className="space-y-5 max-w-[1400px] animate-fade-in">
+    <div className="space-y-5 w-full max-w-[1400px] mx-auto animate-fade-in">
       {/* ─── Header ─── */}
       <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/5" />
@@ -148,10 +156,26 @@ export function GamePlayShell({
                   <Badge className={cn("text-[10px] shrink-0 gap-1",
                     gameType === 'sync' ? 'bg-success/15 text-success border-success/25' : 'bg-info/15 text-info border-info/25'
                   )}>
-                    {gameType === 'sync' ? <><div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" /> LIVE</> : <><Radio className="h-2.5 w-2.5" /> ASYNC</>}
+                    {gameType === 'sync'
+                      ? (<><div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" /> {t('gamePlay.shell.liveSession', 'Live session')}</>)
+                      : (<><Radio className="h-2.5 w-2.5" /> {t('gamePlay.shell.asyncSession', 'Async session')}</>)}
                   </Badge>
                 </div>
                 <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5 sm:mt-1">{subtitle}</p>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <span className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-medium tracking-wide border",
+                    isLobby
+                      ? "border-warning/40 bg-warning/10 text-warning"
+                      : "border-primary/40 bg-primary/10 text-primary"
+                  )}>
+                    <span className={cn(
+                      "h-1.5 w-1.5 rounded-full",
+                      isLobby ? "bg-warning animate-pulse" : "bg-primary"
+                    )} />
+                    {sessionStatusLabel}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -224,13 +248,30 @@ export function GamePlayShell({
         </div>
 
         {showLink && (
-          <div className="border-t border-border px-4 sm:px-5 py-3 bg-muted/30 flex items-center gap-2 animate-fade-in">
-            <Link2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            <Input value={joinLink} readOnly className="h-8 text-[11px] sm:text-[12px] bg-background/60 flex-1 min-w-0 border-border/50" />
-            <Button size="sm" variant="outline" onClick={copyLink} className="h-8 text-[11px] gap-1 shrink-0 rounded-lg">
-              {copied ? <CheckCircle className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
-              {copied ? t('gamePlay.shell.copied') : t('gamePlay.shell.copy')}
-            </Button>
+          <div className="border-t border-border px-4 sm:px-5 py-3 bg-muted/30 flex flex-col gap-2 animate-fade-in">
+            <div className="flex items-center gap-2">
+              <Link2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <Input
+                value={joinLink}
+                readOnly
+                className="h-8 text-[11px] sm:text-[12px] bg-background/60 flex-1 min-w-0 border-border/50"
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={copyLink}
+                className="h-8 text-[11px] gap-1 shrink-0 rounded-lg"
+              >
+                {copied ? <CheckCircle className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+                {copied ? t('gamePlay.shell.copied') : t('gamePlay.shell.copy')}
+              </Button>
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              {t(
+                'gamePlay.shell.inviteHelp',
+                'Share this link with teammates you want to bring into this session.'
+              )}
+            </p>
           </div>
         )}
       </div>

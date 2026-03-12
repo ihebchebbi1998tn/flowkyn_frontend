@@ -63,7 +63,7 @@ export default function Dashboard() {
       />
 
       {/* Stat cards */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3.5 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: t('dashboard.activeSessions'), value: String(stats?.activeSessions ?? 0), icon: Play, gradient: 'primary' as const },
           { label: t('dashboard.teamMembers'), value: String(stats?.teamMembers ?? 0), icon: Users, gradient: 'info' as const },
@@ -76,7 +76,12 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <motion.div className="grid gap-5 lg:grid-cols-5" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2, ease: 'easeOut' }}>
+      <motion.div
+        className="grid gap-4 lg:gap-5 lg:grid-cols-5"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2, ease: 'easeOut' }}
+      >
         <EngagementChart data={engagementData} onViewDetails={() => navigate(ROUTES.ANALYTICS)} />
         <UpcomingEvents events={(stats?.upcomingEvents ?? []) as any} stats={{
           activeSessions: stats?.activeSessions ?? 0,

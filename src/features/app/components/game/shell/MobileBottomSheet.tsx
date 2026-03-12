@@ -45,9 +45,19 @@ export function MobileBottomSheet({
               <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
                 <div className="flex items-center gap-2">
                   {activeTab === 'chat' ? (
-                    <><MessageCircle className="h-4 w-4 text-primary" /><span className="text-[13px] font-semibold text-foreground">{t('gamePlay.shell.chat')}</span></>
+                    <>
+                      <MessageCircle className="h-4 w-4 text-primary" />
+                      <span className="text-[13px] font-semibold text-foreground">
+                        {t('gamePlay.shell.chatLabel', 'Team chat')}
+                      </span>
+                    </>
                   ) : (
-                    <><Trophy className="h-4 w-4 text-primary" /><span className="text-[13px] font-semibold text-foreground">{t('gamePlay.leaderboard.title')}</span></>
+                    <>
+                      <Trophy className="h-4 w-4 text-primary" />
+                      <span className="text-[13px] font-semibold text-foreground">
+                        {t('gamePlay.leaderboard.teamProgressTitle', 'Team progress')}
+                      </span>
+                    </>
                   )}
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={onClose}>
@@ -74,7 +84,9 @@ export function MobileBottomSheet({
               )}
             >
               <MessageCircle className="h-4 w-4 text-primary" />
-              <span className="text-[12px] font-semibold text-foreground">{t('gamePlay.shell.chat')}</span>
+              <span className="text-[12px] font-semibold text-foreground">
+                {t('gamePlay.shell.chatLabel', 'Team chat')}
+              </span>
               <ChevronUp className="h-3 w-3 text-muted-foreground" />
             </button>
 
@@ -86,7 +98,9 @@ export function MobileBottomSheet({
               )}
             >
               <Trophy className="h-4 w-4 text-warning" />
-              <span className="text-[12px] font-semibold text-foreground">{t('gamePlay.shell.scores')}</span>
+              <span className="text-[12px] font-semibold text-foreground">
+                {t('gamePlay.shell.scoresLabel', 'Team progress')}
+              </span>
               <ChevronUp className="h-3 w-3 text-muted-foreground" />
             </button>
           </div>

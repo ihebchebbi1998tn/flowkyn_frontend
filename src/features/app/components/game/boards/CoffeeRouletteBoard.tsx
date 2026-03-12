@@ -142,12 +142,14 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
                 )}
                 <Shuffle className="h-9 w-9 text-info relative z-10" />
               </motion.div>
-               <h3 className="text-xl font-bold text-foreground mb-2">
-                 {participants.length < 2 ? t('gamePlay.coffeeRoulette.waitingForOthers', 'Waiting for others...') : t('gamePlay.coffeeRoulette.readyToConnect')}
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                 {participants.length < 2
+                   ? t('gamePlay.coffeeRoulette.waitingForOthers', 'Waiting for teammates...')
+                   : t('gamePlay.coffeeRoulette.readyToConnect')}
                </h3>
               <p className="text-[13px] text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
-                {participants.length < 2 
-                  ? t('gamePlay.coffeeRoulette.needMorePlayers', 'We need at least 2 people to start the roulette. Share the invite link to get started!') 
+                {participants.length < 2
+                  ? t('gamePlay.coffeeRoulette.needMoreParticipants', 'We need at least 2 people to start this connection session. Share the invite link to get started as a team!')
                   : t('gamePlay.coffeeRoulette.description')}
               </p>
               <div className="flex items-center justify-center gap-4 mb-8 text-[12px] text-muted-foreground">
@@ -155,7 +157,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
                 <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> {participants.length} {t('analyticsPage.participants')}</span>
               </div>
               <Button variant="brand" onClick={startMatching} disabled={participants.length < 2} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
-                <Shuffle className="h-5 w-5" /> {participants.length < 2 ? 'Waiting for more players...' : t('gamePlay.coffeeRoulette.shuffleMatch')}
+                <Shuffle className="h-5 w-5" /> {participants.length < 2 ? t('gamePlay.coffeeRoulette.waitingForTeam', 'Waiting for more teammates...') : t('gamePlay.coffeeRoulette.shuffleMatch')}
               </Button>
             </div>
           </div>

@@ -28,7 +28,7 @@ export function LeaderboardSidebar({ participants }: LeaderboardSidebarProps) {
             {t('gamePlay.leaderboard.title')}
           </h3>
           <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
-            {onlineCount} {onlineCount === 1 ? 'player' : 'players'}
+            {onlineCount} {onlineCount === 1 ? 'teammate' : 'teammates'}
           </span>
         </div>
       </div>
@@ -37,7 +37,7 @@ export function LeaderboardSidebar({ participants }: LeaderboardSidebarProps) {
       <div className="p-2 space-y-0.5">
         {sorted.length === 0 && (
           <p className="text-center text-[12px] text-muted-foreground py-6">
-            No players yet
+            No teammates yet
           </p>
         )}
         {sorted.map((p, i) => {

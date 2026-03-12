@@ -41,7 +41,19 @@ export const chartGridProps = {
 
 /* ─── Page shell ─── */
 export function PageShell({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn('space-y-5 max-w-[1200px] animate-fade-in', className)}>{children}</div>;
+  return (
+    <div
+      className={cn(
+        // Constrain width on large screens but let it breathe on tablets
+        'space-y-5 w-full max-w-[1200px] animate-fade-in',
+        // Center within the main layout while keeping nice padding on small devices
+        'mx-auto',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
 /* ─── Page header ─── */
@@ -89,14 +101,14 @@ const accentBarMap = {
 
 export function DashStat({ label, value, icon: Icon, change, trend, gradient = 'primary' }: DashStatProps) {
   return (
-    <div className="group relative rounded-xl border border-border bg-card overflow-hidden transition-all duration-200 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5">
+    <div className="group relative rounded-2xl border border-border bg-card/95 backdrop-blur-sm overflow-hidden transition-all duration-200 hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5">
       {/* Top accent bar */}
       <div className={cn("h-0.5 w-full bg-gradient-to-r opacity-50 group-hover:opacity-100 transition-opacity duration-200", accentBarMap[gradient])} />
       
-      <div className="p-4 sm:p-5">
-        <div className="flex items-center justify-between mb-3">
+      <div className="p-3.5 sm:p-5">
+        <div className="flex items-center justify-between mb-2.5 sm:mb-3 gap-3">
           <div className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105",
+            "flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105",
             iconColorMap[gradient]
           )}>
             <Icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
@@ -111,8 +123,12 @@ export function DashStat({ label, value, icon: Icon, change, trend, gradient = '
             </div>
           )}
         </div>
-        <p className="text-[28px] font-bold text-foreground tracking-tight leading-none mb-1.5">{value}</p>
-        <p className="text-label text-muted-foreground uppercase tracking-wider">{label}</p>
+        <p className="text-[24px] sm:text-[28px] font-bold text-foreground tracking-tight leading-none mb-1">
+          {value}
+        </p>
+        <p className="text-[11px] sm:text-label text-muted-foreground uppercase tracking-[0.16em]">
+          {label}
+        </p>
         {change && (
           <p className="text-label-xs text-muted-foreground/70 mt-1.5">{change}</p>
         )}
@@ -133,15 +149,15 @@ interface ChartCardProps {
 
 export function ChartCard({ title, subtitle, action, children, className, noPadding }: ChartCardProps) {
   return (
-    <div className={cn('rounded-xl border border-border bg-card overflow-hidden shadow-card', className)}>
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+    <div className={cn('rounded-2xl border border-border bg-card/95 backdrop-blur-sm overflow-hidden shadow-card', className)}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-5 py-3.5 sm:py-4 border-b border-border/60">
         <div>
-          <h3 className="text-card-title font-semibold text-foreground">{title}</h3>
+          <h3 className="text-card-title font-semibold text-foreground truncate">{title}</h3>
           {subtitle && <p className="text-label text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
-        {action}
+        {action && <div className="flex items-center justify-end shrink-0">{action}</div>}
       </div>
-      <div className={noPadding ? '' : 'p-5'}>{children}</div>
+      <div className={noPadding ? '' : 'p-4 sm:p-5'}>{children}</div>
     </div>
   );
 }
