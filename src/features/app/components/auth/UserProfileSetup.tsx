@@ -202,9 +202,11 @@ export function UserProfileSetup({
                 <Pencil className="h-4 w-4 text-primary" />
                 <h2 className="text-sm font-bold text-foreground">Edit Your Profile</h2>
               </div>
-              <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xs px-2 py-1 rounded-md hover:bg-muted transition-colors">
-                ✕
-              </button>
+              {onClose && (
+                <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xs px-2 py-1 rounded-md hover:bg-muted transition-colors">
+                  ✕
+                </button>
+              )}
             </div>
             <div className="p-5">
               {inner}

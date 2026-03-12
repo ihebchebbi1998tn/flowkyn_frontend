@@ -26,66 +26,20 @@ const REACTION_ICONS: Record<string, typeof Heart> = {
   award: Award,
 };
 
-const MOCK_POSTS: Post[] = [
-  {
-    id: '1', authorName: 'Sarah Kim', authorAvatar: 'SK',
-    content: 'Shipped the new onboarding flow this week! Three months of work finally live. The user feedback has been really positive so far.',
-    timestamp: '2 hours ago',
-    reactions: [
-      { type: 'heart', count: 5, reacted: true },
-      { type: 'thumbsUp', count: 3, reacted: false },
-      { type: 'star', count: 2, reacted: false },
-    ],
-    replies: [
-      { authorName: 'Alex Morgan', authorAvatar: 'AM', content: 'Amazing work Sarah! The new flow is so much smoother.', timestamp: '1 hour ago' },
-    ],
-  },
-  {
-    id: '2', authorName: 'Tom Rivera', authorAvatar: 'TR',
-    content: "Finally organized my home office this weekend. It sounds small but it's made a huge difference for my focus and energy.",
-    timestamp: '4 hours ago',
-    reactions: [
-      { type: 'heart', count: 7, reacted: false },
-      { type: 'thumbsUp', count: 4, reacted: true },
-    ],
-    replies: [],
-  },
-  {
-    id: '3', authorName: 'Alex Morgan', authorAvatar: 'AM',
-    content: "Won my first 5K race! I've been training for 3 months and crossed the finish line at 24:32. Personal best!",
-    timestamp: '6 hours ago',
-    reactions: [
-      { type: 'heart', count: 12, reacted: false },
-      { type: 'star', count: 6, reacted: false },
-      { type: 'award', count: 3, reacted: false },
-    ],
-    replies: [
-      { authorName: 'Sarah Kim', authorAvatar: 'SK', content: "That's incredible Alex! What a milestone.", timestamp: '5 hours ago' },
-      { authorName: 'Lisa Chen', authorAvatar: 'LC', content: 'Congrats! You should be really proud.', timestamp: '4 hours ago' },
-    ],
-  },
-  {
-    id: '4', authorName: 'Lisa Chen', authorAvatar: 'LC',
-    content: "Resolved a tricky production bug that's been haunting us for 2 weeks. Turns out it was a timezone edge case. Feels good to finally squash it.",
-    timestamp: '8 hours ago',
-    reactions: [
-      { type: 'thumbsUp', count: 8, reacted: false },
-      { type: 'heart', count: 3, reacted: false },
-    ],
-    replies: [],
-  },
-];
-
-interface WinsOfTheWeekBoardProps {
+export interface WinsOfTheWeekBoardProps {
   prompt?: string;
+  currentUserId: string;
+  currentUserName: string;
+  currentUserAvatar: string;
+  currentUserAvatarUrl?: string | null;
 }
 
-export function WinsOfTheWeekBoard({ prompt }: WinsOfTheWeekBoardProps) {
+export function WinsOfTheWeekBoard({ prompt, currentUserId, currentUserName, currentUserAvatar, currentUserAvatarUrl }: WinsOfTheWeekBoardProps) {
   const { t } = useTranslation();
   const displayPrompt = prompt || t('gamePlay.winsOfWeek.defaultPrompt', 'Share your win from this week — work or personal, big or small!');
-  const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState('');
-  const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set(['1', '3']));
+  const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
   const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
   const [showReplyFor, setShowReplyFor] = useState<string | null>(null);
 
@@ -93,7 +47,7 @@ export function WinsOfTheWeekBoard({ prompt }: WinsOfTheWeekBoardProps) {
     if (!newPost.trim()) return;
     const post: Post = {
       id: String(Date.now()),
-      authorName: 'You', authorAvatar: 'YO',
+      authorName: currentUserName, authorAvatar: currentUserAvatar,
       content: newPost.trim(), timestamp: 'Just now',
       reactions: [], replies: [],
     };
@@ -119,7 +73,7 @@ export function WinsOfTheWeekBoard({ prompt }: WinsOfTheWeekBoardProps) {
     if (!text) return;
     setPosts(prev => prev.map(p => {
       if (p.id !== postId) return p;
-      return { ...p, replies: [...p.replies, { authorName: 'You', authorAvatar: 'YO', content: text, timestamp: 'Just now' }] };
+      return { ...p, replies: [...p.replies, { authorName: currentUserName, authorAvatar: currentUserAvatar, content: text, timestamp: 'Just now' }] };
     }));
     setReplyInputs(prev => ({ ...prev, [postId]: '' }));
     setShowReplyFor(null);
@@ -152,7 +106,8 @@ export function WinsOfTheWeekBoard({ prompt }: WinsOfTheWeekBoardProps) {
       <div className="rounded-xl border border-border bg-card p-4">
         <div className="flex items-start gap-3">
           <Avatar className="h-8 w-8 shrink-0 mt-0.5">
-            <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-semibold">YO</AvatarFallback>
+            {currentUserAvatarUrl ? <img src={currentUserAvatarUrl} alt={currentUserName} className="h-full w-full object-cover" /> : null}
+            <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-semibold">{currentUserAvatar}</AvatarFallback>
           </Avatar>
           <div className="flex-1 space-y-2">
             <Textarea value={newPost} onChange={e => setNewPost(e.target.value)} placeholder={t('gamePlay.winsOfWeek.shareYourWin')} rows={2}
@@ -168,6 +123,13 @@ export function WinsOfTheWeekBoard({ prompt }: WinsOfTheWeekBoardProps) {
 
       {/* Posts feed */}
       <div className="space-y-3">
+        {posts.length === 0 && (
+          <div className="rounded-xl border border-dashed border-border p-8 text-center bg-muted/20">
+            <Heart className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-[14px] font-medium text-foreground">No wins shared yet</p>
+            <p className="text-[12px] text-muted-foreground mt-1">Be the first to share your win of the week!</p>
+          </div>
+        )}
         {posts.map(post => {
           const repliesExpanded = expandedReplies.has(post.id);
           return (
@@ -255,7 +217,8 @@ export function WinsOfTheWeekBoard({ prompt }: WinsOfTheWeekBoardProps) {
                 {showReplyFor === post.id && (
                   <div className="mt-3 pl-[42px] flex items-center gap-2">
                     <Avatar className="h-6 w-6 shrink-0">
-                      <AvatarFallback className="bg-primary/10 text-primary text-[8px] font-semibold">YO</AvatarFallback>
+                       {currentUserAvatarUrl ? <img src={currentUserAvatarUrl} alt={currentUserName} className="h-full w-full object-cover" /> : null}
+                      <AvatarFallback className="bg-primary/10 text-primary text-[8px] font-semibold">{currentUserAvatar}</AvatarFallback>
                     </Avatar>
                     <input type="text" value={replyInputs[post.id] || ''}
                       onChange={e => setReplyInputs(prev => ({ ...prev, [post.id]: e.target.value }))}

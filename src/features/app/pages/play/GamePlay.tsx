@@ -52,10 +52,13 @@ function GamePlayWithoutBoundary() {
   const config = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
 
   // ─── Profile (avatar + nickname) ───────────────────────────────────────────
-  const [profile, setProfile] = useState<ProfileSetupData | null>(
+  const [profile, setProfile] = useState<ProfileSetupData | null>(() => 
     eventId ? getStoredProfile(eventId) : null
   );
-  const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [showProfileEdit, setShowProfileEdit] = useState(() => {
+    if (!eventId) return false;
+    return !getStoredProfile(eventId);
+  });
 
   const handleProfileSave = useCallback((data: ProfileSetupData) => {
     if (!eventId) return;
@@ -223,11 +226,19 @@ function GamePlayWithoutBoundary() {
 
   // ─── Game board ────────────────────────────────────────────────────────────
   const renderBoard = () => {
+    const boardProps = {
+      participants,
+      currentUserId,
+      currentUserName,
+      currentUserAvatar: (currentUserName || '??').slice(0, 2).toUpperCase(),
+      currentUserAvatarUrl
+    };
+
     switch (config.gameTypeKey) {
-      case 'two-truths': return <TwoTruthsBoard />;
-      case 'coffee-roulette': return <CoffeeRouletteBoard />;
-      case 'wins-of-week': return <WinsOfTheWeekBoard prompt={config.promptKey ? t(config.promptKey) : undefined} />;
-      default: return <TwoTruthsBoard />;
+      case 'two-truths': return <TwoTruthsBoard {...boardProps} />;
+      case 'coffee-roulette': return <CoffeeRouletteBoard {...boardProps} />;
+      case 'wins-of-week': return <WinsOfTheWeekBoard prompt={config.promptKey ? t(config.promptKey) : undefined} {...boardProps} />;
+      default: return <TwoTruthsBoard {...boardProps} />;
     }
   };
 
@@ -257,7 +268,7 @@ function GamePlayWithoutBoundary() {
             defaultAvatarUrl={profile?.avatarUrl}
             submitLabel="Save Profile"
             onSubmit={handleProfileSave}
-            onClose={() => setShowProfileEdit(false)}
+            onClose={profile ? () => setShowProfileEdit(false) : undefined}
           />
         )}
       </AnimatePresence>

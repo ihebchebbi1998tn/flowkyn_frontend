@@ -26,16 +26,15 @@ const CONVERSATION_STARTERS = [
   "What's the best piece of advice you've ever received?",
 ];
 
-const MOCK_PAIRS: Pair[] = [
-  { id: '1', person1: { name: 'Alex Morgan', avatar: 'AM' }, person2: { name: 'Sarah Kim', avatar: 'SK' }, topic: "What's the most interesting thing you've learned recently?" },
-  { id: '2', person1: { name: 'Tom Rivera', avatar: 'TR' }, person2: { name: 'Lisa Chen', avatar: 'LC' }, topic: "If you could live anywhere for a year, where would you go?" },
-  { id: '3', person1: { name: 'Max Weber', avatar: 'MW' }, person2: { name: 'Jan Doe', avatar: 'JD' }, topic: "What's a hobby or skill you'd love to pick up?" },
-];
+export interface CoffeeRouletteBoardProps {
+  participants: any[];
+  currentUserId: string;
+}
 
-export function CoffeeRouletteBoard() {
+export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
   const [phase, setPhase] = useState<GamePhase>('waiting');
-  const [pairs, setPairs] = useState<Pair[]>(MOCK_PAIRS);
+  const [pairs, setPairs] = useState<Pair[]>([]);
   const [isShuffling, setIsShuffling] = useState(false);
   const [myPair, setMyPair] = useState<Pair | null>(null);
   const [chatMinutes, setChatMinutes] = useState(0);
@@ -47,13 +46,19 @@ export function CoffeeRouletteBoard() {
     // Simulate shuffle animation
     let count = 0;
     const interval = setInterval(() => {
-      setPairs(prev => {
-        const shuffled = [...prev].sort(() => Math.random() - 0.5);
-        return shuffled.map((p, i) => ({
-          ...p,
-          topic: CONVERSATION_STARTERS[Math.floor(Math.random() * CONVERSATION_STARTERS.length)],
-        }));
-      });
+      const shuffled = [...participants].sort(() => Math.random() - 0.5);
+      const newPairs: Pair[] = [];
+      for (let i = 0; i < shuffled.length; i += 2) {
+        if (i + 1 < shuffled.length) {
+          newPairs.push({
+            id: String(i),
+            person1: { name: shuffled[i].name, avatar: shuffled[i].avatar },
+            person2: { name: shuffled[i+1].name, avatar: shuffled[i+1].avatar },
+            topic: CONVERSATION_STARTERS[Math.floor(Math.random() * CONVERSATION_STARTERS.length)],
+          });
+        }
+      }
+      setPairs(newPairs);
       count++;
       if (count >= 8) {
         clearInterval(interval);
@@ -126,10 +131,10 @@ export function CoffeeRouletteBoard() {
               </p>
               <div className="flex items-center justify-center gap-4 mb-8 text-[12px] text-muted-foreground">
                 <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {t('gamePlay.coffeeRoulette.minutes')}</span>
-                <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> {pairs.length * 2} {t('analyticsPage.participants')}</span>
+                <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> {participants.length} {t('analyticsPage.participants')}</span>
               </div>
-              <Button variant="brand" onClick={startMatching} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
-                <Shuffle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.shuffleMatch')}
+              <Button variant="brand" onClick={startMatching} disabled={participants.length < 2} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
+                <Shuffle className="h-5 w-5" /> {participants.length < 2 ? 'Waiting for more players...' : t('gamePlay.coffeeRoulette.shuffleMatch')}
               </Button>
             </div>
           </div>

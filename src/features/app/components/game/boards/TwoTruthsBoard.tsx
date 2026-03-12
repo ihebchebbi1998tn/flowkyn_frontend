@@ -20,30 +20,15 @@ interface Statement {
   isLie?: boolean;
 }
 
-interface TwoTruthsBoardProps {
+export interface TwoTruthsBoardProps {
   onRoundComplete?: (roundNumber: number) => void;
+  participants: any[];
+  currentUserId: string;
+  currentUserName: string;
+  currentUserAvatar: string;
 }
 
-const MOCK_STATEMENTS: Statement[] = [
-  { id: 's1', text: 'I have visited 12 countries', authorId: '2', authorName: 'Sarah Kim', authorAvatar: 'SK' },
-  { id: 's2', text: 'I once met a famous musician backstage', authorId: '2', authorName: 'Sarah Kim', authorAvatar: 'SK' },
-  { id: 's3', text: "I can solve a Rubik's cube in under 2 minutes", authorId: '2', authorName: 'Sarah Kim', authorAvatar: 'SK', isLie: true },
-];
-
-const MOCK_VOTE_TALLY = [
-  { statementId: 's1', count: 1, percentage: 25 },
-  { statementId: 's2', count: 1, percentage: 25 },
-  { statementId: 's3', count: 2, percentage: 50 },
-];
-
-const MOCK_RESULTS = [
-  { name: 'You', score: 300, avatar: 'YO', rank: 1 },
-  { name: 'Sarah Kim', score: 200, avatar: 'SK', rank: 2 },
-  { name: 'Alex Morgan', score: 100, avatar: 'AM', rank: 3 },
-  { name: 'Tom Rivera', score: 100, avatar: 'TR', rank: 4 },
-];
-
-export function TwoTruthsBoard({ onRoundComplete }: TwoTruthsBoardProps) {
+export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, currentUserName, currentUserAvatar }: TwoTruthsBoardProps) {
   const { t } = useTranslation();
   const [phase, setPhase] = useState<GamePhase>('waiting');
   const [round, setRound] = useState(1);
@@ -63,7 +48,7 @@ export function TwoTruthsBoard({ onRoundComplete }: TwoTruthsBoardProps) {
 
   const handleVote = useCallback(() => {
     setVoted(true);
-    setTimeout(() => { setPhase('reveal'); setRevealedLie('s3'); }, 1500);
+    setTimeout(() => { setPhase('reveal'); setRevealedLie('s2'); }, 1500);
   }, []);
 
   useEffect(() => {
@@ -98,6 +83,25 @@ export function TwoTruthsBoard({ onRoundComplete }: TwoTruthsBoardProps) {
     setTimeLeft(30);
   }, []);
   const maxTime = phase === 'submit' ? 30 : 20;
+
+  const targetStatements: Statement[] = [
+    { id: 's0', text: statements[0] || 'Statement 1', authorId: currentUserId, authorName: currentUserName, authorAvatar: currentUserAvatar },
+    { id: 's1', text: statements[1] || 'Statement 2', authorId: currentUserId, authorName: currentUserName, authorAvatar: currentUserAvatar },
+    { id: 's2', text: statements[2] || 'Statement 3 (Lie)', authorId: currentUserId, authorName: currentUserName, authorAvatar: currentUserAvatar, isLie: true },
+  ];
+  
+  const mockTally = [
+    { statementId: 's0', count: Math.floor(participants.length * 0.2), percentage: 20 },
+    { statementId: 's1', count: Math.floor(participants.length * 0.3), percentage: 30 },
+    { statementId: 's2', count: Math.max(1, Math.floor(participants.length * 0.5)), percentage: 50 },
+  ];
+
+  const results = participants.map((p, i) => ({
+    name: p.name,
+    score: p.id === currentUserId ? 300 : Math.floor(Math.random() * 200),
+    avatar: p.avatar,
+    rank: i + 1
+  })).sort((a, b) => b.score - a.score).map((p, i) => ({ ...p, rank: i + 1 }));
 
   return (
     <div className="space-y-4">
@@ -199,16 +203,16 @@ export function TwoTruthsBoard({ onRoundComplete }: TwoTruthsBoardProps) {
           <div className="px-5 py-4 border-b border-border bg-gradient-to-r from-warning/5 to-transparent">
             <div className="flex items-center gap-3">
               <Avatar className="h-9 w-9 ring-2 ring-warning/20 ring-offset-2 ring-offset-card">
-                <AvatarFallback className="bg-info/10 text-info text-[10px] font-bold">SK</AvatarFallback>
+                <AvatarFallback className="bg-info/10 text-info text-[10px] font-bold">{currentUserAvatar}</AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.twoTruths.statementsOf', { name: 'Sarah Kim' })}</h3>
+                <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.twoTruths.statementsOf', { name: currentUserName })}</h3>
                 <p className="text-[11px] text-muted-foreground">{t('gamePlay.twoTruths.spotTheLie')}</p>
               </div>
             </div>
           </div>
           <div className="p-5 space-y-2.5">
-            {MOCK_STATEMENTS.map((stmt, i) => (
+            {targetStatements.map((stmt, i) => (
               <button
                 key={stmt.id}
                 onClick={() => !voted && setSelectedVote(stmt.id)}
@@ -267,8 +271,8 @@ export function TwoTruthsBoard({ onRoundComplete }: TwoTruthsBoardProps) {
             </div>
           </div>
           <div className="p-5 space-y-2.5">
-            {MOCK_STATEMENTS.map((stmt, i) => {
-              const tally = MOCK_VOTE_TALLY.find(t => t.statementId === stmt.id);
+            {targetStatements.map((stmt, i) => {
+              const tally = mockTally.find(t => t.statementId === stmt.id);
               const isLie = stmt.id === revealedLie;
               const wasMyVote = selectedVote === stmt.id;
               return (
@@ -350,7 +354,7 @@ export function TwoTruthsBoard({ onRoundComplete }: TwoTruthsBoardProps) {
       {phase === 'results' && (
         <GameResults
           subtitle={t('gamePlay.results.roundsPlayed', { count: totalRounds })}
-          results={MOCK_RESULTS}
+          results={results}
           onPlayAgain={() => {
             setPhase('waiting');
             setRound(1);
