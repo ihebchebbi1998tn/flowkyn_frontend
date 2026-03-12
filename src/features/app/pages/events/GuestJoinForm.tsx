@@ -55,6 +55,9 @@ export function GuestJoinForm({
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input type="email" placeholder="your@email.com" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} className="pl-10 h-11" />
             </div>
+            {guestEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail) && (
+              <p className="text-xs text-destructive font-medium">Please enter a valid email address</p>
+            )}
           </div>
 
           <AvatarPicker seed={guestName || 'guest'} onSelect={setSelectedAvatar} selectedUri={selectedAvatar} />
@@ -69,7 +72,7 @@ export function GuestJoinForm({
             </div>
           )}
 
-          <Button className="w-full h-11 gap-2" disabled={!guestName.trim() || isPending} onClick={onJoin}>
+          <Button className="w-full h-11 gap-2" disabled={!guestName.trim() || isPending || (guestEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail))} onClick={onJoin}>
             {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{t('events.joinEvent')} <ArrowRight className="h-4 w-4" /></>}
           </Button>
 

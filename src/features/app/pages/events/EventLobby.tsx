@@ -8,6 +8,7 @@
 import { useState, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import {
   Users, Clock, Gamepad2, ArrowRight, Copy, CheckCircle,
   Link2, Wifi, User, Sparkles, Shield, Loader2,
@@ -64,12 +65,11 @@ export default function EventLobby() {
         eventId: id,
         data: { name: guestName, email: guestEmail || undefined, avatar_url: selectedAvatar, token: inviteToken || undefined },
       });
-      // Store guest token and participant info for game/chat participation
+      // Store guest token and participant info for game/chat participation (event-specific keys)
       if (result.guest_token) {
-        localStorage.setItem('guest_token', result.guest_token);
-        localStorage.setItem('guest_participant_id', result.participant_id);
-        localStorage.setItem('guest_name', result.guest_name);
-        localStorage.setItem('guest_event_id', id);
+        localStorage.setItem(`guest_token_${id}`, result.guest_token);
+        localStorage.setItem(`guest_participant_id_${id}`, result.participant_id);
+        localStorage.setItem(`guest_name_${id}`, result.guest_name);
       }
       trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: id, guestName });
       setHasJoined(true);
@@ -114,22 +114,25 @@ export default function EventLobby() {
   // Guest join form
   if (showGuestForm && !hasJoined) {
     return (
-      <GuestJoinForm
-        eventTitle={event.title}
-        guestName={guestName} setGuestName={setGuestName}
-        guestEmail={guestEmail} setGuestEmail={setGuestEmail}
-        selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar}
-        onJoin={handleJoinAsGuest} onBack={() => setShowGuestForm(false)}
-        isPending={joinAsGuest.isPending}
-      />
+      <ErrorBoundary>
+        <GuestJoinForm
+          eventTitle={event.title}
+          guestName={guestName} setGuestName={setGuestName}
+          guestEmail={guestEmail} setGuestEmail={setGuestEmail}
+          selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar}
+          onJoin={handleJoinAsGuest} onBack={() => setShowGuestForm(false)}
+          isPending={joinAsGuest.isPending}
+        />
+      </ErrorBoundary>
     );
   }
 
   // Main lobby
   return (
-    <>
-      <CountdownOverlay active={showCountdown} onComplete={handleCountdownComplete} />
-      <div className="min-h-[80vh] flex items-center justify-center animate-fade-in">
+    <ErrorBoundary>
+      <>
+        <CountdownOverlay active={showCountdown} onComplete={handleCountdownComplete} />
+        <div className="min-h-[80vh] flex items-center justify-center animate-fade-in">
         <div className="w-full max-w-2xl space-y-6">
           <div className="relative rounded-2xl border border-border bg-card overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-primary/3" />
@@ -199,8 +202,13 @@ export default function EventLobby() {
                   ))}
                   {hasJoined && (
                     <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-primary/30 bg-primary/5 transition-all">
-                      {selectedAvatar ? <img src={selectedAvatar} alt="You" className="h-7 w-7 rounded-full" />
-                        : <Avatar className="h-7 w-7"><AvatarFallback className="bg-primary/20 text-primary text-[9px] font-bold">{t('events.you')}</AvatarFallback></Avatar>}
+                      {selectedAvatar ? (
+                        <img src={selectedAvatar} alt="You" className="h-7 w-7 rounded-full object-cover" />
+                      ) : (
+                        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-[9px] font-bold text-primary-foreground">
+                          {(guestName || t('events.you')).slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
                       <span className="text-xs font-medium text-foreground">{guestName || t('events.you')}</span>
                       <Badge className="text-[8px] h-4 px-1.5 bg-primary/15 text-primary border-primary/25">{t('events.you')}</Badge>
                     </div>
@@ -264,7 +272,8 @@ export default function EventLobby() {
             <span className="text-[11px]">{t('events.poweredBy')}</span>
           </div>
         </div>
-      </div>
-    </>
+        </div>
+      </>
+    </ErrorBoundary>
   );
 }

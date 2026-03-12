@@ -99,24 +99,33 @@ export default function LaunchActivity() {
 
       const createdEvent = await eventsApi.create(eventData);
       
-      // Send invitations
+      // Send invitations with better error handling
       if (emails.length > 0) {
         setInvitationProgress({ sent: 0, total: emails.length });
         
-        let failedEmails: string[] = [];
-        for (let i = 0; i < emails.length; i++) {
-          try {
-            await eventsApi.invite(createdEvent.id, emails[i], 'en');
-            setInvitationProgress({ sent: i + 1, total: emails.length });
-          } catch (inviteErr: any) {
-            console.error(`Failed to invite ${emails[i]}:`, inviteErr);
-            failedEmails.push(emails[i]);
-          }
-        }
+        // Use Promise.allSettled for better error aggregation
+        const invitePromises = emails.map((email, i) =>
+          eventsApi.invite(createdEvent.id, email, 'en')
+            .then(() => {
+              setInvitationProgress({ sent: i + 1, total: emails.length });
+              return { success: true, email };
+            })
+            .catch((err) => {
+              console.error(`Failed to invite ${email}:`, err);
+              return { success: false, email };
+            })
+        );
 
-        if (failedEmails.length > 0) {
-          setError(`Event created but failed to invite: ${failedEmails.join(', ')}`);
-          // Still navigate despite partial failure
+        const results = await Promise.all(invitePromises);
+        const failedEmails = results
+          .filter(r => !r.success)
+          .map(r => r.email);
+
+        // Show warning for partial failures, but only prevent navigation on ALL failures
+        if (failedEmails.length > 0 && failedEmails.length < emails.length) {
+          setError(`⚠️ Some invitations failed (${failedEmails.join(', ')}). Event was created successfully.`);
+        } else if (failedEmails.length === emails.length) {
+          throw new Error(`Failed to send any invitations. Please try again.`);
         }
       }
 

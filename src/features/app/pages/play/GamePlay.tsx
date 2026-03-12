@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { GamePlayShell } from '@/features/app/components/game/shell';
 import type { GameParticipant } from '@/features/app/components/game/shell';
 import { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard } from '@/features/app/components/game/boards';
@@ -23,7 +24,7 @@ const GAME_CONFIGS: Record<string, {
   '3': { titleKey: 'gamePlay.configs.winsOfWeekTitle', subtitleKey: 'gamePlay.configs.winsOfWeekSubtitle', type: 'async', gameTypeKey: 'wins-of-week', promptKey: 'gamePlay.configs.defaultPrompt' },
 };
 
-export default function GamePlay() {
+function GamePlayWithoutBoundary() {
   const { id: eventId } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -33,10 +34,10 @@ export default function GamePlay() {
   const gameTypeId = searchParams.get('game') || '1';
   const config = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
 
-  // Support both authenticated users and guests
-  const isGuest = !user && !!localStorage.getItem('guest_token');
-  const currentUserId = user?.id || localStorage.getItem('guest_participant_id') || '';
-  const currentUserName = user?.name || localStorage.getItem('guest_name') || 'Guest';
+  // Support both authenticated users and guests (use event-specific keys)
+  const isGuest = !user && !!localStorage.getItem(`guest_token_${eventId}`);
+  const currentUserId = user?.id || localStorage.getItem(`guest_participant_id_${eventId}`) || '';
+  const currentUserName = user?.name || localStorage.getItem(`guest_name_${eventId}`) || 'Guest';
 
   // ─── Real data from API ────────────────────────────────────────────────────
   const { data: participantsData } = useEventParticipants(eventId || '');
@@ -211,5 +212,13 @@ export default function GamePlay() {
     >
       {renderBoard()}
     </GamePlayShell>
+  );
+}
+
+export default function GamePlay() {
+  return (
+    <ErrorBoundary>
+      <GamePlayWithoutBoundary />
+    </ErrorBoundary>
   );
 }

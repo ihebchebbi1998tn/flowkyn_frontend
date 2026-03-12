@@ -10,12 +10,13 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://api.flowkyn.com';
 interface UseSocketOptions {
   namespace: string;
   autoConnect?: boolean;
+  eventId?: string; // For event-specific guest token lookup
   onConnect?: () => void;
   onDisconnect?: (reason: string) => void;
   onError?: (err: { message: string; code?: string }) => void;
 }
 
-export function useSocket({ namespace, autoConnect = true, onConnect, onDisconnect, onError }: UseSocketOptions) {
+export function useSocket({ namespace, autoConnect = true, eventId, onConnect, onDisconnect, onError }: UseSocketOptions) {
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -28,8 +29,9 @@ export function useSocket({ namespace, autoConnect = true, onConnect, onDisconne
   onErrorRef.current = onError;
 
   const connect = useCallback(() => {
-    // Support both guest tokens and regular access tokens
-    const token = localStorage.getItem('guest_token') || localStorage.getItem('access_token');
+    // Support both guest tokens (event-specific) and regular access tokens
+    const guestToken = eventId ? localStorage.getItem(`guest_token_${eventId}`) : localStorage.getItem('guest_token');
+    const token = guestToken || localStorage.getItem('access_token');
     if (!token) return;
 
     if (socketRef.current) {
@@ -67,7 +69,7 @@ export function useSocket({ namespace, autoConnect = true, onConnect, onDisconne
     });
 
     socketRef.current = socket;
-  }, [namespace]); // Only namespace as dependency — callbacks use refs
+  }, [namespace, eventId]); // Include eventId as dependency for event-specific tokens
 
   const disconnect = useCallback(() => {
     socketRef.current?.disconnect();
