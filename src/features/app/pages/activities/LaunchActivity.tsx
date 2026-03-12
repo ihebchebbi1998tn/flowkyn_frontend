@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, ArrowRight, Users, Clock, Timer, MessageSquare, Coffee, Trophy,
   Lightbulb, Crosshair, Flame, Mail, Plus, X, Send, CalendarDays, Settings2, Check,
-  Globe, Lock,
+  Globe, Lock, AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
+import { eventsApi } from '@/features/app/api/events';
 
 const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; color: string; bgColor: string; type: 'sync' | 'async'; duration: string }> = {
   '1': { name: 'Two Truths & a Lie', icon: MessageSquare, color: 'text-primary', bgColor: 'bg-primary/10', type: 'sync', duration: '15' },
@@ -46,6 +47,8 @@ export default function LaunchActivity() {
   const [emails, setEmails] = useState<string[]>([]);
   const [allowNickname, setAllowNickname] = useState(true);
   const [launching, setLaunching] = useState(false);
+  const [error, setError] = useState('');
+  const [invitationProgress, setInvitationProgress] = useState({ sent: 0, total: 0 });
 
   if (!activity) { navigate('/games'); return null; }
 
@@ -69,9 +72,62 @@ export default function LaunchActivity() {
   const removeEmail = (email: string) => setEmails(emails.filter(e => e !== email));
 
   const handleLaunch = async () => {
+    setError('');
     setLaunching(true);
-    await new Promise(r => setTimeout(r, 1500));
-    navigate(ROUTES.PLAY('demo-123') + `?game=${id}`);
+    
+    try {
+      // Get organization ID from localStorage
+      const orgId = localStorage.getItem('flowkyn_org_id');
+      if (!orgId) {
+        throw new Error('Organization ID not found. Please complete onboarding first.');
+      }
+
+      // Determine visibility value for backend
+      const backendVisibility = visibility === 'workspace' ? 'public' : 'private';
+
+      // Create event
+      const eventData = {
+        organization_id: orgId,
+        title: eventTitle || 'Untitled Event',
+        description,
+        event_mode: id, // Activity ID
+        visibility: backendVisibility,
+        max_participants: parseInt(maxParticipants, 10),
+        start_time: scheduleType === 'now' ? new Date().toISOString() : scheduledDate ? new Date(scheduledDate).toISOString() : undefined,
+        allow_guests: allowNickname,
+      };
+
+      const createdEvent = await eventsApi.create(eventData);
+      
+      // Send invitations
+      if (emails.length > 0) {
+        setInvitationProgress({ sent: 0, total: emails.length });
+        
+        let failedEmails: string[] = [];
+        for (let i = 0; i < emails.length; i++) {
+          try {
+            await eventsApi.invite(createdEvent.id, emails[i], 'en');
+            setInvitationProgress({ sent: i + 1, total: emails.length });
+          } catch (inviteErr: any) {
+            console.error(`Failed to invite ${emails[i]}:`, inviteErr);
+            failedEmails.push(emails[i]);
+          }
+        }
+
+        if (failedEmails.length > 0) {
+          setError(`Event created but failed to invite: ${failedEmails.join(', ')}`);
+          // Still navigate despite partial failure
+        }
+      }
+
+      // Navigate to the actual event with correct ID
+      navigate(ROUTES.PLAY(createdEvent.id) + `?game=${id}`);
+    } catch (err: any) {
+      console.error('Launch failed:', err);
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to launch activity. Please try again.';
+      setError(errorMessage);
+      setLaunching(false);
+    }
   };
 
   const steps: { key: Step; label: string; icon: typeof Settings2 }[] = [
@@ -127,6 +183,19 @@ export default function LaunchActivity() {
           </div>
         ))}
       </div>
+
+      {/* Error Banner */}
+      {error && (
+        <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg border border-destructive/30 bg-destructive/5">
+          <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-[12px] sm:text-[13px] font-medium text-destructive">{error}</p>
+          </div>
+          <button onClick={() => setError('')} className="text-muted-foreground hover:text-foreground">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       {/* Step Content */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -345,8 +414,21 @@ export default function LaunchActivity() {
               <Button variant="outline" onClick={() => setStep('invite')} className="h-10 text-[13px] gap-2">
                 <ArrowLeft className="h-4 w-4" /> Back
               </Button>
-              <Button onClick={handleLaunch} disabled={launching} className="h-10 px-8 text-[13px] gap-2 shadow-sm">
-                {launching ? 'Launching...' : <><Send className="h-4 w-4" /> Launch Now</>}
+              <Button 
+                onClick={handleLaunch} 
+                disabled={launching} 
+                className="h-10 px-8 text-[13px] gap-2 shadow-sm"
+              >
+                {launching ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    {invitationProgress.total > 0 
+                      ? `Inviting... ${invitationProgress.sent}/${invitationProgress.total}`
+                      : 'Creating event...'}
+                  </>
+                ) : (
+                  <><Send className="h-4 w-4" /> Launch Now</>
+                )}
               </Button>
             </div>
           </div>

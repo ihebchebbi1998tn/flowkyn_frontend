@@ -42,7 +42,7 @@ export function GamePlayShell({
   const pendingCount = participants.filter(p => p.status === 'pending').length;
   const totalInvited = participants.length;
   const joinLink = `https://flowkyn.app/join/${eventId}`;
-  const joinPct = Math.round((joinedCount / totalInvited) * 100);
+  const joinPct = totalInvited > 0 ? Math.round((joinedCount / totalInvited) * 100) : 0;
 
   useEffect(() => {
     const timer = setInterval(() => setElapsed(e => e + 1), 1000);
