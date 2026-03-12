@@ -30,14 +30,54 @@ export function skipResult(reason: string): TestResult {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
+/**
+ * Get API base URL from environment or use dynamic origin for localhost.
+ * In production, uses VITE_API_BASE environment variable.
+ * In development, uses window.location.origin/api for local development.
+ */
+function getApiBase(): string {
+  if (import.meta.env.VITE_API_BASE) {
+    return import.meta.env.VITE_API_BASE;
+  }
+  // Development: use relative path to same host as app
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isLocalhost) {
+    return `${window.location.origin}/v1`;
+  }
+  // Fallback to production URL if no env var set
+  return 'https://api.flowkyn.com/v1';
+}
+
+function getApiRoot(): string {
+  if (import.meta.env.VITE_API_ROOT) {
+    return import.meta.env.VITE_API_ROOT;
+  }
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isLocalhost) {
+    return window.location.origin;
+  }
+  return 'https://api.flowkyn.com';
+}
+
+function getWsBase(): string {
+  if (import.meta.env.VITE_WS_BASE) {
+    return import.meta.env.VITE_WS_BASE;
+  }
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isLocalhost) {
+    return window.location.origin;
+  }
+  return 'https://api.flowkyn.com';
+}
+
 /** Base URL for versioned API endpoints (e.g., /users, /events) */
-export const API_BASE = 'https://api.flowkyn.com/v1';
+export const API_BASE = getApiBase();
 
 /** Root URL for non-versioned endpoints (e.g., /health, /docs) */
-export const API_ROOT = 'https://api.flowkyn.com';
+export const API_ROOT = getApiRoot();
 
 /** WebSocket base URL for Socket.io connections */
-export const WS_BASE = 'https://api.flowkyn.com';
+export const WS_BASE = getWsBase();
 
 // ─── Test Registration ──────────────────────────────────────────────────────
 

@@ -51,7 +51,11 @@ export function isDevMode(): boolean {
 
 // ─── Cross-Domain URL Helpers ────────────────────────────────────────────────
 
-const PROD_BASE = 'flowkyn.com';
+/**
+ * Get the base production domain from environment or fallback to flowkyn.com.
+ * Can be overridden via VITE_PROD_BASE environment variable.
+ */
+const PROD_BASE = import.meta.env.VITE_PROD_BASE || 'flowkyn.com';
 
 /**
  * Get the absolute URL for the app subdomain (app.flowkyn.com).
