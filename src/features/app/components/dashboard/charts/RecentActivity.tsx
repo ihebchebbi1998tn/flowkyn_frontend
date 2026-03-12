@@ -42,7 +42,6 @@ export function RecentActivity({ sessions }: RecentActivityProps) {
             className="flex items-center gap-3 px-5 py-3 hover:bg-accent/40 transition-colors"
           >
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
-              <Sparkles className="h-4 w-4" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-medium text-foreground truncate">

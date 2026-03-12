@@ -84,7 +84,6 @@ export function AuthBrandingPanel({ mode }: AuthBrandingPanelProps) {
           >
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="h-4 w-4" style={{ color: 'hsl(var(--auth-panel-foreground) / 0.4)' }} />
                 <span
                   className="text-[11px] font-semibold uppercase tracking-widest"
                   style={{ color: 'hsl(var(--auth-panel-foreground) / 0.4)' }}

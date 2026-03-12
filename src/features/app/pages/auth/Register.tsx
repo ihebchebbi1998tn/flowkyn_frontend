@@ -16,6 +16,7 @@ import { ROUTES } from '@/constants/routes';
 import { ArrowRight } from 'lucide-react';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { AuthBrandingPanel } from '@/features/app/components/auth/AuthBrandingPanel';
+import { ApiError } from '@/lib/apiError';
 import logoImg from '@/assets/logo.png';
 
 export default function Register() {
@@ -41,8 +42,18 @@ export default function Register() {
       await register({ email: form.email, password: form.password, name: `${form.firstName} ${form.lastName}`.trim(), lang });
       trackEvent(TRACK.REGISTER_SUCCESS, { email: form.email });
       navigate('/verify-otp', { state: { email: form.email, password: form.password } });
-    } catch {
-      setError(t('auth.errors.registerFailed'));
+    } catch (err: unknown) {
+      // Check if error is an ApiError with a specific error code
+      if (ApiError.is(err)) {
+        const errorMessage = t(`apiErrors.${err.code}`, null);
+        if (errorMessage && errorMessage !== `apiErrors.${err.code}`) {
+          setError(errorMessage);
+        } else {
+          setError(t('auth.errors.registerFailed'));
+        }
+      } else {
+        setError(t('auth.errors.registerFailed'));
+      }
     } finally {
       setIsLoading(false);
     }

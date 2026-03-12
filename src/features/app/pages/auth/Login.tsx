@@ -16,6 +16,7 @@ import { ROUTES } from '@/constants/routes';
 import { ArrowRight } from 'lucide-react';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { AuthBrandingPanel } from '@/features/app/components/auth/AuthBrandingPanel';
+import { ApiError } from '@/lib/apiError';
 import logoImg from '@/assets/logo.png';
 
 export default function Login() {
@@ -42,9 +43,19 @@ export default function Login() {
       await login(email, password);
       trackEvent(TRACK.LOGIN_SUCCESS, { email });
       navigate(from, { replace: true });
-    } catch {
+    } catch (err: unknown) {
       trackEvent(TRACK.LOGIN_FAILED, { email });
-      setError(t('auth.errors.loginFailed'));
+      // Check if error is an ApiError with a specific error code
+      if (ApiError.is(err)) {
+        const errorMessage = t(`apiErrors.${err.code}`, null);
+        if (errorMessage && errorMessage !== `apiErrors.${err.code}`) {
+          setError(errorMessage);
+        } else {
+          setError(t('auth.errors.loginFailed'));
+        }
+      } else {
+        setError(t('auth.errors.loginFailed'));
+      }
     } finally {
       setIsLoading(false);
     }

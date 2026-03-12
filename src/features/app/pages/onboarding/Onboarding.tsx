@@ -268,7 +268,7 @@ export default function Onboarding() {
                   </>
                 ) : (
                   <>
-                    <Sparkles className="h-4 w-4" /> {t('onboarding.launch')}
+                    {t('onboarding.launch')}
                   </>
                 )}
               </Button>
