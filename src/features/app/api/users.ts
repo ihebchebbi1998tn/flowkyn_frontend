@@ -6,6 +6,7 @@
  * - Profile updates (name, language)
  * - Avatar upload (multipart/form-data)
  * - User directory listing (paginated)
+ * - Onboarding team invitations
  *
  * @see NodejsBackend/src/routes/users.routes.ts
  */
@@ -38,6 +39,14 @@ export const usersApi = {
     api.post<{ message: string }>('/users/change-password', {
       current_password: currentPassword,
       new_password: newPassword,
+    }),
+
+  /** Send team invitations during onboarding */
+  sendOnboardingInvites: (orgId: string, invites: Array<{ email: string }>, lang?: string) =>
+    api.post<{ success: string[]; failed: Array<{ email: string; reason: string }> }>('/users/onboarding-invites', {
+      orgId,
+      invites,
+      lang,
     }),
 
   /** List users in the directory (paginated) */

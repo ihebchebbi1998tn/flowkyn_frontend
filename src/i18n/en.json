@@ -8,6 +8,8 @@
     "create": "Create",
     "update": "Update",
     "confirm": "Confirm",
+    "add": "Add",
+    "remove": "Remove",
     "back": "Back",
     "next": "Next",
     "search": "Search...",
@@ -747,7 +749,8 @@
       "org": { "title": "Your Organization", "description": "Tell us about your company" },
       "industry": { "title": "Industry & Size", "description": "Help us personalize your experience" },
       "goals": { "title": "Your Goals", "description": "What do you want to achieve?" },
-      "branding": { "title": "Language & Branding", "description": "Final touches" }
+      "branding": { "title": "Language & Branding", "description": "Final touches" },
+      "teamInvite": { "title": "Invite Your Team", "description": "Add teammates to collaborate together (optional)" }
     },
     "orgName": "Organization Name",
     "orgNamePlaceholder": "e.g., Acme Inc.",
@@ -788,6 +791,18 @@
     "changeLogo": "Change logo",
     "uploadLogo": "Upload logo",
     "logoHint": "JPG, PNG, GIF or WebP. Max 2MB.",
+    "teamInvite": {
+      "helperText": "💌 You can start inviting teammates right now! They'll receive an email and can join your organization to collaborate on events.",
+      "optional": "This step is optional — you can also invite them later from your dashboard.",
+      "email": "Teammate Email",
+      "emailPlaceholder": "teammate@company.com",
+      "emailRequired": "Please enter an email address",
+      "invalidEmail": "Please enter a valid email address",
+      "alreadyAdded": "This email has already been added",
+      "invitedList": "Invited Teammates",
+      "benefit1": "Team members can be preselected when creating events",
+      "benefit2": "Faster collaboration and event setup"
+    },
     "summary": "Summary",
     "summaryOrg": "Organization",
     "summaryIndustry": "Industry",

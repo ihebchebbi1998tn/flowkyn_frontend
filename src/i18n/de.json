@@ -8,6 +8,8 @@
     "create": "Erstellen",
     "update": "Aktualisieren",
     "confirm": "Bestätigen",
+    "add": "Hinzufügen",
+    "remove": "Entfernen",
     "back": "Zurück",
     "next": "Weiter",
     "search": "Suchen...",
@@ -718,7 +720,8 @@
       "org": { "title": "Ihre Organisation", "description": "Erzählen Sie uns von Ihrem Unternehmen" },
       "industry": { "title": "Branche & Größe", "description": "Helfen Sie uns, Ihr Erlebnis zu personalisieren" },
       "goals": { "title": "Ihre Ziele", "description": "Was möchten Sie erreichen?" },
-      "branding": { "title": "Sprache & Branding", "description": "Letzte Feinheiten" }
+      "branding": { "title": "Sprache & Branding", "description": "Letzte Feinheiten" },
+      "teamInvite": { "title": "Laden Sie Ihr Team ein", "description": "Fügen Sie Teamkollegen hinzu, um zusammenzuarbeiten (optional)" }
     },
     "orgName": "Organisationsname",
     "orgNamePlaceholder": "z. B. Acme GmbH",
@@ -759,6 +762,18 @@
     "changeLogo": "Logo ändern",
     "uploadLogo": "Logo hochladen",
     "logoHint": "JPG, PNG, GIF oder WebP. Max 2 MB.",
+    "teamInvite": {
+      "helperText": "💌 Sie können Ihre Teamkollegen jetzt schon einladen! Sie erhalten eine E-Mail und können Ihrer Organisation beitreten, um an Veranstaltungen zusammenzuarbeiten.",
+      "optional": "Dieser Schritt ist optional — Sie können sie später auch über Ihr Dashboard einladen.",
+      "email": "E-Mail des Teamkollegen",
+      "emailPlaceholder": "kollege@unternehmen.de",
+      "emailRequired": "Bitte geben Sie eine E-Mail-Adresse ein",
+      "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "alreadyAdded": "Diese E-Mail-Adresse wurde bereits hinzugefügt",
+      "invitedList": "Eingeladene Teamkollegen",
+      "benefit1": "Teamkollegen können bei der Ereigniserstellung vorausgewählt werden",
+      "benefit2": "Schnellere Zusammenarbeit und Ereignissetup"
+    },
     "summary": "Zusammenfassung",
     "summaryOrg": "Organisation",
     "summaryIndustry": "Branche",

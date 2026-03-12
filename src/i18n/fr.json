@@ -8,6 +8,8 @@
     "create": "Créer",
     "update": "Mettre à jour",
     "confirm": "Confirmer",
+    "add": "Ajouter",
+    "remove": "Supprimer",
     "back": "Retour",
     "next": "Suivant",
     "search": "Rechercher...",
@@ -718,7 +720,8 @@
       "org": { "title": "Votre Organisation", "description": "Parlez-nous de votre entreprise" },
       "industry": { "title": "Secteur & Taille", "description": "Aidez-nous à personnaliser votre expérience" },
       "goals": { "title": "Vos Objectifs", "description": "Que souhaitez-vous accomplir ?" },
-      "branding": { "title": "Langue & Image", "description": "Les dernières touches" }
+      "branding": { "title": "Langue & Image", "description": "Les dernières touches" },
+      "teamInvite": { "title": "Invitez Votre Équipe", "description": "Ajoutez des collègues pour collaborer ensemble (optionnel)" }
     },
     "orgName": "Nom de l'organisation",
     "orgNamePlaceholder": "ex. Acme Inc.",
@@ -759,6 +762,18 @@
     "changeLogo": "Changer le logo",
     "uploadLogo": "Téléverser un logo",
     "logoHint": "JPG, PNG, GIF ou WebP. Max 2 Mo.",
+    "teamInvite": {
+      "helperText": "💌 Vous pouvez commencer à inviter vos collègues maintenant ! Ils recevront un email et pourront rejoindre votre organisation pour collaborer sur les événements.",
+      "optional": "Cette étape est optionnelle — vous pouvez également les inviter plus tard depuis votre tableau de bord.",
+      "email": "Email du collègue",
+      "emailPlaceholder": "collegue@societe.com",
+      "emailRequired": "Veuillez entrer une adresse email",
+      "invalidEmail": "Veuillez entrer une adresse email valide",
+      "alreadyAdded": "Cet email a déjà été ajouté",
+      "invitedList": "Collègues invités",
+      "benefit1": "Les collègues peuvent être présélectionnés lors de la création d'événements",
+      "benefit2": "Collaboration et configuration d'événements plus rapides"
+    },
     "summary": "Résumé",
     "summaryOrg": "Organisation",
     "summaryIndustry": "Secteur",

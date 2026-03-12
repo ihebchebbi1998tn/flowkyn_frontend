@@ -2,6 +2,12 @@
  * @fileoverview Shared types for the onboarding flow.
  */
 
+/** Team member email invitation data */
+export interface TeamInvite {
+  email: string;
+  error?: string;
+}
+
 /** Data collected across all onboarding steps */
 export interface OnboardingData {
   /** Organization name (required, min 2 chars) */
@@ -20,4 +26,6 @@ export interface OnboardingData {
   logoFile: File | null;
   /** Temporary object URL for logo preview */
   logoPreview: string | null;
+  /** Team member email invitations (optional) */
+  teamInvites: TeamInvite[];
 }

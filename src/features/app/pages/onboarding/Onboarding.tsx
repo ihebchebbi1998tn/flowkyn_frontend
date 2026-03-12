@@ -1,13 +1,14 @@
 /**
- * @fileoverview Onboarding Wizard — 4-step organization setup flow.
+ * @fileoverview Onboarding Wizard — 5-step organization setup flow.
  *
- * Flow: Organization Info → Industry & Size → Goals → Language & Logo
+ * Flow: Organization Info → Industry & Size → Goals → Language & Logo → Team Invites
  *
  * After completion, calls the backend to:
  * 1. Create the organization with all collected data
  * 2. Upload the logo (if provided)
- * 3. Update the user's language preference
- * 4. Mark onboarding as completed
+ * 3. Send team invitations (if provided)
+ * 4. Update the user's language preference
+ * 5. Mark onboarding as completed
  *
  * Each step is a separate component in ./steps/ for maintainability.
  * The celebration screen is also extracted to CelebrationScreen.tsx.
@@ -19,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import {
-  Building2, Briefcase, Target, Globe, ArrowRight, ArrowLeft,
+  Building2, Briefcase, Target, Globe, Users, ArrowRight, ArrowLeft,
   Check, Sparkles, AlertCircle, X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,13 +33,13 @@ import { trackEvent, TRACK } from '@/hooks/useTracker';
 import logoImg from '@/assets/logo.png';
 
 import type { OnboardingData } from './types';
-import { OrgInfoStep, IndustryStep, GoalsStep, BrandingStep } from './steps';
+import { OrgInfoStep, IndustryStep, GoalsStep, BrandingStep, TeamInviteStep } from './steps';
 import { CelebrationScreen } from './CelebrationScreen';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const STEP_ICONS = [Building2, Briefcase, Target, Globe];
-const STEP_I18N_KEYS = ['org', 'industry', 'goals', 'branding'];
+const STEP_ICONS = [Building2, Briefcase, Target, Globe, Users];
+const STEP_I18N_KEYS = ['org', 'industry', 'goals', 'branding', 'teamInvite'];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -62,6 +63,7 @@ export default function Onboarding() {
     language: i18n.language?.substring(0, 2) || 'en',
     logoFile: null,
     logoPreview: null,
+    teamInvites: [],
   });
 
   // ── Handlers ──────────────────────────────────────────────────────────────
@@ -95,6 +97,7 @@ export default function Onboarding() {
       case 1: return data.industry && data.companySize;
       case 2: return data.goals.length > 0;
       case 3: return true;
+      case 4: return true; // Team invites are optional
       default: return false;
     }
   };
@@ -129,13 +132,27 @@ export default function Onboarding() {
         await organizationsApi.uploadLogo(org.id, data.logoFile);
       }
 
-      // 3. Update user language
+      // 3. Send team invitations (if provided)
+      if (data.teamInvites.length > 0) {
+        try {
+          await usersApi.sendOnboardingInvites(org.id, data.teamInvites, data.language);
+        } catch (err) {
+          console.warn('Team invites not sent:', err);
+          // Don't fail the whole onboarding due to invites
+        }
+      }
+
+      // 4. Update user language
       await usersApi.updateProfile({ language: data.language });
 
-      // 4. Mark onboarding complete
+      // 5. Mark onboarding complete
       const updatedUser = await authApi.completeOnboarding();
       if (updatedUser) setUser(updatedUser);
-      trackEvent(TRACK.ONBOARDING_COMPLETED, { orgName: data.orgName, industry: data.industry });
+      trackEvent(TRACK.ONBOARDING_COMPLETED, { 
+        orgName: data.orgName, 
+        industry: data.industry,
+        teamInvitesCount: data.teamInvites.length
+      });
 
       // Show celebration and navigate on SUCCESS only
       setShowCelebration(true);
@@ -182,6 +199,7 @@ export default function Onboarding() {
       case 1: return <IndustryStep data={data} onChange={updateData} />;
       case 2: return <GoalsStep data={data} onToggleGoal={toggleGoal} />;
       case 3: return <BrandingStep data={data} onChange={updateData} onLogoUpload={handleLogoUpload} />;
+      case 4: return <TeamInviteStep data={data} onChange={updateData} />;
       default: return null;
     }
   };

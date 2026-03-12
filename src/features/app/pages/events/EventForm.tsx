@@ -55,6 +55,9 @@ export default function EventForm() {
 
   const [orgIdError, setOrgIdError] = useState('');
 
+  const [teamMembers, setTeamMembers] = useState<{ email: string; name?: string; status: string }[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+
   // Auto-populate org ID from localStorage (set during onboarding)
   useEffect(() => {
     const cachedOrgId = localStorage.getItem('flowkyn_org_id');
@@ -78,6 +81,26 @@ export default function EventForm() {
       });
     }
   }, [existingEvent, isEditing]);
+
+  useEffect(() => {
+    async function fetchMembers() {
+      const orgId = form.organization_id;
+      if (!orgId) return;
+      // Fetch active org members
+      const membersResp = await usersApi.list();
+      const members = membersResp?.data || [];
+      // Fetch pending invitations
+      const resp = await fetch(`/api/organizations/${orgId}/invitations`);
+      const invites = resp.ok ? await resp.json() : [];
+      // Combine
+      const all = [
+        ...members.map((m: any) => ({ email: m.email, name: m.name, status: 'active' })),
+        ...invites.filter((i: any) => i.status === 'pending').map((i: any) => ({ email: i.email, status: 'invited' })),
+      ];
+      setTeamMembers(all);
+    }
+    fetchMembers();
+  }, [form.organization_id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,6 +206,27 @@ export default function EventForm() {
               <Label className="text-[13px]">{t('events.endTime')}</Label>
               <Input type="datetime-local" className="h-10 text-[13px]"
                 value={form.end_time} onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-[13px]">{t('events.selectTeamMembers', 'Select Team Members')}</Label>
+            <div className="flex flex-wrap gap-2">
+              {teamMembers.map(member => (
+                <label key={member.email} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={selectedMembers.includes(member.email)}
+                    onChange={e => {
+                      setSelectedMembers(sel =>
+                        e.target.checked
+                          ? [...sel, member.email]
+                          : sel.filter(email => email !== member.email)
+                      );
+                    }}
+                  />
+                  <span className="text-sm">{member.name || member.email} ({member.status === 'invited' ? t('events.invited') : t('events.active')})</span>
+                </label>
+              ))}
             </div>
           </div>
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
