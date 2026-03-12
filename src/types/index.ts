@@ -56,8 +56,10 @@ export interface FlowkynEvent {
   max_participants: number;
   start_time: string | null;
   end_time: string | null;
-  expires_at: string | null;
   status: 'draft' | 'active' | 'completed' | 'cancelled';
+  // Joined from organization
+  organization_name?: string;
+  organization_logo?: string;
   // Event settings (joined)
   allow_guests?: boolean;
   allow_chat?: boolean;

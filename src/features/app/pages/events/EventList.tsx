@@ -76,12 +76,12 @@ export default function EventList() {
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((event, i) => (
             <motion.div key={event.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: Math.min(i * 0.06, 0.5), ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+              transition={{ duration: 0.25, delay: Math.min(i * 0.05, 0.4), ease: 'easeOut' }}
             >
             <div onClick={() => navigate(ROUTES.EVENT_DETAIL(event.id))}
-              className="group rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 cursor-pointer hover:border-primary/25 hover:shadow-xl hover:shadow-primary/[0.06] hover:-translate-y-1">
+              className="group rounded-2xl border border-border bg-card overflow-hidden transition-all duration-200 cursor-pointer hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5">
               
               {/* Status accent bar */}
               <div className={cn("h-0.5 w-full bg-gradient-to-r",
@@ -92,11 +92,14 @@ export default function EventList() {
                 <div className="flex items-center gap-2 mb-3">
                   <Badge variant="outline" className={cn('text-label border gap-1', statusStyles[event.status] || statusStyles.draft)}>
                     <div className={cn("h-1.5 w-1.5 rounded-full", statusDots[event.status] || statusDots.draft)} />
-                    {event.status}
+                    {t(`events.filters.${event.status}` as any)}
                   </Badge>
                   <Badge variant="outline" className={cn('text-label border gap-0.5',
                     event.event_mode === 'sync' ? 'bg-primary/5 text-primary border-primary/20' : 'bg-success/5 text-success border-success/20')}>
-                    {event.event_mode === 'sync' ? <><Radio className="h-2.5 w-2.5" /> Live</> : <><Clock className="h-2.5 w-2.5" /> Async</>}
+                    {event.event_mode === 'sync'
+                      ? (<><Radio className="h-2.5 w-2.5" /> {t('events.liveSync')}</>)
+                      : (<><Clock className="h-2.5 w-2.5" /> {t('events.async')}</>)
+                    }
                   </Badge>
                 </div>
 
@@ -109,7 +112,8 @@ export default function EventList() {
 
                 <div className="flex items-center justify-between">
                   <span className="text-label text-muted-foreground flex items-center gap-1.5">
-                    <Users className="h-3 w-3" /> Max {event.max_participants}
+                    <Users className="h-3 w-3" />
+                    {t('events.maxParticipants')}: {event.max_participants}
                   </span>
                 </div>
               </div>

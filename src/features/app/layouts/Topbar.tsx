@@ -22,6 +22,7 @@ import { ROUTES } from '@/constants/routes';
 import { ACTIVITIES } from '@/features/app/data/activities';
 import { cn } from '@/lib/utils';
 import logoImg from '@/assets/logo.png';
+import { formatNotificationCopy } from '@/features/app/utils/notificationCopy';
 
 export function Topbar() {
   const { t } = useTranslation();
@@ -126,7 +127,7 @@ export function Topbar() {
                       </div>
                       <Badge variant="outline" className={cn("text-label-xs px-1.5 h-4",
                         activity.type === 'sync' ? 'border-primary/20 text-primary bg-primary/5' : 'border-success/20 text-success bg-success/5')}>
-                        {activity.type === 'sync' ? 'Live' : 'Async'}
+                        {activity.type === 'sync' ? t('games.filters.sync') : t('games.filters.async')}
                       </Badge>
                     </button>
                   ))}
@@ -135,7 +136,9 @@ export function Topbar() {
             ) : (
               <div className="py-8 text-center">
                 <Search className="h-4 w-4 mx-auto mb-2 text-muted-foreground/30" />
-                <p className="text-body-sm text-muted-foreground">No results for "<span className="font-medium text-foreground">{query}</span>"</p>
+                <p className="text-body-sm text-muted-foreground">
+                  {t('search.noResults', { query })}
+                </p>
               </div>
             )}
           </div>
@@ -198,8 +201,7 @@ export function Topbar() {
                 <div className="py-1">
                   {recentNotifications.map(n => {
                     const isRead = !!n.read_at;
-                    const title = (n.data as any)?.title || n.type;
-                    const message = (n.data as any)?.message || '';
+                    const { title, message } = formatNotificationCopy(n, t);
                     return (
                       <button key={n.id}
                         className={cn(
@@ -215,7 +217,9 @@ export function Topbar() {
                           {message && (
                             <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-1">{message}</p>
                           )}
-                          <span className="text-[10px] text-muted-foreground/60 mt-1 block">{formatTime(n.created_at)} {t('notifications.timeAgo')}</span>
+                          <span className="text-[10px] text-muted-foreground/60 mt-1 block">
+                            {formatTime(n.created_at)} {t('notifications.timeAgo')}
+                          </span>
                         </div>
                       </button>
                     );

@@ -9,7 +9,7 @@ import { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard } from '@/featu
 import { EventChat, type ChatMessage } from '@/features/app/components/chat/EventChat';
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
 import { ROUTES } from '@/constants/routes';
-import { useEventParticipants, useEventMessages } from '@/hooks/queries/useEventQueries';
+import { useEventPublicInfo, useEventParticipants, useEventMessages } from '@/hooks/queries/useEventQueries';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
 
@@ -74,8 +74,11 @@ function GamePlayWithoutBoundary() {
   const currentUserAvatarUrl = profile?.avatarUrl || null;
 
   // ─── Real data from API ────────────────────────────────────────────────────
+  const { data: eventData } = useEventPublicInfo(eventId || '');
   const { data: participantsData } = useEventParticipants(eventId || '');
   const { data: messagesData } = useEventMessages(eventId || '');
+
+  const eventPublicObj = eventData as any;
 
   // Map API participants to GameParticipant shape
   const rawParticipants = (participantsData as any)?.data || [];
@@ -252,9 +255,13 @@ function GamePlayWithoutBoundary() {
         participants={participants}
         onEnd={() => navigate(ROUTES.EVENTS)}
         sidebar={chatSidebar}
+        currentUserId={currentUserId}
         currentUserName={currentUserName}
         currentUserAvatarUrl={currentUserAvatarUrl}
         onEditProfile={() => setShowProfileEdit(true)}
+        organizationLogo={eventPublicObj?.organization_logo}
+        organizationName={eventPublicObj?.organization_name}
+        hideBackButton={true}
       >
         {renderBoard()}
       </GamePlayShell>

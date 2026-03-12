@@ -208,9 +208,15 @@ export default function EventLobby() {
 
                 {/* Header */}
                 <div className="flex items-start gap-4">
-                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">
-                    <Gamepad2 className="h-7 w-7 text-primary" />
-                  </div>
+                  {event.organization_logo ? (
+                    <div className="h-14 w-14 rounded-2xl border border-border bg-card flex items-center justify-center shrink-0 overflow-hidden p-1.5 shadow-sm">
+                      <img src={event.organization_logo} alt={event.organization_name} className="h-full w-full object-contain" />
+                    </div>
+                  ) : (
+                    <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0">
+                      <Gamepad2 className="h-7 w-7 text-primary" />
+                    </div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h1 className="text-xl sm:text-2xl font-bold text-foreground">{event.title}</h1>
@@ -353,9 +359,18 @@ export default function EventLobby() {
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-              <img src={logoImg} alt="Flowkyn" className="h-5 w-5 object-contain opacity-50" />
-              <span className="text-[11px]">{t('events.poweredBy')}</span>
+            <div className="flex items-center justify-center gap-2 text-muted-foreground p-4">
+              {event.organization_logo ? (
+                <>
+                  <span className="text-[11px]">{t('events.poweredBy')}</span>
+                  <img src={event.organization_logo} alt={event.organization_name} className="h-5 w-auto max-w-[100px] object-contain grayscale opacity-60" />
+                </>
+              ) : (
+                <>
+                  <img src={logoImg} alt="Flowkyn" className="h-5 w-5 object-contain opacity-50" />
+                  <span className="text-[11px]">{t('events.poweredBy')}</span>
+                </>
+              )}
             </div>
           </div>
         </div>

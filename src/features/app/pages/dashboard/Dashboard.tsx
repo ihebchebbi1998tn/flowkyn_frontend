@@ -70,13 +70,13 @@ export default function Dashboard() {
           { label: t('dashboard.totalEvents'), value: String(stats?.totalEvents ?? 0), icon: Layers, gradient: 'success' as const },
           { label: t('dashboard.completion'), value: `${completionRate}%`, icon: Gauge, gradient: 'warning' as const },
         ].map((stat, i) => (
-          <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: i * 0.05, ease: 'easeOut' }}>
             <DashStat {...stat} />
           </motion.div>
         ))}
       </div>
 
-      <motion.div className="grid gap-5 lg:grid-cols-5" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}>
+      <motion.div className="grid gap-5 lg:grid-cols-5" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.2, ease: 'easeOut' }}>
         <EngagementChart data={engagementData} onViewDetails={() => navigate(ROUTES.ANALYTICS)} />
         <UpcomingEvents events={(stats?.upcomingEvents ?? []) as any} stats={{
           activeSessions: stats?.activeSessions ?? 0,

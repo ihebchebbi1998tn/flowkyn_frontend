@@ -5,15 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNotifications } from '@/context/NotificationContext';
-import { PageShell, PageHeader, EmptyState } from '@/features/app/components/dashboard';
+import { PageShell, PageHeader, EmptyState, DashStat } from '@/features/app/components/dashboard';
 import { NotificationListSkeleton } from '@/components/loading/Skeletons';
 import { cn } from '@/lib/utils';
+import { formatNotificationCopy } from '@/features/app/utils/notificationCopy';
 
 const typeIcons: Record<string, typeof CalendarDays> = { eventReminder: CalendarDays, gameUpdate: Gamepad2, invitation: Mail, system: Settings };
 
 export default function NotificationsPage() {
   const { t } = useTranslation();
-  const { notifications, markAsRead, markAllRead } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllRead } = useNotifications();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,6 +24,13 @@ export default function NotificationsPage() {
   }, []);
 
   const filtered = filter === 'unread' ? notifications.filter(n => !n.read_at) : notifications;
+
+  const totalCount = notifications.length;
+  const unread = unreadCount;
+  const recentCount = notifications.filter(n => {
+    const diff = Date.now() - new Date(n.created_at).getTime();
+    return diff <= 7 * 24 * 60 * 60 * 1000;
+  }).length;
 
   const formatTime = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -35,13 +43,44 @@ export default function NotificationsPage() {
 
   return (
     <PageShell className="max-w-3xl">
-      <PageHeader title={t('notifications.title')}
+      <PageHeader
+        title={t('notifications.title')}
+        subtitle={t('notificationsPage.subtitle')}
         actions={
-          <Button variant="outline" size="sm" onClick={markAllRead} className="h-8 text-[12px] gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={markAllRead}
+            disabled={unread === 0}
+            className="h-8 text-[12px] gap-1.5"
+          >
             <CheckCheck className="h-3.5 w-3.5" /> {t('notifications.markAllRead')}
           </Button>
         }
       />
+
+      {!isLoading && totalCount > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <DashStat
+            label={t('notificationsPage.total')}
+            value={totalCount}
+            icon={Bell}
+            gradient="info"
+          />
+          <DashStat
+            label={t('notificationsPage.unread')}
+            value={unread}
+            icon={Mail}
+            gradient="warning"
+          />
+          <DashStat
+            label={t('notificationsPage.last7Days')}
+            value={recentCount}
+            icon={CalendarDays}
+            gradient="primary"
+          />
+        </div>
+      )}
 
       <Tabs value={filter} onValueChange={v => setFilter(v as any)}>
         <TabsList className="h-9">
@@ -63,8 +102,7 @@ export default function NotificationsPage() {
           {filtered.map(n => {
             const Icon = typeIcons[n.type] || Settings;
             const isRead = !!n.read_at;
-            const title = (n.data as any)?.title || n.type;
-            const message = (n.data as any)?.message || '';
+            const { title, message } = formatNotificationCopy(n, t);
             return (
               <div key={n.id}
                 className={cn(

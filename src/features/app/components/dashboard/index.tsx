@@ -89,14 +89,14 @@ const accentBarMap = {
 
 export function DashStat({ label, value, icon: Icon, change, trend, gradient = 'primary' }: DashStatProps) {
   return (
-    <div className="group relative rounded-xl border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/20 hover:shadow-card-hover hover:-translate-y-0.5">
+    <div className="group relative rounded-xl border border-border bg-card overflow-hidden transition-all duration-200 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5">
       {/* Top accent bar */}
-      <div className={cn("h-0.5 w-full bg-gradient-to-r opacity-40 group-hover:opacity-100 transition-opacity", accentBarMap[gradient])} />
+      <div className={cn("h-0.5 w-full bg-gradient-to-r opacity-50 group-hover:opacity-100 transition-opacity duration-200", accentBarMap[gradient])} />
       
       <div className="p-4 sm:p-5">
         <div className="flex items-center justify-between mb-3">
           <div className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105",
+            "flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105",
             iconColorMap[gradient]
           )}>
             <Icon className="h-[18px] w-[18px]" strokeWidth={1.8} />

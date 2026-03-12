@@ -144,10 +144,36 @@ export default function EventDetail() {
   }
 
   const detailCards = [
-    { icon: Calendar, label: 'events.startTime', value: event.start_time ? new Date(event.start_time).toLocaleDateString() : '—', gradient: 'primary' as const },
-    { icon: Clock, label: 'events.endTime', value: event.end_time ? new Date(event.end_time).toLocaleDateString() : '—', gradient: 'info' as const },
-    { icon: Globe, label: 'events.mode', value: event.event_mode === 'sync' ? 'Live' : 'Async', gradient: 'warning' as const },
-    { icon: Users, label: 'events.participants', value: `${participants.length} / ${event.max_participants}`, gradient: 'success' as const },
+    {
+      icon: Calendar,
+      label: 'events.startTime',
+      value: event.start_time
+        ? new Date(event.start_time).toLocaleString()
+        : '—',
+      gradient: 'primary' as const,
+    },
+    {
+      icon: Clock,
+      label: 'events.endTime',
+      value: event.end_time
+        ? new Date(event.end_time).toLocaleString()
+        : '—',
+      gradient: 'info' as const,
+    },
+    {
+      icon: Globe,
+      label: 'events.mode',
+      value: event.event_mode === 'sync'
+        ? t('events.liveSync')
+        : t('events.async'),
+      gradient: 'warning' as const,
+    },
+    {
+      icon: Users,
+      label: 'events.participants',
+      value: `${participants.length} / ${event.max_participants}`,
+      gradient: 'success' as const,
+    },
   ];
 
   const columns: Column<any>[] = [
@@ -160,9 +186,23 @@ export default function EventDetail() {
         </div>
       ),
     },
-    { key: 'type', header: 'Type', sortable: true, hideOnMobile: true },
-    { key: 'joined_at', header: 'Joined', sortable: true, hideOnMobile: true,
-      render: (p: any) => <span className="text-[12px] text-muted-foreground">{p.joined_at ? new Date(p.joined_at).toLocaleDateString() : '—'}</span> },
+    {
+      key: 'type',
+      header: t('events.participants'),
+      sortable: true,
+      hideOnMobile: true,
+    },
+    {
+      key: 'joined_at',
+      header: t('events.joined'),
+      sortable: true,
+      hideOnMobile: true,
+      render: (p: any) => (
+        <span className="text-[12px] text-muted-foreground">
+          {p.joined_at ? new Date(p.joined_at).toLocaleString() : '—'}
+        </span>
+      ),
+    },
   ];
 
   const handleJoin = () => {

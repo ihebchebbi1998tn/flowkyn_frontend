@@ -30,7 +30,6 @@ export function AppSidebar() {
     { title: t('nav.games'), url: ROUTES.GAMES, icon: Gamepad2 },
     { title: t('nav.organizations'), url: ROUTES.ORGANIZATIONS, icon: Building },
     { title: t('nav.analytics'), url: ROUTES.ANALYTICS, icon: TrendingUp },
-    { title: t('nav.notifications'), url: ROUTES.NOTIFICATIONS, icon: BellDot, badge: unreadCount },
   ];
 
   const manageNav = [

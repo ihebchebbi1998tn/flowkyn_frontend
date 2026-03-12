@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RoundIndicator, PhaseTimer, PhaseBadge, GameResults, CountdownOverlay, type GamePhase } from '../shared';
 
 interface Statement {
@@ -41,6 +42,8 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
   const [revealedLie, setRevealedLie] = useState<string | null>(null);
   const [showCountdown, setShowCountdown] = useState(false);
 
+  const [showDrumroll, setShowDrumroll] = useState(false);
+
   const handleSubmit = useCallback(() => {
     setSubmitted(true);
     setTimeout(() => { setPhase('vote'); setTimeLeft(20); }, 1500);
@@ -48,7 +51,14 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
 
   const handleVote = useCallback(() => {
     setVoted(true);
-    setTimeout(() => { setPhase('reveal'); setRevealedLie('s2'); }, 1500);
+    setTimeout(() => { 
+      setPhase('reveal'); 
+      setShowDrumroll(true);
+      setTimeout(() => {
+        setRevealedLie('s2'); 
+        setShowDrumroll(false);
+      }, 3500); // 3.5s dramatic delay
+    }, 1500);
   }, []);
 
   useEffect(() => {
@@ -72,6 +82,7 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
       setSelectedVote(null);
       setVoted(false);
       setRevealedLie(null);
+      setShowDrumroll(false);
       setStatements(['', '', '']);
     }
   };
@@ -213,19 +224,34 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
           </div>
           <div className="p-5 space-y-2.5">
             {targetStatements.map((stmt, i) => (
-              <button
+              <motion.button
                 key={stmt.id}
                 onClick={() => !voted && setSelectedVote(stmt.id)}
                 disabled={voted}
+                whileHover={!voted ? { scale: 1.015, y: -2 } : {}}
+                whileTap={!voted ? { scale: 0.98 } : {}}
                 className={cn(
-                  "w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group/vote",
+                  "w-full text-left p-4 rounded-xl border-2 transition-colors duration-200 group/vote relative overflow-hidden",
                   selectedVote === stmt.id
                     ? 'border-primary bg-primary/5 shadow-sm shadow-primary/10'
                     : 'border-border hover:border-primary/30 hover:bg-accent/30 hover:shadow-sm',
-                  voted && 'cursor-default'
+                  voted && 'cursor-default opacity-80'
                 )}
               >
-                <div className="flex items-start gap-3">
+                {/* Selection background animation */}
+                <AnimatePresence>
+                  {selectedVote === stmt.id && (
+                     <motion.div 
+                       layoutId="selected-vote-bg"
+                       className="absolute inset-0 bg-primary/5 pointer-events-none"
+                       initial={{ opacity: 0 }}
+                       animate={{ opacity: 1 }}
+                       exit={{ opacity: 0 }}
+                     />
+                  )}
+                </AnimatePresence>
+                
+                <div className="flex items-start gap-3 relative z-10">
                   <span className={cn(
                     "flex h-7 w-7 items-center justify-center rounded-lg text-[12px] font-bold shrink-0 transition-all",
                     selectedVote === stmt.id
@@ -233,9 +259,17 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
                       : 'bg-muted text-muted-foreground group-hover/vote:bg-primary/10 group-hover/vote:text-primary'
                   )}>{String.fromCharCode(65 + i)}</span>
                   <p className="text-[13px] text-foreground leading-relaxed pt-0.5">{stmt.text}</p>
-                  {selectedVote === stmt.id && <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5 ml-auto" />}
+                  {selectedVote === stmt.id && (
+                    <motion.div 
+                      initial={{ scale: 0, rotate: -45 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      className="ml-auto"
+                    >
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                    </motion.div>
+                  )}
                 </div>
-              </button>
+              </motion.button>
             ))}
             {!voted && (
               <div className="flex justify-end pt-3">
@@ -258,7 +292,38 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
 
       {/* REVEAL */}
       {phase === 'reveal' && (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden animate-fade-in">
+        <div className="rounded-2xl border border-border bg-card overflow-hidden animate-fade-in relative">
+          
+          {/* Drumroll Overlay */}
+          <AnimatePresence>
+            {showDrumroll && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 1.1, filter: 'blur(5px)' }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-card/90 backdrop-blur-md"
+              >
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 0.5 }}
+                  className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-6"
+                >
+                  <Sparkles className="w-8 h-8 text-primary" />
+                </motion.div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground mb-4">Finding the truth...</h2>
+                <div className="w-64 h-2 bg-muted rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 3.5, ease: "easeInOut" }}
+                    className="h-full bg-primary rounded-full"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="px-5 py-4 border-b border-border bg-gradient-to-r from-info/5 to-transparent">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-info/10">
@@ -276,10 +341,15 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
               const isLie = stmt.id === revealedLie;
               const wasMyVote = selectedVote === stmt.id;
               return (
-                <div key={stmt.id} className={cn(
-                  "p-4 rounded-xl border-2 transition-all animate-fade-in",
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.15 + (showDrumroll ? 0 : 0.4) }}
+                  key={stmt.id} 
+                  className={cn(
+                  "p-4 rounded-xl border-2 transition-all",
                   isLie ? 'border-destructive/40 bg-destructive/[0.04]' : 'border-success/30 bg-success/[0.03]'
-                )} style={{ animationDelay: `${i * 150}ms` }}>
+                )}>
                   <div className="flex items-start justify-between gap-3 mb-2.5">
                     <div className="flex items-start gap-3">
                       <span className={cn(
@@ -315,7 +385,7 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
                       </div>
                     </div>
                   )}
-                </div>
+                </motion.div>
               );
             })}
           </div>

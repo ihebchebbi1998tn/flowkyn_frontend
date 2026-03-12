@@ -510,7 +510,19 @@
     "types": { "eventReminder": "Event Reminder", "gameUpdate": "Activity Update", "invitation": "Invitation", "system": "System" },
     "timeAgo": "ago",
     "unread": "Unread",
-    "readAll": "All"
+    "readAll": "All",
+    "eventCreated": {
+      "title": "Event created",
+      "message": "Your event \"{{eventTitle}}\" was created successfully."
+    },
+    "eventJoined": {
+      "title": "You joined an event",
+      "message": "You joined \"{{eventTitle}}\"."
+    },
+    "eventParticipantJoined": {
+      "title": "New participant joined",
+      "message": "{{guestName, default:Someone}} joined \"{{eventTitle}}\"."
+    }
   },
   "analytics": {
     "title": "Analytics",
@@ -623,7 +635,9 @@
     "dangerZoneDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
     "deleteAccount": "Delete Account",
     "saving": "Saving...",
-    "saveAllChanges": "Save All Changes"
+    "saveAllChanges": "Save All Changes",
+    "quickNav": "Quick navigation",
+    "quickNavHint": "Jump directly to a section below"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -965,6 +979,12 @@
     "logoSizeError": "Logo must be under 5MB"
   },
   "notificationsPage": {
-    "allCaughtUp": "You're all caught up! New notifications will appear here."
+    "allCaughtUp": "You're all caught up! New notifications will appear here.",
+    "total": "All notifications",
+    "unread": "Unread",
+    "last7Days": "Last 7 days"
+  },
+  "search": {
+    "noResults": "No results for \"{{query}}\""
   }
 }

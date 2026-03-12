@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Post {
   id: string;
@@ -130,10 +131,19 @@ export function WinsOfTheWeekBoard({ prompt, currentUserId, currentUserName, cur
             <p className="text-[12px] text-muted-foreground mt-1">Be the first to share your win of the week!</p>
           </div>
         )}
-        {posts.map(post => {
-          const repliesExpanded = expandedReplies.has(post.id);
-          return (
-            <div key={post.id} className="rounded-xl border border-border bg-card overflow-hidden">
+        <AnimatePresence>
+          {posts.map(post => {
+            const repliesExpanded = expandedReplies.has(post.id);
+            return (
+              <motion.div 
+                layout 
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                key={post.id} 
+                className="rounded-xl border border-border bg-card overflow-hidden"
+              >
               <div className="p-4">
                 {/* Author */}
                 <div className="flex items-center gap-2.5 mb-3">
@@ -153,14 +163,18 @@ export function WinsOfTheWeekBoard({ prompt, currentUserId, currentUserName, cur
                   {post.reactions.map(r => {
                     const Icon = REACTION_ICONS[r.type] || Heart;
                     return (
-                      <button key={r.type} onClick={() => toggleReaction(post.id, r.type)}
+                      <motion.button 
+                        key={r.type} 
+                        onClick={() => toggleReaction(post.id, r.type)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.9 }}
                         className={cn(
                           "flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium transition-all",
                           r.reacted ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/50 text-muted-foreground hover:bg-muted border border-transparent'
                         )}>
                         <Icon className={cn("h-3 w-3", r.reacted && 'fill-current')} />
                         {r.count}
-                      </button>
+                      </motion.button>
                     );
                   })}
                   <div className="flex items-center gap-0.5">
@@ -168,10 +182,14 @@ export function WinsOfTheWeekBoard({ prompt, currentUserId, currentUserName, cur
                       .filter(([type]) => !post.reactions.some(r => r.type === type))
                       .slice(0, 2)
                       .map(([type, Icon]) => (
-                        <button key={type} onClick={() => toggleReaction(post.id, type)}
+                        <motion.button 
+                          key={type} 
+                          onClick={() => toggleReaction(post.id, type)}
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          whileTap={{ scale: 0.9 }}
                           className="p-1 rounded text-muted-foreground/40 hover:text-muted-foreground transition-colors">
                           <Icon className="h-3 w-3" />
-                        </button>
+                        </motion.button>
                       ))}
                   </div>
                   <div className="flex-1" />
@@ -231,9 +249,10 @@ export function WinsOfTheWeekBoard({ prompt, currentUserId, currentUserName, cur
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
           );
         })}
+        </AnimatePresence>
       </div>
     </div>
   );

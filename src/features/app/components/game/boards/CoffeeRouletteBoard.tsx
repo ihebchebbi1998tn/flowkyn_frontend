@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
 
 interface Pair {
@@ -24,6 +25,11 @@ const CONVERSATION_STARTERS = [
   "What was your first job? What did you learn from it?",
   "If you could live anywhere in the world for a year, where would you go?",
   "What's the best piece of advice you've ever received?",
+  "What's a book or movie that completely changed your perspective?",
+  "If you had to eat one meal for the rest of your life, what would it be?",
+  "What's the most spontaneous thing you've ever done?",
+  "Which fictional character do you relate to the most?",
+  "What's something you're surprisingly good at?",
 ];
 
 export interface CoffeeRouletteBoardProps {
@@ -121,13 +127,28 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="relative p-8 sm:p-12 text-center">
             <div className="absolute inset-0 bg-gradient-to-b from-info/5 to-transparent" />
-            <div className="relative">
-              <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-info/20 to-info/5 mx-auto mb-5 ring-4 ring-info/10">
-                <Shuffle className="h-9 w-9 text-info" />
-              </div>
-               <h3 className="text-xl font-bold text-foreground mb-2">{t('gamePlay.coffeeRoulette.readyToConnect')}</h3>
+            <div className="relative z-10">
+              <motion.div 
+                animate={participants.length < 2 ? { scale: [1, 1.05, 1], rotate: [0, 5, -5, 0] } : {}}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-info/20 to-info/5 mx-auto mb-5 ring-4 ring-info/10 relative overflow-hidden"
+              >
+                {participants.length < 2 && (
+                   <motion.div 
+                     className="absolute inset-0 bg-info/20"
+                     animate={{ opacity: [0, 0.5, 0] }}
+                     transition={{ duration: 2, repeat: Infinity }}
+                   />
+                )}
+                <Shuffle className="h-9 w-9 text-info relative z-10" />
+              </motion.div>
+               <h3 className="text-xl font-bold text-foreground mb-2">
+                 {participants.length < 2 ? t('gamePlay.coffeeRoulette.waitingForOthers', 'Waiting for others...') : t('gamePlay.coffeeRoulette.readyToConnect')}
+               </h3>
               <p className="text-[13px] text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
-                {t('gamePlay.coffeeRoulette.description')}
+                {participants.length < 2 
+                  ? t('gamePlay.coffeeRoulette.needMorePlayers', 'We need at least 2 people to start the roulette. Share the invite link to get started!') 
+                  : t('gamePlay.coffeeRoulette.description')}
               </p>
               <div className="flex items-center justify-center gap-4 mb-8 text-[12px] text-muted-foreground">
                 <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {t('gamePlay.coffeeRoulette.minutes')}</span>
@@ -153,39 +174,60 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
             </div>
             <div className="p-4 space-y-3">
               {pairs.map((pair, i) => (
-                <div key={pair.id} className={cn(
-                  "flex items-center gap-4 p-4 rounded-xl border-2 transition-all animate-fade-in",
-                  i === 0 ? 'border-info/30 bg-info/[0.04] ring-2 ring-info/10' : 'border-border bg-card'
-                )} style={{ animationDelay: `${i * 200}ms` }}>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.15, duration: 0.4 }}
+                  key={pair.id} 
+                  className={cn(
+                    "flex items-center gap-4 p-4 rounded-xl border-2 transition-colors",
+                    i === 0 ? 'border-info/30 bg-info/[0.04] ring-2 ring-info/10' : 'border-border bg-card'
+                  )} 
+                >
                   {/* Person 1 */}
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <motion.div 
+                    initial={{ x: -30, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: i * 0.15 + 0.2, type: 'spring', stiffness: 200 }}
+                    className="flex items-center gap-2 flex-1 min-w-0"
+                  >
                     <Avatar className="h-10 w-10 ring-2 ring-info/20">
                       <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person1.avatar}</AvatarFallback>
                     </Avatar>
                     <span className="text-[13px] font-medium text-foreground truncate">{pair.person1.name}</span>
-                  </div>
+                  </motion.div>
 
                   {/* Connector */}
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: i * 0.15 + 0.4, type: 'spring' }}
+                    className="flex items-center gap-1.5 shrink-0"
+                  >
                     <div className="h-px w-4 bg-border" />
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-info/10">
                       <Coffee className="h-3.5 w-3.5 text-info" />
                     </div>
                     <div className="h-px w-4 bg-border" />
-                  </div>
+                  </motion.div>
 
                   {/* Person 2 */}
-                  <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
+                  <motion.div 
+                    initial={{ x: 30, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: i * 0.15 + 0.2, type: 'spring', stiffness: 200 }}
+                    className="flex items-center gap-2 flex-1 min-w-0 justify-end"
+                  >
                     <span className="text-[13px] font-medium text-foreground truncate">{pair.person2.name}</span>
                     <Avatar className="h-10 w-10 ring-2 ring-info/20">
                       <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person2.avatar}</AvatarFallback>
                     </Avatar>
-                  </div>
+                  </motion.div>
 
                   {i === 0 && (
                     <Badge className="text-[9px] bg-info/15 text-info border-info/25 shrink-0">{t('gamePlay.coffeeRoulette.you')}</Badge>
                   )}
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>

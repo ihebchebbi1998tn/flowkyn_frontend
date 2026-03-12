@@ -1,11 +1,11 @@
 /**
- * @fileoverview Settings page — wider layout, professional UI.
+ * @fileoverview Settings page — wider layout, professional UI with in-page navigation.
  */
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Settings, Building2, User, CalendarClock } from 'lucide-react';
+import { Settings, Building2, User, CalendarClock, Bell, Palette, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -32,6 +32,16 @@ export default function SettingsPage() {
   const [notifWeeklyDigest, setNotifWeeklyDigest] = useState(false);
   const [notifMarketing, setNotifMarketing] = useState(false);
   const [displayName, setDisplayName] = useState(user?.name || '');
+
+  const profileRef = useRef<HTMLDivElement | null>(null);
+  const appearanceRef = useRef<HTMLDivElement | null>(null);
+  const notificationsRef = useRef<HTMLDivElement | null>(null);
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
+  const securityRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollTo = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const handleSave = () => {
     updateProfile.mutate({ name: displayName, language: i18n.language });
@@ -61,58 +71,116 @@ export default function SettingsPage() {
         </div>
         <p className="text-[13px] text-muted-foreground">{t('settings.subtitle')}</p>
       </div>
-
-      <ProfileSection
-        displayName={displayName}
-        setDisplayName={setDisplayName}
-        email={user?.email}
-        currentLang={i18n.language}
-        onLanguageChange={handleLanguageChange}
-      />
-
-      <AppearanceSection theme={theme} setTheme={handleThemeChange} />
-
-      <NotificationsSection
-        notifEmail={notifEmail} setNotifEmail={setNotifEmail}
-        notifEventReminder={notifEventReminder} setNotifEventReminder={setNotifEventReminder}
-        notifActivityUpdate={notifActivityUpdate} setNotifActivityUpdate={setNotifActivityUpdate}
-        notifWeeklyDigest={notifWeeklyDigest} setNotifWeeklyDigest={setNotifWeeklyDigest}
-        notifMarketing={notifMarketing} setNotifMarketing={setNotifMarketing}
-      />
-
-      {/* Workspace */}
-      <Section icon={Building2} title={t('settings.workspace')} desc={t('settings.workspaceDesc')}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-          <FieldGroup label={t('settings.workspaceName')}>
-            <Input defaultValue="Flowkyn Inc." className="h-10 text-[13px]" />
-          </FieldGroup>
-          <FieldGroup label={t('settings.defaultMaxParticipants')}>
-            <Input type="number" defaultValue={20} className="h-10 text-[13px]" />
-          </FieldGroup>
+      <div className="mb-3">
+        <div className="inline-flex w-full sm:w-auto items-center gap-1 rounded-xl border border-border bg-muted/40 px-2.5 py-1.5 text-[11px] text-muted-foreground">
+          <span className="font-semibold uppercase tracking-[0.14em]">{t('settings.quickNav')}</span>
+          <span className="hidden sm:inline">·</span>
+          <span className="hidden sm:inline">{t('settings.quickNavHint')}</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-          <FieldGroup label={t('settings.eventVisibility')}>
-            <Select defaultValue="workspace">
-              <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="workspace">{t('settings.workspaceOnly')}</SelectItem>
-                <SelectItem value="invite">{t('settings.inviteOnly')}</SelectItem>
-                <SelectItem value="public">{t('events.visibilities.public')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </FieldGroup>
+        <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+          <button
+            type="button"
+            onClick={() => scrollTo(profileRef)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+          >
+            <User className="h-3.5 w-3.5" />
+            {t('settings.profile')}
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollTo(appearanceRef)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+          >
+            <Palette className="h-3.5 w-3.5" />
+            {t('settings.appearance')}
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollTo(notificationsRef)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+          >
+            <Bell className="h-3.5 w-3.5" />
+            {t('settings.notifications')}
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollTo(workspaceRef)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+          >
+            <Building2 className="h-3.5 w-3.5" />
+            {t('settings.workspace')}
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollTo(securityRef)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+          >
+            <Shield className="h-3.5 w-3.5" />
+            {t('settings.security')}
+          </button>
         </div>
-        <div className="border-t border-border">
-          <SettingRow icon={User} label={t('settings.allowGuestAccess')} desc={t('settings.allowGuestAccessDesc')}>
-            <Switch defaultChecked />
-          </SettingRow>
-          <SettingRow icon={CalendarClock} label={t('settings.autoSendReminders')} desc={t('settings.autoSendRemindersDesc')} noBorder>
-            <Switch defaultChecked />
-          </SettingRow>
-        </div>
-      </Section>
+      </div>
 
-      <SecuritySection />
+      <div ref={profileRef}>
+        <ProfileSection
+          displayName={displayName}
+          setDisplayName={setDisplayName}
+          email={user?.email}
+          currentLang={i18n.language}
+          onLanguageChange={handleLanguageChange}
+        />
+      </div>
+
+      <div ref={appearanceRef}>
+        <AppearanceSection theme={theme} setTheme={handleThemeChange} />
+      </div>
+
+      <div ref={notificationsRef}>
+        <NotificationsSection
+          notifEmail={notifEmail} setNotifEmail={setNotifEmail}
+          notifEventReminder={notifEventReminder} setNotifEventReminder={setNotifEventReminder}
+          notifActivityUpdate={notifActivityUpdate} setNotifActivityUpdate={setNotifActivityUpdate}
+          notifWeeklyDigest={notifWeeklyDigest} setNotifWeeklyDigest={setNotifWeeklyDigest}
+          notifMarketing={notifMarketing} setNotifMarketing={setNotifMarketing}
+        />
+      </div>
+
+      <div ref={workspaceRef}>
+        <Section icon={Building2} title={t('settings.workspace')} desc={t('settings.workspaceDesc')}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <FieldGroup label={t('settings.workspaceName')}>
+              <Input defaultValue="Flowkyn Inc." className="h-10 text-[13px]" />
+            </FieldGroup>
+            <FieldGroup label={t('settings.defaultMaxParticipants')}>
+              <Input type="number" defaultValue={20} className="h-10 text-[13px]" />
+            </FieldGroup>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            <FieldGroup label={t('settings.eventVisibility')}>
+              <Select defaultValue="workspace">
+                <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="workspace">{t('settings.workspaceOnly')}</SelectItem>
+                  <SelectItem value="invite">{t('settings.inviteOnly')}</SelectItem>
+                  <SelectItem value="public">{t('events.visibilities.public')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </FieldGroup>
+          </div>
+          <div className="border-t border-border">
+            <SettingRow icon={User} label={t('settings.allowGuestAccess')} desc={t('settings.allowGuestAccessDesc')}>
+              <Switch defaultChecked />
+            </SettingRow>
+            <SettingRow icon={CalendarClock} label={t('settings.autoSendReminders')} desc={t('settings.autoSendRemindersDesc')} noBorder>
+              <Switch defaultChecked />
+            </SettingRow>
+          </div>
+        </Section>
+      </div>
+
+      <div ref={securityRef}>
+        <SecuritySection />
+      </div>
 
       {/* Save all */}
       <div className="flex justify-end pb-8">

@@ -5,6 +5,7 @@ import {
   ArrowLeft, Users, Clock, Timer, Copy, Share2,
   CheckCircle, Link2, Radio, Pencil,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { LeaderboardSidebar } from './LeaderboardSidebar';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import type { GameParticipant } from './types';
+import { motion } from 'framer-motion';
 
 type MobileTab = 'chat' | 'leaderboard';
 
@@ -26,17 +28,26 @@ interface GamePlayShellProps {
   children: React.ReactNode;
   sidebar?: React.ReactNode;
   onEnd?: () => void;
+  /** Current user ID (used to filter out own join toasts) */
+  currentUserId?: string;
   /** Current user's display name (for header) */
   currentUserName?: string;
   /** Current user's avatar URL (for header) */
   currentUserAvatarUrl?: string | null;
   /** Opens the in-game profile editor */
   onEditProfile?: () => void;
+  /** Company logo URL to display instead of default text */
+  organizationLogo?: string;
+  /** Company name for accessibility */
+  organizationName?: string;
+  /** Hide the back button if the user has already joined the game */
+  hideBackButton?: boolean;
 }
 
 export function GamePlayShell({
   title, subtitle, gameType, eventId, participants, children, sidebar, onEnd,
-  currentUserName, currentUserAvatarUrl, onEditProfile,
+  currentUserId, currentUserName, currentUserAvatarUrl, onEditProfile,
+  organizationLogo, organizationName, hideBackButton,
 }: GamePlayShellProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -60,6 +71,28 @@ export function GamePlayShell({
     };
   }, []);
 
+  // Track previously joined participants to show toasts
+  const prevJoinedIds = useRef<Set<string>>(new Set());
+  
+  useEffect(() => {
+    const newlyJoined = participants.filter(p => 
+      p.status === 'joined' && p.id !== currentUserId && !prevJoinedIds.current.has(p.id)
+    );
+    
+    newlyJoined.forEach(p => {
+      toast.success(`${p.name} joined the lobby! 🎉`, {
+        description: t('gamePlay.shell.readyToPlay', 'Ready to play!'),
+        icon: '👋',
+      });
+      prevJoinedIds.current.add(p.id);
+    });
+
+    // Backfill any existing joined ones so we don't double-toast on normal re-renders
+    participants.forEach(p => {
+      if (p.status === 'joined') prevJoinedIds.current.add(p.id);
+    });
+  }, [participants, currentUserId, t]);
+
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
     const sec = s % 60;
@@ -80,14 +113,35 @@ export function GamePlayShell({
       {/* ─── Header ─── */}
       <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/5" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+        
+        {/* Animated Background Orbs */}
+        <motion.div 
+          className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none"
+          animate={{ x: [0, -30, 0], y: [0, 40, 0], scale: [1, 1.2, 1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div 
+          className="absolute bottom-0 left-10 w-48 h-48 bg-info/10 rounded-full blur-[60px] pointer-events-none"
+          animate={{ x: [0, 50, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        />
 
         <div className="relative p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
             <div className="flex items-start gap-3 min-w-0">
-              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80" onClick={() => navigate(ROUTES.EVENTS)}>
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
+              {!hideBackButton && (
+                <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80" onClick={() => navigate(ROUTES.EVENTS)}>
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+              )}
+              
+              {/* Company Logo Display */}
+              {organizationLogo && (
+                <div className="flex items-center justify-center h-9 bg-background/30 backdrop-blur-sm rounded-lg px-2 border border-border/30 shrink-0">
+                  <img src={organizationLogo} alt={organizationName || 'Company'} className="h-6 w-auto max-w-[100px] object-contain" />
+                </div>
+              )}
+
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-base sm:text-xl font-bold tracking-tight text-foreground truncate">{title}</h1>

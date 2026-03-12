@@ -514,7 +514,19 @@
     "types": { "eventReminder": "Rappel d'événement", "gameUpdate": "Mise à jour d'activité", "invitation": "Invitation", "system": "Système" },
     "timeAgo": "il y a",
     "unread": "Non lues",
-    "readAll": "Toutes"
+    "readAll": "Toutes",
+    "eventCreated": {
+      "title": "Événement créé",
+      "message": "Votre événement \"{{eventTitle}}\" a été créé avec succès."
+    },
+    "eventJoined": {
+      "title": "Vous avez rejoint un événement",
+      "message": "Vous avez rejoint \"{{eventTitle}}\"."
+    },
+    "eventParticipantJoined": {
+      "title": "Nouveau participant",
+      "message": "{{guestName, default:Quelqu'un}} a rejoint \"{{eventTitle}}\"."
+    }
   },
   "analytics": {
     "title": "Analytique",
@@ -627,7 +639,9 @@
     "dangerZoneDesc": "Supprimer définitivement votre compte. Cette action est irréversible.",
     "deleteAccount": "Supprimer le compte",
     "saving": "Enregistrement...",
-    "saveAllChanges": "Enregistrer tout"
+    "saveAllChanges": "Enregistrer tout",
+    "quickNav": "Navigation rapide",
+    "quickNavHint": "Accédez directement à une section ci-dessous"
   },
   "gameShell": {
     "invite": "Inviter",
@@ -936,6 +950,12 @@
     "logoSizeError": "Le logo doit faire moins de 5 Mo"
   },
   "notificationsPage": {
-    "allCaughtUp": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici."
+    "allCaughtUp": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici.",
+    "total": "Toutes les notifications",
+    "unread": "Non lues",
+    "last7Days": "7 derniers jours"
+  },
+  "search": {
+    "noResults": "Aucun résultat pour \"{{query}}\""
   }
 }
