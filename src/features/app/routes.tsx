@@ -12,12 +12,9 @@ import { AuthGuard } from './guards/AuthGuard';
 import { RouteErrorBoundary } from '@/components/guards/ErrorBoundary';
 
 /* ─── Auth Pages ─── */
-const Login = lazy(() => import('./pages/auth/Login'));
-const Register = lazy(() => import('./pages/auth/Register'));
+const AuthContainer = lazy(() => import('./pages/auth/AuthContainer'));
 const OTPVerify = lazy(() => import('./pages/auth/OTPVerify'));
 const VerifyEmail = lazy(() => import('./pages/auth/VerifyEmail'));
-const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
 
 /* ─── Invitations ─── */
 const AcceptInvitation = lazy(() => import('./pages/invitations/AcceptInvitation'));
@@ -56,13 +53,13 @@ const MyReportsPage = lazy(() => import('./pages/support/MyReportsPage'));
 
 export const appRoutes = (
   <>
-    {/* ─── Auth pages (public, no guard) ─── */}
-    <Route path={ROUTES.LOGIN} element={<RouteErrorBoundary section="Login"><Login /></RouteErrorBoundary>} />
-    <Route path={ROUTES.REGISTER} element={<RouteErrorBoundary section="Register"><Register /></RouteErrorBoundary>} />
+    {/* ─── Auth pages (public, no guard) — unified in AuthContainer ─── */}
+    <Route path={ROUTES.LOGIN} element={<RouteErrorBoundary section="Auth"><AuthContainer /></RouteErrorBoundary>} />
+    <Route path={ROUTES.REGISTER} element={<RouteErrorBoundary section="Auth"><AuthContainer /></RouteErrorBoundary>} />
+    <Route path={ROUTES.FORGOT_PASSWORD} element={<RouteErrorBoundary section="Auth"><AuthContainer /></RouteErrorBoundary>} />
+    <Route path={ROUTES.RESET_PASSWORD} element={<RouteErrorBoundary section="Auth"><AuthContainer /></RouteErrorBoundary>} />
     <Route path={ROUTES.VERIFY_OTP} element={<RouteErrorBoundary section="Verification"><OTPVerify /></RouteErrorBoundary>} />
     <Route path="/verify" element={<RouteErrorBoundary section="Email Verification"><VerifyEmail /></RouteErrorBoundary>} />
-    <Route path={ROUTES.FORGOT_PASSWORD} element={<RouteErrorBoundary section="Password Reset"><ForgotPassword /></RouteErrorBoundary>} />
-    <Route path={ROUTES.RESET_PASSWORD} element={<RouteErrorBoundary section="Password Reset"><ResetPassword /></RouteErrorBoundary>} />
 
     {/* ─── Invitations ─── */}
     <Route path={ROUTES.INVITE()} element={<RouteErrorBoundary section="Invitation"><AcceptInvitation /></RouteErrorBoundary>} />

@@ -4,9 +4,10 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { useAuthSwitch } from './AuthContainer';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
@@ -15,7 +16,6 @@ import { AlertBanner } from '@/components/notifications/AlertBanner';
 import { ROUTES } from '@/constants/routes';
 import { ArrowRight } from 'lucide-react';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
-import { AuthBrandingPanel } from '@/features/app/components/auth/AuthBrandingPanel';
 import { ApiError } from '@/lib/apiError';
 import logoImg from '@/assets/logo.png';
 
@@ -24,6 +24,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { switchView } = useAuthSwitch();
   const searchParams = new URLSearchParams(location.search);
   const redirectParam = searchParams.get('redirect');
   const from = redirectParam || (location.state as { from?: { pathname: string } })?.from?.pathname || ROUTES.DASHBOARD;
@@ -45,7 +46,6 @@ export default function Login() {
       navigate(from, { replace: true });
     } catch (err: unknown) {
       trackEvent(TRACK.LOGIN_FAILED, { email });
-      // Check if error is an ApiError with a specific error code
       if (ApiError.is(err)) {
         const errorMessage = t(`apiErrors.${err.code}`, null);
         if (errorMessage && errorMessage !== `apiErrors.${err.code}`) {
@@ -62,83 +62,76 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      <AuthBrandingPanel mode="login" />
-
-      {/* Form panel */}
-      <div className="flex-1 flex items-center justify-center bg-background p-6">
-        <motion.div
-          className="w-full max-w-[380px] space-y-7"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="lg:hidden mb-4">
-            <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
-          </div>
-
-          <div className="space-y-1.5">
-            <h1 className="text-[22px] font-bold text-foreground tracking-tight">{t('auth.loginTitle')}</h1>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">{t('auth.loginSubtitle')}</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {successMessage && <AlertBanner type="success" message={successMessage} />}
-            {error && <AlertBanner type="error" message={error} onClose={() => setError('')} />}
-
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-[13px] font-medium">{t('auth.email')}</Label>
-              <Input
-                id="email" type="email" placeholder="you@company.com" value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="h-11 text-[13px] rounded-xl bg-background border-input focus-visible:ring-primary/30"
-                autoFocus
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-[13px] font-medium">{t('auth.password')}</Label>
-                <Link to={ROUTES.FORGOT_PASSWORD} className="text-[12px] text-primary hover:underline font-medium transition-colors">
-                  {t('auth.forgotPassword')}
-                </Link>
-              </div>
-              <PasswordInput
-                id="password" placeholder="••••••••" value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="h-11 text-[13px] rounded-xl"
-              />
-            </div>
-
-            <LoadingButton
-              type="submit" loading={isLoading}
-              className="w-full h-11 text-[13px] gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
-            >
-              {t('auth.login')}
-              <ArrowRight className="h-3.5 w-3.5" />
-            </LoadingButton>
-          </form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/60" /></div>
-            <div className="relative flex justify-center">
-              <span className="bg-background px-3 text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
-                {t('auth.or')}
-              </span>
-            </div>
-          </div>
-
-          <p className="text-center text-[13px] text-muted-foreground">
-            {t('auth.noAccount')}{' '}
-            <Link
-              to={ROUTES.REGISTER}
-              className="text-primary hover:underline font-semibold transition-colors"
-            >
-              {t('auth.register')}
-            </Link>
-          </p>
-        </motion.div>
+    <div className="space-y-7">
+      <div className="lg:hidden mb-4">
+        <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
       </div>
+
+      <div className="space-y-1.5">
+        <h1 className="text-[22px] font-bold text-foreground tracking-tight">{t('auth.loginTitle')}</h1>
+        <p className="text-[13px] text-muted-foreground leading-relaxed">{t('auth.loginSubtitle')}</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {successMessage && <AlertBanner type="success" message={successMessage} />}
+        {error && <AlertBanner type="error" message={error} onClose={() => setError('')} />}
+
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-[13px] font-medium">{t('auth.email')}</Label>
+          <Input
+            id="email" type="email" placeholder="you@company.com" value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="h-11 text-[13px] rounded-xl bg-background border-input focus-visible:ring-primary/30"
+            autoFocus
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password" className="text-[13px] font-medium">{t('auth.password')}</Label>
+            <button
+              type="button"
+              onClick={() => switchView('forgot')}
+              className="text-[12px] text-primary hover:underline font-medium transition-colors"
+            >
+              {t('auth.forgotPassword')}
+            </button>
+          </div>
+          <PasswordInput
+            id="password" placeholder="••••••••" value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="h-11 text-[13px] rounded-xl"
+          />
+        </div>
+
+        <LoadingButton
+          type="submit" loading={isLoading}
+          className="w-full h-11 text-[13px] gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
+        >
+          {t('auth.login')}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </LoadingButton>
+      </form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/60" /></div>
+        <div className="relative flex justify-center">
+          <span className="bg-background px-3 text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
+            {t('auth.or')}
+          </span>
+        </div>
+      </div>
+
+      <p className="text-center text-[13px] text-muted-foreground">
+        {t('auth.noAccount')}{' '}
+        <button
+          type="button"
+          onClick={() => switchView('register')}
+          className="text-primary hover:underline font-semibold transition-colors cursor-pointer"
+        >
+          {t('auth.register')}
+        </button>
+      </p>
     </div>
   );
 }
