@@ -40,15 +40,21 @@ class ApiClient {
       credentials: 'include',
     });
     if (res.status === 401 && !_retried) {
-      // Only attempt one token refresh per request to prevent infinite loops.
-      const refreshed = await this.refreshToken();
-      if (refreshed) return this.request<T>(path, options, true);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
+      // Auth endpoints (login, refresh, register) should never trigger a redirect —
+      // they return 401 as a legitimate "wrong credentials / expired token" response.
+      // Only attempt the refresh + redirect flow for protected API endpoints.
+      const isAuthEndpoint = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/register');
+      if (!isAuthEndpoint) {
+        // Only attempt one token refresh per request to prevent infinite loops.
+        const refreshed = await this.refreshToken();
+        if (refreshed) return this.request<T>(path, options, true);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+      }
       throw new ApiError({
         error: 'Unauthorized',
-        code: 'AUTH_TOKEN_EXPIRED',
+        code: 'AUTH_INVALID_CREDENTIALS',
         statusCode: 401,
         requestId: 'unknown',
         timestamp: new Date().toISOString(),

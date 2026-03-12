@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, RotateCcw, ArrowRight, Star, Sparkles } from 'lucide-react';
+import { Trophy, RotateCcw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -34,9 +34,10 @@ export function GameResults({ title, subtitle, results, onPlayAgain, onExit }: G
   const { t } = useTranslation();
   const displayTitle = title || t('gamePlay.results.gameComplete');
   const maxScore = Math.max(...results.map(r => r.score), 1);
-  const sortedResults = [...results].sort((a, b) => a.rank - b.rank);
+  // Memoize to prevent new array references each render (which would loop the useEffect)
+  const sortedResults = useMemo(() => [...results].sort((a, b) => a.rank - b.rank), [results]);
   const totalResults = sortedResults.length;
-  const revealOrder = [...sortedResults].reverse();
+  const revealOrder = useMemo(() => [...sortedResults].reverse(), [sortedResults]);
 
   const [phase, setPhase] = useState<RevealPhase>('intro');
   const [revealedCount, setRevealedCount] = useState(0);
@@ -125,7 +126,7 @@ export function GameResults({ title, subtitle, results, onPlayAgain, onExit }: G
               <p className="text-[14px] text-muted-foreground mb-6">{subtitle || t('gamePlay.results.getReady')}</p>
               {phase === 'drumroll' && (
                 <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity }} className="flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5 text-warning" /><span className="text-[14px] font-bold text-warning">{t('gamePlay.results.drumrollPlease')}</span><Sparkles className="h-5 w-5 text-warning" />
+                  <span className="text-[14px] font-bold text-warning">{t('gamePlay.results.drumrollPlease')}</span>
                 </motion.div>
               )}
               {phase !== 'drumroll' && (
@@ -202,8 +203,7 @@ export function GameResults({ title, subtitle, results, onPlayAgain, onExit }: G
                       </div>
 
                       <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.4, type: 'spring' as const, stiffness: 400 }}
-                        className="relative flex items-center gap-1.5 shrink-0">
-                        <Star className={cn("h-4 w-4", isTop3 ? 'text-warning' : 'text-muted-foreground/40')} />
+                        className="relative flex items-center gap-1 shrink-0">
                         <span className={cn("font-black tabular-nums",
                           entry.rank === 1 ? 'text-[18px] text-warning' : isTop3 ? 'text-[16px] text-foreground' : 'text-[14px] text-muted-foreground'
                         )}>

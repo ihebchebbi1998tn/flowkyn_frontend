@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, SmilePlus, MessageCircle, ChevronDown } from 'lucide-react';
+import { Send, MessageCircle, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +12,10 @@ export interface ChatMessage {
   userId: string;
   participantId: string;
   senderName: string;
+  /** Initials fallback (2 chars) */
   senderAvatar: string;
+  /** Optional real avatar image URL (data URI or https) */
+  senderAvatarUrl?: string | null;
   message: string;
   timestamp: string;
   isOwn?: boolean;
@@ -27,10 +29,32 @@ interface EventChatProps {
   typingUsers?: string[];
   className?: string;
   currentUserId?: string;
+  /** Current user's avatar URL for their own messages */
+  currentUserAvatarUrl?: string | null;
+}
+
+function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: string | null; isOwn: boolean }) {
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={name}
+        className="h-8 w-8 rounded-full object-cover ring-2 ring-background shrink-0"
+      />
+    );
+  }
+  return (
+    <div className={cn(
+      "h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ring-2 ring-background",
+      isOwn ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+    )}>
+      {name.slice(0, 2).toUpperCase()}
+    </div>
+  );
 }
 
 export function EventChat({
-  eventId, messages, onSendMessage, onTyping, typingUsers = [], className, currentUserId,
+  eventId, messages, onSendMessage, onTyping, typingUsers = [], className, currentUserId, currentUserAvatarUrl,
 }: EventChatProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
@@ -44,6 +68,13 @@ export function EventChat({
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages.length, isAtBottom]);
+
+  // Scroll to bottom on mount
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, []);
 
   const handleScroll = useCallback(() => {
     if (!scrollRef.current) return;
@@ -81,17 +112,22 @@ export function EventChat({
     catch { return ''; }
   };
 
+  // Group consecutive messages from same user
   const groupedMessages = messages.reduce<(ChatMessage & { showAvatar: boolean })[]>((acc, msg, i) => {
     const prev = i > 0 ? messages[i - 1] : null;
+    const nextMsg = i < messages.length - 1 ? messages[i + 1] : null;
     const showAvatar = !prev || prev.userId !== msg.userId;
-    acc.push({ ...msg, showAvatar });
+    const isLastInGroup = !nextMsg || nextMsg.userId !== msg.userId;
+    acc.push({ ...msg, showAvatar, isLastInGroup } as any);
     return acc;
   }, []);
 
   return (
     <div className={cn("flex flex-col rounded-2xl border border-border bg-card overflow-hidden", className)}>
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-primary/5 to-transparent shrink-0">
         <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
           <MessageCircle className="h-4 w-4 text-primary" />
           <h3 className="text-[13px] font-bold text-foreground">{t('chat.title')}</h3>
         </div>
@@ -100,11 +136,16 @@ export function EventChat({
         </Badge>
       </div>
 
-      <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-3 space-y-1 min-h-[200px] max-h-[400px] scrollbar-hide">
+      {/* Messages */}
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto px-3 py-4 space-y-1 min-h-[300px] max-h-[520px] scrollbar-hide"
+      >
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full py-10 text-center">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
-              <MessageCircle className="h-5 w-5 text-primary" />
+          <div className="flex flex-col items-center justify-center h-full py-12 text-center">
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-3">
+              <MessageCircle className="h-6 w-6 text-primary" />
             </div>
             <p className="text-[13px] font-medium text-muted-foreground">{t('chat.noMessages')}</p>
             <p className="text-[11px] text-muted-foreground/60 mt-1">{t('chat.beFirst')}</p>
@@ -113,29 +154,44 @@ export function EventChat({
           <AnimatePresence initial={false}>
             {groupedMessages.map((msg) => {
               const isOwn = msg.isOwn || msg.userId === currentUserId;
+              // Use the message's own avatarUrl, or fall back to currentUserAvatarUrl for own messages
+              const avatarUrl = msg.senderAvatarUrl || (isOwn ? currentUserAvatarUrl : null);
               return (
-                <motion.div key={msg.id} initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }} className={cn("flex gap-2", isOwn && "flex-row-reverse")}>
-                  <div className="w-7 shrink-0">
-                    {msg.showAvatar ? (
-                      <Avatar className="h-7 w-7">
-                        <AvatarFallback className={cn("text-[9px] font-bold", isOwn ? "bg-primary/15 text-primary" : "bg-accent text-accent-foreground")}>
-                          {msg.senderAvatar}
-                        </AvatarFallback>
-                      </Avatar>
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  className={cn("flex items-end gap-2 px-1", isOwn ? "flex-row-reverse" : "flex-row",
+                    msg.showAvatar ? "mt-3" : "mt-0.5"
+                  )}
+                >
+                  {/* Avatar — only show for last message in group */}
+                  <div className="w-8 shrink-0">
+                    {(msg as any).isLastInGroup ? (
+                      <AvatarBubble name={msg.senderName} avatarUrl={avatarUrl} isOwn={isOwn} />
                     ) : null}
                   </div>
-                  <div className={cn("max-w-[75%] min-w-0", isOwn && "items-end")}>
+
+                  <div className={cn("max-w-[72%] min-w-0 space-y-0.5", isOwn && "items-end flex flex-col")}>
                     {msg.showAvatar && (
-                      <p className={cn("text-[10px] font-semibold mb-0.5 px-1", isOwn ? "text-right text-primary" : "text-muted-foreground")}>
-                        {msg.senderName}
+                      <p className={cn("text-[10px] font-semibold px-1", isOwn ? "text-right text-primary" : "text-muted-foreground")}>
+                        {isOwn ? 'You' : msg.senderName}
                       </p>
                     )}
-                    <div className={cn("rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words",
-                      isOwn ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-muted/60 text-foreground rounded-tl-sm")}>
+                    <div className={cn(
+                      "px-3 py-2 text-[13px] leading-relaxed break-words",
+                      isOwn
+                        ? "bg-primary text-primary-foreground rounded-2xl rounded-br-sm"
+                        : "bg-muted/70 text-foreground rounded-2xl rounded-bl-sm"
+                    )}>
                       {msg.message}
                     </div>
-                    <p className={cn("text-[9px] text-muted-foreground/50 mt-0.5 px-1", isOwn && "text-right")}>{formatTime(msg.timestamp)}</p>
+                    {(msg as any).isLastInGroup && (
+                      <p className={cn("text-[9px] text-muted-foreground/50 px-1", isOwn && "text-right")}>
+                        {formatTime(msg.timestamp)}
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               );
@@ -144,24 +200,30 @@ export function EventChat({
         )}
 
         {typingUsers.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 px-1 pt-1">
-            <div className="flex gap-0.5">
+          <motion.div
+            initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="flex items-center gap-2 px-2 pt-2"
+          >
+            <div className="flex gap-0.5 bg-muted/70 px-3 py-2 rounded-2xl rounded-bl-sm">
               {[0, 1, 2].map((i) => (
-                <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40"
+                <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"
                   animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }} />
               ))}
             </div>
-            <span className="text-[10px] text-muted-foreground/50">
+            <span className="text-[10px] text-muted-foreground/60">
               {typingUsers.length === 1 ? t('chat.isTyping', { name: typingUsers[0] }) : t('chat.peopleTyping', { count: typingUsers.length })}
             </span>
           </motion.div>
         )}
       </div>
 
+      {/* Scroll to bottom */}
       <AnimatePresence>
         {!isAtBottom && messages.length > 5 && (
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-            className="flex justify-center -mt-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+            className="flex justify-center -mt-8 relative z-10"
+          >
             <Button variant="outline" size="sm" onClick={scrollToBottom} className="h-7 rounded-full text-[10px] gap-1 shadow-md bg-card">
               <ChevronDown className="h-3 w-3" /> {t('chat.newMessages')}
             </Button>
@@ -169,13 +231,24 @@ export function EventChat({
         )}
       </AnimatePresence>
 
-      <div className="border-t border-border p-2.5">
+      {/* Input */}
+      <div className="border-t border-border p-3 shrink-0 bg-card">
         <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-center gap-2">
-          <Input ref={inputRef} value={input} onChange={(e) => handleInputChange(e.target.value)}
-            placeholder={t('chat.placeholder')} maxLength={2000}
-            className="h-9 text-[13px] rounded-xl border-border/50 bg-muted/30 focus:bg-background transition-colors" />
-          <Button type="submit" size="icon" disabled={!input.trim()}
-            className="h-9 w-9 rounded-xl shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30">
+          {currentUserAvatarUrl ? (
+            <img src={currentUserAvatarUrl} alt="You" className="h-7 w-7 rounded-full object-cover shrink-0" />
+          ) : null}
+          <Input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => handleInputChange(e.target.value)}
+            placeholder={t('chat.placeholder')}
+            maxLength={2000}
+            className="h-10 text-[13px] rounded-xl border-border/50 bg-muted/30 focus:bg-background transition-colors flex-1"
+          />
+          <Button
+            type="submit" size="icon" disabled={!input.trim()}
+            className="h-10 w-10 rounded-xl shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30"
+          >
             <Send className="h-3.5 w-3.5" />
           </Button>
         </form>

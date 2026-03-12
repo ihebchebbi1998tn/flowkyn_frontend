@@ -1,98 +1,109 @@
 import { useTranslation } from 'react-i18next';
-import { Clock, Crown, Zap, Trophy } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { GameParticipant } from './types';
 
 interface LeaderboardSidebarProps {
   participants: GameParticipant[];
 }
 
+const RANK_MEDALS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
 export function LeaderboardSidebar({ participants }: LeaderboardSidebarProps) {
   const { t } = useTranslation();
-  const sorted = [...participants].sort((a, b) => {
-    if (a.status !== b.status) return a.status === 'joined' ? -1 : 1;
-    return b.score - a.score;
-  });
-  const maxScore = Math.max(...participants.map(p => p.score), 1);
+
+  const sorted = [...participants]
+    .filter(p => p.status === 'joined')
+    .sort((a, b) => b.score - a.score);
+
+  const maxScore = Math.max(...sorted.map(p => p.score), 1);
+  const onlineCount = sorted.length;
 
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden lg:sticky lg:top-16">
-      <div className="bg-gradient-to-r from-primary/10 to-transparent px-4 py-3.5 border-b border-border">
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-border">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-primary" />
-            <h3 className="text-[13px] font-bold text-foreground">{t('gamePlay.leaderboard.title')}</h3>
-          </div>
-          <Badge variant="outline" className="text-[9px] gap-1">
-            <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-            {t('gamePlay.leaderboard.online', { count: participants.filter(p => p.status === 'joined').length })}
-          </Badge>
+          <h3 className="text-[13px] font-bold text-foreground">
+            {t('gamePlay.leaderboard.title')}
+          </h3>
+          <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
+            {onlineCount} {onlineCount === 1 ? 'player' : 'players'}
+          </span>
         </div>
       </div>
 
+      {/* Rows */}
       <div className="p-2 space-y-0.5">
+        {sorted.length === 0 && (
+          <p className="text-center text-[12px] text-muted-foreground py-6">
+            No players yet
+          </p>
+        )}
         {sorted.map((p, i) => {
-          const isJoined = p.status === 'joined';
-          const rank = isJoined ? sorted.filter((s, j) => s.status === 'joined' && j <= i).length : null;
+          const rank = i + 1;
+          const medal = RANK_MEDALS[rank];
           const scoreWidth = p.score > 0 ? (p.score / maxScore) * 100 : 0;
 
           return (
-            <div key={p.id} className={cn(
-              "relative flex items-center gap-2.5 p-2.5 rounded-xl transition-all group",
-              isJoined ? 'hover:bg-accent/40' : 'opacity-40'
-            )}>
-              {p.score > 0 && (
-                <div className="absolute inset-y-0 left-0 rounded-xl bg-primary/[0.04] transition-all duration-700"
-                  style={{ width: `${scoreWidth}%` }} />
+            <div
+              key={p.id}
+              className={cn(
+                'relative flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-colors hover:bg-muted/50',
+                rank === 1 && 'bg-warning/[0.04]'
+              )}
+            >
+              {/* Score bar */}
+              {scoreWidth > 0 && (
+                <div
+                  className="absolute inset-y-0 left-0 rounded-xl bg-primary/[0.04] pointer-events-none"
+                  style={{ width: `${scoreWidth}%` }}
+                />
               )}
 
-              <div className="relative w-6 flex items-center justify-center shrink-0">
-                {rank && rank <= 3 ? (
-                  <div className={cn(
-                    "h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold",
-                    rank === 1 && "bg-warning/20 text-warning ring-1 ring-warning/30",
-                    rank === 2 && "bg-muted text-muted-foreground ring-1 ring-border",
-                    rank === 3 && "bg-warning/10 text-warning/60 ring-1 ring-warning/15",
-                  )}>
-                    {rank}
-                  </div>
-                ) : rank ? (
-                  <span className="text-[11px] font-semibold text-muted-foreground/50">{rank}</span>
+              {/* Rank */}
+              <div className="relative w-6 shrink-0 flex items-center justify-center">
+                {medal ? (
+                  <span className="text-[14px]">{medal}</span>
                 ) : (
-                  <Clock className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-[11px] font-semibold text-muted-foreground/60 tabular-nums">{rank}</span>
                 )}
               </div>
 
-              <Avatar className="h-7 w-7 relative">
+              {/* Avatar */}
+              <Avatar className="h-7 w-7 shrink-0 relative">
+                {(p as any).avatarUrl && <AvatarImage src={(p as any).avatarUrl} />}
                 <AvatarFallback className={cn(
-                  "text-[9px] font-bold",
-                  isJoined ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                )}>{p.avatar}</AvatarFallback>
+                  'text-[9px] font-bold',
+                  rank === 1 ? 'bg-warning/15 text-warning' : 'bg-muted text-muted-foreground'
+                )}>
+                  {p.avatar}
+                </AvatarFallback>
               </Avatar>
 
+              {/* Name */}
               <div className="flex-1 min-w-0 relative">
-                <div className="flex items-center gap-1">
-                  <p className="text-[12px] font-medium text-foreground truncate">{p.name}</p>
-                  {p.isHost && <Crown className="h-3 w-3 text-warning shrink-0" />}
-                </div>
-                {isJoined && p.joinedAt && (
-                  <p className="text-[9px] text-muted-foreground">{p.joinedAt}</p>
-                )}
+                <p className={cn(
+                  'truncate font-medium text-foreground',
+                  rank === 1 ? 'text-[13px]' : 'text-[12px]'
+                )}>
+                  {p.name}
+                  {p.isHost && <span className="ml-1 text-[9px] text-muted-foreground/60 font-normal">host</span>}
+                </p>
               </div>
 
-              <div className="relative shrink-0">
+              {/* Score */}
+              <div className="relative shrink-0 text-right">
                 {p.score > 0 ? (
-                  <div className="flex items-center gap-1">
-                    <Zap className="h-3 w-3 text-primary" />
-                    <span className="text-[13px] font-bold text-primary tabular-nums">{p.score}</span>
-                  </div>
-                ) : !isJoined ? (
-                  <Badge variant="outline" className="text-[8px] bg-muted/50 text-muted-foreground border-border h-[18px]">
-                    {t('gamePlay.leaderboard.pending')}
-                  </Badge>
-                ) : null}
+                  <span className={cn(
+                    'font-bold tabular-nums',
+                    rank === 1 ? 'text-[14px] text-warning' : 'text-[13px] text-foreground'
+                  )}>
+                    {p.score}
+                  </span>
+                ) : (
+                  <span className="text-[11px] text-muted-foreground/40">—</span>
+                )}
               </div>
             </div>
           );

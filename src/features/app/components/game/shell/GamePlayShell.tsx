@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Users, Clock, Timer, Copy, Share2,
-  CheckCircle, Link2, Radio,
+  CheckCircle, Link2, Radio, Pencil,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { LeaderboardSidebar } from './LeaderboardSidebar';
@@ -26,10 +26,17 @@ interface GamePlayShellProps {
   children: React.ReactNode;
   sidebar?: React.ReactNode;
   onEnd?: () => void;
+  /** Current user's display name (for header) */
+  currentUserName?: string;
+  /** Current user's avatar URL (for header) */
+  currentUserAvatarUrl?: string | null;
+  /** Opens the in-game profile editor */
+  onEditProfile?: () => void;
 }
 
 export function GamePlayShell({
   title, subtitle, gameType, eventId, participants, children, sidebar, onEnd,
+  currentUserName, currentUserAvatarUrl, onEditProfile,
 }: GamePlayShellProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -94,6 +101,24 @@ export function GamePlayShell({
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
+              {/* Current user's profile pill */}
+              {(currentUserAvatarUrl || currentUserName) && (
+                <button
+                  onClick={onEditProfile}
+                  title="Edit your profile"
+                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 hover:bg-muted/60 transition-colors group"
+                >
+                  {currentUserAvatarUrl ? (
+                    <img src={currentUserAvatarUrl} alt="You" className="h-6 w-6 rounded-full object-cover" />
+                  ) : (
+                    <div className="h-6 w-6 rounded-full bg-primary/15 flex items-center justify-center text-[9px] font-bold text-primary">
+                      {(currentUserName || 'You').slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="text-[11px] font-medium text-foreground max-w-[80px] truncate hidden sm:inline">{currentUserName || 'You'}</span>
+                  <Pencil className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+                </button>
+              )}
               <Button variant="outline" size="sm" onClick={() => setShowLink(!showLink)} className="h-8 sm:h-9 text-[11px] sm:text-[12px] gap-1.5 rounded-xl">
                 <Share2 className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{t('gamePlay.shell.invite')}</span>
               </Button>
@@ -131,6 +156,7 @@ export function GamePlayShell({
             <div className="flex -space-x-2 ml-auto sm:ml-0">
               {participants.filter(p => p.status === 'joined').slice(0, 4).map((p, i) => (
                 <Avatar key={p.id} className="h-6 w-6 sm:h-7 sm:w-7 ring-2 ring-card" style={{ zIndex: 5 - i }}>
+                  {(p as any).avatarUrl && <AvatarImage src={(p as any).avatarUrl} />}
                   <AvatarFallback className="bg-primary/10 text-primary text-[7px] sm:text-[8px] font-bold">{p.avatar}</AvatarFallback>
                 </Avatar>
               ))}
