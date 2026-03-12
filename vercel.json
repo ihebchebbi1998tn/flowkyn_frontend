@@ -9,4 +9,8 @@
       ]
     }
   ]
+  ,
+  "rewrites": [
+    { "source": "/((?!version.json).*)", "destination": "/index.html" }
+  ]
 }
