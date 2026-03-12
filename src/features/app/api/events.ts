@@ -56,7 +56,7 @@ export const eventsApi = {
       visibility: string; max_participants: number; start_time: string;
       end_time: string; status: string; allow_guests: boolean;
       organization_name: string; organization_logo: string | null;
-      participant_count: number;
+      participant_count: number; invited_count?: number;
     }>(`/events/${eventId}/public`),
 
   /** Validate an invitation token — no auth required */

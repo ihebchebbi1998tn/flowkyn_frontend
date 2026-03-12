@@ -90,7 +90,7 @@ export default function LaunchActivity() {
         organization_id: orgId,
         title: eventTitle || 'Untitled Event',
         description,
-        event_mode: id, // Activity ID
+        event_mode: activity.type, // 'sync' or 'async'
         visibility: backendVisibility,
         max_participants: parseInt(maxParticipants, 10),
         start_time: scheduleType === 'now' ? new Date().toISOString() : scheduledDate ? new Date(scheduledDate).toISOString() : undefined,

@@ -206,8 +206,10 @@ export default function EventLobby() {
                 <div className="flex items-center gap-2">
                   <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center"><Users className="h-4 w-4 text-primary" /></div>
                   <div>
-                    <p className="text-sm font-bold text-foreground">{event.participant_count}/{event.max_participants}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t('events.joined')}</p>
+                    <p className="text-sm font-bold text-foreground">{event.participant_count} <span className="text-xs font-normal text-muted-foreground">joined</span></p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                      {event.invited_count ? `${event.invited_count} invited` : `Max ${event.max_participants}`}
+                    </p>
                   </div>
                 </div>
                 <div className="h-8 w-px bg-border" />
