@@ -39,7 +39,12 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
     }
 
     const socket = io(`${SOCKET_URL}${namespace}`, {
-      auth: { token },
+      auth: (cb) => {
+        // Fetch fresh token at the exact moment of connection/reconnection
+        const freshGuest = eventId ? localStorage.getItem(`guest_token_${eventId}`) : localStorage.getItem('guest_token');
+        const freshToken = freshGuest || localStorage.getItem('access_token');
+        cb({ token: freshToken });
+      },
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 5,

@@ -153,7 +153,7 @@ function GamePlayWithoutBoundary() {
     } else {
       // Fallback: optimistic local message
       const newMsg: ChatMessage = {
-        id: `local-${Date.now()}`,
+        id: `local-${crypto.randomUUID()}`,
         userId: currentUserId,
         participantId: '',
         senderName: currentUserName,
