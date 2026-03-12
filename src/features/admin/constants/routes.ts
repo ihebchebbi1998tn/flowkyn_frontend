@@ -12,5 +12,6 @@ export const ADMIN_ROUTES = {
   GAMES: '/games',
   CONTACTS: '/contacts',
   AUDIT_LOGS: '/audit-logs',
+  BUG_REPORTS: '/bug-reports',
   SETTINGS: '/settings',
 } as const;

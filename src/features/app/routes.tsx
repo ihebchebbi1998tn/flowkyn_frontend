@@ -50,6 +50,10 @@ const GamePlay = lazy(() => import('./pages/play/GamePlay'));
 const ActivityDetail = lazy(() => import('./pages/activities/ActivityDetail'));
 const LaunchActivity = lazy(() => import('./pages/activities/LaunchActivity'));
 
+/* ─── Support & Bug Reports ─── */
+const BugReportForm = lazy(() => import('./pages/support/BugReportForm'));
+const MyReportsPage = lazy(() => import('./pages/support/MyReportsPage'));
+
 export const appRoutes = (
   <>
     {/* ─── Auth pages (public, no guard) ─── */}
@@ -86,6 +90,10 @@ export const appRoutes = (
 
       <Route path={ROUTES.ACTIVITY_DETAIL()} element={<RouteErrorBoundary section="Activity"><ActivityDetail /></RouteErrorBoundary>} />
       <Route path={ROUTES.ACTIVITY_LAUNCH()} element={<RouteErrorBoundary section="Launch Activity"><LaunchActivity /></RouteErrorBoundary>} />
+
+      {/* Support & Bug Reports */}
+      <Route path={ROUTES.SUPPORT_REPORT} element={<RouteErrorBoundary section="Report Bug"><BugReportForm /></RouteErrorBoundary>} />
+      <Route path={ROUTES.SUPPORT_REPORTS} element={<RouteErrorBoundary section="My Reports"><MyReportsPage /></RouteErrorBoundary>} />
     </Route>
 
     {/* ─── Focused Layout (no sidebar — immersive game experience) ─── */}

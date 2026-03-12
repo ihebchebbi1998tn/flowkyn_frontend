@@ -42,6 +42,10 @@ export const ROUTES = {
   // Invitations
   INVITE: (token = ':token') => `/invite/${token}`,
 
+  // Support & Bug Reports
+  SUPPORT_REPORT: '/support/report',
+  SUPPORT_REPORTS: '/support/reports',
+
   // Other
   NOTIFICATIONS: '/notifications',
   ANALYTICS: '/analytics',
