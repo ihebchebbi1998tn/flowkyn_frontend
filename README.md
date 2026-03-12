@@ -215,3 +215,64 @@ src/
 | `admin.flowkyn.com` | Admin | Admin panel |
 | `tests.flowkyn.com` | Tests | UI test suite |
 | `localhost:*` | Dev | All modes available |
+
+---
+
+## Functional Overview
+
+### Main Features & Pages
+
+- **Onboarding**: Multi-step wizard (org info, industry, goals, branding, team invites)
+  - `src/features/app/pages/onboarding/Onboarding.tsx`
+  - Steps: OrgInfoStep, IndustryStep, GoalsStep, BrandingStep, TeamInviteStep
+- **Organizations**: Creation, info, members, invitations, logo upload
+  - `src/features/app/pages/organizations/`
+  - API: `src/features/app/api/organizations.ts`
+- **Events**: Creation, lobby, guest join, participant management
+  - `src/features/app/pages/events/EventLobby.tsx`, `EventForm.tsx`
+  - API: `src/features/app/api/events.ts`
+- **Games**: Game sessions (live & async), rounds, scoring, leaderboard
+  - `src/features/app/pages/games/GameShell.tsx`
+  - API: `src/features/app/api/games.ts`
+- **Dashboard**: Analytics, recent activity, engagement stats
+  - `src/features/app/pages/dashboard/Dashboard.tsx`
+  - Components: RecentActivitySection, charts
+- **Auth**: Login, register, password reset, account verification
+  - `src/features/app/pages/auth/`
+  - API: `src/features/app/api/auth.ts`
+- **Profile**: User profile, avatar upload, password change
+  - `src/features/app/pages/profile/Profile.tsx`
+  - API: `src/features/app/api/users.ts`
+- **Notifications**: Real-time and email notifications
+  - `src/features/app/components/notifications/`
+  - API: `src/features/app/api/notifications.ts`
+- **Analytics**: Participation, engagement, activity stats
+  - `src/features/app/pages/analytics/Analytics.tsx`
+  - API: `src/features/app/api/analytics.ts`
+
+### Folder Mapping
+| Feature         | Main Page/Component                | API Client                | Context/Hooks         |
+|----------------|------------------------------------|---------------------------|-----------------------|
+| Onboarding     | pages/onboarding/Onboarding.tsx     | api/organizations, api/users | context/AuthContext   |
+| Events         | pages/events/EventLobby.tsx, EventForm.tsx | api/events, api/users      | hooks/useEventQueries |
+| Games          | pages/games/GameShell.tsx           | api/games                  | hooks/useGameQueries  |
+| Dashboard      | pages/dashboard/Dashboard.tsx       | api/analytics              | hooks/useTracker      |
+| Auth           | pages/auth/Login.tsx, Register.tsx  | api/auth                   | context/AuthContext   |
+| Profile        | pages/profile/Profile.tsx           | api/users                  | context/AuthContext   |
+| Analytics      | pages/analytics/Analytics.tsx        | api/analytics              | hooks/useTracker      |
+| Notifications  | components/notifications/           | api/notifications          | context/Notifications |
+
+### Utilities & Shared
+- **i18n/**: Translation files (en.json, fr.json, de.json)
+- **assets/**: Images, logo, icons
+- **types/**: Shared TypeScript types
+- **utils/**: Helper functions (auth, slug, pagination, sanitize)
+- **validators/**: Form validation schemas
+
+## Contributing
+- Modular pages/components: add features by creating new files in pages/components
+- Use i18next for translations
+- Follow TypeScript and React best practices
+
+## License
+© 2026 Flowkyn. All rights reserved.

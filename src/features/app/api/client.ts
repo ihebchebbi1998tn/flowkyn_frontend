@@ -18,8 +18,9 @@ class ApiClient {
   private getHeaders(isMultipart = false): HeadersInit {
     const headers: HeadersInit = {};
     if (!isMultipart) headers['Content-Type'] = 'application/json';
-    // Use guest token if available, otherwise use regular access token
-    const token = localStorage.getItem('guest_token') || localStorage.getItem('access_token');
+    // Always prefer the real user JWT; fall back to guest_token only when no
+    // authenticated session exists (e.g., a guest-only participant).
+    const token = localStorage.getItem('access_token') || localStorage.getItem('guest_token');
     if (token) headers['Authorization'] = `Bearer ${token}`;
     return headers;
   }
@@ -31,16 +32,17 @@ class ApiClient {
     return url.toString();
   }
 
-  async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  async request<T>(path: string, options: RequestOptions = {}, _retried = false): Promise<T> {
     const { params, ...fetchOptions } = options;
     const res = await fetch(this.buildUrl(path, params), {
       ...fetchOptions,
       headers: { ...this.getHeaders(), ...fetchOptions.headers },
       credentials: 'include',
     });
-    if (res.status === 401) {
+    if (res.status === 401 && !_retried) {
+      // Only attempt one token refresh per request to prevent infinite loops.
       const refreshed = await this.refreshToken();
-      if (refreshed) return this.request<T>(path, options);
+      if (refreshed) return this.request<T>(path, options, true);
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       window.location.href = '/login';

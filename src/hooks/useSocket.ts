@@ -95,8 +95,11 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
 
   const on = useCallback((event: string, handler: (...args: any[]) => void) => {
     socketRef.current?.on(event, handler);
+    // Capture the ref so cleanup always removes from whichever socket instance
+    // is current at teardown time (handles reconnects correctly).
+    const socketRefForCleanup = socketRef;
     return () => {
-      socketRef.current?.off(event, handler);
+      socketRefForCleanup.current?.off(event, handler);
     };
   }, []);
 

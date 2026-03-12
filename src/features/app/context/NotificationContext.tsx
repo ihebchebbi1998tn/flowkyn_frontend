@@ -3,7 +3,7 @@
  * Subscribes to the /notifications WebSocket namespace for live push notifications.
  */
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { Notification, PaginatedResponse } from '@/types';
+import type { Notification } from '@/types';
 import { notificationsApi } from '@/features/app/api/notifications';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useNotificationsSocket } from '@/hooks/useSocket';
@@ -23,14 +23,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Safely check auth — may not have AuthProvider in admin-only mode
-  let isAuthenticated = false;
-  try {
-    const auth = useAuth();
-    isAuthenticated = auth.isAuthenticated;
-  } catch {
-    // Not inside AuthProvider (e.g., admin-only mode) — stay unauthenticated
-  }
+  // useAuth() must be called unconditionally (Rules of Hooks).
+  // When NotificationProvider is rendered outside an AuthProvider (e.g. admin mode),
+  // useAuth returns null — we guard against that with the null check below.
+  const auth = useAuth();
+  const isAuthenticated = auth?.isAuthenticated ?? false;
 
   const unreadCount = notifications.filter(n => !n.read_at).length;
 
