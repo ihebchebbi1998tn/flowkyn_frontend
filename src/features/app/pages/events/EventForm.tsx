@@ -10,26 +10,7 @@ import { AlertBanner } from '@/components/notifications/AlertBanner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft } from 'lucide-react';
 import { useCreateEvent, useUpdateEvent, useEvent } from '@/hooks/queries';
-import { useOrganization } from '@/hooks/queries/useOrgQueries';
-import { useAuth } from '@/context/AuthContext';
-import { ErrorState } from '@/components/common/ErrorState';
-import { usersApi } from '@/features/app/api/users';
-import { useQuery } from '@tanstack/react-query';
-
-/**
- * Fetch user's organization ID. The user is always tied to one org via their membership.
- * We use /users/me to get user, then the org list to derive it.
- * For now, we grab the first org the user is associated with.
- */
-function useUserOrgId() {
-  const { user } = useAuth();
-  // The backend GET /organizations doesn't exist as a list for members,
-  // but user's org is available via analytics/dashboard (upcomingEvents contain org info)
-  // OR we can derive it from /users/me if the backend exposes it.
-  // The simplest path: we query the org detail if we know the ID.
-  // For MVP, we'll let users enter it or auto-fetch from onboarding.
-  return null; // Will be set from the user's context if available
-}
+import { organizationsApi } from '@/features/app/api/organizations';
 
 export default function EventForm() {
   const { t } = useTranslation();
@@ -40,7 +21,6 @@ export default function EventForm() {
   const createEvent = useCreateEvent();
   const updateEvent = useUpdateEvent();
   const { data: existingEvent, isLoading: eventLoading } = useEvent(editId || '');
-  const { user } = useAuth();
 
   const [form, setForm] = useState({
     title: '',
@@ -86,18 +66,23 @@ export default function EventForm() {
     async function fetchMembers() {
       const orgId = form.organization_id;
       if (!orgId) return;
-      // Fetch active org members
-      const membersResp = await usersApi.list();
-      const members = membersResp?.data || [];
-      // Fetch pending invitations
-      const resp = await fetch(`/api/organizations/${orgId}/invitations`);
-      const invites = resp.ok ? await resp.json() : [];
-      // Combine
-      const all = [
-        ...members.map((m: any) => ({ email: m.email, name: m.name, status: 'active' })),
-        ...invites.filter((i: any) => i.status === 'pending').map((i: any) => ({ email: i.email, status: 'invited' })),
-      ];
-      setTeamMembers(all);
+      try {
+        // Fetch active org members
+        const members = await organizationsApi.listMembers(orgId);
+        // Fetch pending invitations (including onboarding invites)
+        const invites = await organizationsApi.listInvitations(orgId);
+
+        const all = [
+          ...members.map((m: any) => ({ email: m.email, name: m.name, status: 'active' })),
+          ...invites
+            .filter((i: any) => i.status === 'pending')
+            .map((i: any) => ({ email: i.email, status: 'invited' })),
+        ];
+        setTeamMembers(all);
+      } catch {
+        // Best-effort helper; failure here shouldn't block event creation
+        setTeamMembers([]);
+      }
     }
     fetchMembers();
   }, [form.organization_id]);

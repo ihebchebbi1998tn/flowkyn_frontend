@@ -35,6 +35,12 @@ export const organizationsApi = {
   listMembers: (orgId: string) =>
     api.get<OrgMember[]>(`/organizations/${orgId}/members`),
 
+  /** List pending/previous invitations for an organization */
+  listInvitations: (orgId: string) =>
+    api.get<Array<{ id: string; email: string; status: string; created_at: string; expires_at: string }>>(
+      `/organizations/${orgId}/invitations`
+    ),
+
   /**
    * Send an invitation email to join the organization.
    * @param roleId - The role ID to assign (admin, member, moderator)
