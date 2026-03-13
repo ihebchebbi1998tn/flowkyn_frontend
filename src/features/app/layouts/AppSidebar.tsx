@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutGrid, Gamepad2, Building, TrendingUp, BellDot,
-  UsersRound, Cog, LogOut, X,
+  UsersRound, Cog, LogOut, X, LifeBuoy,
 } from 'lucide-react';
 import { NavLink } from '@/components/navigation/NavLink';
 import {
@@ -35,6 +35,7 @@ export function AppSidebar() {
   const manageNav = [
     { title: t('nav.users'), url: ROUTES.USERS, icon: UsersRound },
     { title: t('nav.settings'), url: ROUTES.SETTINGS, icon: Cog },
+    { title: t('nav.support'), url: ROUTES.SUPPORT_REPORTS, icon: LifeBuoy },
   ];
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');

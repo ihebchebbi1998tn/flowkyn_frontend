@@ -42,7 +42,11 @@
     "success": "Success",
     "error": "Error",
     "warning": "Warning",
-    "info": "Info"
+    "info": "Info",
+    "tbd": "TBD",
+    "backToEvents": "Back to events",
+    "live": "Live",
+    "async": "Async"
   },
   "landing": {
     "nav": {
@@ -261,6 +265,9 @@
       "privacy": { "title": "Privacy by Default", "description": "No tracking cookies, no data selling, no third-party advertising. Your team's data stays yours." }
     }
   },
+  "layout": {
+    "liveExperience": "Live Experience"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "organizations": "Workspace",
@@ -272,6 +279,7 @@
     "profile": "Profile",
     "settings": "Settings",
     "email": "Email Admin",
+    "support": "Support",
     "logout": "Log Out",
     "language": "Language"
   },
@@ -416,7 +424,42 @@
     "yourName": "Your Name",
     "emailOptional": "Email (optional)",
     "guest": "Guest",
-    "backToLobby": "← Back to lobby"
+    "backToLobby": "← Back to lobby",
+    "badgeLive": "LIVE",
+    "badgeAsync": "ASYNC",
+    "badgeLiveShort": "● Live",
+    "badgeAsyncShort": "○ Async",
+    "setupGameProfile": "Set up your game profile",
+    "chooseAppearIn": "Choose how you'll appear in \"{{eventTitle}}\"",
+    "continueToLobby": "Continue to Lobby",
+    "invalidInvitationToken": "Invalid invitation token. Please check the link.",
+    "joinFailed": "Failed to join. Please try again.",
+    "yourGameProfile": "Your game profile",
+    "joinedCount": "joined",
+    "invitedCount": "invited",
+    "invitedCountFull": "{{count}} invited",
+    "maxParticipantsShort": "Max {{count}}",
+    "selectTeamMembers": "Select Team Members",
+    "invited": "Invited",
+    "active": "Active",
+    "emailPlaceholder": "colleague@company.com",
+    "emailPlaceholderGuest": "your@email.com",
+    "invalidEmail": "Please enter a valid email address"
+  },
+  "profileSetup": {
+    "chooseIdentity": "Choose your identity",
+    "pickNickname": "Pick a nickname and avatar before you join.",
+    "continue": "Continue",
+    "nickname": "Nickname *",
+    "nicknamePlaceholder": "What should people call you?",
+    "emailOptional": "Email (optional)",
+    "emailPlaceholder": "your@email.com",
+    "yourAvatar": "Your avatar",
+    "yourName": "Your name",
+    "appearInGame": "This is how you'll appear in the game",
+    "saved": "Saved!",
+    "editProfile": "Edit Your Profile",
+    "back": "Back"
   },
   "games": {
     "title": "Activities",
@@ -431,9 +474,10 @@
     "actions": "Actions",
     "submitAction": "Submit",
     "gameStatus": "Status",
-    "statuses": { "waiting": "Waiting", "inProgress": "In Progress", "completed": "Completed", "cancelled": "Cancelled" },
+    "statuses": { "waiting": "Waiting", "inProgress": "In Progress", "completed": "Completed", "cancelled": "Cancelled", "active": "Active", "paused": "Paused" },
     "round": "Round",
     "score": "Score",
+    "activeCount": "{{count}} active",
     "noGames": "No activities available",
     "categories": {
       "all": "All",
@@ -471,6 +515,26 @@
       "showingFiltered": "{{count}} of {{total}} activities",
       "noResults": "No activities match your filters",
       "noResultsHint": "Try adjusting your filters or search term"
+    }
+  },
+  "activities": {
+    "twoTruths": {
+      "name": "Two Truths and a Lie",
+      "description": "Classic icebreaker where each person shares three statements — two truths and one lie. Team guesses which is the lie.",
+      "duration": "15 min",
+      "teamSize": "5–30 people"
+    },
+    "coffeeRoulette": {
+      "name": "Coffee Roulette",
+      "description": "Random 1:1 pairings for virtual coffee chats. Creates cross-team connections and breaks down silos through personal conversation.",
+      "duration": "30 min",
+      "teamSize": "Pairs (2 people)"
+    },
+    "winsOfWeek": {
+      "name": "Wins of the Week",
+      "description": "Weekly Slack/Teams thread where everyone shares one win from their week — work or personal. Builds positive culture and celebrates progress.",
+      "duration": "Ongoing",
+      "teamSize": "Any size"
     }
   },
   "chat": {

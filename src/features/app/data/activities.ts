@@ -10,6 +10,7 @@ export interface Activity {
   id: string;
   name: string;
   description: string;
+  i18nKey?: string;
   category: ActivityCategory;
   type: ActivityType;
   duration: string;
@@ -35,6 +36,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: '1',
     name: 'Two Truths and a Lie',
+    i18nKey: 'activities.twoTruths',
     icon: MessageSquare,
     category: 'icebreaker',
     type: 'sync',
@@ -80,6 +82,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: '2',
     name: 'Coffee Roulette',
+    i18nKey: 'activities.coffeeRoulette',
     icon: Coffee,
     category: 'connection',
     type: 'sync',
@@ -129,6 +132,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: '3',
     name: 'Wins of the Week',
+    i18nKey: 'activities.winsOfWeek',
     icon: Trophy,
     category: 'wellness',
     type: 'async',

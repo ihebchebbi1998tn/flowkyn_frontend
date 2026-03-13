@@ -41,11 +41,13 @@ export default function GameList() {
       if (filters.teamSize !== 'all' && a.teamSizeTag !== filters.teamSize) return false;
       if (filters.search) {
         const q = filters.search.toLowerCase();
-        if (!a.name.toLowerCase().includes(q) && !a.description.toLowerCase().includes(q)) return false;
+        const name = a.i18nKey ? t(`${a.i18nKey}.name`, { defaultValue: a.name }) : a.name;
+        const description = a.i18nKey ? t(`${a.i18nKey}.description`, { defaultValue: a.description }) : a.description;
+        if (!name.toLowerCase().includes(q) && !description.toLowerCase().includes(q)) return false;
       }
       return true;
     });
-  }, [filters]);
+  }, [filters, t]);
 
   const liveSessionsList = activeSessions ?? [];
 
@@ -61,7 +63,7 @@ export default function GameList() {
 
       {/* Live active sessions from backend */}
       {liveSessionsList.length > 0 && (
-        <ChartCard title={t('games.activeSessions')} subtitle={`${liveSessionsList.length} active`} noPadding
+        <ChartCard title={t('games.activeSessions')} subtitle={t('games.activeCount', { count: liveSessionsList.length })} noPadding
           action={
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75" />
@@ -78,12 +80,12 @@ export default function GameList() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-[13px] font-medium text-foreground truncate">{session.game_type_name}</p>
-                    <p className="text-[11px] text-muted-foreground">{session.event_title} · Round {session.current_round}</p>
+                    <p className="text-[11px] text-muted-foreground">{session.event_title} · {t('games.round')} {session.current_round}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Badge variant="outline" className={cn('text-[10px] border', statusStyle(session.status))}>
-                    {session.status}
+                    {t(`games.statuses.${session.status}`, { defaultValue: session.status })}
                   </Badge>
                   <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
                 </div>

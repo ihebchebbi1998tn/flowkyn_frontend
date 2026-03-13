@@ -53,10 +53,10 @@ export function GuestJoinForm({
             <label className="text-xs font-medium text-foreground">{t('events.emailOptional')}</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input type="email" placeholder="your@email.com" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} className="pl-10 h-11" />
+              <Input type="email" placeholder={t('events.emailPlaceholderGuest')} value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} className="pl-10 h-11" />
             </div>
             {guestEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail) && (
-              <p className="text-xs text-destructive font-medium">Please enter a valid email address</p>
+              <p className="text-xs text-destructive font-medium">{t('events.invalidEmail')}</p>
             )}
           </div>
 

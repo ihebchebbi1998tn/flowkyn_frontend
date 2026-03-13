@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
 import { eventsApi } from '@/features/app/api/events';
+import { ACTIVITIES as CATALOG_ACTIVITIES } from '@/features/app/data/activities';
 
 const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; color: string; bgColor: string; type: 'sync' | 'async'; duration: string }> = {
   '1': { name: 'Two Truths & a Lie', icon: MessageSquare, color: 'text-primary', bgColor: 'bg-primary/10', type: 'sync', duration: '15' },
@@ -34,9 +35,13 @@ export default function LaunchActivity() {
   const { id } = useParams();
   const navigate = useNavigate();
   const activity = ACTIVITIES[id || '1'];
+  const catalogActivity = useMemo(() => CATALOG_ACTIVITIES.find(a => a.id === (id || '1')), [id]);
+  const activityName = catalogActivity?.i18nKey
+    ? t(`${catalogActivity.i18nKey}.name`, { defaultValue: activity?.name })
+    : (activity?.name || '');
 
   const [step, setStep] = useState<Step>('configure');
-  const [eventTitle, setEventTitle] = useState(activity ? `${activity.name} — Team Event` : '');
+  const [eventTitle, setEventTitle] = useState(activity ? `${activityName} — Team Event` : '');
   const [description, setDescription] = useState('');
   const [maxParticipants, setMaxParticipants] = useState('20');
   const [duration, setDuration] = useState(activity?.duration || '15');
@@ -159,7 +164,7 @@ export default function LaunchActivity() {
             <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", activity.color)} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground truncate">Launch {activity.name}</h1>
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground truncate">Launch {activityName}</h1>
             <p className="text-[11px] sm:text-[12px] text-muted-foreground">Set up and invite your team</p>
           </div>
         </div>

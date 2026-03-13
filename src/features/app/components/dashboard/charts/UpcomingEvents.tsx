@@ -60,7 +60,7 @@ export function UpcomingEvents({ events, stats }: UpcomingEventsProps) {
             >
               <div className="flex flex-col items-center justify-center w-11 shrink-0">
                 <span className="text-[10px] font-semibold uppercase text-muted-foreground leading-none tracking-[0.12em]">
-                  {event.start_time ? format(new Date(event.start_time), 'MMM d') : 'TBD'}
+                  {event.start_time ? format(new Date(event.start_time), 'MMM d') : t('common.tbd')}
                 </span>
                 <span className="text-[10px] text-muted-foreground/70 mt-0.5">
                   {event.start_time ? format(new Date(event.start_time), 'h:mm a') : '—'}
@@ -80,7 +80,7 @@ export function UpcomingEvents({ events, stats }: UpcomingEventsProps) {
                         : 'border-success/20 text-success bg-success/5'
                     )}
                   >
-                    {event.event_mode === 'sync' ? '● Live' : '○ Async'}
+                    {event.event_mode === 'sync' ? t('events.badgeLiveShort') : t('events.badgeAsyncShort')}
                   </Badge>
                   <div className="flex items-center gap-1">
                     <div className="h-1.5 w-14 rounded-full bg-muted overflow-hidden">

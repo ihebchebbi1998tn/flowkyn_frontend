@@ -109,7 +109,7 @@ export default function EventLobby() {
         // Authenticated user: accept invitation or join directly
         if (inviteToken) {
           if (!/^[A-Za-z0-9_-]+$/.test(inviteToken)) {
-            setJoinError('Invalid invitation token. Please check the link.');
+            setJoinError(t('events.invalidInvitationToken'));
             return;
           }
           await acceptInvitation.mutateAsync({ eventId: id, token: inviteToken });
@@ -138,7 +138,7 @@ export default function EventLobby() {
       }
       setHasJoined(true);
     } catch (err: any) {
-      const msg = err?.message || 'Failed to join. Please try again.';
+      const msg = err?.message || t('events.joinFailed');
       setJoinError(msg);
     } finally {
       setIsJoining(false);
@@ -171,11 +171,11 @@ export default function EventLobby() {
     return (
       <ErrorBoundary>
         <UserProfileSetup
-          title="Set up your game profile"
-          subtitle={`Choose how you'll appear in "${event.title}"`}
+          title={t('events.setupGameProfile')}
+          subtitle={t('events.chooseAppearIn', { eventTitle: event.title })}
           defaultName={isAuthenticated && user ? user.name : ''}
           defaultAvatarUrl={storedProfile?.avatarUrl}
-          submitLabel="Continue to Lobby"
+          submitLabel={t('events.continueToLobby')}
           showEmail={!isAuthenticated}
           email={guestEmail}
           onEmailChange={setGuestEmail}
@@ -227,7 +227,7 @@ export default function EventLobby() {
                       <Badge className={cn("text-[10px] gap-1 shrink-0",
                         event.event_mode === 'sync' ? 'bg-success/15 text-success border-success/25' : 'bg-info/15 text-info border-info/25')}>
                         <div className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
-                        {event.event_mode === 'sync' ? 'LIVE' : 'ASYNC'}
+                        {event.event_mode === 'sync' ? t('events.badgeLive') : t('events.badgeAsync')}
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{event.description}</p>
@@ -249,13 +249,13 @@ export default function EventLobby() {
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">{profile.displayName}</p>
-                      <p className="text-[10px] text-muted-foreground">Your game profile</p>
+                      <p className="text-[10px] text-muted-foreground">{t('events.yourGameProfile')}</p>
                     </div>
                     <button
                       onClick={() => setShowProfileForm(true)}
                       className="text-[11px] text-primary hover:underline flex items-center gap-1 shrink-0"
                     >
-                      <User className="h-3 w-3" /> Edit
+                      <User className="h-3 w-3" /> {t('common.edit')}
                     </button>
                   </div>
                 )}
@@ -269,7 +269,7 @@ export default function EventLobby() {
                         {(event as any).participant_count} <span className="text-xs font-normal text-muted-foreground">joined</span>
                       </p>
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                        {(event as any).invited_count ? `${(event as any).invited_count} invited` : `Max ${event.max_participants}`}
+                        {(event as any).invited_count ? t('events.invitedCountFull', { count: (event as any).invited_count }) : t('events.maxParticipantsShort', { count: event.max_participants })}
                       </p>
                     </div>
                   </div>

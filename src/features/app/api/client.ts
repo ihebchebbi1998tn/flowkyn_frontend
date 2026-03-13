@@ -18,9 +18,17 @@ class ApiClient {
   private getHeaders(isMultipart = false): HeadersInit {
     const headers: HeadersInit = {};
     if (!isMultipart) headers['Content-Type'] = 'application/json';
-    // Always prefer the real user JWT; fall back to guest_token only when no
-    // authenticated session exists (e.g., a guest-only participant).
-    const token = localStorage.getItem('access_token') || localStorage.getItem('guest_token');
+    // Prefer the real user JWT
+    let token = localStorage.getItem('access_token') || localStorage.getItem('guest_token');
+    
+    if (!token && !localStorage.getItem('access_token')) {
+      // Try to extract eventId from the current URL to find an event-specific guest token
+      const match = window.location.pathname.match(/\/(join|play|lobby|events)\/([a-zA-Z0-9-]+)/);
+      if (match && match[2]) {
+        token = localStorage.getItem(`guest_token_${match[2]}`);
+      }
+    }
+
     if (token) headers['Authorization'] = `Bearer ${token}`;
     return headers;
   }
@@ -165,9 +173,7 @@ class ApiClient {
   /** Upload file using multipart/form-data (with 401 refresh support) */
   upload<T>(path: string, formData: FormData) {
     const doUpload = async (retry = true): Promise<T> => {
-      const headers: HeadersInit = {};
-      const token = localStorage.getItem('access_token');
-      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const headers = this.getHeaders(true) as Record<string, string>;
       const res = await fetch(this.buildUrl(path), {
         method: 'POST',
         body: formData,

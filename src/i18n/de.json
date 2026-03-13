@@ -42,7 +42,11 @@
     "success": "Erfolg",
     "error": "Fehler",
     "warning": "Warnung",
-    "info": "Info"
+    "info": "Info",
+    "tbd": "TBD",
+    "backToEvents": "Zurück zu Veranstaltungen",
+    "live": "Live",
+    "async": "Asynchron"
   },
   "landing": {
     "nav": {
@@ -261,6 +265,9 @@
       "privacy": { "title": "Datenschutz als Standard", "description": "Keine Tracking-Cookies, kein Datenverkauf, keine Werbung Dritter. Die Daten Ihres Teams bleiben Ihre." }
     }
   },
+  "layout": {
+    "liveExperience": "Live-Erlebnis"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "organizations": "Arbeitsbereich",
@@ -272,6 +279,7 @@
     "profile": "Profil",
     "settings": "Einstellungen",
     "email": "E-Mail-Admin",
+    "support": "Support",
     "logout": "Abmelden",
     "language": "Sprache"
   },
@@ -449,7 +457,42 @@
     "yourName": "Ihr Name",
     "emailOptional": "E-Mail (optional)",
     "guest": "Gast",
-    "backToLobby": "← Zurück zur Lobby"
+    "backToLobby": "← Zurück zur Lobby",
+    "badgeLive": "LIVE",
+    "badgeAsync": "ASYNC",
+    "badgeLiveShort": "● Live",
+    "badgeAsyncShort": "○ Asynchron",
+    "setupGameProfile": "Richten Sie Ihr Spielprofil ein",
+    "chooseAppearIn": "Wählen Sie, wie Sie in „{{eventTitle}}\" erscheinen möchten",
+    "continueToLobby": "Weiter zur Lobby",
+    "invalidInvitationToken": "Ungültiger Einladungslink. Bitte prüfen Sie den Link.",
+    "joinFailed": "Beitritt fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "yourGameProfile": "Ihr Spielprofil",
+    "joinedCount": "beigetreten",
+    "invitedCount": "eingeladen",
+    "invitedCountFull": "{{count}} eingeladen",
+    "maxParticipantsShort": "Max {{count}}",
+    "selectTeamMembers": "Teammitglieder auswählen",
+    "invited": "Eingeladen",
+    "active": "Aktiv",
+    "emailPlaceholder": "kollege@firma.de",
+    "emailPlaceholderGuest": "ihre@email.com",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein"
+  },
+  "profileSetup": {
+    "chooseIdentity": "Wählen Sie Ihre Identität",
+    "pickNickname": "Wählen Sie einen Spitznamen und Avatar, bevor Sie beitreten.",
+    "continue": "Weiter",
+    "nickname": "Spitzname *",
+    "nicknamePlaceholder": "Wie sollen Sie genannt werden?",
+    "emailOptional": "E-Mail (optional)",
+    "emailPlaceholder": "ihre@email.com",
+    "yourAvatar": "Ihr Avatar",
+    "yourName": "Ihr Name",
+    "appearInGame": "So erscheinen Sie im Spiel",
+    "saved": "Gespeichert!",
+    "editProfile": "Profil bearbeiten",
+    "back": "Zurück"
   },
   "games": {
     "title": "Aktivitäten",
@@ -464,9 +507,10 @@
     "actions": "Aktionen",
     "submitAction": "Absenden",
     "gameStatus": "Status",
-    "statuses": { "waiting": "Wartend", "inProgress": "Läuft", "completed": "Abgeschlossen", "cancelled": "Abgebrochen" },
+    "statuses": { "waiting": "Wartend", "inProgress": "Läuft", "completed": "Abgeschlossen", "cancelled": "Abgebrochen", "active": "Aktiv", "paused": "Pausiert" },
     "round": "Runde",
     "score": "Punktzahl",
+    "activeCount": "{{count}} aktiv",
     "noGames": "Keine Aktivitäten verfügbar",
     "categories": {
       "all": "Alle",
@@ -726,6 +770,26 @@
     "participation": "Teilnahme",
     "copied": "Kopiert!",
     "copy": "Kopieren"
+  },
+  "activities": {
+    "twoTruths": {
+      "name": "Zwei Wahrheiten und eine Lüge",
+      "description": "Klassischer Eisbrecher: Jede Person teilt drei Aussagen — zwei wahr, eine gelogen. Das Team errät, welche die Lüge ist.",
+      "duration": "15 Min.",
+      "teamSize": "5–30 Personen"
+    },
+    "coffeeRoulette": {
+      "name": "Coffee Roulette",
+      "description": "Zufällige 1:1-Paarungen für virtuelle Kaffee-Chats. Schafft teamübergreifende Verbindungen und baut Silos durch persönliche Gespräche ab.",
+      "duration": "30 Min.",
+      "teamSize": "Paare (2 Personen)"
+    },
+    "winsOfWeek": {
+      "name": "Erfolge der Woche",
+      "description": "Wöchentlicher Slack/Teams-Thread, in dem alle einen Erfolg aus der Woche teilen — beruflich oder privat. Fördert eine positive Kultur und feiert Fortschritt.",
+      "duration": "Fortlaufend",
+      "teamSize": "Beliebige Größe"
+    }
   },
   "chat": {
     "title": "Chat",

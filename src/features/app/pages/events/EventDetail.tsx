@@ -87,7 +87,7 @@ function InviteDialog({ eventId }: { eventId: string }) {
           <div className="flex gap-2">
             <Input
               type="email"
-              placeholder="colleague@company.com"
+              placeholder={t('events.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-10 text-[13px]"
@@ -215,7 +215,7 @@ export default function EventDetail() {
   return (
     <div className="space-y-4 sm:space-y-6 max-w-[1400px] animate-fade-in">
       <div className="flex items-center gap-2 sm:gap-3">
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(ROUTES.EVENTS)} aria-label="Back to events">
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(ROUTES.EVENTS)} aria-label={t('common.backToEvents')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="min-w-0">

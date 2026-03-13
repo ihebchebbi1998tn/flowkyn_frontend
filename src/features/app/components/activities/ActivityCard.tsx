@@ -20,6 +20,10 @@ export function ActivityCard({ activity }: ActivityCardProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const gradient = categoryGradient[activity.category] || 'from-primary/60 to-primary';
+  const name = activity.i18nKey ? t(`${activity.i18nKey}.name`, { defaultValue: activity.name }) : activity.name;
+  const description = activity.i18nKey ? t(`${activity.i18nKey}.description`, { defaultValue: activity.description }) : activity.description;
+  const duration = activity.i18nKey ? t(`${activity.i18nKey}.duration`, { defaultValue: activity.duration }) : activity.duration;
+  const teamSize = activity.i18nKey ? t(`${activity.i18nKey}.teamSize`, { defaultValue: activity.teamSize }) : activity.teamSize;
 
   return (
     <button
@@ -40,7 +44,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
           </div>
           <div className="min-w-0 flex-1 pt-0.5">
             <h3 className="text-[14px] font-bold text-foreground group-hover:text-primary transition-colors truncate leading-tight">
-              {activity.name}
+              {name}
             </h3>
             <div className="flex items-center gap-1.5 mt-1.5">
               <Badge variant="outline" className={cn("text-[9px] border h-[18px] px-1.5 font-medium rounded-md", categoryColors[activity.category])}>
@@ -49,7 +53,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
               <Badge variant="outline" className={cn("text-[9px] h-[18px] px-1.5 gap-0.5 font-medium rounded-md",
                 activity.type === 'sync' ? 'border-primary/20 text-primary bg-primary/5' : 'border-success/20 text-success bg-success/5'
               )}>
-                {activity.type === 'sync' ? <><Radio className="h-2 w-2" /> Live</> : <><Clock className="h-2 w-2" /> Async</>}
+                {activity.type === 'sync' ? <><Radio className="h-2 w-2" /> {t('common.live')}</> : <><Clock className="h-2 w-2" /> {t('common.async')}</>}
               </Badge>
             </div>
           </div>
@@ -57,7 +61,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
 
         {/* Description */}
         <p className="text-[12px] text-muted-foreground leading-relaxed line-clamp-2 mb-4">
-          {activity.description}
+          {description}
         </p>
 
         {/* Footer */}
@@ -65,11 +69,11 @@ export function ActivityCard({ activity }: ActivityCardProps) {
           <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Timer className="h-3.5 w-3.5 text-muted-foreground/50" />
-              {activity.duration}
+              {duration}
             </span>
             <span className="flex items-center gap-1.5">
               <Users className="h-3.5 w-3.5 text-muted-foreground/50" />
-              {activity.teamSize}
+              {teamSize}
             </span>
           </div>
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-transparent group-hover:bg-primary/10 transition-all duration-300">

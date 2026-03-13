@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Gamepad2 } from 'lucide-react';
 import { PageSkeleton } from '@/components/loading/PageSkeleton';
 
@@ -16,7 +17,7 @@ export function FocusedLayout() {
         <div className="flex items-center justify-end px-4 sm:px-6 h-14 max-w-[1600px] mx-auto w-full">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Gamepad2 className="h-4 w-4" />
-            <span className="text-[11px] font-medium uppercase tracking-wider hidden sm:inline">Live Experience</span>
+            <span className="text-[11px] font-medium uppercase tracking-wider hidden sm:inline">{t('layout.liveExperience')}</span>
           </div>
         </div>
       </header>

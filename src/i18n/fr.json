@@ -42,7 +42,11 @@
     "success": "Succès",
     "error": "Erreur",
     "warning": "Attention",
-    "info": "Info"
+    "info": "Info",
+    "tbd": "À définir",
+    "backToEvents": "Retour aux événements",
+    "live": "En direct",
+    "async": "Asynchrone"
   },
   "landing": {
     "nav": {
@@ -261,6 +265,9 @@
       "privacy": { "title": "Confidentialité par défaut", "description": "Pas de cookies de suivi, pas de vente de données, pas de publicité tierce. Les données de votre équipe restent les vôtres." }
     }
   },
+  "layout": {
+    "liveExperience": "Expérience en direct"
+  },
   "nav": {
     "dashboard": "Tableau de bord",
     "organizations": "Espace de travail",
@@ -272,6 +279,7 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "email": "Admin e-mail",
+    "support": "Support",
     "logout": "Déconnexion",
     "language": "Langue"
   },
@@ -449,7 +457,42 @@
     "yourName": "Votre nom",
     "emailOptional": "E-mail (facultatif)",
     "guest": "Invité",
-    "backToLobby": "← Retour au salon"
+    "backToLobby": "← Retour au salon",
+    "badgeLive": "LIVE",
+    "badgeAsync": "ASYNC",
+    "badgeLiveShort": "● En direct",
+    "badgeAsyncShort": "○ Asynchrone",
+    "setupGameProfile": "Configurez votre profil de jeu",
+    "chooseAppearIn": "Choisissez comment vous apparaîtrez dans « {{eventTitle}} »",
+    "continueToLobby": "Continuer vers le salon",
+    "invalidInvitationToken": "Jeton d'invitation invalide. Vérifiez le lien.",
+    "joinFailed": "Impossible de rejoindre. Veuillez réessayer.",
+    "yourGameProfile": "Votre profil de jeu",
+    "joinedCount": "inscrits",
+    "invitedCount": "invités",
+    "invitedCountFull": "{{count}} invités",
+    "maxParticipantsShort": "Max {{count}}",
+    "selectTeamMembers": "Sélectionner les membres",
+    "invited": "Invité",
+    "active": "Actif",
+    "emailPlaceholder": "collegue@entreprise.com",
+    "emailPlaceholderGuest": "vous@email.com",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide"
+  },
+  "profileSetup": {
+    "chooseIdentity": "Choisissez votre identité",
+    "pickNickname": "Choisissez un surnom et un avatar avant de rejoindre.",
+    "continue": "Continuer",
+    "nickname": "Surnom *",
+    "nicknamePlaceholder": "Comment voulez-vous qu'on vous appelle ?",
+    "emailOptional": "E-mail (facultatif)",
+    "emailPlaceholder": "vous@email.com",
+    "yourAvatar": "Votre avatar",
+    "yourName": "Votre nom",
+    "appearInGame": "C'est ainsi que vous apparaîtrez dans le jeu",
+    "saved": "Enregistré !",
+    "editProfile": "Modifier votre profil",
+    "back": "Retour"
   },
   "games": {
     "title": "Activités",
@@ -464,9 +507,10 @@
     "actions": "Actions",
     "submitAction": "Soumettre",
     "gameStatus": "Statut",
-    "statuses": { "waiting": "En attente", "inProgress": "En cours", "completed": "Terminé", "cancelled": "Annulé" },
+    "statuses": { "waiting": "En attente", "inProgress": "En cours", "completed": "Terminé", "cancelled": "Annulé", "active": "Actif", "paused": "En pause" },
     "round": "Tour",
     "score": "Score",
+    "activeCount": "{{count}} actives",
     "noGames": "Aucune activité disponible",
     "categories": {
       "all": "Toutes",
@@ -726,6 +770,26 @@
     "participation": "Participation",
     "copied": "Copié !",
     "copy": "Copier"
+  },
+  "activities": {
+    "twoTruths": {
+      "name": "Deux vérités et un mensonge",
+      "description": "Brise-glace classique : chacun partage trois affirmations — deux vraies et une fausse. L’équipe devine laquelle est le mensonge.",
+      "duration": "15 min",
+      "teamSize": "5–30 personnes"
+    },
+    "coffeeRoulette": {
+      "name": "Coffee Roulette",
+      "description": "Appariements aléatoires 1:1 pour des cafés virtuels. Crée des connexions inter-équipes et brise les silos via des conversations personnelles.",
+      "duration": "30 min",
+      "teamSize": "Paires (2 personnes)"
+    },
+    "winsOfWeek": {
+      "name": "Victoires de la semaine",
+      "description": "Fil Slack/Teams hebdomadaire où chacun partage une victoire de sa semaine — pro ou perso. Renforce la culture positive et célèbre les progrès.",
+      "duration": "En continu",
+      "teamSize": "Toute taille"
+    }
   },
   "chat": {
     "title": "Discussion",

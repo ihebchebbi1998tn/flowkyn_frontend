@@ -143,7 +143,7 @@ export default function EventForm() {
   return (
     <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
       <div className="flex items-center gap-2 sm:gap-3">
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/events')} aria-label="Back to events">
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/events')} aria-label={t('common.backToEvents')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-lg sm:text-xl font-bold tracking-tight">
@@ -209,7 +209,7 @@ export default function EventForm() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[13px]">{t('events.selectTeamMembers', 'Select Team Members')}</Label>
+            <Label className="text-[13px]">{t('events.selectTeamMembers')}</Label>
             <div className="flex flex-wrap gap-2">
               {teamMembers.map(member => (
                 <label key={member.email} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
