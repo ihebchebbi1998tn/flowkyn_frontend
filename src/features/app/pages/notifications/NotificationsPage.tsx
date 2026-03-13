@@ -42,7 +42,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <PageShell className="max-w-3xl">
+    <PageShell>
       <PageHeader
         title={t('notifications.title')}
         subtitle={t('notificationsPage.subtitle')}

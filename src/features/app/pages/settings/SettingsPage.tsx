@@ -14,6 +14,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useUpdateProfile } from '@/hooks/queries';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
+import { PageShell } from '@/features/app/components/dashboard';
 import { ProfileSection } from './ProfileSection';
 import { Section, SettingRow, FieldGroup } from './ProfileSection';
 import { AppearanceSection } from './AppearanceSection';
@@ -60,9 +61,10 @@ export default function SettingsPage() {
   };
 
   return (
-    <motion.div className="max-w-[900px] mx-auto space-y-6"
-      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
+    <PageShell>
+      <motion.div className="space-y-6"
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
       {/* Header */}
       <div className="mb-2">
         <div className="flex items-center gap-2 mb-1">
@@ -182,12 +184,13 @@ export default function SettingsPage() {
         <SecuritySection />
       </div>
 
-      {/* Save all */}
-      <div className="flex justify-end pb-8">
-        <Button variant="brand" onClick={handleSave} disabled={updateProfile.isPending} className="h-10 px-8 text-[13px]">
-          {updateProfile.isPending ? t('settings.saving') : t('settings.saveAllChanges')}
-        </Button>
-      </div>
-    </motion.div>
+        {/* Save all */}
+        <div className="flex justify-end pb-8">
+          <Button variant="brand" onClick={handleSave} disabled={updateProfile.isPending} className="h-10 px-8 text-[13px]">
+            {updateProfile.isPending ? t('settings.saving') : t('settings.saveAllChanges')}
+          </Button>
+        </div>
+      </motion.div>
+    </PageShell>
   );
 }

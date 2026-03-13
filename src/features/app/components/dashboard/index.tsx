@@ -44,10 +44,8 @@ export function PageShell({ children, className }: { children: React.ReactNode; 
   return (
     <div
       className={cn(
-        // Constrain width on large screens but let it breathe on tablets
-        'space-y-5 w-full max-w-[1200px] animate-fade-in',
-        // Center within the main layout while keeping nice padding on small devices
-        'mx-auto',
+        // Full-width within the main app content with compact vertical rhythm
+        'space-y-4 w-full animate-fade-in',
         className,
       )}
     >
@@ -65,10 +63,10 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0">
-        {subtitle && <p className="text-body-sm text-muted-foreground mb-0.5">{subtitle}</p>}
-        <h1 className="text-page-title text-foreground leading-none truncate">{title}</h1>
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/60 pb-3 mb-3">
+      <div className="min-w-0 space-y-1">
+        {subtitle && <p className="text-body-sm text-muted-foreground">{subtitle}</p>}
+        <h1 className="text-page-title text-foreground leading-none truncate tracking-tight">{title}</h1>
       </div>
       {actions && <div className="flex items-center gap-2.5 shrink-0 mt-3 sm:mt-0">{actions}</div>}
     </div>
