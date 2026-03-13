@@ -73,11 +73,11 @@ function GamePlayWithoutBoundary() {
 
   // ─── Current user identity ─────────────────────────────────────────────────
   const isGuest = !user && !!localStorage.getItem(`guest_token_${eventId}`);
-  const currentParticipantId =
-    isGuest
-      ? (eventId ? localStorage.getItem(`guest_participant_id_${eventId}`) : null)
-      : (eventId ? localStorage.getItem(`member_participant_id_${eventId}`) : null);
-  const currentUserId = currentParticipantId || user?.id || '';
+  // For authenticated users, currentUserId = user.id (JWT user ID) — this is what the server broadcasts as `userId` in socket events.
+  // For guests, currentUserId = guest_participant_id (participant UUID) — because server has no user ID for guests.
+  const guestParticipantId = isGuest && eventId ? localStorage.getItem(`guest_participant_id_${eventId}`) : null;
+  const memberParticipantId = !isGuest && eventId ? localStorage.getItem(`member_participant_id_${eventId}`) : null;
+  const currentUserId = isGuest ? (guestParticipantId || '') : (user?.id || '');
   const currentUserName = profile?.displayName || user?.name || localStorage.getItem(`guest_name_${eventId}`) || 'Guest';
   const currentUserAvatarUrl = profile?.avatarUrl || null;
 
@@ -108,6 +108,7 @@ function GamePlayWithoutBoundary() {
   const rawMessages = (messagesData as any)?.data || [];
   const initialMessages: ChatMessage[] = rawMessages.map((m: any) => ({
     id: m.id,
+    // For authenticated users: server stores user_id (real user ID). For guests: no user_id.
     userId: m.user_id || m.participant_id,
     participantId: m.participant_id,
     senderName: m.user_name || m.guest_name || 'Unknown',
@@ -115,7 +116,10 @@ function GamePlayWithoutBoundary() {
     senderAvatarUrl: m.avatar_url || null,
     message: m.message,
     timestamp: m.created_at,
-    isOwn: (m.user_id || m.participant_id) === currentUserId,
+    // isOwn: compare against user.id for auth users, guest participant ID for guests
+    isOwn: isGuest
+      ? m.participant_id === guestParticipantId
+      : !!(m.user_id && m.user_id === user?.id),
   }));
 
   // Merge initial (from API) + live (from WebSocket) — deduplicate by id
@@ -134,9 +138,18 @@ function GamePlayWithoutBoundary() {
       if (eventId) {
         // Emit event:join and wait for acknowledgment
         eventsSocket.emit('event:join', { eventId })
+          .then((ack: any) => {
+            if (ack?.data?.participantId) {
+              // Store the participant ID returned by the backend (useful for auto-joined organizers)
+              if (isGuest) {
+                localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
+              } else {
+                localStorage.setItem(`member_participant_id_${eventId}`, ack.data.participantId);
+              }
+            }
+          })
           .catch(err => {
             console.error('[GamePlay] Failed to join event room:', err.message);
-            // Show error to user if needed
           });
       }
     },
@@ -157,6 +170,12 @@ function GamePlayWithoutBoundary() {
     const handleChatMessage = (data: any) => {
       console.log('[GamePlay] Received chat message:', data);
       const name = data.senderName || 'Player';
+      // Server sends: userId (real user ID for auth users) and participantId (UUID for all)
+      // isOwn for auth users: compare data.userId with user?.id
+      // isOwn for guests: compare data.participantId with guestParticipantId
+      const isOwn = isGuest
+        ? data.participantId === guestParticipantId
+        : !!(data.userId && data.userId === user?.id);
       const msg: ChatMessage = {
         id: data.id || `ws-${crypto.randomUUID()}`,
         userId: data.userId,
@@ -166,7 +185,7 @@ function GamePlayWithoutBoundary() {
         senderAvatarUrl: getSafeImageUrl(data.senderAvatarUrl) || null,
         message: data.message,
         timestamp: data.timestamp || new Date().toISOString(),
-        isOwn: data.userId === currentUserId,
+        isOwn,
       };
       setLiveMessages(prev => [...prev, msg]);
     };
@@ -192,12 +211,6 @@ function GamePlayWithoutBoundary() {
 
   // ─── Async game data: activity posts (Wins of the Week) ─────────────────────
   const rawPosts = (postsData as any)?.data || [];
-
-  // For now, posting is only wired for guests, since participant_id is readily available.
-  const guestParticipantId =
-    !user && eventId ? localStorage.getItem(`guest_participant_id_${eventId}`) : null;
-  const memberParticipantId =
-    user && eventId ? localStorage.getItem(`member_participant_id_${eventId}`) : null;
 
   const postParticipantId = guestParticipantId || memberParticipantId || null;
   const canPostWins = !!postParticipantId;

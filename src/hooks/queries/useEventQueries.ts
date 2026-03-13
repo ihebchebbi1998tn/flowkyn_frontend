@@ -153,8 +153,12 @@ export function useAcceptEventInvitation() {
   return useMutation({
     mutationFn: ({ eventId, token }: { eventId: string; token: string }) =>
       eventsApi.acceptInvitation(eventId, token),
-    onSuccess: (_, { eventId }) => {
+    onSuccess: (result, { eventId }) => {
       queryClient.invalidateQueries({ queryKey: eventKeys.participants(eventId) });
+      // Store participant ID so invited users have proper identity for game actions + posts
+      if ((result as any)?.participant_id) {
+        localStorage.setItem(`member_participant_id_${eventId}`, (result as any).participant_id);
+      }
     },
     onError: (err) => showError(err),
   });
