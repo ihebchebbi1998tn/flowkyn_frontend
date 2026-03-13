@@ -10,6 +10,8 @@ import { PageSkeleton } from '@/components/loading/PageSkeleton';
  * with a back button and the game content.
  */
 export function FocusedLayout() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Minimal branded bar */}

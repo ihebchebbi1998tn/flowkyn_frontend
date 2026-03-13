@@ -68,6 +68,7 @@ export const appRoutes = (
 
     {/* ─── Dashboard Layout (sidebar + topbar) ─── */}
     <Route element={<AuthGuard><DashboardLayout /></AuthGuard>}>
+      <Route path={ROUTES.HOME} element={<RouteErrorBoundary section="Dashboard"><Dashboard /></RouteErrorBoundary>} />
       <Route path={ROUTES.DASHBOARD} element={<RouteErrorBoundary section="Dashboard"><Dashboard /></RouteErrorBoundary>} />
       <Route path={ROUTES.PROFILE} element={<RouteErrorBoundary section="Profile"><Profile /></RouteErrorBoundary>} />
       <Route path={ROUTES.USERS} element={<RouteErrorBoundary section="Users"><UserList /></RouteErrorBoundary>} />
@@ -97,8 +98,5 @@ export const appRoutes = (
       <Route path={ROUTES.EVENT_LOBBY()} element={<RouteErrorBoundary section="Event Lobby"><EventLobby /></RouteErrorBoundary>} />
       <Route path={ROUTES.PLAY()} element={<RouteErrorBoundary section="Game"><GamePlay /></RouteErrorBoundary>} />
     </Route>
-
-    {/* ─── Root redirect: app.flowkyn.com/ → /dashboard ─── */}
-    <Route path={ROUTES.HOME} element={<AuthGuard><RouteErrorBoundary section="Dashboard"><Dashboard /></RouteErrorBoundary></AuthGuard>} />
   </>
 );
