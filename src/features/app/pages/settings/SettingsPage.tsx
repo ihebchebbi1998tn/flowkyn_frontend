@@ -149,7 +149,7 @@ export default function SettingsPage() {
         <Section icon={Building2} title={t('settings.workspace')} desc={t('settings.workspaceDesc')}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <FieldGroup label={t('settings.workspaceName')}>
-              <Input defaultValue="Flowkyn Inc." className="h-10 text-[13px]" />
+              <Input defaultValue={user?.name ? `${user.name}'s Workspace` : 'Workspace'} className="h-10 text-[13px]" />
             </FieldGroup>
             <FieldGroup label={t('settings.defaultMaxParticipants')}>
               <Input type="number" defaultValue={20} className="h-10 text-[13px]" />

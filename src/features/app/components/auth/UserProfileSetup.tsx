@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { AvatarPicker } from '@/components/common/AvatarPicker';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSafeImageUrl } from '@/features/app/utils/assets';
 
 export interface ProfileSetupData {
   displayName: string;
@@ -58,7 +59,7 @@ export function UserProfileSetup({
   onEmailChange,
 }: UserProfileSetupProps) {
   const [name, setName] = useState(defaultName);
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(defaultAvatarUrl);
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(getSafeImageUrl(defaultAvatarUrl));
   const [saved, setSaved] = useState(false);
 
   const canSubmit = name.trim().length > 0;

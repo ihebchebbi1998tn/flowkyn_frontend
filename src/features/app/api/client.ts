@@ -78,7 +78,35 @@ class ApiClient {
       });
     }
     if (res.status === 204) return undefined as T;
-    return res.json();
+    
+    const data = await res.json();
+    return this.transformResponseUrls(data) as T;
+  }
+
+  /** Recursively rewrites localhost URLs from the backend to the current API domain */
+  private transformResponseUrls(obj: any): any {
+    if (obj === null || obj === undefined) return obj;
+    if (typeof obj === 'string') {
+      // If string is an absolute URL pointing to /uploads/..., rewrite its origin
+      // so it matches the current API API_BASE (regardless of what host it was saved with).
+      const match = obj.match(/^https?:\/\/[^\/]+(\/uploads\/.*)/);
+      if (match) {
+        const baseRoot = API_BASE.replace(/\/v1$/, '');
+        return `${baseRoot}${match[1]}`;
+      }
+      return obj;
+    }
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.transformResponseUrls(item));
+    }
+    if (typeof obj === 'object') {
+      const newObj: any = {};
+      for (const [k, v] of Object.entries(obj)) {
+        newObj[k] = this.transformResponseUrls(v);
+      }
+      return newObj;
+    }
+    return obj;
   }
 
   /**
@@ -181,7 +209,8 @@ class ApiClient {
         });
       }
       if (res.status === 204) return undefined as T;
-      return res.json() as Promise<T>;
+      const data = await res.json();
+      return this.transformResponseUrls(data) as T;
     };
     return doUpload();
   }

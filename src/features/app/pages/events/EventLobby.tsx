@@ -25,6 +25,7 @@ import { useAuth } from '@/features/app/context/AuthContext';
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
 import logoImg from '@/assets/logo.png';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
+import { getSafeImageUrl } from '@/features/app/utils/assets';
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
 
@@ -35,7 +36,9 @@ function getStoredProfile(eventId: string): { displayName: string; avatarUrl: st
   try {
     const raw = localStorage.getItem(profileKey(eventId));
     if (!raw) return null;
-    return JSON.parse(raw);
+    const data = JSON.parse(raw);
+    if (data.avatarUrl) data.avatarUrl = getSafeImageUrl(data.avatarUrl);
+    return data;
   } catch { return null; }
 }
 

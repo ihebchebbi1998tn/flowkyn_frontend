@@ -8,6 +8,7 @@ import type { GameParticipant } from '@/features/app/components/game/shell';
 import { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard } from '@/features/app/components/game/boards';
 import { EventChat, type ChatMessage } from '@/features/app/components/chat/EventChat';
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
+import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { ROUTES } from '@/constants/routes';
 import { useEventPublicInfo, useEventParticipants, useEventMessages } from '@/hooks/queries/useEventQueries';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
@@ -141,7 +142,7 @@ function GamePlayWithoutBoundary() {
         participantId: data.participantId,
         senderName: name,
         senderAvatar: name.slice(0, 2).toUpperCase(),
-        senderAvatarUrl: data.senderAvatarUrl || null,
+        senderAvatarUrl: getSafeImageUrl(data.senderAvatarUrl) || null,
         message: data.message,
         timestamp: data.timestamp || new Date().toISOString(),
         isOwn: data.userId === currentUserId,
