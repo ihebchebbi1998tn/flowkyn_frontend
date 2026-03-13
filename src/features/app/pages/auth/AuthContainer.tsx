@@ -38,16 +38,19 @@ export default function AuthContainer() {
   // Determine initial view from URL params or reset token
   useEffect(() => {
     const token = searchParams.get('token');
-    const view = (searchParams.get('view') as AuthView) || 'login';
+    const view = (searchParams.get('view') as AuthView | null);
 
-    if (token && location.pathname === '/reset-password') {
+    // Prioritize explicit view query param if set
+    if (view) {
+      setCurrentView(view);
+    } else if (token && location.pathname === '/reset-password') {
       setCurrentView('reset');
     } else if (location.pathname === '/forgot-password') {
       setCurrentView('forgot');
     } else if (location.pathname === '/register') {
       setCurrentView('register');
     } else {
-      setCurrentView(view);
+      setCurrentView('login');
     }
   }, [searchParams, location.pathname]);
 

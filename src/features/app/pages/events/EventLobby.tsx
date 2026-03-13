@@ -116,12 +116,13 @@ export default function EventLobby() {
         trackEvent(TRACK.EVENT_JOINED, { eventId: id, viaInvitation: !!inviteToken });
       } else {
         // Guest join
+        const safeAvatarUrl = profile.avatarUrl?.startsWith('http') ? profile.avatarUrl : undefined;
         const result = await joinAsGuest.mutateAsync({
           eventId: id,
           data: {
             name: profile.displayName,
             email: guestEmail || undefined,
-            avatar_url: profile.avatarUrl || undefined,
+            avatar_url: safeAvatarUrl,
             token: inviteToken || undefined,
           },
         });
