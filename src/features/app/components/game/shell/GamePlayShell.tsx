@@ -67,8 +67,8 @@ export function GamePlayShell({
   const sessionStatusLabel =
     gameType === 'sync'
       ? (isLobby
-          ? t('gamePlay.shell.statusWaiting', 'Waiting for your team')
-          : t('gamePlay.shell.statusLive', 'Live team session'))
+        ? t('gamePlay.shell.statusWaiting', 'Waiting for your team')
+        : t('gamePlay.shell.statusLive', 'Live team session'))
       : t('gamePlay.shell.statusAsync', 'Async check‑in session');
 
   useEffect(() => {
@@ -81,12 +81,12 @@ export function GamePlayShell({
 
   // Track previously joined participants to show toasts
   const prevJoinedIds = useRef<Set<string>>(new Set());
-  
+
   useEffect(() => {
-    const newlyJoined = participants.filter(p => 
+    const newlyJoined = participants.filter(p =>
       p.status === 'joined' && p.id !== currentUserId && !prevJoinedIds.current.has(p.id)
     );
-    
+
     newlyJoined.forEach(p => {
       toast.success(`${p.name} joined the session! 🎉`, {
         description: t('gamePlay.shell.readyToConnect', 'Ready to connect!'),
@@ -121,14 +121,14 @@ export function GamePlayShell({
       {/* ─── Header ─── */}
       <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/5" />
-        
+
         {/* Animated Background Orbs */}
-        <motion.div 
+        <motion.div
           className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none"
           animate={{ x: [0, -30, 0], y: [0, 40, 0], scale: [1, 1.2, 1] }}
           transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <motion.div 
+        <motion.div
           className="absolute bottom-0 left-10 w-48 h-48 bg-info/10 rounded-full blur-[60px] pointer-events-none"
           animate={{ x: [0, 50, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
@@ -142,7 +142,7 @@ export function GamePlayShell({
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
               )}
-              
+
               {/* Company Logo Display */}
               {organizationLogo && (
                 <div className="flex items-center justify-center h-9 bg-background/30 backdrop-blur-sm rounded-lg px-2 border border-border/30 shrink-0">
@@ -162,20 +162,6 @@ export function GamePlayShell({
                   </Badge>
                 </div>
                 <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5 sm:mt-1">{subtitle}</p>
-                <div className="mt-1.5 flex items-center gap-2">
-                  <span className={cn(
-                    "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-medium tracking-wide border",
-                    isLobby
-                      ? "border-warning/40 bg-warning/10 text-warning"
-                      : "border-primary/40 bg-primary/10 text-primary"
-                  )}>
-                    <span className={cn(
-                      "h-1.5 w-1.5 rounded-full",
-                      isLobby ? "bg-warning animate-pulse" : "bg-primary"
-                    )} />
-                    {sessionStatusLabel}
-                  </span>
-                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">

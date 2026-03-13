@@ -78,14 +78,21 @@ export default function EventForm() {
             .filter((i: any) => i.status === 'pending')
             .map((i: any) => ({ email: i.email, status: 'invited' })),
         ];
-        setTeamMembers(all);
+        // Deduplicate emails
+        const uniqueTeamMembers = Array.from(new Map(all.map(item => [item.email, item])).values());
+        setTeamMembers(uniqueTeamMembers);
+
+        // Auto-select everyone by default if we are creating a new event
+        if (!isEditing && uniqueTeamMembers.length > 0 && selectedMembers.length === 0) {
+          setSelectedMembers(uniqueTeamMembers.map(m => m.email));
+        }
       } catch {
         // Best-effort helper; failure here shouldn't block event creation
         setTeamMembers([]);
       }
     }
     fetchMembers();
-  }, [form.organization_id]);
+  }, [form.organization_id, isEditing, selectedMembers.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,9 +115,10 @@ export default function EventForm() {
         onSuccess: () => setTimeout(() => navigate(`/events/${editId}`), 500),
       });
     } else {
-      createEvent.mutate(payload, {
-        onSuccess: () => setTimeout(() => navigate('/events'), 500),
-      });
+      createEvent.mutate(
+        { ...payload, invites: selectedMembers },
+        { onSuccess: () => setTimeout(() => navigate('/events'), 500) }
+      );
     }
   };
 
