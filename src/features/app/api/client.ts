@@ -52,7 +52,13 @@ class ApiClient {
       // they return 401 as a legitimate "wrong credentials / expired token" response.
       // Only attempt the refresh + redirect flow for protected API endpoints.
       const isAuthEndpoint = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/register');
-      if (!isAuthEndpoint) {
+
+      // Guest-friendly pages (/join, /play) are designed for unauthenticated users.
+      // A 401 here just means "not logged in yet" — do NOT redirect to login.
+      const guestFriendlyPaths = ['/join', '/play', '/invite'];
+      const isGuestFriendlyPage = guestFriendlyPaths.some(p => window.location.pathname.startsWith(p));
+
+      if (!isAuthEndpoint && !isGuestFriendlyPage) {
         // Only attempt one token refresh per request to prevent infinite loops.
         const refreshed = await this.refreshToken();
         if (refreshed) return this.request<T>(path, options, true);
