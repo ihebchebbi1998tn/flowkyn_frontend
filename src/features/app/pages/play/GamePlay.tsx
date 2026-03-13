@@ -32,17 +32,26 @@ function saveProfile(eventId: string, data: ProfileSetupData) {
   localStorage.setItem(profileKey(eventId), JSON.stringify(data));
 }
 
+// ─── Game Types & Phases ───────────────────────────────────────────────────
+export const GAME_TYPES = {
+  TWO_TRUTHS: 'two-truths',
+  COFFEE_ROULETTE: 'coffee-roulette',
+  WINS_OF_WEEK: 'wins-of-week',
+} as const;
+
+export type GameTypeKey = typeof GAME_TYPES[keyof typeof GAME_TYPES];
+
 // ─── Game type configs ─────────────────────────────────────────────────────
 const GAME_CONFIGS: Record<string, {
   titleKey: string;
   subtitleKey: string;
   type: 'sync' | 'async';
-  gameTypeKey: string;
+  gameTypeKey: GameTypeKey;
   promptKey?: string;
 }> = {
-  '1': { titleKey: 'gamePlay.configs.twoTruthsTitle', subtitleKey: 'gamePlay.configs.twoTruthsSubtitle', type: 'sync', gameTypeKey: 'two-truths' },
-  '2': { titleKey: 'gamePlay.configs.coffeeRouletteTitle', subtitleKey: 'gamePlay.configs.coffeeRouletteSubtitle', type: 'sync', gameTypeKey: 'coffee-roulette' },
-  '3': { titleKey: 'gamePlay.configs.winsOfWeekTitle', subtitleKey: 'gamePlay.configs.winsOfWeekSubtitle', type: 'async', gameTypeKey: 'wins-of-week', promptKey: 'gamePlay.configs.defaultPrompt' },
+  '1': { titleKey: 'gamePlay.configs.twoTruthsTitle', subtitleKey: 'gamePlay.configs.twoTruthsSubtitle', type: 'sync', gameTypeKey: GAME_TYPES.TWO_TRUTHS },
+  '2': { titleKey: 'gamePlay.configs.coffeeRouletteTitle', subtitleKey: 'gamePlay.configs.coffeeRouletteSubtitle', type: 'sync', gameTypeKey: GAME_TYPES.COFFEE_ROULETTE },
+  '3': { titleKey: 'gamePlay.configs.winsOfWeekTitle', subtitleKey: 'gamePlay.configs.winsOfWeekSubtitle', type: 'async', gameTypeKey: GAME_TYPES.WINS_OF_WEEK, promptKey: 'gamePlay.configs.defaultPrompt' },
 };
 
 function GamePlayWithoutBoundary() {
@@ -197,11 +206,14 @@ function GamePlayWithoutBoundary() {
   // Cleanup: leave event room on unmount
   useEffect(() => {
     return () => {
-      if (eventId && eventsSocket.isConnected) {
-        eventsSocket.emit('event:leave', { eventId });
+      // Always safely check if we can emit. We remove isConnected from deps 
+      // of the effect itself so it doesn't re-run/re-leave rapidly on reconnects,
+      // but we use the socket ref's current state inside the cleanup.
+      if (eventId && eventsSocket.socket?.connected) {
+        eventsSocket.socket.emit('event:leave', { eventId });
       }
     };
-  }, [eventId]);
+  }, [eventId, eventsSocket.socket]);
 
   // ─── WebSocket: Games namespace ────────────────────────────────────────────
   const gamesSocket = useGamesSocket({
@@ -374,7 +386,7 @@ function GamePlayWithoutBoundary() {
     };
 
     switch (config.gameTypeKey) {
-      case 'two-truths':
+      case GAME_TYPES.TWO_TRUTHS:
         return (
           <TwoTruthsBoard
             {...boardProps}
@@ -385,7 +397,7 @@ function GamePlayWithoutBoundary() {
             onEmitAction={onEmitAction}
           />
         );
-      case 'coffee-roulette':
+      case GAME_TYPES.COFFEE_ROULETTE:
         return (
           <CoffeeRouletteBoard
             participants={participants}
@@ -395,7 +407,7 @@ function GamePlayWithoutBoundary() {
             onEmitAction={onEmitAction}
           />
         );
-      case 'wins-of-week':
+      case GAME_TYPES.WINS_OF_WEEK:
         return (
           <WinsOfTheWeekBoard
             prompt={config.promptKey ? t(config.promptKey) : undefined}

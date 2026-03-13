@@ -10,9 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
+import { GAME_TYPES } from '@/features/app/pages/play/GamePlay';
 
 type CoffeeSnapshot = {
-  kind: 'coffee-roulette';
+  kind: typeof GAME_TYPES.COFFEE_ROULETTE;
   phase: 'waiting' | 'matching' | 'chatting' | 'complete';
   pairs: Array<{
     id: string;
@@ -34,9 +35,9 @@ export interface CoffeeRouletteBoardProps {
 
 export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapshot, gameData, onEmitAction }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
-  const snapshot: CoffeeSnapshot | null = (gameData?.kind === 'coffee-roulette'
+  const snapshot: CoffeeSnapshot | null = (gameData?.kind === GAME_TYPES.COFFEE_ROULETTE
     ? gameData
-    : (initialSnapshot?.kind === 'coffee-roulette' ? initialSnapshot : null)) as any;
+    : (initialSnapshot?.kind === GAME_TYPES.COFFEE_ROULETTE ? initialSnapshot : null)) as any;
 
   const phase = (snapshot?.phase || 'waiting') as GamePhase;
   const pairs = snapshot?.pairs || [];

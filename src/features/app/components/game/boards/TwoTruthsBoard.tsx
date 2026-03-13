@@ -9,9 +9,10 @@ import {
   TwoTruthsVoteSection,
   TwoTruthsRevealSection,
 } from './TwoTruthsSections';
+import { GAME_TYPES } from '@/features/app/pages/play/GamePlay';
 
 type TwoTruthsSnapshot = {
-  kind: 'two-truths';
+  kind: typeof GAME_TYPES.TWO_TRUTHS;
   phase: GamePhase;
   round: number;
   totalRounds: number;
@@ -50,9 +51,9 @@ export function TwoTruthsBoard({
   gameData,
 }: TwoTruthsBoardProps) {
   const { t } = useTranslation();
-  const snapshot: TwoTruthsSnapshot | null = (gameData?.kind === 'two-truths'
+  const snapshot: TwoTruthsSnapshot | null = (gameData?.kind === GAME_TYPES.TWO_TRUTHS
     ? gameData
-    : (initialSnapshot?.kind === 'two-truths' ? initialSnapshot : null)) as any;
+    : (initialSnapshot?.kind === GAME_TYPES.TWO_TRUTHS ? initialSnapshot : null)) as any;
 
   const phase: GamePhase = (snapshot?.phase || 'waiting') as any;
   const round = snapshot?.round || 1;

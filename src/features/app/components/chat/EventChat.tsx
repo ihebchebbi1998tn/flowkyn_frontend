@@ -53,7 +53,9 @@ function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: st
   );
 }
 
-export function EventChat({
+import React from 'react';
+
+export const EventChat = React.memo(function EventChat({
   eventId, messages, onSendMessage, onTyping, typingUsers = [], className, currentUserId, currentUserAvatarUrl,
 }: EventChatProps) {
   const { t } = useTranslation();
@@ -255,4 +257,4 @@ export function EventChat({
       </div>
     </div>
   );
-}
+});
