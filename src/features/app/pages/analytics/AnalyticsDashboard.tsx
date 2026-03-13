@@ -77,7 +77,7 @@ export default function AnalyticsDashboard() {
         actions={
           <div className="flex items-center gap-2">
             <Select value={range} onValueChange={setRange}>
-              <SelectTrigger className="w-[130px] h-8 text-[12px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-[130px] h-8 text-caption"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="1">{t('analyticsPage.lastMonth')}</SelectItem>
                 <SelectItem value="3">{t('analyticsPage.threeMonths')}</SelectItem>

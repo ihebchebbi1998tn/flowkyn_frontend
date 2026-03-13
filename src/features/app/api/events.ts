@@ -135,4 +135,29 @@ export const eventsApi = {
   /** Create an activity post */
   createPost: (eventId: string, participantId: string, content: string) =>
     api.post(`/events/${eventId}/posts`, { participant_id: participantId, content }),
+
+  // ── Identity helpers ────────────────────────────────────────────────────────
+
+  /** Get the current participant identity (member or guest) for this event */
+  getMyParticipant: (eventId: string) =>
+    api.get<{
+      id: string;
+      type: string;
+      name: string | null;
+      avatar: string | null;
+      isGuest: boolean;
+    }>(`/events/${eventId}/me`),
+
+  /** Get the current user's per-event profile (display name + avatar) */
+  getMyProfile: (eventId: string) =>
+    api.get<{
+      participant_id: string;
+      id: string | null;
+      display_name: string;
+      avatar_url: string | null;
+    }>(`/events/${eventId}/profile`),
+
+  /** Upsert the current user's per-event profile */
+  upsertMyProfile: (eventId: string, payload: { display_name: string; avatar_url?: string | null }) =>
+    api.put(`/events/${eventId}/profile`, payload),
 };

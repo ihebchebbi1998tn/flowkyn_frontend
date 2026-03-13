@@ -74,13 +74,13 @@ export default function OrgDetail() {
       render: (m) => (
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-primary/10 text-primary text-[11px] font-semibold">
+            <AvatarFallback className="bg-primary/10 text-primary text-label-xs font-semibold">
               {m.name.split(' ').map(n => n[0]).join('')}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <p className="font-medium text-[13px] text-foreground truncate">{m.name}</p>
-            <p className="text-[11px] text-muted-foreground truncate">{m.email}</p>
+            <p className="font-medium text-body-sm text-foreground truncate">{m.name}</p>
+            <p className="text-caption text-muted-foreground truncate">{m.email}</p>
           </div>
         </div>
       ),
@@ -90,7 +90,7 @@ export default function OrgDetail() {
       render: (m) => {
         const s = roleStyle[m.role_name] || roleStyle.member;
         return (
-          <Badge variant="outline" className={cn('text-[10px] border', s.bg, s.text, s.border)}>
+          <Badge variant="outline" className={cn('text-label-xs border', s.bg, s.text, s.border)}>
             {m.role_name === 'owner' && <Crown className="h-2.5 w-2.5 mr-1" />}
             {m.role_name === 'admin' && <Shield className="h-2.5 w-2.5 mr-1" />}
             {m.role_name}
@@ -100,7 +100,7 @@ export default function OrgDetail() {
     },
     {
       key: 'joined_at', header: t('organizations.memberSince'), sortable: true, hideOnMobile: true,
-      render: (m) => <span className="text-[12px] text-muted-foreground">{new Date(m.joined_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>,
+      render: (m) => <span className="text-body-sm text-muted-foreground">{new Date(m.joined_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>,
     },
     {
       key: 'actions', header: '', hideOnMobile: true,
@@ -147,11 +147,11 @@ export default function OrgDetail() {
               )}
             </div>
             <div>
-              <h1 className="text-[22px] sm:text-[28px] font-bold tracking-tight text-foreground leading-none">{org?.name}</h1>
-              <p className="text-[13px] text-muted-foreground mt-1">/{org?.slug}</p>
+              <h1 className="text-page-title sm:text-3xl font-bold tracking-tight text-foreground leading-none">{org?.name}</h1>
+              <p className="text-body-sm text-muted-foreground mt-1">/{org?.slug}</p>
             </div>
           </div>
-          <Button onClick={() => setShowInvite(true)} className="h-8 text-[12px] gap-1.5 shadow-sm hidden sm:flex">
+          <Button onClick={() => setShowInvite(true)} className="h-8 text-caption gap-1.5 shadow-sm hidden sm:flex rounded-lg">
             <UserPlus className="h-3.5 w-3.5" /> {t('organizations.inviteMember')}
           </Button>
         </div>
@@ -171,20 +171,20 @@ export default function OrgDetail() {
       <FormModal open={showInvite} onClose={() => setShowInvite(false)} title={t('organizations.inviteMember')}
         footer={
           <div className="flex gap-2 w-full justify-end">
-            <Button variant="outline" onClick={() => setShowInvite(false)} className="text-[13px]">{t('common.cancel')}</Button>
-            <Button onClick={handleInvite} disabled={inviteMember.isPending} className="text-[13px] gap-2">
+            <Button variant="outline" onClick={() => setShowInvite(false)} className="text-body-sm">{t('common.cancel')}</Button>
+            <Button onClick={handleInvite} disabled={inviteMember.isPending} className="text-body-sm gap-2">
               <Mail className="h-3.5 w-3.5" />{inviteMember.isPending ? t('orgDetail.sending') : t('common.send')}
             </Button>
           </div>
         }>
         <div className="space-y-1.5">
-          <Label className="text-[13px]">{t('organizations.inviteEmail')}</Label>
-          <Input type="email" className="h-10 text-[13px]" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} placeholder="colleague@company.com" />
+          <Label className="text-body-sm">{t('organizations.inviteEmail')}</Label>
+          <Input type="email" className="h-10 text-body-sm" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} placeholder="colleague@company.com" />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-[13px]">{t('organizations.inviteRole')}</Label>
+          <Label className="text-body-sm">{t('organizations.inviteRole')}</Label>
           <Select value={inviteRole} onValueChange={setInviteRole}>
-            <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-10 text-body-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="admin">Admin</SelectItem>
               <SelectItem value="member">Member</SelectItem>

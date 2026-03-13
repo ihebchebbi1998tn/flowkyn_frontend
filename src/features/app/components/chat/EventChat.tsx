@@ -31,6 +31,8 @@ interface EventChatProps {
   currentUserId?: string;
   /** Current user's avatar URL for their own messages */
   currentUserAvatarUrl?: string | null;
+  /** Whether the chat transport is currently usable */
+  isOnline?: boolean;
 }
 
 function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: string | null; isOwn: boolean }) {
@@ -56,7 +58,7 @@ function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: st
 import React from 'react';
 
 export const EventChat = React.memo(function EventChat({
-  eventId, messages, onSendMessage, onTyping, typingUsers = [], className, currentUserId, currentUserAvatarUrl,
+  eventId, messages, onSendMessage, onTyping, typingUsers = [], className, currentUserId, currentUserAvatarUrl, isOnline = true,
 }: EventChatProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
@@ -90,7 +92,7 @@ export const EventChat = React.memo(function EventChat({
 
   const handleSend = () => {
     const trimmed = input.trim();
-    if (!trimmed) return;
+    if (!trimmed || !isOnline) return;
     onSendMessage(trimmed);
     setInput('');
     onTyping?.(false);
@@ -243,12 +245,13 @@ export const EventChat = React.memo(function EventChat({
             ref={inputRef}
             value={input}
             onChange={(e) => handleInputChange(e.target.value)}
-            placeholder={t('chat.placeholder')}
+            placeholder={isOnline ? t('chat.placeholder') : t('chat.offlinePlaceholder', 'You are offline – messages cannot be sent')}
             maxLength={2000}
             className="h-10 text-[13px] rounded-xl border-border/50 bg-muted/30 focus:bg-background transition-colors flex-1"
+            disabled={!isOnline}
           />
           <Button
-            type="submit" size="icon" disabled={!input.trim()}
+            type="submit" size="icon" disabled={!input.trim() || !isOnline}
             className="h-10 w-10 rounded-xl shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30"
           >
             <Send className="h-3.5 w-3.5" />

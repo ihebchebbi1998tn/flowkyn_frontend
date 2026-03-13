@@ -11,6 +11,7 @@ import { UserProfileSetup, type ProfileSetupData } from '@/features/app/componen
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { ROUTES } from '@/constants/routes';
 import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts } from '@/hooks/queries/useEventQueries';
+import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { gamesApi } from '@/features/app/api/games';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
@@ -64,14 +65,24 @@ function GamePlayWithoutBoundary() {
   const gameTypeId = searchParams.get('game') || '1';
   const config = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
 
+  // ─── Current user identity (server-driven) ─────────────────────────────────
+  const identity = useEventIdentity(eventId || undefined);
+  const { isGuest, userId: currentUserId, participantId, displayName, avatarUrl } = identity;
+
+  const guestParticipantId = isGuest ? participantId : null;
+  const memberParticipantId = !isGuest ? participantId : null;
   // ─── Profile (avatar + nickname) ───────────────────────────────────────────
-  const [profile, setProfile] = useState<ProfileSetupData | null>(() => 
-    eventId ? getStoredProfile(eventId) : null
-  );
-  const [showProfileEdit, setShowProfileEdit] = useState(() => {
-    if (!eventId) return false;
-    return !getStoredProfile(eventId);
-  });
+  const initialProfile: ProfileSetupData | null = displayName
+    ? { displayName, avatarUrl: avatarUrl || '' }
+    : eventId
+      ? getStoredProfile(eventId)
+      : null;
+
+  const [profile, setProfile] = useState<ProfileSetupData | null>(initialProfile);
+  const [showProfileEdit, setShowProfileEdit] = useState(() => !initialProfile);
+
+  const currentUserName = profile?.displayName || displayName;
+  const currentUserAvatarUrl = profile?.avatarUrl || avatarUrl;
 
   const handleProfileSave = useCallback((data: ProfileSetupData) => {
     if (!eventId) return;
@@ -80,20 +91,10 @@ function GamePlayWithoutBoundary() {
     setShowProfileEdit(false);
   }, [eventId]);
 
-  // ─── Current user identity ─────────────────────────────────────────────────
-  const isGuest = !user && !!localStorage.getItem(`guest_token_${eventId}`);
-  // For authenticated users, currentUserId = user.id (JWT user ID) — this is what the server broadcasts as `userId` in socket events.
-  // For guests, currentUserId = guest_participant_id (participant UUID) — because server has no user ID for guests.
-  const guestParticipantId = isGuest && eventId ? localStorage.getItem(`guest_participant_id_${eventId}`) : null;
-  const memberParticipantId = !isGuest && eventId ? localStorage.getItem(`member_participant_id_${eventId}`) : null;
-  const currentUserId = isGuest ? (guestParticipantId || '') : (user?.id || '');
-  const currentUserName = profile?.displayName || user?.name || localStorage.getItem(`guest_name_${eventId}`) || 'Guest';
-  const currentUserAvatarUrl = profile?.avatarUrl || null;
-
   // ─── Real data from API ────────────────────────────────────────────────────
   const { data: eventData } = useEventPublicInfo(eventId || '');
-  const { data: participantsData } = useEventParticipants(eventId || '');
-  const { data: messagesData } = useEventMessages(eventId || '');
+  const { data: participantsData, refetch: refetchParticipants } = useEventParticipants(eventId || '');
+  const { data: messagesData, refetch: refetchMessages } = useEventMessages(eventId || '');
   const { data: postsData, refetch: refetchPosts } = useEventPosts(eventId || '');
 
   const eventPublicObj = eventData as any;
@@ -145,11 +146,9 @@ function GamePlayWithoutBoundary() {
     eventId: eventId || undefined,
     onConnect: () => {
       if (eventId) {
-        // Emit event:join and wait for acknowledgment
         eventsSocket.emit('event:join', { eventId })
           .then((ack: any) => {
             if (ack?.data?.participantId) {
-              // Store the participant ID returned by the backend (useful for auto-joined organizers)
               if (isGuest) {
                 localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
               } else {
@@ -311,6 +310,37 @@ function GamePlayWithoutBoundary() {
     return () => { unsubState?.(); unsubData?.(); };
   }, [gamesSocket.isConnected]);
 
+  // Reconnect backfill: when events socket reconnects, refetch messages/participants
+  const wasEventsConnectedRef = useRef(false);
+  useEffect(() => {
+    if (eventsSocket.status === 'connected') {
+      if (!wasEventsConnectedRef.current) {
+        wasEventsConnectedRef.current = true;
+        if (eventId) {
+          refetchMessages();
+          refetchParticipants();
+        }
+      }
+    } else {
+      wasEventsConnectedRef.current = false;
+    }
+  }, [eventsSocket.status, eventId, refetchMessages, refetchParticipants]);
+
+  // Reconnect backfill for games: when games socket reconnects, always issue game:state_sync
+  const wasGamesConnectedRef = useRef(false);
+  useEffect(() => {
+    if (gamesSocket.status === 'connected') {
+      if (!wasGamesConnectedRef.current) {
+        wasGamesConnectedRef.current = true;
+        if (sessionId) {
+          gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+        }
+      }
+    } else {
+      wasGamesConnectedRef.current = false;
+    }
+  }, [gamesSocket.status, sessionId, gamesSocket]);
+
   // ─── Typing state ──────────────────────────────────────────────────────────
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
@@ -353,6 +383,22 @@ function GamePlayWithoutBoundary() {
   // ─── Chat sidebar ──────────────────────────────────────────────────────────
   const chatSidebar = (
     <div className="space-y-4 sticky top-16">
+      <div className="flex items-center justify-between text-label-xs text-muted-foreground px-1">
+        <span>
+          {eventsSocket.status === 'connected' && t('chat.connected', 'Live & synced')}
+          {eventsSocket.status === 'reconnecting' && t('chat.reconnecting', 'Reconnecting…')}
+          {eventsSocket.status === 'disconnected' && !eventsSocket.isConnected && t('chat.offline', 'Offline')}
+        </span>
+        {eventsSocket.status === 'disconnected' && !eventsSocket.isConnected && (
+          <button
+            type="button"
+            onClick={() => eventsSocket.connect()}
+            className="text-label-xs text-primary hover:underline"
+          >
+            {t('chat.retry', 'Retry')}
+          </button>
+        )}
+      </div>
       <EventChat
         eventId={eventId || ''}
         messages={allMessages}
@@ -361,6 +407,7 @@ function GamePlayWithoutBoundary() {
         currentUserId={currentUserId}
         currentUserAvatarUrl={currentUserAvatarUrl}
         typingUsers={typingUsers}
+        isOnline={eventsSocket.status === 'connected'}
       />
     </div>
   );

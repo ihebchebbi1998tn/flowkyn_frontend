@@ -79,13 +79,13 @@ function InviteDialog({ eventId }: { eventId: string }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5">
+        <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5 rounded-lg">
           <Mail className="h-3.5 w-3.5" /> {t('events.invite')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-[16px]">{t('events.inviteParticipant')}</DialogTitle>
+          <DialogTitle className="text-section-title">{t('events.inviteParticipant')}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
           <div className="flex gap-2">
@@ -94,7 +94,7 @@ function InviteDialog({ eventId }: { eventId: string }) {
               placeholder={t('events.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-10 text-[13px]"
+              className="h-10 text-body-sm"
               onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
             />
             <Button onClick={handleInvite} disabled={!email.trim() || inviteMutation.isPending} className="h-10 px-4 gap-1.5">
@@ -106,12 +106,12 @@ function InviteDialog({ eventId }: { eventId: string }) {
             <Input
               value={`${window.location.origin}/join/${eventId}`}
               readOnly
-              className="h-8 text-[11px] bg-background/60 flex-1 border-border/50"
+              className="h-8 text-label-xs bg-background/60 flex-1 border-border/50"
             />
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 text-[11px] gap-1 shrink-0 rounded-lg"
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-label-xs gap-1 shrink-0 rounded-lg"
               onClick={() => {
                 navigator.clipboard.writeText(`${window.location.origin}/join/${eventId}`);
                 trackEvent(TRACK.EVENT_LINK_COPIED, { eventId });
@@ -150,16 +150,16 @@ function ActionConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-[16px]">{title}</DialogTitle>
+          <DialogTitle className="text-section-title">{title}</DialogTitle>
         </DialogHeader>
-        <p className="text-[13px] text-muted-foreground">{description}</p>
+        <p className="text-body-sm text-muted-foreground">{description}</p>
         <div className="flex gap-2 justify-end pt-4">
-          <Button variant="outline" className="h-8 sm:h-9 text-[12px]" onClick={() => onOpenChange(false)} disabled={isLoading}>
+          <Button variant="outline" className="h-8 sm:h-9 text-caption" onClick={() => onOpenChange(false)} disabled={isLoading}>
             Cancel
           </Button>
           <Button 
             variant={isDangerous ? 'destructive' : 'default'} 
-            className="h-8 sm:h-9 text-[12px]" 
+            className="h-8 sm:h-9 text-caption" 
             onClick={onConfirm} 
             disabled={isLoading}
           >
@@ -238,8 +238,8 @@ export default function EventDetail() {
       key: 'name', header: t('organizations.name'), sortable: true,
       render: (p: any) => (
         <div className="flex items-center gap-2 sm:gap-3">
-          <Avatar className="h-6 w-6 sm:h-7 sm:w-7"><AvatarFallback className="bg-primary/10 text-primary text-[9px] sm:text-[10px] font-semibold">{(p.name || '?')[0]}</AvatarFallback></Avatar>
-          <span className="text-[12px] sm:text-[13px] font-medium truncate">{p.name}</span>
+          <Avatar className="h-6 w-6 sm:h-7 sm:w-7"><AvatarFallback className="bg-primary/10 text-primary text-label-xs font-semibold">{(p.name || '?')[0]}</AvatarFallback></Avatar>
+          <span className="text-body-sm font-medium truncate">{p.name}</span>
         </div>
       ),
     },
@@ -255,7 +255,7 @@ export default function EventDetail() {
       sortable: true,
       hideOnMobile: true,
       render: (p: any) => (
-        <span className="text-[12px] text-muted-foreground">
+        <span className="text-body-sm text-muted-foreground">
           {p.joined_at ? new Date(p.joined_at).toLocaleString() : '—'}
         </span>
       ),
@@ -309,14 +309,14 @@ export default function EventDetail() {
         </Button>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">{event.title}</h1>
+            <h1 className="text-section-title truncate">{event.title}</h1>
             {event.status && (
-              <Badge variant={event.status === 'active' ? 'default' : 'secondary'} className="text-[11px]">
+              <Badge variant={event.status === 'active' ? 'default' : 'secondary'} className="text-label-xs">
                 {t(`events.status.${event.status}`)}
               </Badge>
             )}
           </div>
-          <p className="text-[12px] sm:text-[13px] text-muted-foreground">{event.description}</p>
+          <p className="text-body-sm text-muted-foreground">{event.description}</p>
         </div>
       </div>
 
@@ -329,8 +329,8 @@ export default function EventDetail() {
                 <card.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
               </div>
               <div className="min-w-0">
-                <p className="text-[9px] sm:text-[11px] text-muted-foreground uppercase tracking-wider font-medium truncate">{t(card.label)}</p>
-                <p className="text-[12px] sm:text-[14px] font-semibold text-card-foreground truncate">{card.value}</p>
+                <p className="text-label-xs text-muted-foreground uppercase tracking-wider font-medium truncate">{t(card.label)}</p>
+                <p className="text-body font-semibold text-card-foreground truncate">{card.value}</p>
               </div>
             </div>
           </div>
@@ -339,7 +339,7 @@ export default function EventDetail() {
 
       <div className="flex flex-wrap gap-2 sm:gap-3">
         <Button
-          className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5"
+          className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5"
           onClick={handleJoin}
           disabled={joinEvent.isPending}
         >
@@ -347,23 +347,23 @@ export default function EventDetail() {
           {t('events.joinEvent')}
         </Button>
         <InviteDialog eventId={id!} />
-        <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px]" onClick={() => navigate(ROUTES.EVENT_EDIT(id))}>{t('common.edit')}</Button>
-        <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px]" onClick={() => navigate(ROUTES.EVENT_LOBBY(id))}>
+        <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm" onClick={() => navigate(ROUTES.EVENT_EDIT(id))}>{t('common.edit')}</Button>
+        <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm" onClick={() => navigate(ROUTES.EVENT_LOBBY(id))}>
           {t('events.openLobby')}
         </Button>
         
         {isEventActive && (
           <>
-            <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5" onClick={() => setPauseConfirm(true)} disabled={pauseEvent.isPending}>
+            <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5" onClick={() => setPauseConfirm(true)} disabled={pauseEvent.isPending}>
               <Pause className="h-3.5 w-3.5" /> {t('events.pause')}
             </Button>
-            <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5" onClick={() => setStopConfirm(true)} disabled={stopEvent.isPending}>
+            <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5" onClick={() => setStopConfirm(true)} disabled={stopEvent.isPending}>
               <Square className="h-3.5 w-3.5" /> {t('events.stop')}
             </Button>
           </>
         )}
         
-        <Button variant="destructive" className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5" onClick={() => setDeleteConfirm(true)} disabled={deleteEvent.isPending}>
+        <Button variant="destructive" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5" onClick={() => setDeleteConfirm(true)} disabled={deleteEvent.isPending}>
           <Trash2 className="h-3.5 w-3.5" /> {t('events.delete')}
         </Button>
       </div>

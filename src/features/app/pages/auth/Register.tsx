@@ -64,8 +64,8 @@ export default function Register() {
       </div>
 
       <div className="space-y-1.5">
-        <h1 className="text-[22px] font-bold text-foreground tracking-tight">{t('auth.registerTitle')}</h1>
-        <p className="text-[13px] text-muted-foreground leading-relaxed">{t('auth.registerSubtitle')}</p>
+        <h1 className="text-page-title text-foreground">{t('auth.registerTitle')}</h1>
+        <p className="text-body-sm text-muted-foreground leading-relaxed">{t('auth.registerSubtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3.5">
@@ -73,18 +73,18 @@ export default function Register() {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-[13px] font-medium">{t('auth.firstName')}</Label>
+            <Label className="text-body-sm font-medium">{t('auth.firstName')}</Label>
             <Input
-              className="h-11 text-[13px] rounded-xl"
+              className="h-11 text-body-sm rounded-xl"
               value={form.firstName}
               onChange={e => update('firstName', e.target.value)}
               autoFocus
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[13px] font-medium">{t('auth.lastName')}</Label>
+            <Label className="text-body-sm font-medium">{t('auth.lastName')}</Label>
             <Input
-              className="h-11 text-[13px] rounded-xl"
+              className="h-11 text-body-sm rounded-xl"
               value={form.lastName}
               onChange={e => update('lastName', e.target.value)}
             />
@@ -92,34 +92,34 @@ export default function Register() {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-[13px] font-medium">{t('auth.email')}</Label>
+          <Label className="text-body-sm font-medium">{t('auth.email')}</Label>
           <Input
-            type="email" className="h-11 text-[13px] rounded-xl"
+            type="email" className="h-11 text-body-sm rounded-xl"
             value={form.email} onChange={e => update('email', e.target.value)}
             placeholder="you@company.com"
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-[13px] font-medium">{t('auth.password')}</Label>
+          <Label className="text-body-sm font-medium">{t('auth.password')}</Label>
           <PasswordInput
-            className="h-11 text-[13px] rounded-xl"
+            className="h-11 text-body-sm rounded-xl"
             value={form.password} onChange={e => update('password', e.target.value)}
             placeholder={t('auth.passwordPlaceholder')}
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-[13px] font-medium">{t('auth.confirmPassword')}</Label>
+          <Label className="text-body-sm font-medium">{t('auth.confirmPassword')}</Label>
           <PasswordInput
-            className="h-11 text-[13px] rounded-xl"
+            className="h-11 text-body-sm rounded-xl"
             value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)}
           />
         </div>
 
         <LoadingButton
           type="submit" loading={isLoading}
-          className="w-full h-11 text-[13px] gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
+          className="w-full h-11 text-body-sm gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
         >
           {t('auth.register')}
           <ArrowRight className="h-3.5 w-3.5" />
@@ -129,13 +129,13 @@ export default function Register() {
       <div className="relative">
         <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/60" /></div>
         <div className="relative flex justify-center">
-          <span className="bg-background px-3 text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
+          <span className="bg-background px-3 text-label-xs text-muted-foreground/60 uppercase tracking-wider font-medium">
             {t('auth.or')}
           </span>
         </div>
       </div>
 
-      <p className="text-center text-[13px] text-muted-foreground">
+      <p className="text-center text-body-sm text-muted-foreground">
         {t('auth.hasAccount')}{' '}
         <button
           type="button"

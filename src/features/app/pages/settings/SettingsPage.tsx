@@ -69,12 +69,12 @@ export default function SettingsPage() {
       <div className="mb-2">
         <div className="flex items-center gap-2 mb-1">
           <Settings className="h-5 w-5 text-primary" />
-          <h1 className="text-[22px] sm:text-[26px] font-bold tracking-tight text-foreground">{t('nav.settings')}</h1>
+          <h1 className="text-page-title text-foreground">{t('nav.settings')}</h1>
         </div>
-        <p className="text-[13px] text-muted-foreground">{t('settings.subtitle')}</p>
+        <p className="text-body-sm text-muted-foreground">{t('settings.subtitle')}</p>
       </div>
       <div className="mb-3">
-        <div className="inline-flex w-full sm:w-auto items-center gap-1 rounded-xl border border-border bg-muted/40 px-2.5 py-1.5 text-[11px] text-muted-foreground">
+        <div className="inline-flex w-full sm:w-auto items-center gap-1 rounded-xl border border-border bg-muted/40 px-2.5 py-1.5 text-label-xs text-muted-foreground">
           <span className="font-semibold uppercase tracking-[0.14em]">{t('settings.quickNav')}</span>
           <span className="hidden sm:inline">·</span>
           <span className="hidden sm:inline">{t('settings.quickNavHint')}</span>
@@ -83,7 +83,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => scrollTo(profileRef)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-label-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
           >
             <User className="h-3.5 w-3.5" />
             {t('settings.profile')}
@@ -91,7 +91,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => scrollTo(appearanceRef)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-label-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
           >
             <Palette className="h-3.5 w-3.5" />
             {t('settings.appearance')}
@@ -99,7 +99,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => scrollTo(notificationsRef)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-label-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
           >
             <Bell className="h-3.5 w-3.5" />
             {t('settings.notifications')}
@@ -107,7 +107,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => scrollTo(workspaceRef)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-label-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
           >
             <Building2 className="h-3.5 w-3.5" />
             {t('settings.workspace')}
@@ -115,7 +115,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => scrollTo(securityRef)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-label-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
           >
             <Shield className="h-3.5 w-3.5" />
             {t('settings.security')}
@@ -151,16 +151,16 @@ export default function SettingsPage() {
         <Section icon={Building2} title={t('settings.workspace')} desc={t('settings.workspaceDesc')}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <FieldGroup label={t('settings.workspaceName')}>
-              <Input defaultValue={user?.name ? `${user.name}'s Workspace` : 'Workspace'} className="h-10 text-[13px]" />
+              <Input defaultValue={user?.name ? `${user.name}'s Workspace` : 'Workspace'} className="h-10 text-body-sm" />
             </FieldGroup>
             <FieldGroup label={t('settings.defaultMaxParticipants')}>
-              <Input type="number" defaultValue={20} className="h-10 text-[13px]" />
+              <Input type="number" defaultValue={20} className="h-10 text-body-sm" />
             </FieldGroup>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <FieldGroup label={t('settings.eventVisibility')}>
               <Select defaultValue="workspace">
-                <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-10 text-body-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="workspace">{t('settings.workspaceOnly')}</SelectItem>
                   <SelectItem value="invite">{t('settings.inviteOnly')}</SelectItem>
@@ -186,7 +186,7 @@ export default function SettingsPage() {
 
         {/* Save all */}
         <div className="flex justify-end pb-8">
-          <Button variant="brand" onClick={handleSave} disabled={updateProfile.isPending} className="h-10 px-8 text-[13px]">
+          <Button variant="brand" onClick={handleSave} disabled={updateProfile.isPending} className="h-10 px-8 text-body-sm">
             {updateProfile.isPending ? t('settings.saving') : t('settings.saveAllChanges')}
           </Button>
         </div>

@@ -21,9 +21,20 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 import { CountdownOverlay } from '@/features/app/components/game/shared';
-import { useEventPublicInfo, useEventParticipants, useJoinEvent, useJoinAsGuest, useAcceptEventInvitation } from '@/hooks/queries/useEventQueries';
+import {
+  useEventPublicInfo,
+  useEventParticipants,
+  useEventMessages,
+  useJoinEvent,
+  useJoinAsGuest,
+  useAcceptEventInvitation,
+} from '@/hooks/queries/useEventQueries';
+import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
+import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
+import { EventChat, type ChatMessage } from '@/features/app/components/chat/EventChat';
+import { useEventsSocket } from '@/hooks/useSocket';
 import logoImg from '@/assets/logo.png';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
@@ -58,15 +69,24 @@ export default function EventLobby() {
   const { isAuthenticated, user } = useAuth();
 
   const { data: event, isLoading: eventLoading } = useEventPublicInfo(id || '');
-  const { data: participantsData } = useEventParticipants(id || '');
+  const { data: participantsData, refetch: refetchParticipants } = useEventParticipants(id || '');
+  const { data: messagesData, refetch: refetchMessages } = useEventMessages(id || '');
   const joinEvent = useJoinEvent();
   const joinAsGuest = useJoinAsGuest();
   const acceptInvitation = useAcceptEventInvitation();
 
-  // Profile state — loaded from localStorage if already set for this event
-  const storedProfile = id ? getStoredProfile(id) : null;
-  const [profile, setProfile] = useState<ProfileSetupData | null>(storedProfile);
-  const [showProfileForm, setShowProfileForm] = useState(!storedProfile);
+  // Profile state — prefer server profile (via identity) and fall back to localStorage
+  const identity = useEventIdentity(id || undefined);
+  const { isGuest, userId: currentUserId, displayName, avatarUrl } = identity;
+  const serverBackedProfile: ProfileSetupData | null = displayName
+    ? { displayName, avatarUrl: avatarUrl || '' }
+    : null;
+
+  const storedProfile = !serverBackedProfile && id ? getStoredProfile(id) : null;
+  const initialProfile = serverBackedProfile || storedProfile;
+
+  const [profile, setProfile] = useState<ProfileSetupData | null>(initialProfile);
+  const [showProfileForm, setShowProfileForm] = useState(!initialProfile);
 
   const [guestEmail, setGuestEmail] = useState('');
   const [hasJoined, setHasJoined] = useState(false);
@@ -74,9 +94,38 @@ export default function EventLobby() {
   const [showCountdown, setShowCountdown] = useState(false);
   const [joinError, setJoinError] = useState<string>('');
   const [isJoining, setIsJoining] = useState(false);
+  const [onlineCount, setOnlineCount] = useState<number | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const upsertProfile = useUpsertEventProfile(id || undefined);
 
   const joinLink = `${window.location.origin}/join/${id}`;
   const participants = (participantsData as any)?.data ?? [];
+
+  // Chat state: initial history from API + live messages from WebSocket
+  const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
+
+  const rawMessages = (messagesData as any)?.data || [];
+  const initialMessages: ChatMessage[] = rawMessages.map((m: any) => ({
+    id: m.id,
+    userId: m.user_id || m.participant_id,
+    participantId: m.participant_id,
+    senderName: m.user_name || m.guest_name || 'Unknown',
+    senderAvatar: (m.user_name || m.guest_name || '??').slice(0, 2).toUpperCase(),
+    senderAvatarUrl: getSafeImageUrl(m.avatar_url) || null,
+    message: m.message,
+    timestamp: m.created_at,
+    isOwn: isGuest
+      ? m.participant_id === identity.participantId
+      : !!(m.user_id && m.user_id === user?.id),
+  }));
+
+  const seenIds = new Set<string>();
+  const allMessages = [...initialMessages, ...liveMessages].filter(m => {
+    if (seenIds.has(m.id)) return false;
+    seenIds.add(m.id);
+    return true;
+  });
 
   const copyLinkTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -92,11 +141,135 @@ export default function EventLobby() {
     return () => { if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current); };
   }, []);
 
+  // Real-time events socket for lobby (presence + chat)
+  const eventsSocket = useEventsSocket({
+    eventId: id || undefined,
+    onConnect: () => {
+      if (!id) return;
+      eventsSocket.emit('event:join', { eventId: id })
+        .then((ack: any) => {
+          if (ack?.data?.participantId) {
+            if (isGuest) {
+              localStorage.setItem(`guest_participant_id_${id}`, ack.data.participantId);
+            } else {
+              localStorage.setItem(`member_participant_id_${id}`, ack.data.participantId);
+            }
+          }
+          eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
+        })
+        .catch((err: any) => {
+          console.error('[EventLobby] Failed to join event room:', err?.message || err);
+        });
+    },
+  });
+
+  // Listen for presence updates and participant join/leave to keep lobby live
+  useEffect(() => {
+    if (!eventsSocket.isConnected || !id) return;
+
+    const handlePresence = (payload: any) => {
+      if (payload?.eventId !== id || !Array.isArray(payload.onlineUserIds)) return;
+      setOnlineCount(payload.onlineUserIds.length);
+    };
+
+    const handleUserJoined = () => {
+      refetchParticipants();
+      eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
+    };
+
+    const handleUserLeft = () => {
+      refetchParticipants();
+      eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
+    };
+
+    const unsubPresence = eventsSocket.on('event:presence', handlePresence);
+    const unsubJoined = eventsSocket.on('event:user_joined', handleUserJoined);
+    const unsubLeft = eventsSocket.on('event:user_left', handleUserLeft);
+
+    return () => {
+      unsubPresence?.();
+      unsubJoined?.();
+      unsubLeft?.();
+    };
+  }, [eventsSocket.isConnected, id, refetchParticipants, eventsSocket]);
+
+  // Reconnect backfill: when socket transitions back to connected, refetch messages and participants
+  const wasConnectedRef = useRef(false);
+  useEffect(() => {
+    if (eventsSocket.status === 'connected') {
+      if (!wasConnectedRef.current) {
+        wasConnectedRef.current = true;
+        if (id) {
+          setIsSyncing(true);
+          Promise.all([refetchParticipants(), refetchMessages()])
+            .catch(() => {})
+            .finally(() => setIsSyncing(false));
+        }
+      }
+    } else {
+      wasConnectedRef.current = false;
+    }
+  }, [eventsSocket.status, id, refetchParticipants]);
+
+  // Live chat listeners in lobby
+  useEffect(() => {
+    if (!eventsSocket.isConnected || !id) return;
+
+    const handleChatMessage = (data: any) => {
+      const name = data.senderName || 'Player';
+      const isOwn = isGuest
+        ? data.participantId === identity.participantId
+        : !!(data.userId && data.userId === user?.id);
+
+      const msg: ChatMessage = {
+        id: data.id || `ws-${crypto.randomUUID()}`,
+        userId: data.userId,
+        participantId: data.participantId,
+        senderName: name,
+        senderAvatar: name.slice(0, 2).toUpperCase(),
+        senderAvatarUrl: getSafeImageUrl(data.senderAvatarUrl) || null,
+        message: data.message,
+        timestamp: data.timestamp || new Date().toISOString(),
+        isOwn,
+      };
+      setLiveMessages(prev => [...prev, msg]);
+    };
+
+    const handleTyping = (data: { userId: string; userName?: string; isTyping: boolean }) => {
+      if (data.userId === currentUserId) return;
+      const displayId = data.userName || data.userId;
+      setTypingUsers(prev => {
+        if (data.isTyping && !prev.includes(displayId)) return [...prev, displayId];
+        if (!data.isTyping) return prev.filter(u => u !== displayId);
+        return prev;
+      });
+    };
+
+    const unsubMessage = eventsSocket.on('chat:message', handleChatMessage);
+    const unsubTyping = eventsSocket.on('chat:typing', handleTyping);
+
+    return () => {
+      unsubMessage?.();
+      unsubTyping?.();
+    };
+  }, [eventsSocket.isConnected, id, isGuest, identity.participantId, user?.id, currentUserId, eventsSocket]);
+
+  // Leave event room when lobby unmounts
+  useEffect(() => {
+    return () => {
+      if (id && eventsSocket.socket?.connected) {
+        eventsSocket.socket.emit('event:leave', { eventId: id });
+      }
+    };
+  }, [id, eventsSocket.socket]);
+
   /** Called when user completes profile setup */
   const handleProfileComplete = (data: ProfileSetupData) => {
     if (!id) return;
     saveProfile(id, data);
     setProfile(data);
+    // Persist to backend event profile for server-driven identity
+    upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
     setShowProfileForm(false);
   };
 
@@ -152,6 +325,20 @@ export default function EventLobby() {
   const handleCountdownComplete = useCallback(() => {
     navigate(ROUTES.PLAY(id));
   }, [navigate, id]);
+
+  const handleSendMessage = useCallback((message: string) => {
+    if (eventsSocket.isConnected && id) {
+      eventsSocket.emit('chat:message', { eventId: id, message }).catch((err: any) => {
+        console.error('[EventLobby] Failed to send message:', err?.message || err);
+      });
+    }
+  }, [eventsSocket.isConnected, id, eventsSocket]);
+
+  const handleTyping = useCallback((isTyping: boolean) => {
+    if (eventsSocket.isConnected && id) {
+      eventsSocket.emit('chat:typing', { eventId: id, isTyping }).catch(() => {});
+    }
+  }, [eventsSocket.isConnected, id, eventsSocket]);
 
   // ── Loading ──────────────────────────────────────────────────────────────
   if (eventLoading) {
@@ -289,7 +476,33 @@ export default function EventLobby() {
                   <div className="flex items-center gap-2">
                     <div className="h-9 w-9 rounded-xl bg-success/10 flex items-center justify-center"><Wifi className="h-4 w-4 text-success" /></div>
                     <div>
-                      <p className="text-sm font-bold text-foreground">{t('events.connected')}</p>
+                      <p className="text-sm font-bold text-foreground">
+                        {eventsSocket.status === 'connected' && (
+                          <>
+                            {t('events.connected')}
+                            {onlineCount !== null && (
+                              <span className="text-xs font-normal text-muted-foreground ml-1">
+                                · {onlineCount} {t('events.online')}
+                              </span>
+                            )}
+                            {isSyncing && (
+                              <span className="text-[11px] font-medium text-muted-foreground ml-1">
+                                · {t('events.syncing', 'Syncing…')}
+                              </span>
+                            )}
+                          </>
+                        )}
+                        {eventsSocket.status === 'reconnecting' && (
+                          <span className="text-xs font-medium text-warning">
+                            {t('events.reconnecting', 'Reconnecting…')}
+                          </span>
+                        )}
+                        {eventsSocket.status === 'disconnected' && !eventsSocket.isConnected && (
+                          <span className="text-xs font-medium text-muted-foreground">
+                            {t('events.offline', 'Offline')}
+                          </span>
+                        )}
+                      </p>
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t('common.status')}</p>
                     </div>
                   </div>
@@ -328,6 +541,20 @@ export default function EventLobby() {
                       <span className="text-[10px] text-muted-foreground ml-1">{t('events.waitingForOthers')}</span>
                     </div>
                   </div>
+                </div>
+
+                {/* Live chat in lobby */}
+                <div className="pt-2">
+                  <EventChat
+                    eventId={id || ''}
+                    messages={allMessages}
+                    onSendMessage={handleSendMessage}
+                    onTyping={handleTyping}
+                    currentUserId={currentUserId}
+                    currentUserAvatarUrl={avatarUrl}
+                    typingUsers={typingUsers}
+                    isOnline={eventsSocket.status === 'connected'}
+                  />
                 </div>
 
                 {inviteToken && (
@@ -370,13 +597,13 @@ export default function EventLobby() {
             <div className="flex items-center justify-center gap-2 text-muted-foreground p-4">
               {event.organization_logo ? (
                 <>
-                  <span className="text-[11px]">{t('events.poweredBy')}</span>
+                  <span className="text-label-xs">{t('events.poweredBy')}</span>
                   <img src={event.organization_logo} alt={event.organization_name} className="h-5 w-auto max-w-[100px] object-contain grayscale opacity-60" />
                 </>
               ) : (
                 <>
                   <img src={logoImg} alt="Flowkyn" className="h-5 w-5 object-contain opacity-50" />
-                  <span className="text-[11px]">{t('events.poweredBy')}</span>
+                  <span className="text-label-xs">{t('events.poweredBy')}</span>
                 </>
               )}
             </div>

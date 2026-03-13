@@ -52,7 +52,7 @@ export default function NotificationsPage() {
             size="sm"
             onClick={markAllRead}
             disabled={unread === 0}
-            className="h-8 text-[12px] gap-1.5"
+            className="h-8 text-caption gap-1.5"
           >
             <CheckCheck className="h-3.5 w-3.5" /> {t('notifications.markAllRead')}
           </Button>
@@ -84,8 +84,8 @@ export default function NotificationsPage() {
 
       <Tabs value={filter} onValueChange={v => setFilter(v as any)}>
         <TabsList className="h-9">
-          <TabsTrigger value="all" className="text-[12px] h-7">{t('notifications.readAll')}</TabsTrigger>
-          <TabsTrigger value="unread" className="text-[12px] h-7">{t('notifications.unread')}</TabsTrigger>
+          <TabsTrigger value="all" className="text-caption h-7">{t('notifications.readAll')}</TabsTrigger>
+          <TabsTrigger value="unread" className="text-caption h-7">{t('notifications.unread')}</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -116,13 +116,13 @@ export default function NotificationsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[13px] font-medium leading-tight truncate">{title}</p>
+                    <p className="text-body-sm font-medium leading-tight truncate">{title}</p>
                     {!isRead && <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />}
                   </div>
-                  <p className="text-[12px] text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">{message}</p>
+                  <p className="text-body-sm text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">{message}</p>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <Badge variant="outline" className="text-[10px] h-5 border-border">{n.type}</Badge>
-                    <span className="text-[11px] text-muted-foreground">{formatTime(n.created_at)} {t('notifications.timeAgo')}</span>
+                    <Badge variant="outline" className="text-label-xs h-5 border-border">{n.type}</Badge>
+                    <span className="text-caption text-muted-foreground">{formatTime(n.created_at)} {t('notifications.timeAgo')}</span>
                   </div>
                 </div>
               </div>

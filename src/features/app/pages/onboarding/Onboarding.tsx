@@ -212,11 +212,11 @@ export default function Onboarding() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 h-14 max-w-3xl mx-auto w-full">
+          <div className="flex items-center justify-between px-6 h-14 max-w-3xl mx-auto w-full">
           <div className="flex items-center">
             <img src={logoImg} alt="Flowkyn" className="h-10 w-10 object-contain" />
           </div>
-          <span className="text-[11px] text-muted-foreground font-medium">
+          <span className="text-label-xs text-muted-foreground font-medium">
             {t('onboarding.stepOf', { current: step + 1, total: STEP_ICONS.length })}
           </span>
         </div>
@@ -251,7 +251,7 @@ export default function Onboarding() {
             {STEP_ICONS.map((_, i) => (
               <div key={i} className="flex items-center gap-2">
                 <div className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold transition-all duration-300",
+                  "flex h-8 w-8 items-center justify-center rounded-full text-label-xs font-bold transition-all duration-300",
                   i < step ? 'bg-success text-success-foreground' :
                   i === step ? 'bg-primary text-primary-foreground shadow-md shadow-primary/25' :
                   'bg-muted text-muted-foreground'
@@ -280,10 +280,10 @@ export default function Onboarding() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="text-center mb-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                <h1 className="text-page-title sm:text-3xl font-bold text-foreground tracking-tight">
                   {t(`onboarding.steps.${stepKey}.title`)}
                 </h1>
-                <p className="text-sm text-muted-foreground mt-2">{t(`onboarding.steps.${stepKey}.description`)}</p>
+                <p className="text-body-sm text-muted-foreground mt-2">{t(`onboarding.steps.${stepKey}.description`)}</p>
               </div>
 
               <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">

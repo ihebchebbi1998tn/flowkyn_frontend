@@ -55,7 +55,7 @@ export default function GameList() {
     <PageShell>
       <PageHeader title={t('games.title')} subtitle={t('games.subtitle')}
         actions={
-          <Button className="h-8 text-[12px] gap-1.5 shadow-sm">
+          <Button className="h-8 text-caption gap-1.5 shadow-sm rounded-lg">
             <Plus className="h-3.5 w-3.5" /> {t('games.createSession')}
           </Button>
         }
@@ -79,12 +79,12 @@ export default function GameList() {
                     <MessageSquare className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-foreground truncate">{session.game_type_name}</p>
-                    <p className="text-[11px] text-muted-foreground">{session.event_title} · {t('games.round')} {session.current_round}</p>
+                    <p className="text-body-sm font-medium text-foreground truncate">{session.game_type_name}</p>
+                    <p className="text-caption text-muted-foreground">{session.event_title} · {t('games.round')} {session.current_round}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Badge variant="outline" className={cn('text-[10px] border', statusStyle(session.status))}>
+                  <Badge variant="outline" className={cn('text-label-xs border', statusStyle(session.status))}>
                     {t(`games.statuses.${session.status}`, { defaultValue: session.status })}
                   </Badge>
                   <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
@@ -97,11 +97,11 @@ export default function GameList() {
 
       <Tabs value={filters.category} onValueChange={v => setFilters(f => ({ ...f, category: v }))}>
         <TabsList className="h-9">
-          <TabsTrigger value="all" className="text-[12px] h-7">{t('common.all')}</TabsTrigger>
-          <TabsTrigger value="icebreaker" className="text-[12px] h-7">{t('games.categories.icebreaker')}</TabsTrigger>
-          <TabsTrigger value="connection" className="text-[12px] h-7">{t('games.categories.connection')}</TabsTrigger>
-          <TabsTrigger value="wellness" className="text-[12px] h-7">{t('games.categories.wellness')}</TabsTrigger>
-          <TabsTrigger value="competition" className="text-[12px] h-7">{t('games.categories.competition')}</TabsTrigger>
+          <TabsTrigger value="all" className="text-caption h-7">{t('common.all')}</TabsTrigger>
+          <TabsTrigger value="icebreaker" className="text-caption h-7">{t('games.categories.icebreaker')}</TabsTrigger>
+          <TabsTrigger value="connection" className="text-caption h-7">{t('games.categories.connection')}</TabsTrigger>
+          <TabsTrigger value="wellness" className="text-caption h-7">{t('games.categories.wellness')}</TabsTrigger>
+          <TabsTrigger value="competition" className="text-caption h-7">{t('games.categories.competition')}</TabsTrigger>
         </TabsList>
       </Tabs>
 

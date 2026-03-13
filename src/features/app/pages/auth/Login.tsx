@@ -68,8 +68,8 @@ export default function Login() {
       </div>
 
       <div className="space-y-1.5">
-        <h1 className="text-[22px] font-bold text-foreground tracking-tight">{t('auth.loginTitle')}</h1>
-        <p className="text-[13px] text-muted-foreground leading-relaxed">{t('auth.loginSubtitle')}</p>
+        <h1 className="text-page-title text-foreground">{t('auth.loginTitle')}</h1>
+        <p className="text-body-sm text-muted-foreground leading-relaxed">{t('auth.loginSubtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,22 +77,22 @@ export default function Login() {
         {error && <AlertBanner type="error" message={error} onClose={() => setError('')} />}
 
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-[13px] font-medium">{t('auth.email')}</Label>
+          <Label htmlFor="email" className="text-body-sm font-medium">{t('auth.email')}</Label>
           <Input
             id="email" type="email" placeholder="you@company.com" value={email}
             onChange={e => setEmail(e.target.value)}
-            className="h-11 text-[13px] rounded-xl bg-background border-input focus-visible:ring-primary/30"
+            className="h-11 text-body-sm rounded-xl bg-background border-input focus-visible:ring-primary/30"
             autoFocus
           />
         </div>
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-[13px] font-medium">{t('auth.password')}</Label>
+            <Label htmlFor="password" className="text-body-sm font-medium">{t('auth.password')}</Label>
             <button
               type="button"
               onClick={() => switchView('forgot')}
-              className="text-[12px] text-primary hover:underline font-medium transition-colors"
+              className="text-caption text-primary hover:underline font-medium transition-colors"
             >
               {t('auth.forgotPassword')}
             </button>
@@ -100,13 +100,13 @@ export default function Login() {
           <PasswordInput
             id="password" placeholder="••••••••" value={password}
             onChange={e => setPassword(e.target.value)}
-            className="h-11 text-[13px] rounded-xl"
+            className="h-11 text-body-sm rounded-xl"
           />
         </div>
 
         <LoadingButton
           type="submit" loading={isLoading}
-          className="w-full h-11 text-[13px] gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
+          className="w-full h-11 text-body-sm gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
         >
           {t('auth.login')}
           <ArrowRight className="h-3.5 w-3.5" />
@@ -116,13 +116,13 @@ export default function Login() {
       <div className="relative">
         <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/60" /></div>
         <div className="relative flex justify-center">
-          <span className="bg-background px-3 text-[11px] text-muted-foreground/60 uppercase tracking-wider font-medium">
+          <span className="bg-background px-3 text-label-xs text-muted-foreground/60 uppercase tracking-wider font-medium">
             {t('auth.or')}
           </span>
         </div>
       </div>
 
-      <p className="text-center text-[13px] text-muted-foreground">
+      <p className="text-center text-body-sm text-muted-foreground">
         {t('auth.noAccount')}{' '}
         <button
           type="button"

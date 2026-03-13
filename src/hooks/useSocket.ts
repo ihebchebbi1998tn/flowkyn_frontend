@@ -7,6 +7,8 @@ import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://api.flowkyn.com';
 
+type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
 interface UseSocketOptions {
   namespace: string;
   autoConnect?: boolean;
@@ -19,6 +21,7 @@ interface UseSocketOptions {
 export function useSocket({ namespace, autoConnect = true, eventId, onConnect, onDisconnect, onError }: UseSocketOptions) {
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [status, setStatus] = useState<ConnectionStatus>('disconnected');
 
   // Store callbacks in refs to avoid reconnect loops
   const onConnectRef = useRef(onConnect);
@@ -38,6 +41,8 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
       socketRef.current.disconnect();
     }
 
+    setStatus(prev => (prev === 'disconnected' ? 'connecting' : 'reconnecting'));
+
     const socket = io(`${SOCKET_URL}${namespace}`, {
       auth: (cb) => {
         // Fetch fresh token at the exact moment of connection/reconnection
@@ -54,12 +59,29 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
 
     socket.on('connect', () => {
       setIsConnected(true);
+      setStatus('connected');
       onConnectRef.current?.();
     });
 
     socket.on('disconnect', (reason) => {
       setIsConnected(false);
+      // Socket.io will attempt to reconnect automatically unless we explicitly called disconnect,
+      // but from the client's perspective we can treat this as either reconnecting or disconnected.
+      // We'll optimistically assume reconnection will be attempted.
+      setStatus('reconnecting');
       onDisconnectRef.current?.(reason);
+    });
+
+    socket.io.on('reconnect_attempt', () => {
+      setStatus('reconnecting');
+    });
+
+    socket.io.on('reconnect_error', () => {
+      setStatus('reconnecting');
+    });
+
+    socket.io.on('reconnect_failed', () => {
+      setStatus('disconnected');
     });
 
     socket.on('error', (data: { message: string; code?: string }) => {
@@ -68,8 +90,11 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
 
     socket.on('connect_error', (err) => {
       console.warn(`[Socket ${namespace}] Connection error:`, err.message);
+      setIsConnected(false);
+      setStatus('reconnecting');
       if (err.message.includes('Authentication') || err.message.includes('token')) {
         socket.disconnect();
+        setStatus('disconnected');
       }
     });
 
@@ -80,6 +105,7 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
     socketRef.current?.disconnect();
     socketRef.current = null;
     setIsConnected(false);
+    setStatus('disconnected');
   }, []);
 
   const emit = useCallback(<T = any>(event: string, data?: any): Promise<T | void> => {
@@ -124,7 +150,7 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
     };
   }, [autoConnect, connect]);
 
-  return { socket: socketRef.current, isConnected, connect, disconnect, emit, on, off };
+  return { socket: socketRef.current, isConnected, status, connect, disconnect, emit, on, off };
 }
 
 // ─── Convenience hooks for each namespace ───
