@@ -122,7 +122,12 @@ function GamePlayWithoutBoundary() {
   const eventsSocket = useEventsSocket({
     onConnect: () => {
       if (eventId) {
-        eventsSocket.emit('event:join', { eventId });
+        // Emit event:join and wait for acknowledgment
+        eventsSocket.emit('event:join', { eventId })
+          .catch(err => {
+            console.error('[GamePlay] Failed to join event room:', err.message);
+            // Show error to user if needed
+          });
       }
     },
   });
@@ -132,9 +137,15 @@ function GamePlayWithoutBoundary() {
   liveMessagesRef.current = liveMessages;
 
   useEffect(() => {
-    if (!eventsSocket.isConnected) return;
+    if (!eventsSocket.isConnected) {
+      console.log('[GamePlay] Chat listener: socket not connected');
+      return;
+    }
+
+    console.log('[GamePlay] Setting up chat message listener for eventId:', eventId);
 
     const handleChatMessage = (data: any) => {
+      console.log('[GamePlay] Received chat message:', data);
       const name = data.senderName || 'Player';
       const msg: ChatMessage = {
         id: data.id || `ws-${crypto.randomUUID()}`,
@@ -152,7 +163,7 @@ function GamePlayWithoutBoundary() {
 
     const unsub = eventsSocket.on('chat:message', handleChatMessage);
     return unsub;
-  }, [eventsSocket.isConnected, currentUserId]);
+  }, [eventsSocket.isConnected, currentUserId, eventId]); // Added eventId to deps
 
   // Cleanup: leave event room on unmount
   useEffect(() => {
@@ -189,8 +200,13 @@ function GamePlayWithoutBoundary() {
   // ─── Send message via WebSocket ────────────────────────────────────────────
   const handleSendMessage = useCallback((message: string) => {
     if (eventsSocket.isConnected && eventId) {
-      eventsSocket.emit('chat:message', { eventId, message });
+      console.log('[GamePlay] Sending message to eventId:', eventId, 'message:', message);
+      eventsSocket.emit('chat:message', { eventId, message })
+        .catch(err => {
+          console.error('[GamePlay] Failed to send message:', err.message);
+        });
     } else {
+      console.warn('[GamePlay] Socket not connected, using fallback local message');
       // Fallback: optimistic local message
       const newMsg: ChatMessage = {
         id: `local-${crypto.randomUUID()}`,
