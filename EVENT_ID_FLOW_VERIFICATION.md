@@ -5,7 +5,7 @@ This document verifies that all users (authenticated & guests) who join or are i
 ## Complete User Journey Flows
 
 ### Flow 1: Email Invitation → Join Event
-
+k
 ```
 1. EVENT CREATOR sends invite via EventDetail.tsx
    ↓
