@@ -22,7 +22,7 @@ export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const { switchView } = useAuthSwitch();
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '', orgName: '' });
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -114,16 +114,6 @@ export default function Register() {
           <PasswordInput
             className="h-11 text-[13px] rounded-xl"
             value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label className="text-[13px] font-medium">
-            {t('auth.orgName')} <span className="text-muted-foreground font-normal">({t('auth.optional')})</span>
-          </Label>
-          <Input
-            className="h-11 text-[13px] rounded-xl"
-            value={form.orgName} onChange={e => update('orgName', e.target.value)}
           />
         </div>
 
