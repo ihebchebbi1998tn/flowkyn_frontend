@@ -3,13 +3,13 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Search, MoreHorizontal, Ban, Trash2, Eye, CheckCircle, Users } from 'lucide-react';
+import { Search, MoreHorizontal, Ban, Trash2, Eye, CheckCircle, Users, Building } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { PageHeader } from '@/components/common/PageHeader';
-import { TableSkeleton } from '@/components/loading/Skeletons';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
@@ -94,7 +94,7 @@ export default function AdminUsers() {
 
       {/* Table */}
       {loading ? (
-        <TableSkeleton rows={5} cols={5} />
+        <div className="py-20 flex justify-center"><LogoLoader size="md" /></div>
       ) : users.length === 0 ? (
         <div className="rounded-lg border border-border bg-card p-12 text-center">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted mx-auto mb-3">
@@ -109,7 +109,7 @@ export default function AdminUsers() {
             <table className="w-full text-body-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/30">
-                  <th className="text-left font-semibold px-4 py-3 text-muted-foreground">User</th>
+                  <th className="text-left font-semibold px-4 py-3 text-muted-foreground w-[300px]">User & Company</th>
                   <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden md:table-cell">Language</th>
                   <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden lg:table-cell">Joined</th>
                   <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden sm:table-cell">Updated</th>
@@ -130,6 +130,11 @@ export default function AdminUsers() {
                         <div className="min-w-0">
                           <p className="font-medium text-foreground truncate">{user.name}</p>
                           <p className="text-label text-muted-foreground truncate">{user.email}</p>
+                          {user.organization_name && (
+                            <p className="text-[11px] font-medium text-primary mt-0.5 truncate flex items-center gap-1">
+                              <Building className="h-3 w-3" /> {user.organization_name}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </td>

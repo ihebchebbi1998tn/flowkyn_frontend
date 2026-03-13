@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { adminApi, type AuditLogEntry } from '@/features/admin/api/admin';
 import { PageHeader } from '@/components/common/PageHeader';
-import { TableSkeleton } from '@/components/loading/Skeletons';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 import { toast } from 'sonner';
 
 // ─── Action Categories & Colors ──────────────────────────────────────────────
@@ -318,7 +318,7 @@ export default function AdminAuditLogs() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6}><TableSkeleton rows={10} cols={6} /></td></tr>
+                <tr><td colSpan={6}><div className="py-20 flex justify-center"><LogoLoader size="md" /></div></td></tr>
               ) : (
                 filtered.map(log => {
                   const isExpanded = expandedId === log.id;
@@ -353,7 +353,11 @@ export default function AdminAuditLogs() {
                           </Badge>
                         </td>
                         <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
-                          {log.organization_name || '—'}
+                          {log.organization_name ? (
+                            <div className="flex items-center gap-1.5 p-1 px-2 border border-border rounded w-max bg-card/50">
+                               <span className="text-[12px] font-medium text-foreground">{log.organization_name}</span>
+                            </div>
+                          ) : '—'}
                         </td>
                         <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell max-w-[250px] truncate text-[12px]">
                           {metaItems.slice(0, 2).map(m => `${m.key}: ${m.value}`).join(' · ') || '—'}

@@ -20,7 +20,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import { PageHeader } from '@/components/common/PageHeader';
 import { StatCard } from '@/components/cards/StatCard';
-import { TableSkeleton } from '@/components/loading/Skeletons';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 import { adminApi, type BugReportEntry, type BugReportStats } from '@/features/admin/api/admin';
 import { toast } from 'sonner';
 import { BarChart3, AlertTriangle, Clock, CheckCircle, XCircle } from 'lucide-react';
@@ -123,7 +123,7 @@ export default function AdminTickets() {
     return (
       <div className="space-y-6">
         <PageHeader title="Ticket Management" subtitle="Manage all bug reports and feature requests" />
-        <TableSkeleton />
+        <div className="py-20 flex justify-center"><LogoLoader size="md" /></div>
       </div>
     );
   }

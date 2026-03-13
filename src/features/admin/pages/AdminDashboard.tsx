@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Users, Building2, Gamepad2, Activity, TrendingUp, UserPlus } from 'lucide-react';
 import { StatCard, InfoCard } from '@/components/cards/StatCard';
 import { PageHeader } from '@/components/common/PageHeader';
-import { StatCardSkeleton, ChartCardSkeleton } from '@/components/loading/Skeletons';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 import { adminApi, type AdminStats, type AuditLogEntry } from '@/api/admin';
 
 export default function AdminDashboard() {
@@ -37,9 +37,7 @@ export default function AdminDashboard() {
     return (
       <div className="space-y-6">
         <PageHeader title="Admin Dashboard" subtitle="Loading platform data..." />
-        <StatCardSkeleton count={4} />
-        <StatCardSkeleton count={3} />
-        <ChartCardSkeleton height={200} />
+        <div className="py-20 flex justify-center"><LogoLoader size="md" /></div>
       </div>
     );
   }

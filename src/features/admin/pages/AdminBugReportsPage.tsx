@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  AlertCircle, Search, Filter, Loader, CheckCircle, Clock, Trash2,
-  BarChart3, TrendingUp, Edit2
+  AlertCircle, Search, Filter, CheckCircle, Clock, Trash2,
+  BarChart3, TrendingUp, Edit2, Loader2
 } from 'lucide-react';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 import { bugReportsApi } from '@/features/app/api/bugReports';
 
 type StatusFilter = 'all' | 'open' | 'in_progress' | 'resolved' | 'closed';
@@ -300,8 +301,8 @@ export const AdminBugReportsPage: React.FC = () => {
         {/* Reports Table */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader className="w-8 h-8 text-gray-400 animate-spin" />
+            <div className="flex items-center justify-center py-20">
+              <LogoLoader size="md" />
             </div>
           ) : reports.length === 0 ? (
             <div className="py-12 text-center">
@@ -480,7 +481,7 @@ export const AdminBugReportsPage: React.FC = () => {
                 >
                   {updatingReportId === selectedReport.id ? (
                     <>
-                      <Loader className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                       {t('bugReports.updating')}
                     </>
                   ) : (

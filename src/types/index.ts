@@ -8,6 +8,9 @@ export interface User {
   language: string;
   status: 'pending' | 'active' | 'suspended';
   onboarding_completed: boolean;
+  // Joined from admin list
+  organization_name?: string;
+  organization_id?: string;
   created_at: string;
   updated_at: string;
 }
