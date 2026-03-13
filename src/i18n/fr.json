@@ -477,7 +477,23 @@
     "active": "Actif",
     "emailPlaceholder": "collegue@entreprise.com",
     "emailPlaceholderGuest": "vous@email.com",
-    "invalidEmail": "Veuillez entrer une adresse e-mail valide"
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "pause": "Pause",
+    "stop": "Arrêter",
+    "delete": "Supprimer",
+    "pauseEvent": "Mettre l'événement en pause",
+    "pauseEventDescription": "Mettez cet événement en pause temporairement. Les participants peuvent toujours le consulter, mais aucune nouvelle activité ne démarrera.",
+    "stopEvent": "Arrêter l'événement",
+    "stopEventDescription": "Arrêtez cet événement immédiatement. Il sera marqué comme terminé et les participants ne pourront plus rejoindre.",
+    "deleteEvent": "Supprimer l'événement",
+    "deleteEventDescription": "Supprimez définitivement cet événement et toutes les données connexes. Cette action ne peut pas être annulée.",
+    "status": {
+      "draft": "Brouillon",
+      "active": "Actif",
+      "paused": "En pause",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    }
   },
   "profileSetup": {
     "chooseIdentity": "Choisissez votre identité",

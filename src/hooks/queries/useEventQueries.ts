@@ -181,3 +181,45 @@ export function useValidateEventToken(eventId: string, token: string) {
     enabled: !!eventId && !!token,
   });
 }
+
+export function usePauseEvent() {
+  const queryClient = useQueryClient();
+  const { showError } = useApiError();
+
+  return useMutation({
+    mutationFn: (eventId: string) => eventsApi.update(eventId, { status: 'paused' }),
+    onSuccess: (_, eventId) => {
+      queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
+      toast.success('Event paused');
+    },
+    onError: (err) => showError(err),
+  });
+}
+
+export function useStopEvent() {
+  const queryClient = useQueryClient();
+  const { showError } = useApiError();
+
+  return useMutation({
+    mutationFn: (eventId: string) => eventsApi.update(eventId, { status: 'completed' }),
+    onSuccess: (_, eventId) => {
+      queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
+      toast.success('Event stopped');
+    },
+    onError: (err) => showError(err),
+  });
+}
+
+export function useCancelEvent() {
+  const queryClient = useQueryClient();
+  const { showError } = useApiError();
+
+  return useMutation({
+    mutationFn: (eventId: string) => eventsApi.update(eventId, { status: 'cancelled' }),
+    onSuccess: (_, eventId) => {
+      queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
+      toast.success('Event cancelled');
+    },
+    onError: (err) => showError(err),
+  });
+}

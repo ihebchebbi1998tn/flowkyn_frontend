@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, Users, Globe, Clock, Loader2, Mail, Send, Copy, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, Globe, Clock, Loader2, Mail, Send, Copy, CheckCircle, Pause, Square, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { DataTable, type Column } from '@/components/tables/DataTable';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { useEvent, useEventParticipants, useJoinEvent, useInviteToEvent } from '@/hooks/queries';
+import { useEvent, useEventParticipants, useJoinEvent, useInviteToEvent, usePauseEvent, useStopEvent, useDeleteEvent } from '@/hooks/queries';
 import { ErrorState } from '@/components/common/ErrorState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ROUTES } from '@/constants/routes';
@@ -127,6 +127,51 @@ function InviteDialog({ eventId }: { eventId: string }) {
   );
 }
 
+function ActionConfirmDialog({ 
+  open, 
+  onOpenChange, 
+  onConfirm, 
+  isLoading, 
+  title, 
+  description,
+  confirmText,
+  isDangerous = false,
+}: { 
+  open: boolean; 
+  onOpenChange: (open: boolean) => void; 
+  onConfirm: () => void; 
+  isLoading: boolean; 
+  title: string;
+  description: string;
+  confirmText: string;
+  isDangerous?: boolean;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="text-[16px]">{title}</DialogTitle>
+        </DialogHeader>
+        <p className="text-[13px] text-muted-foreground">{description}</p>
+        <div className="flex gap-2 justify-end pt-4">
+          <Button variant="outline" className="h-8 sm:h-9 text-[12px]" onClick={() => onOpenChange(false)} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button 
+            variant={isDangerous ? 'destructive' : 'default'} 
+            className="h-8 sm:h-9 text-[12px]" 
+            onClick={onConfirm} 
+            disabled={isLoading}
+          >
+            {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : null}
+            {confirmText}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function EventDetail() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
@@ -136,6 +181,14 @@ export default function EventDetail() {
   const { data: participantsData } = useEventParticipants(id || '');
   const participants = participantsData?.data || [];
   const joinEvent = useJoinEvent();
+  const pauseEvent = usePauseEvent();
+  const stopEvent = useStopEvent();
+  const deleteEvent = useDeleteEvent();
+
+  // State for confirmation dialogs
+  const [pauseConfirm, setPauseConfirm] = useState(false);
+  const [stopConfirm, setStopConfirm] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   if (isLoading) return <EventDetailSkeleton />;
 
@@ -216,14 +269,53 @@ export default function EventDetail() {
     });
   };
 
+  const handlePause = () => {
+    if (!id) return;
+    pauseEvent.mutate(id, {
+      onSuccess: () => {
+        setPauseConfirm(false);
+        trackEvent(TRACK.EVENT_PAUSED, { eventId: id });
+      },
+    });
+  };
+
+  const handleStop = () => {
+    if (!id) return;
+    stopEvent.mutate(id, {
+      onSuccess: () => {
+        setStopConfirm(false);
+        trackEvent(TRACK.EVENT_STOPPED, { eventId: id });
+      },
+    });
+  };
+
+  const handleDelete = () => {
+    if (!id) return;
+    deleteEvent.mutate(id, {
+      onSuccess: () => {
+        trackEvent(TRACK.EVENT_DELETED, { eventId: id });
+        navigate(ROUTES.EVENTS);
+      },
+    });
+  };
+
+  const isEventActive = event.status === 'active' || event.status === 'draft';
+
   return (
     <div className="space-y-4 sm:space-y-6 max-w-[1400px] animate-fade-in">
       <div className="flex items-center gap-2 sm:gap-3">
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(ROUTES.EVENTS)} aria-label={t('common.backToEvents')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="min-w-0">
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">{event.title}</h1>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">{event.title}</h1>
+            {event.status && (
+              <Badge variant={event.status === 'active' ? 'default' : 'secondary'} className="text-[11px]">
+                {t(`events.status.${event.status}`)}
+              </Badge>
+            )}
+          </div>
           <p className="text-[12px] sm:text-[13px] text-muted-foreground">{event.description}</p>
         </div>
       </div>
@@ -259,11 +351,57 @@ export default function EventDetail() {
         <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px]" onClick={() => navigate(ROUTES.EVENT_LOBBY(id))}>
           {t('events.openLobby')}
         </Button>
+        
+        {isEventActive && (
+          <>
+            <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5" onClick={() => setPauseConfirm(true)} disabled={pauseEvent.isPending}>
+              <Pause className="h-3.5 w-3.5" /> {t('events.pause')}
+            </Button>
+            <Button variant="outline" className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5" onClick={() => setStopConfirm(true)} disabled={stopEvent.isPending}>
+              <Square className="h-3.5 w-3.5" /> {t('events.stop')}
+            </Button>
+          </>
+        )}
+        
+        <Button variant="destructive" className="h-8 sm:h-9 text-[12px] sm:text-[13px] gap-1.5" onClick={() => setDeleteConfirm(true)} disabled={deleteEvent.isPending}>
+          <Trash2 className="h-3.5 w-3.5" /> {t('events.delete')}
+        </Button>
       </div>
 
       <InfoCard title={t('events.participants')} gradient="primary">
         <DataTable columns={columns} data={participants} searchable />
       </InfoCard>
+
+      <ActionConfirmDialog
+        open={pauseConfirm}
+        onOpenChange={setPauseConfirm}
+        onConfirm={handlePause}
+        isLoading={pauseEvent.isPending}
+        title={t('events.pauseEvent')}
+        description={t('events.pauseEventDescription')}
+        confirmText={t('events.pause')}
+      />
+
+      <ActionConfirmDialog
+        open={stopConfirm}
+        onOpenChange={setStopConfirm}
+        onConfirm={handleStop}
+        isLoading={stopEvent.isPending}
+        title={t('events.stopEvent')}
+        description={t('events.stopEventDescription')}
+        confirmText={t('events.stop')}
+      />
+
+      <ActionConfirmDialog
+        open={deleteConfirm}
+        onOpenChange={setDeleteConfirm}
+        onConfirm={handleDelete}
+        isLoading={deleteEvent.isPending}
+        title={t('events.deleteEvent')}
+        description={t('events.deleteEventDescription')}
+        confirmText={t('events.delete')}
+        isDangerous
+      />
     </div>
   );
 }

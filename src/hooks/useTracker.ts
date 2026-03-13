@@ -108,6 +108,8 @@ export const TRACK = {
   EVENT_CREATED: 'event_created',
   EVENT_UPDATED: 'event_updated',
   EVENT_DELETED: 'event_deleted',
+  EVENT_PAUSED: 'event_paused',
+  EVENT_STOPPED: 'event_stopped',
   EVENT_JOINED: 'event_joined',
   EVENT_LEFT: 'event_left',
   EVENT_INVITED: 'event_invited',
