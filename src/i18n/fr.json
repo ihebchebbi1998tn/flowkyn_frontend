@@ -761,6 +761,72 @@
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce rapport?",
     "resolutionNotes": "Notes de résolution"
   },
+  "support": {
+    "title": "Aide & Support",
+    "description": "Trouvez des réponses aux questions courantes ou signalez un problème. Nous sommes là pour vous aider!",
+    "searchFAQ": "Rechercher des réponses...",
+    "foundResults": "{{count}} résultat(s) trouvé(s)",
+    "noResultsFound": "Aucun résultat correspondant. Essayez une autre recherche.",
+    "reportIssueTitle": "Signaler un problème",
+    "reportIssueButton": "Signaler un problème",
+    "contactSupport": "Contacter le support",
+    "stillNeedHelp": "Besoin d'aide?",
+    "stillNeedHelpDesc": "Vous ne trouvez pas ce que vous cherchez? Signalez un problème directement ou contactez notre équipe d'assistance.",
+    "card_faq_title": "Questions fréquemment posées",
+    "card_faq_desc": "Parcourez notre FAQ complète pour trouver rapidement des réponses aux questions courantes.",
+    "card_report_title": "Signaler des problèmes",
+    "card_report_desc": "Vous avez trouvé un bug ou une demande de fonctionnalité? Faites-le nous savoir et nous nous en occuperons.",
+    "card_contact_title": "Contacter le support",
+    "card_contact_desc": "Besoin d'aide supplémentaire? Contactez directement notre équipe d'assistance.",
+    "faqTitle": "Questions fréquemment posées",
+    "category_getting_started": "Premiers pas",
+    "category_events": "Événements",
+    "category_activities": "Activités",
+    "category_teams": "Équipes & Organisations",
+    "category_technical": "Support technique",
+    "faq": {
+      "getting_started": {
+        "q1": "Comment créer mon compte?",
+        "a1": "Inscrivez-vous avec votre adresse e-mail et suivez le processus de vérification. Vous pourrez créer votre première organisation immédiatement.",
+        "q2": "Quelle est la différence entre une équipe et une organisation?",
+        "a2": "Une organisation est le conteneur de haut niveau où vous gérez les membres de l'équipe et l'accès. Les équipes sont des groupes au sein de votre organisation pour des projets ou départements spécifiques.",
+        "q3": "Puis-je inviter des personnes dans mon organisation?",
+        "a3": "Oui! Allez dans votre organisation et cliquez sur 'Inviter des membres'. Vous pouvez inviter des membres de l'équipe par e-mail et leur attribuer des rôles spécifiques."
+      },
+      "events": {
+        "q1": "Comment créer un événement?",
+        "a1": "Accédez à Événements et cliquez sur 'Créer un nouvel événement'. Remplissez les détails de l'événement, la date et les activités que vous souhaitez inclure.",
+        "q2": "Puis-je planifier les événements à l'avance?",
+        "a2": "Absolument! Vous pouvez créer des événements et les planifier à n'importe quelle date future. Nous enverrons des rappels aux participants.",
+        "q3": "Comment les participants rejoignent-ils un événement?",
+        "a3": "Les participants peuvent rejoindre via un lien d'invitation, ou vous pouvez leur envoyer une invitation directe par email."
+      },
+      "activities": {
+        "q1": "Quels types d'activités puis-je créer?",
+        "a1": "Vous pouvez créer des quiz, des sondages, des jeux, des chasses au trésor et bien d'autres activités interactives.",
+        "q2": "Les activités peuvent-elles être réutilisées?",
+        "a2": "Oui! Enregistrez les activités en tant que modèles et réutilisez-les dans plusieurs événements. Vous pouvez les personnaliser à chaque fois.",
+        "q3": "Comment voir les résultats des activités?",
+        "a3": "Accédez au tableau de bord analytique de tout événement pour voir les résultats détaillés, les scores des participants et les métriques d'engagement."
+      },
+      "teams": {
+        "q1": "Combien de personnes puis-je ajouter à mon équipe?",
+        "a1": "Il n'y a pas de limite! Ajoutez autant de membres d'équipe que vous le souhaitez. Vous pouvez les organiser en groupes et leur attribuer différents rôles.",
+        "q2": "Quels sont les différents rôles d'utilisateur?",
+        "a2": "Nous avons des rôles Admin (contrôle total), Modérateur (gérer les événements et les participants) et Membre (participant uniquement).",
+        "q3": "Puis-je gérer les permissions des membres de l'équipe?",
+        "a3": "Oui, vous pouvez personnaliser les permissions en fonction des rôles et donner des accès spécifiques aux membres de l'équipe pour certains événements ou fonctionnalités."
+      },
+      "technical": {
+        "q1": "Quels navigateurs Flowkyn supporte-t-il?",
+        "a1": "Nous supportons tous les navigateurs modernes y compris Chrome, Firefox, Safari et Edge. Pour des performances optimales, veuillez mettre à jour votre navigateur.",
+        "q2": "Mes données sont-elles sécurisées sur Flowkyn?",
+        "a2": "Oui! Nous utilisons le chiffrement et les mesures de sécurité standard de l'industrie. Vos données sont protégées et ne sont jamais partagées sans votre consentement.",
+        "q3": "Que dois-je faire si je rencontre un bug?",
+        "a3": "Veuillez utiliser la fonctionnalité 'Signaler un problème' dans notre section support. Incluez autant de détails que possible et notre équipe enquêtera."
+      }
+    }
+  },
   "gameShell": {
     "invite": "Inviter",
     "end": "Fin",

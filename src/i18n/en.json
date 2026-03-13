@@ -777,6 +777,72 @@
     "confirmDelete": "Are you sure you want to delete this report?",
     "resolutionNotes": "Resolution Notes"
   },
+  "support": {
+    "title": "Help & Support",
+    "description": "Find answers to common questions or report an issue. We're here to help!",
+    "searchFAQ": "Search for answers...",
+    "foundResults": "Found {{count}} result(s)",
+    "noResultsFound": "No matching results. Try a different search.",
+    "reportIssueTitle": "Report an Issue",
+    "reportIssueButton": "Report an Issue",
+    "contactSupport": "Contact Support",
+    "stillNeedHelp": "Still Need Help?",
+    "stillNeedHelpDesc": "Can't find what you're looking for? Report an issue directly or reach out to our support team.",
+    "card_faq_title": "Frequently Asked Questions",
+    "card_faq_desc": "Browse our comprehensive FAQ to find quick answers to common questions.",
+    "card_report_title": "Report Issues",
+    "card_report_desc": "Found a bug or have a feature request? Let us know and we'll get it addressed.",
+    "card_contact_title": "Contact Support",
+    "card_contact_desc": "Need further assistance? Contact our support team directly.",
+    "faqTitle": "Frequently Asked Questions",
+    "category_getting_started": "Getting Started",
+    "category_events": "Events",
+    "category_activities": "Activities",
+    "category_teams": "Teams & Organizations",
+    "category_technical": "Technical Support",
+    "faq": {
+      "getting_started": {
+        "q1": "How do I create my account?",
+        "a1": "Sign up with your email address and follow the verification process. You'll be able to create your first organization right away.",
+        "q2": "What's the difference between a team and an organization?",
+        "a2": "An organization is the top-level container where you manage team members and access. Teams are groups within your organization for specific projects or departments.",
+        "q3": "Can I invite people to my organization?",
+        "a3": "Yes! Go to your organization settings and click 'Invite Members'. You can invite team members by email and assign them specific roles."
+      },
+      "events": {
+        "q1": "How do I create an event?",
+        "a1": "Navigate to Events and click 'Create New Event'. Fill in the event details, date, and activities you want to include.",
+        "q2": "Can I schedule events in advance?",
+        "a2": "Absolutely! You can create events and schedule them for any future date. We'll send reminders to participants.",
+        "q3": "How do participants join an event?",
+        "a3": "Participants can join through an invite link, or you can send them a direct invitation via email."
+      },
+      "activities": {
+        "q1": "What types of activities can I create?",
+        "a1": "You can create quizzes, surveys, games, scavenger hunts, and many more interactive activities.",
+        "q2": "Can activities be reused?",
+        "a2": "Yes! Save activities as templates and reuse them in multiple events. You can customize them each time.",
+        "q3": "How do I see activity results?",
+        "a3": "Access the analytics dashboard for any event to see detailed results, participant scores, and engagement metrics."
+      },
+      "teams": {
+        "q1": "How many people can I add to my team?",
+        "a1": "There's no limit! Add as many team members as you need. You can organize them into groups and assign different roles.",
+        "q2": "What are the different user roles?",
+        "a2": "We have Admin (full control), Moderator (manage events and participants), and Member (participant only) roles.",
+        "q3": "Can I manage permissions for team members?",
+        "a3": "Yes, you can customize permissions based on roles and give specific team members access to certain events or features."
+      },
+      "technical": {
+        "q1": "What browsers does Flowkyn support?",
+        "a1": "We support all modern browsers including Chrome, Firefox, Safari, and Edge. For best performance, please keep your browser updated.",
+        "q2": "Is my data secure on Flowkyn?",
+        "a2": "Yes! We use industry-standard encryption and security measures. Your data is protected and never shared without your consent.",
+        "q3": "What should I do if I encounter a bug?",
+        "a3": "Please use the 'Report an Issue' feature in our support section. Include as much detail as possible, and our team will investigate."
+      }
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome back",

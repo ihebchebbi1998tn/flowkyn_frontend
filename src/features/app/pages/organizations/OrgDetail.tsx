@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Crown, UserPlus, Mail, MoreHorizontal, Shield, Camera, ImagePlus, Loader2 } from 'lucide-react';
 import { DataTable, type Column } from '@/components/tables/DataTable';
@@ -15,7 +14,7 @@ import { PageShell, PageHeader, DashStat, ChartCard } from '@/features/app/compo
 import { TableSkeleton, StatCardSkeleton } from '@/components/loading/Skeletons';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useOrganization, useOrgMembers, useInviteOrgMember, useRemoveOrgMember, useUploadOrgLogo } from '@/hooks/queries';
+import { useMyOrganization, useOrgMembers, useInviteOrgMember, useRemoveOrgMember, useUploadOrgLogo } from '@/hooks/queries';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import type { OrgMember } from '@/types';
 
@@ -28,15 +27,15 @@ const roleStyle: Record<string, { bg: string; text: string; border: string }> = 
 
 export default function OrgDetail() {
   const { t } = useTranslation();
-  const { id: orgId } = useParams<{ id: string }>();
   const [showInvite, setShowInvite] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('member');
   const [removeTarget, setRemoveTarget] = useState<OrgMember | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { data: org, isLoading: orgLoading } = useOrganization(orgId || '');
-  const { data: members, isLoading: membersLoading } = useOrgMembers(orgId || '');
+  const { data: org, isLoading: orgLoading } = useMyOrganization();
+  const orgId = org?.id || '';
+  const { data: members, isLoading: membersLoading } = useOrgMembers(orgId);
   const inviteMember = useInviteOrgMember();
   const removeMember = useRemoveOrgMember();
   const uploadLogo = useUploadOrgLogo();

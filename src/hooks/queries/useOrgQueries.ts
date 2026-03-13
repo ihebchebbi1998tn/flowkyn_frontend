@@ -9,6 +9,13 @@ export const orgKeys = {
   members: (id: string) => ['organizations', id, 'members'] as const,
 };
 
+export function useMyOrganization() {
+  return useQuery({
+    queryKey: orgKeys.detail('current'),
+    queryFn: () => organizationsApi.getCurrent(),
+  });
+}
+
 export function useOrganization(id: string) {
   return useQuery({
     queryKey: orgKeys.detail(id),

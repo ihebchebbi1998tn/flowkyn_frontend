@@ -23,6 +23,10 @@ export const organizationsApi = {
   create: (data: { name: string; description?: string; industry?: string; company_size?: string; goals?: string[] }) =>
     api.post<Organization>('/organizations', data),
 
+  /** Get the current user's primary organization */
+  getCurrent: () =>
+    api.get<Organization>('/organizations/current'),
+
   /** Get organization details by ID */
   getById: (orgId: string) =>
     api.get<Organization>(`/organizations/${orgId}`),

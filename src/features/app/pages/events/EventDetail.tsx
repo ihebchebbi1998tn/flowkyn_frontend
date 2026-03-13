@@ -68,6 +68,10 @@ function InviteDialog({ eventId }: { eventId: string }) {
           setEmail('');
           setOpen(false);
         },
+        onError: (err) => {
+          // Component-level error handler to log the error
+          console.error('Invite error:', err);
+        },
       }
     );
   };

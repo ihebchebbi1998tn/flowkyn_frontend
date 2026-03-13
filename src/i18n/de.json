@@ -761,6 +761,72 @@
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Bericht löschen möchten?",
     "resolutionNotes": "Lösungsnotizen"
   },
+  "support": {
+    "title": "Hilfe & Support",
+    "description": "Finden Sie Antworten auf häufig gestellte Fragen oder melden Sie ein Problem. Wir helfen Ihnen gerne weiter!",
+    "searchFAQ": "Nach Antworten suchen...",
+    "foundResults": "{{count}} Ergebnis(se) gefunden",
+    "noResultsFound": "Keine passenden Ergebnisse. Versuchen Sie eine andere Suche.",
+    "reportIssueTitle": "Ein Problem melden",
+    "reportIssueButton": "Problem melden",
+    "contactSupport": "Support kontaktieren",
+    "stillNeedHelp": "Brauchen Sie noch Hilfe?",
+    "stillNeedHelpDesc": "Können Sie nicht finden, was Sie suchen? Melden Sie ein Problem direkt oder kontaktieren Sie unser Support-Team.",
+    "card_faq_title": "Häufig gestellte Fragen",
+    "card_faq_desc": "Durchsuchen Sie unsere umfassende FAQ, um schnell Antworten auf häufig gestellte Fragen zu finden.",
+    "card_report_title": "Probleme melden",
+    "card_report_desc": "Haben Sie einen Bug gefunden oder eine Funktionsanfrage? Teilen Sie uns dies mit und wir kümmern uns darum.",
+    "card_contact_title": "Support kontaktieren",
+    "card_contact_desc": "Benötigen Sie weitere Hilfe? Kontaktieren Sie unser Support-Team direkt.",
+    "faqTitle": "Häufig gestellte Fragen",
+    "category_getting_started": "Erste Schritte",
+    "category_events": "Veranstaltungen",
+    "category_activities": "Aktivitäten",
+    "category_teams": "Teams & Organisationen",
+    "category_technical": "Technischer Support",
+    "faq": {
+      "getting_started": {
+        "q1": "Wie erstelle ich mein Konto?",
+        "a1": "Melden Sie sich mit Ihrer E-Mail-Adresse an und folgen Sie dem Verifizierungsvorgang. Sie können sofort Ihre erste Organisation erstellen.",
+        "q2": "Was ist der Unterschied zwischen einem Team und einer Organisation?",
+        "a2": "Eine Organisation ist der übergeordnete Container, in dem Sie Mitglieder und Zugriff verwalten. Teams sind Gruppen innerhalb Ihrer Organisation für bestimmte Projekte oder Abteilungen.",
+        "q3": "Kann ich Personen in meine Organisation einladen?",
+        "a3": "Ja! Gehen Sie zu Ihren Organisationseinstellungen und klicken Sie auf 'Mitglieder einladen'. Sie können Teamkollegen per E-Mail einladen und ihnen bestimmte Rollen zuweisen."
+      },
+      "events": {
+        "q1": "Wie erstelle ich eine Veranstaltung?",
+        "a1": "Navigieren Sie zu Ereignissen und klicken Sie auf 'Neue Veranstaltung erstellen'. Geben Sie die Details der Veranstaltung, das Datum und die gewünschten Aktivitäten ein.",
+        "q2": "Kann ich Veranstaltungen im Voraus planen?",
+        "a2": "Absolut! Sie können Veranstaltungen erstellen und sie für ein beliebiges zukünftiges Datum planen. Wir senden Erinnerungen an die Teilnehmer.",
+        "q3": "Wie treten Teilnehmer einer Veranstaltung bei?",
+        "a3": "Teilnehmer können über einen Einladungslink beitreten, oder Sie senden ihnen eine direkte Einladung per E-Mail."
+      },
+      "activities": {
+        "q1": "Welche Arten von Aktivitäten kann ich erstellen?",
+        "a1": "Sie können Quizze, Umfragen, Spiele, Schnitzeljagden und viele weitere interaktive Aktivitäten erstellen.",
+        "q2": "Können Aktivitäten wiederverwendet werden?",
+        "a2": "Ja! Speichern Sie Aktivitäten als Vorlagen und verwenden Sie sie in mehreren Veranstaltungen. Sie können sie jedes Mal anpassen.",
+        "q3": "Wie kann ich Aktivitätsergebnisse sehen?",
+        "a3": "Greifen Sie auf das Analysedashboard einer Veranstaltung zu, um detaillierte Ergebnisse, Teilnehmerergebnisse und Engagement-Metriken anzuzeigen."
+      },
+      "teams": {
+        "q1": "Wie viele Personen kann ich zu meinem Team hinzufügen?",
+        "a1": "Es gibt keine Begrenzung! Fügen Sie so viele Teamkollegen wie nötig hinzu. Sie können sie in Gruppen organisieren und unterschiedliche Rollen zuweisen.",
+        "q2": "Welche verschiedenen Benutzerrollen gibt es?",
+        "a2": "Wir haben Admin-Rollen (vollständige Kontrolle), Moderator (Verwaltung von Veranstaltungen und Teilnehmern) und Member (nur Teilnehmer).",
+        "q3": "Kann ich Berechtigungen für Mitglieder verwalten?",
+        "a3": "Ja, Sie können Berechtigungen basierend auf Rollen anpassen und bestimmten Teamkollegen Zugriff auf bestimmte Veranstaltungen oder Funktionen geben."
+      },
+      "technical": {
+        "q1": "Welche Browser unterstützt Flowkyn?",
+        "a1": "Wir unterstützen alle modernen Browser, einschließlich Chrome, Firefox, Safari und Edge. Halten Sie Ihren Browser für optimale Leistung aktualisiert.",
+        "q2": "Sind meine Daten auf Flowkyn sicher?",
+        "a2": "Ja! Wir verwenden Verschlüsselung nach Industriestandard und Sicherheitsmaßnahmen. Ihre Daten sind geschützt und werden niemals ohne Ihre Zustimmung weitergegeben.",
+        "q3": "Was sollte ich tun, wenn ich auf einen Bug stoße?",
+        "a3": "Bitte verwenden Sie die Funktion 'Problem melden' in unserem Support-Bereich. Geben Sie so viele Details wie möglich an und unser Team wird der Angelegenheit nachgehen."
+      }
+    }
+  },
   "gameShell": {
     "invite": "Einladen",
     "end": "Beenden",
