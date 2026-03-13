@@ -132,6 +132,10 @@ export default function Onboarding() {
         await organizationsApi.uploadLogo(org.id, data.logoFile);
       }
 
+      // 2b. Fetch latest org data to ensure logo_url is up-to-date
+      const latestOrg = await organizationsApi.getById(org.id);
+      // Optionally update local state if needed (not strictly required for redirect)
+
       // 3. Send team invitations (if provided)
       if (data.teamInvites.length > 0) {
         try {
