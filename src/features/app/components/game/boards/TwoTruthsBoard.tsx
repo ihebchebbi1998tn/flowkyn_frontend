@@ -10,14 +10,19 @@ import {
   TwoTruthsRevealSection,
 } from './TwoTruthsSections';
 
-interface Statement {
-  id: string;
-  text: string;
-  authorId: string;
-  authorName: string;
-  authorAvatar: string;
-  isLie?: boolean;
-}
+type TwoTruthsSnapshot = {
+  kind: 'two-truths';
+  phase: GamePhase;
+  round: number;
+  totalRounds: number;
+  presenterParticipantId: string | null;
+  statements: { id: 's0' | 's1' | 's2'; text: string }[] | null;
+  votes: Record<string, 's0' | 's1' | 's2'>;
+  revealedLie: 's0' | 's1' | 's2' | null;
+  scores?: Record<string, number>;
+  submitEndsAt?: string;
+  voteEndsAt?: string;
+};
 
 export interface TwoTruthsBoardProps {
   onRoundComplete?: (roundNumber: number) => void;
@@ -25,92 +30,123 @@ export interface TwoTruthsBoardProps {
   currentUserId: string;
   currentUserName: string;
   currentUserAvatar: string;
+  sessionId: string | null;
+  activeRoundId: string | null;
+  initialSnapshot?: any;
+  onEmitAction: (actionType: string, payload?: any) => Promise<void>;
+  gameData?: any;
 }
 
-export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, currentUserName, currentUserAvatar }: TwoTruthsBoardProps) {
+export function TwoTruthsBoard({
+  onRoundComplete,
+  participants,
+  currentUserId,
+  currentUserName,
+  currentUserAvatar,
+  sessionId,
+  activeRoundId,
+  initialSnapshot,
+  onEmitAction,
+  gameData,
+}: TwoTruthsBoardProps) {
   const { t } = useTranslation();
-  const [phase, setPhase] = useState<GamePhase>('waiting');
-  const [round, setRound] = useState(1);
-  const totalRounds = 4;
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [statements, setStatements] = useState(['', '', '']);
-  const [submitted, setSubmitted] = useState(false);
-  const [selectedVote, setSelectedVote] = useState<string | null>(null);
-  const [voted, setVoted] = useState(false);
-  const [revealedLie, setRevealedLie] = useState<string | null>(null);
+  const snapshot: TwoTruthsSnapshot | null = (gameData?.kind === 'two-truths'
+    ? gameData
+    : (initialSnapshot?.kind === 'two-truths' ? initialSnapshot : null)) as any;
+
+  const phase: GamePhase = (snapshot?.phase || 'waiting') as any;
+  const round = snapshot?.round || 1;
+  const totalRounds = snapshot?.totalRounds || 4;
+  const presenterId = snapshot?.presenterParticipantId || null;
+  const isPresenter = !!presenterId && presenterId === currentUserId;
+  const statements = snapshot?.statements || null;
+  const votes = snapshot?.votes || {};
+  const revealedLie = snapshot?.revealedLie || null;
+  const scores = snapshot?.scores || {};
+  const submitEndsAt = snapshot?.submitEndsAt || null;
+  const voteEndsAt = snapshot?.voteEndsAt || null;
+
+  const [localStatements, setLocalStatements] = useState(['', '', '']);
+  const [selectedVote, setSelectedVote] = useState<'s0' | 's1' | 's2' | null>(null);
+  const voted = !!votes[currentUserId];
   const [showCountdown, setShowCountdown] = useState(false);
 
-  const [showDrumroll, setShowDrumroll] = useState(false);
-
-  const handleSubmit = useCallback(() => {
-    setSubmitted(true);
-    setTimeout(() => { setPhase('vote'); setTimeLeft(20); }, 1500);
-  }, []);
-
-  const handleVote = useCallback(() => {
-    setVoted(true);
-    setTimeout(() => { 
-      setPhase('reveal'); 
-      setShowDrumroll(true);
-      setTimeout(() => {
-        setRevealedLie('s2'); 
-        setShowDrumroll(false);
-      }, 3500); // 3.5s dramatic delay
-    }, 1500);
-  }, []);
-
-  useEffect(() => {
-    if ((phase === 'submit' || phase === 'vote') && timeLeft > 0) {
-      const t = setTimeout(() => setTimeLeft(tl => tl - 1), 1000);
-      return () => clearTimeout(t);
-    }
-    if (timeLeft === 0 && phase === 'submit' && !submitted) handleSubmit();
-    if (timeLeft === 0 && phase === 'vote' && !voted) handleVote();
-  }, [phase, timeLeft, submitted, voted, handleSubmit, handleVote]);
-
-  const handleNextRound = () => {
-    if (round >= totalRounds) {
-      setPhase('results');
-    } else {
-      onRoundComplete?.(round);
-      setRound(r => r + 1);
-      setPhase('submit');
-      setTimeLeft(30);
-      setSubmitted(false);
-      setSelectedVote(null);
-      setVoted(false);
-      setRevealedLie(null);
-      setShowDrumroll(false);
-      setStatements(['', '', '']);
-    }
-  };
-
   const startGame = () => { setShowCountdown(true); };
-  const handleCountdownDone = useCallback(() => {
+  const handleCountdownDone = useCallback(async () => {
     setShowCountdown(false);
-    setPhase('submit');
-    setTimeLeft(30);
-  }, []);
+    await onEmitAction('two_truths:start', { totalRounds: 4 });
+  }, [onEmitAction]);
+
+  const submit = useCallback(async () => {
+    if (!sessionId || !activeRoundId) return;
+    await onEmitAction('two_truths:submit', { statements: localStatements });
+  }, [sessionId, activeRoundId, localStatements, onEmitAction]);
+
+  const submitVote = useCallback(async () => {
+    if (!selectedVote) return;
+    await onEmitAction('two_truths:vote', { statementId: selectedVote });
+  }, [selectedVote, onEmitAction]);
+
+  const reveal = useCallback(async () => {
+    await onEmitAction('two_truths:reveal', { lieId: 's2' });
+  }, [onEmitAction]);
+
+  const nextRound = useCallback(async () => {
+    onRoundComplete?.(round);
+    await onEmitAction('two_truths:next_round', {});
+    setLocalStatements(['', '', '']);
+    setSelectedVote(null);
+  }, [onEmitAction, onRoundComplete, round]);
+
   const maxTime = phase === 'submit' ? 30 : 20;
 
-  const targetStatements: Statement[] = [
-    { id: 's0', text: statements[0] || 'Statement 1', authorId: currentUserId, authorName: currentUserName, authorAvatar: currentUserAvatar },
-    { id: 's1', text: statements[1] || 'Statement 2', authorId: currentUserId, authorName: currentUserName, authorAvatar: currentUserAvatar },
-    { id: 's2', text: statements[2] || 'Statement 3 (Lie)', authorId: currentUserId, authorName: currentUserName, authorAvatar: currentUserAvatar, isLie: true },
-  ];
-  
-  const mockTally = [
-    { statementId: 's0', count: Math.floor(participants.length * 0.2), percentage: 20 },
-    { statementId: 's1', count: Math.floor(participants.length * 0.3), percentage: 30 },
-    { statementId: 's2', count: Math.max(1, Math.floor(participants.length * 0.5)), percentage: 50 },
-  ];
+  const [timeLeft, setTimeLeft] = useState(maxTime);
 
-  const results = participants.map((p, i) => ({
-    name: p.name,
-    score: p.id === currentUserId ? 300 : Math.floor(Math.random() * 200),
-    avatar: p.avatar,
-    rank: i + 1
-  })).sort((a, b) => b.score - a.score).map((p, i) => ({ ...p, rank: i + 1 }));
+  useEffect(() => {
+    let targetTime: string | null = null;
+    if (phase === 'submit' && submitEndsAt) targetTime = submitEndsAt;
+    else if (phase === 'vote' && voteEndsAt) targetTime = voteEndsAt;
+
+    if (!targetTime) {
+      setTimeLeft(maxTime);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((new Date(targetTime).getTime() - Date.now()) / 1000));
+      setTimeLeft(remaining);
+      if (remaining === 0) clearInterval(interval);
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [phase, submitEndsAt, voteEndsAt, maxTime]);
+
+  const presenterName =
+    participants.find((p: any) => p.id === presenterId)?.name || currentUserName;
+
+  const targetStatements = (statements || [
+    { id: 's0' as const, text: 'Statement 1' },
+    { id: 's1' as const, text: 'Statement 2' },
+    { id: 's2' as const, text: 'Statement 3' },
+  ]).map((s) => ({ id: s.id, text: s.text }));
+
+  const tallyCounts: Record<'s0' | 's1' | 's2', number> = { s0: 0, s1: 0, s2: 0 };
+  Object.values(votes).forEach((v) => { tallyCounts[v] = (tallyCounts[v] || 0) + 1; });
+  const totalVotes = Math.max(1, Object.keys(votes).length);
+  const mockTally = (['s0', 's1', 's2'] as const).map((id) => ({
+    statementId: id,
+    count: tallyCounts[id],
+    percentage: Math.round((tallyCounts[id] / totalVotes) * 100),
+  }));
+
+  const results = participants
+    .map((p: any) => ({
+      name: p.name,
+      score: scores[p.id] || 0,
+      avatar: p.avatar,
+    }))
+    .sort((a: any, b: any) => b.score - a.score)
+    .map((r: any, i: number) => ({ ...r, rank: i + 1 }));
 
   return (
     <div className="space-y-4">
@@ -129,36 +165,47 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
       )}
 
       {/* SUBMIT */}
-      {phase === 'submit' && !submitted && (
+      {phase === 'submit' && isPresenter && (
         <TwoTruthsSubmitSection
-          statements={statements}
+          statements={localStatements}
           onChange={(index, value) => {
-            const next = [...statements];
+            const next = [...localStatements];
             next[index] = value;
-            setStatements(next);
+            setLocalStatements(next);
           }}
-          onSubmit={handleSubmit}
-          isSubmitDisabled={statements.some((s) => !s.trim())}
+          onSubmit={submit}
+          isSubmitDisabled={localStatements.some((s) => !s.trim())}
         />
       )}
 
       {/* Submitted waiting */}
-      {phase === 'submit' && submitted && (
-        <TwoTruthsSubmittedSection />
+      {phase === 'submit' && !isPresenter && (
+        <TwoTruthsSubmittedSection message={t('gamePlay.twoTruths.waitingForPresenter', 'Waiting for the presenter to submit statements...')} />
       )}
 
       {/* VOTE */}
       {phase === 'vote' && (
         <TwoTruthsVoteSection
-          currentUserName={currentUserName}
+          currentUserName={presenterName}
           currentUserAvatar={currentUserAvatar}
           targetStatements={targetStatements}
           selectedVote={selectedVote}
           voted={voted}
-          onSelect={(id) => !voted && setSelectedVote(id)}
-          onSubmitVote={handleVote}
-          disableSubmit={!selectedVote}
+          onSelect={(id) => !voted && setSelectedVote(id as any)}
+          onSubmitVote={submitVote}
+          disableSubmit={!selectedVote || voted}
         />
+      )}
+
+      {phase === 'vote' && isPresenter && (
+        <div className="flex justify-end">
+          <button
+            className="text-[11px] text-muted-foreground hover:text-foreground underline"
+            onClick={reveal}
+          >
+            Reveal (host)
+          </button>
+        </div>
       )}
 
       {/* REVEAL */}
@@ -167,9 +214,9 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
           targetStatements={targetStatements}
           mockTally={mockTally}
           revealedLie={revealedLie}
-          selectedVote={selectedVote}
-          showDrumroll={showDrumroll}
-          onNextRound={handleNextRound}
+          selectedVote={votes[currentUserId] || selectedVote}
+          showDrumroll={false}
+          onNextRound={nextRound}
           isLastRound={round >= totalRounds}
         />
       )}
@@ -180,14 +227,7 @@ export function TwoTruthsBoard({ onRoundComplete, participants, currentUserId, c
           subtitle={t('gamePlay.results.roundsPlayed', { count: totalRounds })}
           results={results}
           onPlayAgain={() => {
-            setPhase('waiting');
-            setRound(1);
-            setTimeLeft(30);
-            setSubmitted(false);
-            setSelectedVote(null);
-            setVoted(false);
-            setRevealedLie(null);
-            setStatements(['', '', '']);
+            onEmitAction('two_truths:start', { totalRounds: 4 });
           }}
         />
       )}

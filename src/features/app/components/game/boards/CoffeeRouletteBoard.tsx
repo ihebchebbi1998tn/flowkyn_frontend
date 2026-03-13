@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Coffee, Shuffle, MessageCircle, Clock, Users,
@@ -11,67 +11,46 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
 
-interface Pair {
-  id: string;
-  person1: { name: string; avatar: string };
-  person2: { name: string; avatar: string };
-  topic: string;
-}
-
-const CONVERSATION_STARTERS = [
-  "What's the most interesting thing you've learned recently?",
-  "If you could have dinner with anyone (alive or dead), who would it be?",
-  "What's a hobby or skill you'd love to pick up?",
-  "What was your first job? What did you learn from it?",
-  "If you could live anywhere in the world for a year, where would you go?",
-  "What's the best piece of advice you've ever received?",
-  "What's a book or movie that completely changed your perspective?",
-  "If you had to eat one meal for the rest of your life, what would it be?",
-  "What's the most spontaneous thing you've ever done?",
-  "Which fictional character do you relate to the most?",
-  "What's something you're surprisingly good at?",
-];
+type CoffeeSnapshot = {
+  kind: 'coffee-roulette';
+  phase: 'waiting' | 'matching' | 'chatting' | 'complete';
+  pairs: Array<{
+    id: string;
+    person1: { participantId: string; name: string; avatar: string };
+    person2: { participantId: string; name: string; avatar: string };
+    topic: string;
+  }>;
+  startedChatAt: string | null;
+  chatEndsAt?: string;
+};
 
 export interface CoffeeRouletteBoardProps {
   participants: any[];
   currentUserId: string;
+  initialSnapshot?: any;
+  gameData?: any;
+  onEmitAction: (actionType: string, payload?: any) => Promise<void>;
 }
 
-export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRouletteBoardProps) {
+export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapshot, gameData, onEmitAction }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
-  const [phase, setPhase] = useState<GamePhase>('waiting');
-  const [pairs, setPairs] = useState<Pair[]>([]);
-  const [isShuffling, setIsShuffling] = useState(false);
-  const [myPair, setMyPair] = useState<Pair | null>(null);
-  const [chatMinutes, setChatMinutes] = useState(0);
-  const [currentStarter, setCurrentStarter] = useState(0);
-  const [showCountdown, setShowCountdown] = useState(false);
+  const snapshot: CoffeeSnapshot | null = (gameData?.kind === 'coffee-roulette'
+    ? gameData
+    : (initialSnapshot?.kind === 'coffee-roulette' ? initialSnapshot : null)) as any;
 
-  const shufflePairs = () => {
-    setIsShuffling(true);
-    // Simulate shuffle animation
-    let count = 0;
-    const interval = setInterval(() => {
-      const shuffled = [...participants].sort(() => Math.random() - 0.5);
-      const newPairs: Pair[] = [];
-      for (let i = 0; i < shuffled.length; i += 2) {
-        if (i + 1 < shuffled.length) {
-          newPairs.push({
-            id: String(i),
-            person1: { name: shuffled[i].name, avatar: shuffled[i].avatar },
-            person2: { name: shuffled[i+1].name, avatar: shuffled[i+1].avatar },
-            topic: CONVERSATION_STARTERS[Math.floor(Math.random() * CONVERSATION_STARTERS.length)],
-          });
-        }
-      }
-      setPairs(newPairs);
-      count++;
-      if (count >= 8) {
-        clearInterval(interval);
-        setIsShuffling(false);
-      }
-    }, 150);
-  };
+  const phase = (snapshot?.phase || 'waiting') as GamePhase;
+  const pairs = snapshot?.pairs || [];
+  const myPair = pairs.find((p) => p.person1.participantId === currentUserId || p.person2.participantId === currentUserId) || null;
+  const chatEndsAt = snapshot?.chatEndsAt || null;
+
+  // Initialize from server timestamp so late-joiners see the correct remaining time
+  const [chatSecondsRemaining, setChatSecondsRemaining] = useState(() => {
+    if (chatEndsAt) {
+      return Math.max(0, Math.ceil((new Date(chatEndsAt).getTime() - Date.now()) / 1000));
+    }
+    return 30 * 60;
+  });
+  const [showCountdown, setShowCountdown] = useState(false);
 
   const startMatching = () => {
     setShowCountdown(true);
@@ -79,27 +58,41 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
 
   const handleCountdownDone = useCallback(() => {
     setShowCountdown(false);
-    shufflePairs();
-    setTimeout(() => {
-      setPhase('matching');
-      setMyPair(pairs[0]);
-    }, 1500);
-  }, [pairs]);
+    onEmitAction('coffee:shuffle', {});
+  }, [onEmitAction]);
 
   const startChatting = () => {
-    setPhase('chatting');
-    // Simulate chat timer
-    const interval = setInterval(() => {
-      setChatMinutes(prev => {
-        if (prev >= 30) { clearInterval(interval); return 30; }
-        return prev + 1;
-      });
-    }, 2000); // Accelerated for demo
+    onEmitAction('coffee:start_chat', {});
   };
 
   const endSession = () => {
-    setPhase('complete');
+    onEmitAction('coffee:end', {});
   };
+
+  useEffect(() => {
+    if (phase !== 'chatting' || !chatEndsAt) {
+      if (phase !== 'chatting') setChatSecondsRemaining(30 * 60);
+      return;
+    }
+
+    // Sync immediately on mount or chatEndsAt change
+    const syncNow = () => {
+      const remaining = Math.max(0, Math.ceil((new Date(chatEndsAt).getTime() - Date.now()) / 1000));
+      setChatSecondsRemaining(remaining);
+      return remaining;
+    };
+    if (syncNow() === 0) return;
+
+    const interval = setInterval(() => {
+      if (syncNow() === 0) clearInterval(interval);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [phase, chatEndsAt]);
+
+  const displayMinutes = Math.floor(chatSecondsRemaining / 60);
+  const displaySeconds = chatSecondsRemaining % 60;
+  const chatMinutesElapsed = Math.floor((30 * 60 - chatSecondsRemaining) / 60);
 
   return (
     <div className="space-y-4">
@@ -226,7 +219,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
                     </Avatar>
                   </motion.div>
 
-                  {i === 0 && (
+                  {(pair.person1.participantId === currentUserId || pair.person2.participantId === currentUserId) && (
                     <Badge className="text-[9px] bg-info/15 text-info border-info/25 shrink-0">{t('gamePlay.coffeeRoulette.you')}</Badge>
                   )}
                 </motion.div>
@@ -242,7 +235,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
               </div>
               <div>
                 <p className="text-[11px] font-semibold text-info uppercase tracking-wider mb-1">{t('gamePlay.coffeeRoulette.conversationStarter')}</p>
-                <p className="text-[14px] text-foreground font-medium leading-relaxed">"{pairs[0]?.topic}"</p>
+                <p className="text-[14px] text-foreground font-medium leading-relaxed">"{myPair?.topic || pairs[0]?.topic}"</p>
               </div>
             </div>
           </div>
@@ -282,27 +275,21 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
               {/* Timer */}
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="text-[20px] font-bold text-foreground tabular-nums">{chatMinutes}:00</span>
-                <span className="text-[12px] text-muted-foreground">/ 30:00</span>
+                <span className="text-[20px] font-bold text-foreground tabular-nums">
+                  {String(displayMinutes).padStart(2, '0')}:{String(displaySeconds).padStart(2, '0')}
+                </span>
+                <span className="text-[12px] text-muted-foreground">/ 30:00 remaining</span>
               </div>
 
               <div className="h-2 rounded-full bg-muted overflow-hidden max-w-xs mx-auto mb-6">
                 <div className="h-full rounded-full bg-gradient-to-r from-info/80 to-info transition-all duration-700"
-                  style={{ width: `${(chatMinutes / 30) * 100}%` }} />
+                  style={{ width: `${((30 * 60 - chatSecondsRemaining) / (30 * 60)) * 100}%` }} />
               </div>
 
-              {/* Conversation starters carousel */}
+              {/* Topic */}
               <div className="rounded-xl border border-border bg-muted/30 p-4 max-w-md mx-auto mb-4">
                 <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t('gamePlay.coffeeRoulette.needATopic')}</p>
-                <p className="text-[13px] text-foreground leading-relaxed">"{CONVERSATION_STARTERS[currentStarter]}"</p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="mt-2 text-[11px] text-info hover:text-info"
-                  onClick={() => setCurrentStarter((currentStarter + 1) % CONVERSATION_STARTERS.length)}
-                >
-                  <Shuffle className="h-3 w-3 mr-1" /> {t('gamePlay.coffeeRoulette.nextTopic')}
-                </Button>
+                <p className="text-[13px] text-foreground leading-relaxed">"{myPair.topic}"</p>
               </div>
 
               <Button onClick={endSession} variant="outline" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
@@ -324,7 +311,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
               </div>
               <h3 className="text-xl font-bold text-foreground mb-2">{t('gamePlay.coffeeRoulette.greatConnection')}</h3>
               <p className="text-[13px] text-muted-foreground mb-4 max-w-md mx-auto">
-                {t('gamePlay.coffeeRoulette.chattedFor', { minutes: chatMinutes })}
+                {t('gamePlay.coffeeRoulette.chattedFor', { minutes: chatMinutesElapsed })}
               </p>
               <div className="flex items-center justify-center gap-3 mb-6">
                 <Badge variant="outline" className="text-[11px] gap-1 bg-success/5 border-success/20 text-success">
@@ -333,7 +320,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId }: CoffeeRoule
               </div>
               <div className="flex items-center justify-center gap-3">
                 <Button variant="outline" size="lg" className="h-11 text-[13px] gap-2 rounded-xl"
-                  onClick={() => { setPhase('waiting'); setChatMinutes(0); }}>
+                  onClick={() => { onEmitAction('coffee:reset', {}); setChatSecondsRemaining(30 * 60); }}>
                   <Shuffle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.newPairing')}
                 </Button>
                 <Button variant="brand" size="lg" className="h-11 text-[13px] gap-2">

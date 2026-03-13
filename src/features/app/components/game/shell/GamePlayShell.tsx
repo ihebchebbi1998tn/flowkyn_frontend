@@ -63,7 +63,7 @@ export function GamePlayShell({
   const joinLink = `${window.location.origin}/join/${eventId}`;
   const joinPct = totalInvited > 0 ? Math.round((joinedCount / totalInvited) * 100) : 0;
 
-  const isLobby = joinedCount === 0 || pendingCount > 0;
+  const isLobby = joinedCount < 2;
   const sessionStatusLabel =
     gameType === 'sync'
       ? (isLobby

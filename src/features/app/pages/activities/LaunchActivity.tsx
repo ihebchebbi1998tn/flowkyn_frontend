@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
 import { eventsApi } from '@/features/app/api/events';
+import { gamesApi } from '@/features/app/api/games';
 import { ACTIVITIES as CATALOG_ACTIVITIES } from '@/features/app/data/activities';
 
 const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; color: string; bgColor: string; type: 'sync' | 'async'; duration: string }> = {
@@ -26,6 +27,17 @@ const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; col
   '4': { name: 'Icebreaker Trivia', icon: Lightbulb, color: 'text-success', bgColor: 'bg-success/10', type: 'sync', duration: '20' },
   '5': { name: 'Team Scavenger Hunt', icon: Crosshair, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'sync', duration: '45' },
   '6': { name: 'Gratitude Circle', icon: Flame, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'async', duration: '0' },
+};
+
+// Mapping from activity ID to backend game_types.key
+const ACTIVITY_GAME_KEYS: Record<string, string> = {
+  '1': 'two-truths',
+  '2': 'coffee-roulette',
+  '3': 'wins-of-week',
+  // Future activities (4–6) can be wired to trivia/scavenger-hunt/gratitude keys as needed
+  '4': 'trivia',
+  '5': 'scavenger-hunt',
+  '6': 'gratitude',
 };
 
 type Step = 'configure' | 'invite' | 'review';
@@ -103,7 +115,33 @@ export default function LaunchActivity() {
       };
 
       const createdEvent = await eventsApi.create(eventData);
-      
+
+      // For "start now" flows, immediately activate the event and start a game session
+      // for both sync and async activities so that GamePlay can resolve a live session.
+      if (scheduleType === 'now') {
+        try {
+          // Ensure event is marked active so the backend allows starting sessions
+          await eventsApi.update(createdEvent.id, { status: 'active' } as any);
+        } catch (statusErr) {
+          console.warn('[LaunchActivity] Failed to set event status to active:', (statusErr as any)?.message);
+        }
+
+        // If this activity is backed by a game type, create a game session now.
+        try {
+          const gameKey = ACTIVITY_GAME_KEYS[id || '1'];
+          if (gameKey) {
+            const types = await gamesApi.listTypes();
+            const matchingType = types.find(t => t.key === gameKey);
+            if (matchingType) {
+              await gamesApi.startSession(createdEvent.id, matchingType.id);
+            }
+          }
+        } catch (gameErr) {
+          // Game session creation failures should not block event creation or navigation.
+          console.warn('[LaunchActivity] Failed to create game session:', (gameErr as any)?.message);
+        }
+      }
+
       // Send invitations with better error handling
       if (emails.length > 0) {
         setInvitationProgress({ sent: 0, total: emails.length });

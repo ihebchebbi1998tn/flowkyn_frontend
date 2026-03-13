@@ -114,7 +114,10 @@ export default function EventLobby() {
           }
           await acceptInvitation.mutateAsync({ eventId: id, token: inviteToken });
         } else {
-          await joinEvent.mutateAsync(id);
+          const result = await joinEvent.mutateAsync(id);
+          if ((result as any)?.participant_id) {
+            localStorage.setItem(`member_participant_id_${id}`, (result as any).participant_id);
+          }
         }
         trackEvent(TRACK.EVENT_JOINED, { eventId: id, viaInvitation: !!inviteToken });
       } else {

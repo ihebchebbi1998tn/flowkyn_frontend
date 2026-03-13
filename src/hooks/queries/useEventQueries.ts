@@ -11,6 +11,7 @@ export const eventKeys = {
   publicInfo: (id: string) => ['events', id, 'public'] as const,
   participants: (id: string) => ['events', id, 'participants'] as const,
   messages: (id: string) => ['events', id, 'messages'] as const,
+  posts: (id: string) => ['events', id, 'posts'] as const,
 };
 
 export function useEvents(page = 1, limit = 10, orgId?: string) {
@@ -48,6 +49,14 @@ export function useEventMessages(eventId: string, page = 1, limit = 50) {
   return useQuery({
     queryKey: eventKeys.messages(eventId),
     queryFn: () => eventsApi.getMessages(eventId, page, limit),
+    enabled: !!eventId,
+  });
+}
+
+export function useEventPosts(eventId: string, page = 1, limit = 50) {
+  return useQuery({
+    queryKey: eventKeys.posts(eventId),
+    queryFn: () => eventsApi.getPosts(eventId, page, limit),
     enabled: !!eventId,
   });
 }
@@ -112,8 +121,13 @@ export function useJoinEvent() {
 
   return useMutation({
     mutationFn: (eventId: string) => eventsApi.join(eventId),
-    onSuccess: (_, eventId) => {
+    onSuccess: (result, eventId) => {
       queryClient.invalidateQueries({ queryKey: eventKeys.participants(eventId) });
+      // Store member participant ID for this event so real-time games and posts
+      // can use the correct participant identity for authenticated users.
+      if ((result as any)?.participant_id) {
+        localStorage.setItem(`member_participant_id_${eventId}`, (result as any).participant_id);
+      }
     },
     onError: (err) => showError(err),
   });

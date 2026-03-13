@@ -10,9 +10,12 @@ import { EventChat, type ChatMessage } from '@/features/app/components/chat/Even
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { ROUTES } from '@/constants/routes';
-import { useEventPublicInfo, useEventParticipants, useEventMessages } from '@/hooks/queries/useEventQueries';
+import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts } from '@/hooks/queries/useEventQueries';
+import { gamesApi } from '@/features/app/api/games';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
+import { eventsApi } from '@/features/app/api/events';
+import { postsApi } from '@/features/app/api/posts';
 
 // ─── Profile helpers (same keys as EventLobby) ────────────────────────────────
 const profileKey = (eventId: string) => `event_profile_${eventId}`;
@@ -70,7 +73,11 @@ function GamePlayWithoutBoundary() {
 
   // ─── Current user identity ─────────────────────────────────────────────────
   const isGuest = !user && !!localStorage.getItem(`guest_token_${eventId}`);
-  const currentUserId = user?.id || localStorage.getItem(`guest_participant_id_${eventId}`) || '';
+  const currentParticipantId =
+    isGuest
+      ? (eventId ? localStorage.getItem(`guest_participant_id_${eventId}`) : null)
+      : (eventId ? localStorage.getItem(`member_participant_id_${eventId}`) : null);
+  const currentUserId = currentParticipantId || user?.id || '';
   const currentUserName = profile?.displayName || user?.name || localStorage.getItem(`guest_name_${eventId}`) || 'Guest';
   const currentUserAvatarUrl = profile?.avatarUrl || null;
 
@@ -78,6 +85,7 @@ function GamePlayWithoutBoundary() {
   const { data: eventData } = useEventPublicInfo(eventId || '');
   const { data: participantsData } = useEventParticipants(eventId || '');
   const { data: messagesData } = useEventMessages(eventId || '');
+  const { data: postsData, refetch: refetchPosts } = useEventPosts(eventId || '');
 
   const eventPublicObj = eventData as any;
 
@@ -120,6 +128,8 @@ function GamePlayWithoutBoundary() {
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
+    // Pass eventId so the socket hook can resolve the correct per-event guest token
+    eventId: eventId || undefined,
     onConnect: () => {
       if (eventId) {
         // Emit event:join and wait for acknowledgment
@@ -175,7 +185,106 @@ function GamePlayWithoutBoundary() {
   }, [eventId]);
 
   // ─── WebSocket: Games namespace ────────────────────────────────────────────
-  const gamesSocket = useGamesSocket();
+  const gamesSocket = useGamesSocket({
+    // Use eventId so guests can authenticate with their per-event guest token
+    eventId: eventId || undefined,
+  });
+
+  // ─── Async game data: activity posts (Wins of the Week) ─────────────────────
+  const rawPosts = (postsData as any)?.data || [];
+
+  // For now, posting is only wired for guests, since participant_id is readily available.
+  const guestParticipantId =
+    !user && eventId ? localStorage.getItem(`guest_participant_id_${eventId}`) : null;
+  const memberParticipantId =
+    user && eventId ? localStorage.getItem(`member_participant_id_${eventId}`) : null;
+
+  const postParticipantId = guestParticipantId || memberParticipantId || null;
+  const canPostWins = !!postParticipantId;
+
+  const winsPosts = rawPosts.map((p: any) => ({
+    id: p.id,
+    authorName: p.author_name,
+    authorAvatar: (p.author_avatar || p.author_name || '??').slice(0, 2).toUpperCase(),
+    content: p.content,
+    timestamp: p.created_at,
+    reactions: (p.reactions || []).map((r: any) => ({
+      type: r.type,
+      count: r.count,
+      // We don't yet track per-user "reacted" flags server-side; treat all as not-reacted in UI.
+      reacted: false,
+    })),
+  }));
+
+  // ─── Game session resolution (per event + game type) ───────────────────────
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isResolvingSession, setIsResolvingSession] = useState(false);
+  const [activeRoundId, setActiveRoundId] = useState<string | null>(null);
+  const [initialSnapshot, setInitialSnapshot] = useState<any>(null);
+  const [gameData, setGameData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!eventId) return;
+    let cancelled = false;
+
+    const resolveSession = async () => {
+      setIsResolvingSession(true);
+      try {
+        const session = await gamesApi.getActiveSession(eventId, config.gameTypeKey);
+        if (!cancelled) {
+          setSessionId(session ? session.id : null);
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          console.warn('[GamePlay] Failed to resolve active game session:', err?.message || err);
+          setSessionId(null);
+        }
+      } finally {
+        if (!cancelled) setIsResolvingSession(false);
+      }
+    };
+
+    resolveSession();
+    return () => { cancelled = true; };
+  }, [eventId, config.gameTypeKey]);
+
+  // Join the games namespace room once we have a session and socket is connected
+  useEffect(() => {
+    if (!sessionId || !gamesSocket.isConnected) return;
+    gamesSocket.emit<any>('game:join', { sessionId })
+      .then((resp: any) => {
+        // resp may be ack.data or full ack depending on socket wrapper
+        const data = resp?.data || resp;
+        if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
+        if (data?.snapshot) {
+          setInitialSnapshot(data.snapshot);
+          setGameData(data.snapshot);
+        }
+        // Ask for latest state snapshot too (in case join ack didn't include it)
+        gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+      })
+      .catch(err => {
+        console.error('[GamePlay] Failed to join game session room:', err.message);
+      });
+  }, [sessionId, gamesSocket.isConnected]);
+
+  // Listen for game snapshots pushed by server
+  useEffect(() => {
+    if (!gamesSocket.isConnected) return;
+    const unsubState = gamesSocket.on('game:state', (payload: any) => {
+      const snap = payload?.state?.snapshot;
+      const ar = payload?.state?.activeRoundId;
+      if (ar) setActiveRoundId(ar);
+      if (snap) {
+        setInitialSnapshot(snap);
+        setGameData(snap);
+      }
+    });
+    const unsubData = gamesSocket.on('game:data', (payload: any) => {
+      if (payload?.gameData) setGameData(payload.gameData);
+    });
+    return () => { unsubState?.(); unsubData?.(); };
+  }, [gamesSocket.isConnected]);
 
   // ─── Typing state ──────────────────────────────────────────────────────────
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -206,22 +315,9 @@ function GamePlayWithoutBoundary() {
           console.error('[GamePlay] Failed to send message:', err.message);
         });
     } else {
-      console.warn('[GamePlay] Socket not connected, using fallback local message');
-      // Fallback: optimistic local message
-      const newMsg: ChatMessage = {
-        id: `local-${crypto.randomUUID()}`,
-        userId: currentUserId,
-        participantId: '',
-        senderName: currentUserName,
-        senderAvatar: currentUserName.slice(0, 2).toUpperCase(),
-        senderAvatarUrl: currentUserAvatarUrl,
-        message,
-        timestamp: new Date().toISOString(),
-        isOwn: true,
-      };
-      setLiveMessages(prev => [...prev, newMsg]);
+      console.warn('[GamePlay] Socket not connected, cannot send message — will retry when reconnected.');
     }
-  }, [eventsSocket.isConnected, eventId, currentUserId, currentUserName, currentUserAvatarUrl]);
+  }, [eventsSocket.isConnected, eventId]);
 
   const handleTyping = useCallback((isTyping: boolean) => {
     if (eventsSocket.isConnected && eventId) {
@@ -251,14 +347,74 @@ function GamePlayWithoutBoundary() {
       currentUserId,
       currentUserName,
       currentUserAvatar: (currentUserName || '??').slice(0, 2).toUpperCase(),
-      currentUserAvatarUrl
+      currentUserAvatarUrl,
+    };
+
+    const onEmitAction = async (actionType: string, payload?: any) => {
+      if (!sessionId) return;
+      await gamesSocket.emit('game:action', {
+        sessionId,
+        roundId: activeRoundId || undefined,
+        actionType,
+        payload: payload || {},
+      });
     };
 
     switch (config.gameTypeKey) {
-      case 'two-truths': return <TwoTruthsBoard {...boardProps} />;
-      case 'coffee-roulette': return <CoffeeRouletteBoard {...boardProps} />;
-      case 'wins-of-week': return <WinsOfTheWeekBoard prompt={config.promptKey ? t(config.promptKey) : undefined} {...boardProps} />;
-      default: return <TwoTruthsBoard {...boardProps} />;
+      case 'two-truths':
+        return (
+          <TwoTruthsBoard
+            {...boardProps}
+            sessionId={sessionId}
+            activeRoundId={activeRoundId}
+            initialSnapshot={initialSnapshot}
+            gameData={gameData}
+            onEmitAction={onEmitAction}
+          />
+        );
+      case 'coffee-roulette':
+        return (
+          <CoffeeRouletteBoard
+            participants={participants}
+            currentUserId={currentUserId}
+            initialSnapshot={initialSnapshot}
+            gameData={gameData}
+            onEmitAction={onEmitAction}
+          />
+        );
+      case 'wins-of-week':
+        return (
+          <WinsOfTheWeekBoard
+            prompt={config.promptKey ? t(config.promptKey) : undefined}
+            currentUserId={currentUserId}
+            currentUserName={currentUserName}
+            currentUserAvatar={(currentUserName || '??').slice(0, 2).toUpperCase()}
+            currentUserAvatarUrl={currentUserAvatarUrl}
+            posts={winsPosts}
+            canPost={canPostWins}
+            onPost={async (content: string) => {
+              if (!eventId || !postParticipantId) return;
+              await eventsApi.createPost(eventId, postParticipantId, content);
+              await refetchPosts();
+            }}
+            onToggleReaction={async (postId: string, reactionType: string) => {
+              if (!postParticipantId) return;
+              await postsApi.react(postId, postParticipantId, reactionType);
+              await refetchPosts();
+            }}
+          />
+        );
+      default:
+        return (
+          <TwoTruthsBoard
+            {...boardProps}
+            sessionId={sessionId}
+            activeRoundId={activeRoundId}
+            initialSnapshot={initialSnapshot}
+            gameData={gameData}
+            onEmitAction={onEmitAction}
+          />
+        );
     }
   };
 

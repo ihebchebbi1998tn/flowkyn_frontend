@@ -110,6 +110,22 @@ export const eventsApi = {
   getMessages: (eventId: string, page = 1, limit = 50) =>
     api.get(`/events/${eventId}/messages`, { page: String(page), limit: String(limit) }),
 
+  /** Get paginated activity posts for async games like Wins of the Week */
+  getPosts: (eventId: string, page = 1, limit = 50) =>
+    api.get<PaginatedResponse<{
+      id: string;
+      event_id: string;
+      author_participant_id: string;
+      content: string;
+      created_at: string;
+      author_name: string;
+      author_avatar: string | null;
+      reactions: { type: string; count: number }[];
+    }>>(`/events/${eventId}/posts`, {
+      page: String(page),
+      limit: String(limit),
+    }),
+
   /** Send a chat message */
   sendMessage: (eventId: string, participantId: string, message: string) =>
     api.post(`/events/${eventId}/messages`, { participant_id: participantId, message }),
