@@ -13,6 +13,7 @@ import {
   Users, Clock, Gamepad2, ArrowRight, Copy, CheckCircle,
   Link2, Wifi, Sparkles, Shield, Loader2, AlertCircle, X, User,
 } from 'lucide-react';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -156,7 +157,7 @@ export default function EventLobby() {
   if (eventLoading) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <LogoLoader size="lg" />
       </div>
     );
   }

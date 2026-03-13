@@ -10,6 +10,7 @@ import { eventsApi } from '@/features/app/api/events';
 import { organizationsApi } from '@/features/app/api/organizations';
 import { ROUTES } from '@/constants/routes';
 import logoImg from '@/assets/flowkyn-logo.png';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 
 type InviteType = 'org' | 'event';
 type InviteStatus = 'loading' | 'valid' | 'accepted' | 'expired' | 'error';
@@ -116,7 +117,7 @@ export default function AcceptInvitation() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <LogoLoader size="lg" />
       </div>
     );
   }
@@ -137,7 +138,7 @@ export default function AcceptInvitation() {
           <CardContent className="p-8">
             {status === 'loading' && (
               <div className="flex flex-col items-center py-8">
-                <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+                <LogoLoader size="md" className="mb-4" />
                 <p className="text-[15px] font-medium text-foreground">{t('invitation.verifying')}</p>
                 <p className="text-[13px] text-muted-foreground mt-1">{t('invitation.pleaseWait')}</p>
               </div>

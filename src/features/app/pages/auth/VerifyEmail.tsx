@@ -13,6 +13,7 @@ import { authApi } from '@/features/app/api/auth';
 import { ApiError } from '@/lib/apiError';
 import { ROUTES } from '@/constants/routes';
 import logoImg from '@/assets/logo.png';
+import { LogoLoader } from '@/components/loading/LogoLoader';
 
 export default function VerifyEmail() {
   const { t } = useTranslation();
@@ -51,11 +52,13 @@ export default function VerifyEmail() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm text-center space-y-6">
-        <img src={logoImg} alt="Flowkyn" className="h-14 w-14 mx-auto object-contain" />
+        {status !== 'verifying' && (
+          <img src={logoImg} alt="Flowkyn" className="h-14 w-14 mx-auto object-contain" />
+        )}
 
         {status === 'verifying' && (
           <div className="space-y-4">
-            <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
+            <LogoLoader size="md" />
             <p className="text-[15px] font-medium text-foreground">{t('auth.verifyingEmail')}</p>
             <p className="text-[13px] text-muted-foreground">{t('auth.pleaseWait')}</p>
           </div>

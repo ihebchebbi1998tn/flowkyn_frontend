@@ -86,8 +86,8 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
       <SidebarHeader className="px-3 py-4">
         <div className="flex items-center justify-between">
-          <Link to={ROUTES.DASHBOARD} onClick={handleNavClick} className="flex items-center justify-center w-full">
-            <img src={logoImg} alt="Flowkyn" className={cn("object-contain", collapsed ? "h-8 w-8" : "h-10 w-10")} />
+          <Link to={ROUTES.DASHBOARD} onClick={handleNavClick} className="flex items-center justify-center w-full py-2">
+            <img src={logoImg} alt="Flowkyn" className={cn("object-contain transition-all duration-200", collapsed ? "h-10 w-10" : "h-16 w-16")} />
           </Link>
           {isMobile && (
             <button
