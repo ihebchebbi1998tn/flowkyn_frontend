@@ -141,11 +141,21 @@ export default function EventLobby() {
     return () => { if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current); };
   }, []);
 
-  // Real-time events socket for lobby (presence + chat)
   const eventsSocket = useEventsSocket({
     eventId: id || undefined,
-    onConnect: () => {
-      if (!id) return;
+    // We handle the join logic explicitly via useEffect below to avoid race conditions.
+  });
+
+  // Ensure socket connects when user successfully joins (especially guests who just got their token)
+  useEffect(() => {
+    if (hasJoined && !eventsSocket.isConnected && eventsSocket.status === 'disconnected') {
+      eventsSocket.connect();
+    }
+  }, [hasJoined, eventsSocket]);
+
+  // Join the event room when connected AND officially joined
+  useEffect(() => {
+    if (hasJoined && id && eventsSocket.isConnected) {
       eventsSocket.emit('event:join', { eventId: id })
         .then((ack: any) => {
           if (ack?.data?.participantId) {
@@ -158,10 +168,10 @@ export default function EventLobby() {
           eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
         })
         .catch((err: any) => {
-          console.error('[EventLobby] Failed to join event room:', err?.message || err);
+           console.error('[EventLobby] Failed to join event room:', err?.message || err);
         });
-    },
-  });
+    }
+  }, [hasJoined, id, eventsSocket.isConnected, eventsSocket]);
 
   // Listen for presence updates and participant join/leave to keep lobby live
   useEffect(() => {

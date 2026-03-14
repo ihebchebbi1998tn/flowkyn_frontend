@@ -144,24 +144,26 @@ function GamePlayWithoutBoundary() {
   const eventsSocket = useEventsSocket({
     // Pass eventId so the socket hook can resolve the correct per-event guest token
     eventId: eventId || undefined,
-    onConnect: () => {
-      if (eventId) {
-        eventsSocket.emit('event:join', { eventId })
-          .then((ack: any) => {
-            if (ack?.data?.participantId) {
-              if (isGuest) {
-                localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
-              } else {
-                localStorage.setItem(`member_participant_id_${eventId}`, ack.data.participantId);
-              }
-            }
-          })
-          .catch(err => {
-            console.error('[GamePlay] Failed to join event room:', err.message);
-          });
-      }
-    },
   });
+
+  // Join the event room robustly when connected
+  useEffect(() => {
+    if (eventsSocket.isConnected && eventId) {
+      eventsSocket.emit('event:join', { eventId })
+        .then((ack: any) => {
+          if (ack?.data?.participantId) {
+            if (isGuest) {
+              localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
+            } else {
+              localStorage.setItem(`member_participant_id_${eventId}`, ack.data.participantId);
+            }
+          }
+        })
+        .catch(err => {
+          console.error('[GamePlay] Failed to join event room:', err?.message || err);
+        });
+    }
+  }, [eventsSocket.isConnected, eventId, eventsSocket, isGuest]);
 
   // Listen for incoming chat messages
   const liveMessagesRef = useRef(liveMessages);
@@ -246,6 +248,24 @@ function GamePlayWithoutBoundary() {
   const [activeRoundId, setActiveRoundId] = useState<string | null>(null);
   const [initialSnapshot, setInitialSnapshot] = useState<any>(null);
   const [gameData, setGameData] = useState<any>(null);
+
+  // Re-join the session robustly when connected
+  useEffect(() => {
+    if (gamesSocket.isConnected && sessionId) {
+      gamesSocket.emit<any>('game:join', { sessionId })
+        .then((resp: any) => {
+          const data = resp?.data || resp;
+          if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
+          if (data?.snapshot) {
+            setInitialSnapshot(data.snapshot);
+            setGameData(data.snapshot);
+          }
+        })
+        .catch((err: any) => {
+          console.error('[GamePlay] Failed to join game room:', err?.message || err);
+        });
+    }
+  }, [gamesSocket.isConnected, sessionId, gamesSocket]);
 
   useEffect(() => {
     if (!eventId) return;
@@ -423,9 +443,44 @@ function GamePlayWithoutBoundary() {
     };
 
     const onEmitAction = async (actionType: string, payload?: any) => {
-      if (!sessionId) return;
+      let sid = sessionId;
+
+      // Auto-create a game session if one doesn't exist yet (e.g. first "Start Round")
+      if (!sid && eventId) {
+        try {
+          // Resolve the game type UUID from its key
+          const types = await gamesApi.listTypes();
+          const typeRow = (types as any[]).find((t: any) => t.key === config.gameTypeKey);
+          if (!typeRow) {
+            console.error('[GamePlay] Unknown game type key:', config.gameTypeKey);
+            return;
+          }
+          // Create session (also creates an initial active round)
+          const newSession = await gamesApi.startSession(eventId, typeRow.id) as any;
+          sid = newSession.id;
+          setSessionId(sid);
+          if (newSession.active_round_id) setActiveRoundId(newSession.active_round_id);
+
+          // Join the new game room
+          if (gamesSocket.isConnected) {
+            const resp: any = await gamesSocket.emit<any>('game:join', { sessionId: sid });
+            const data = resp?.data || resp;
+            if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
+            if (data?.snapshot) {
+              setInitialSnapshot(data.snapshot);
+              setGameData(data.snapshot);
+            }
+          }
+        } catch (err: any) {
+          console.error('[GamePlay] Failed to auto-create game session:', err?.message || err);
+          return;
+        }
+      }
+
+      if (!sid) return;
+
       await gamesSocket.emit('game:action', {
-        sessionId,
+        sessionId: sid,
         roundId: activeRoundId || undefined,
         actionType,
         payload: payload || {},
