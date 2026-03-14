@@ -141,7 +141,11 @@ function GamePlayWithoutBoundary() {
       }
       setHasJoined(true);
     } catch (err: any) {
-      setJoinError(err?.message || 'Failed to join event');
+      if (err?.status === 409 || err?.response?.status === 409) {
+        setHasJoined(true);
+      } else {
+        setJoinError(err?.message || 'Failed to join event');
+      }
     } finally {
       setIsJoining(false);
     }
