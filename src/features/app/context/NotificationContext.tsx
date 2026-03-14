@@ -7,6 +7,7 @@ import type { Notification } from '@/types';
 import { notificationsApi } from '@/features/app/api/notifications';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useNotificationsSocket } from '@/hooks/useSocket';
+import { useApiError } from '@/hooks/useApiError';
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -22,6 +23,7 @@ const NotificationContext = createContext<NotificationContextType | null>(null);
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { showError } = useApiError();
 
   // useAuth() must be called unconditionally (Rules of Hooks).
   // When NotificationProvider is rendered outside an AuthProvider (e.g. admin mode),
@@ -38,11 +40,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const result = await notificationsApi.list(1, 50);
       setNotifications(result.data);
     } catch (err) {
-      console.warn('Failed to fetch notifications:', err);
+      showError(err, 'Failed to fetch notifications');
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, showError]);
 
   // Fetch on mount & when auth changes
   useEffect(() => {
@@ -87,11 +89,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read_at: new Date().toISOString() } : n));
     try {
       await notificationsApi.markAsRead(id);
-    } catch {
+    } catch (err) {
       // Revert on failure
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read_at: null } : n));
+      showError(err, 'Failed to mark notification as read');
     }
-  }, []);
+  }, [showError]);
 
   const markAllRead = useCallback(async () => {
     const now = new Date().toISOString();

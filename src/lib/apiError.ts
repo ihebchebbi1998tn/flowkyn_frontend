@@ -3,6 +3,7 @@ import type { ErrorCode } from './errorCodes';
 /** Structured API error matching the backend ErrorResponse shape */
 export interface ApiErrorResponse {
   error: string;
+  message?: string; // Display message — backend sends both; prefer message for UI
   code: ErrorCode;
   statusCode: number;
   requestId: string;
@@ -17,7 +18,7 @@ export class ApiError extends Error {
   public details?: { field: string; message: string }[];
 
   constructor(response: ApiErrorResponse) {
-    super(response.error);
+    super(response.message ?? response.error);
     this.name = 'ApiError';
     this.code = response.code;
     this.statusCode = response.statusCode;

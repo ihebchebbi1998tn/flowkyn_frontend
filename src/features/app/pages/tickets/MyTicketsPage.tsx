@@ -18,6 +18,7 @@ import { TableSkeleton } from '@/components/loading/Skeletons';
 import { bugReportsApi, type BugReportStatus, type BugReportType, type BugReportPriority, type BugReport } from '@/features/app/api/bugReports';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useApiError } from '@/hooks/useApiError';
 
 const statusConfig: Record<BugReportStatus, { label: string; color: string }> = {
   open: { label: 'Open', color: 'bg-blue-100 text-blue-800' },
@@ -48,6 +49,7 @@ export default function MyTicketsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const { showError } = useApiError();
 
   const fetchTickets = useCallback(async () => {
     setLoading(true);
@@ -59,7 +61,7 @@ export default function MyTicketsPage() {
       setTickets(result.data);
       setTotal(result.pagination.total);
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to load tickets');
+      showError(err, 'Failed to load tickets');
     } finally {
       setLoading(false);
     }
@@ -76,7 +78,7 @@ export default function MyTicketsPage() {
       setPage(1);
       fetchTickets();
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to delete ticket');
+      showError(err, 'Failed to delete ticket');
     }
   };
 

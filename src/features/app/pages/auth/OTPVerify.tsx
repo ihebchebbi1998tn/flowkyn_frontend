@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'sonner';
 import { CheckCircle2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
@@ -16,6 +15,7 @@ import { AlertBanner } from '@/components/notifications/AlertBanner';
 import { useAuth } from '@/context/AuthContext';
 import { authApi } from '@/features/app/api/auth';
 import { ApiError } from '@/lib/apiError';
+import { useApiError } from '@/hooks/useApiError';
 import { ROUTES } from '@/constants/routes';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import logoImg from '@/assets/logo.png';
@@ -38,6 +38,7 @@ export default function OTPVerify() {
   const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [isChangingEmail, setIsChangingEmail] = useState(false);
+  const { showError } = useApiError();
 
   const handleVerify = async () => {
     if (code.length < 6) return;
@@ -82,19 +83,15 @@ export default function OTPVerify() {
       if (ApiError.is(err)) {
         // Check for specific error codes and handle accordingly
         if (err.code === 'AUTH_ALREADY_VERIFIED') {
+          // Already verified is a normal flow — show info but no error
           toast.info(t('auth.alreadyVerified'));
           navigate(ROUTES.LOGIN, { replace: true });
         } else {
-          // Try to get translated error message from apiErrors namespace
-          const errorMessage = t(`apiErrors.${err.code}`, null);
-          if (errorMessage && errorMessage !== `apiErrors.${err.code}`) {
-            toast.error(errorMessage);
-          } else {
-            toast.error(t('auth.resendFailed'));
-          }
+          // Use shared API error handler so we see code/requestId/details
+          showError(err, t('auth.resendFailed'));
         }
       } else {
-        toast.error(t('auth.resendFailed'));
+        showError(err, t('auth.resendFailed'));
       }
     }
   };
@@ -127,14 +124,9 @@ export default function OTPVerify() {
       }, 1000);
     } catch (err: unknown) {
       if (ApiError.is(err)) {
-        const errorMessage = t(`apiErrors.${err.code}`, null);
-        if (errorMessage && errorMessage !== `apiErrors.${err.code}`) {
-          toast.error(errorMessage);
-        } else {
-          toast.error(t('common.error'));
-        }
+        showError(err, t('common.error'));
       } else {
-        toast.error(t('common.error'));
+        showError(err, t('common.error'));
       }
     } finally {
       setIsChangingEmail(false);

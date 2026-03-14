@@ -92,6 +92,7 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
       console.warn(`[Socket ${namespace}] Connection error:`, err.message);
       setIsConnected(false);
       setStatus('reconnecting');
+      onErrorRef.current?.({ message: err.message || 'Socket connection error', code: 'CONNECT_ERROR' });
       if (err.message.includes('Authentication') || err.message.includes('token')) {
         socket.disconnect();
         setStatus('disconnected');

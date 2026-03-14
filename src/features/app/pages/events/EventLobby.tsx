@@ -40,6 +40,7 @@ import logoImg from '@/assets/logo.png';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
+import { useApiError } from '@/hooks/useApiError';
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
 
@@ -101,6 +102,48 @@ export default function EventLobby() {
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const upsertProfile = useUpsertEventProfile(id || undefined);
+  const { showError } = useApiError();
+
+  /** Join logic — defined before effect that depends on it */
+  const handleJoin = useCallback(async () => {
+    if (!id || !profile) return;
+    setJoinError('');
+    setIsJoining(true);
+    try {
+      if (isAuthenticated && user) {
+        if (inviteToken) {
+          if (!/^[A-Za-z0-9_-]+$/.test(inviteToken)) {
+            setJoinError(t('events.invalidInvitationToken'));
+            return;
+          }
+          await acceptInvitation.mutateAsync({ eventId: id, token: inviteToken });
+        } else {
+          const result = await joinEvent.mutateAsync(id);
+          if ((result as any)?.participant_id) {
+            localStorage.setItem(`member_participant_id_${id}`, (result as any).participant_id);
+          }
+        }
+        trackEvent(TRACK.EVENT_JOINED, { eventId: id, viaInvitation: !!inviteToken });
+      } else {
+        const safeAvatarUrl = profile.avatarUrl?.startsWith('http') ? profile.avatarUrl : undefined;
+        const result = await joinAsGuest.mutateAsync({
+          eventId: id,
+          data: { name: profile.displayName, email: guestEmail || undefined, avatar_url: safeAvatarUrl, token: inviteToken || undefined },
+        });
+        if (result.guest_token) {
+          localStorage.setItem(`guest_token_${id}`, result.guest_token);
+          localStorage.setItem(`guest_participant_id_${id}`, result.participant_id);
+          localStorage.setItem(`guest_name_${id}`, result.guest_name);
+        }
+        trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: id, guestName: profile.displayName });
+      }
+      setHasJoined(true);
+    } catch (err: any) {
+      setJoinError(err?.message || t('events.joinFailed'));
+    } finally {
+      setIsJoining(false);
+    }
+  }, [id, profile, isAuthenticated, user, inviteToken, acceptInvitation, joinEvent, joinAsGuest, guestEmail, t]);
 
   // ─── Auto-Join Logic ──────────────────────────────────────────────────────
 
@@ -120,10 +163,16 @@ export default function EventLobby() {
 
   const joinLink = `${window.location.origin}/join/${id}`;
   const participants = (participantsData as any)?.data ?? [];
+  const shouldShowYouPill =
+    !!(hasJoined && profile) &&
+    !(identity.participantId && participants.some((p: any) => p.id === identity.participantId));
+  const hostParticipantId = participants.find((p: any) => p.is_host)?.id as string | undefined;
+  const isHostSelf = !!(identity.participantId && participants.some((p: any) => p.id === identity.participantId && p.is_host));
 
   // Chat state: initial history from API + live messages from WebSocket
   const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
 
   const rawMessages = (messagesData as any)?.data || [];
   const initialMessages: ChatMessage[] = rawMessages.map((m: any) => ({
@@ -141,13 +190,13 @@ export default function EventLobby() {
   }));
 
   const seenIds = new Set<string>();
-  const allMessages = [...initialMessages, ...liveMessages].filter(m => {
+  const allMessages = [...(pinnedMessage ? [pinnedMessage] : []), ...initialMessages, ...liveMessages].filter(m => {
     if (seenIds.has(m.id)) return false;
     seenIds.add(m.id);
     return true;
   });
 
-  const copyLinkTimeoutRef = useRef<NodeJS.Timeout>();
+  const copyLinkTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const copyLink = async () => {
     const success = await copyToClipboard(joinLink);
@@ -168,6 +217,7 @@ export default function EventLobby() {
   const eventsSocket = useEventsSocket({
     eventId: id || undefined,
     // We handle the join logic explicitly via useEffect below to avoid race conditions.
+    onError: (e) => showError(e, t('events.joinFailed')),
   });
 
   // Ensure socket connects when user successfully joins (especially guests who just got their token)
@@ -193,9 +243,10 @@ export default function EventLobby() {
         })
         .catch((err: any) => {
            console.error('[EventLobby] Failed to join event room:', err?.message || err);
+           showError(err, 'Failed to join event room');
         });
     }
-  }, [hasJoined, id, eventsSocket.isConnected, eventsSocket]);
+  }, [hasJoined, id, eventsSocket.isConnected, eventsSocket, showError]);
 
   // Listen for presence updates and participant join/leave to keep lobby live
   useEffect(() => {
@@ -243,7 +294,34 @@ export default function EventLobby() {
     } else {
       wasConnectedRef.current = false;
     }
-  }, [eventsSocket.status, id, refetchParticipants]);
+  }, [eventsSocket.status, id, refetchParticipants, refetchMessages]);
+
+  // Fetch pinned message once for lobby display
+  useEffect(() => {
+    if (!id) return;
+    eventsApi.getPinnedMessage(id)
+      .then((row: any) => {
+        if (!row) {
+          setPinnedMessage(null);
+          return;
+        }
+        const name = row.user_name || 'Player';
+        setPinnedMessage({
+          id: row.id,
+          userId: row.user_id || row.participant_id,
+          participantId: row.participant_id,
+          senderName: name,
+          senderAvatar: (name || '??').slice(0, 2).toUpperCase(),
+          senderAvatarUrl: getSafeImageUrl(row.avatar_url) || null,
+          message: row.message,
+          timestamp: row.created_at,
+          isOwn: false,
+        });
+      })
+      .catch(() => {
+        // Non-fatal for lobby UX; ignore errors
+      });
+  }, [id]);
 
   // Live chat listeners in lobby
   useEffect(() => {
@@ -308,55 +386,6 @@ export default function EventLobby() {
     setShowProfileForm(false);
   };
 
-  /** Join logic — runs AFTER profile is set */
-  const handleJoin = useCallback(async () => {
-    if (!id || !profile) return;
-    setJoinError('');
-    setIsJoining(true);
-    try {
-      if (isAuthenticated && user) {
-        // Authenticated user: accept invitation or join directly
-        if (inviteToken) {
-          if (!/^[A-Za-z0-9_-]+$/.test(inviteToken)) {
-            setJoinError(t('events.invalidInvitationToken'));
-            return;
-          }
-          await acceptInvitation.mutateAsync({ eventId: id, token: inviteToken });
-        } else {
-          const result = await joinEvent.mutateAsync(id);
-          if ((result as any)?.participant_id) {
-            localStorage.setItem(`member_participant_id_${id}`, (result as any).participant_id);
-          }
-        }
-        trackEvent(TRACK.EVENT_JOINED, { eventId: id, viaInvitation: !!inviteToken });
-      } else {
-        // Guest join
-        const safeAvatarUrl = profile.avatarUrl?.startsWith('http') ? profile.avatarUrl : undefined;
-        const result = await joinAsGuest.mutateAsync({
-          eventId: id,
-          data: {
-            name: profile.displayName,
-            email: guestEmail || undefined,
-            avatar_url: safeAvatarUrl,
-            token: inviteToken || undefined,
-          },
-        });
-        if (result.guest_token) {
-          localStorage.setItem(`guest_token_${id}`, result.guest_token);
-          localStorage.setItem(`guest_participant_id_${id}`, result.participant_id);
-          localStorage.setItem(`guest_name_${id}`, result.guest_name);
-        }
-        trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: id, guestName: profile.displayName });
-      }
-      setHasJoined(true);
-    } catch (err: any) {
-      const msg = err?.message || t('events.joinFailed');
-      setJoinError(msg);
-    } finally {
-      setIsJoining(false);
-    }
-  }, [id, profile, isAuthenticated, user, inviteToken, acceptInvitation, joinEvent, joinAsGuest, guestEmail, t]);
-
   const handleCountdownComplete = useCallback(() => {
     navigate(ROUTES.PLAY(id));
   }, [navigate, id]);
@@ -365,9 +394,10 @@ export default function EventLobby() {
     if (eventsSocket.isConnected && id) {
       eventsSocket.emit('chat:message', { eventId: id, message }).catch((err: any) => {
         console.error('[EventLobby] Failed to send message:', err?.message || err);
+        showError(err, 'Failed to send message');
       });
     }
-  }, [eventsSocket.isConnected, id, eventsSocket]);
+  }, [eventsSocket.isConnected, id, eventsSocket, showError]);
 
   const handleTyping = useCallback((isTyping: boolean) => {
     if (eventsSocket.isConnected && id) {
@@ -459,6 +489,13 @@ export default function EventLobby() {
                     <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{event.description}</p>
                     <p className="text-[11px] text-muted-foreground mt-1">
                       {t('events.hostedBy')} <span className="font-medium text-foreground">{event.organization_name}</span>
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/80 mt-1.5">
+                      {event.allow_guests ? t('events.guestsAllowed', 'Guests allowed') : t('events.membersOnly', 'Members only')}
+                      {' · '}
+                      {t('events.maxParticipantsShort', { count: event.max_participants })}
+                      {' · '}
+                      {t('events.statusLabel', 'Status')}: <span className="font-medium text-foreground">{event.status}</span>
                     </p>
                   </div>
                 </div>
@@ -553,10 +590,17 @@ export default function EventLobby() {
                           {p.avatar && <AvatarImage src={p.avatar} />}
                           <AvatarFallback className="bg-muted text-muted-foreground text-[9px] font-bold">{p.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
-                        <span className="text-xs font-medium text-foreground">{p.name}</span>
+                        <span className="text-xs font-medium text-foreground">
+                          {p.name}
+                          {p.is_host && (
+                            <span className="ml-1 inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-full">
+                              ★ {t('events.host', 'Host')}
+                            </span>
+                          )}
+                        </span>
                       </div>
                     ))}
-                    {hasJoined && profile && (
+                    {shouldShowYouPill && (
                       <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-primary/30 bg-primary/5">
                         {profile.avatarUrl ? (
                           <img src={profile.avatarUrl} alt="You" className="h-7 w-7 rounded-full object-cover" />
@@ -589,6 +633,7 @@ export default function EventLobby() {
                     currentUserAvatarUrl={avatarUrl}
                     typingUsers={typingUsers}
                     isOnline={eventsSocket.status === 'connected'}
+                    hostParticipantId={hostParticipantId}
                   />
                 </div>
 

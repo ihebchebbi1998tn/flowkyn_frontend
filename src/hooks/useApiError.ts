@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ApiError } from '@/lib/apiError';
+import { formatErrorForToast } from '@/lib/formatError';
 
 /**
  * Hook that returns a function to show localized toast errors from API responses.
@@ -16,36 +17,27 @@ export function useApiError() {
         try {
           // Safely attempt to use translation function
           const localizedMessage = typeof t === 'function' ? t(`apiErrors.${err.code}`, { defaultValue: '' }) : '';
-          const message = localizedMessage || err.message;
-
-          // If there are field-level details, append them
-          if (err.details?.length) {
-            const detailText = err.details.map(d => `${d.field}: ${d.message}`).join(', ');
-            toast.error(message, { description: detailText });
-          } else {
-            toast.error(message);
-          }
+          const message = localizedMessage || err.message || fallbackMessage || '';
+          const formatted = formatErrorForToast(
+            // Keep err as-is so requestId/details are included
+            Object.assign(err, { message }),
+            { fallbackTitle: fallbackMessage || t('apiErrors.UNKNOWN', { defaultValue: 'An error occurred' }) }
+          );
+          toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
         } catch {
           // If translation fails, fall back to error message
-          toast.error(err.message);
+          const formatted = formatErrorForToast(err, { fallbackTitle: fallbackMessage || 'An error occurred' });
+          toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
         }
         return;
       }
 
       // Fallback for non-structured errors
-      let message = '';
-      if (err instanceof Error) {
-        message = err.message;
-      } else if (typeof fallbackMessage === 'string') {
-        message = fallbackMessage;
-      } else {
-        try {
-          message = typeof t === 'function' ? t('apiErrors.UNKNOWN') : 'An error occurred';
-        } catch {
-          message = 'An error occurred';
-        }
-      }
-      toast.error(message);
+      const fallback = (typeof fallbackMessage === 'string' && fallbackMessage.trim())
+        ? fallbackMessage
+        : (typeof t === 'function' ? t('apiErrors.UNKNOWN', { defaultValue: 'An error occurred' }) : 'An error occurred');
+      const formatted = formatErrorForToast(err, { fallbackTitle: fallback });
+      toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
     } catch (error) {
       // Last resort fallback
       toast.error('An unexpected error occurred');

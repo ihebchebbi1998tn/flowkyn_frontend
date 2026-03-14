@@ -38,6 +38,42 @@ export default function EventForm() {
   const [teamMembers, setTeamMembers] = useState<{ email: string; name?: string; status: string }[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
+  const EVENT_PRESETS = [
+    {
+      id: 'onboarding',
+      label: t('events.presets.onboarding', 'Team Onboarding'),
+      values: {
+        title: 'Team Onboarding Mixer',
+        description: '30-minute welcome session with light icebreakers and weekly wins.',
+        event_mode: 'sync' as const,
+        visibility: 'private' as const,
+        max_participants: 25,
+      },
+    },
+    {
+      id: 'weekly_wins',
+      label: t('events.presets.weeklyWins', 'Weekly Wins'),
+      values: {
+        title: 'Weekly Wins Celebration',
+        description: 'Async check-in where everyone shares their wins of the week.',
+        event_mode: 'async' as const,
+        visibility: 'private' as const,
+        max_participants: 50,
+      },
+    },
+    {
+      id: 'icebreakers',
+      label: t('events.presets.icebreakers', 'Icebreaker Session'),
+      values: {
+        title: 'Icebreaker Session',
+        description: 'Fast-paced icebreakers to help the team connect.',
+        event_mode: 'sync' as const,
+        visibility: 'public' as const,
+        max_participants: 40,
+      },
+    },
+  ] as const;
+
   // Auto-populate org ID from localStorage (set during onboarding)
   useEffect(() => {
     const cachedOrgId = localStorage.getItem('flowkyn_org_id');
@@ -112,12 +148,12 @@ export default function EventForm() {
     if (isEditing && editId) {
       const { organization_id, ...updatePayload } = payload;
       updateEvent.mutate({ eventId: editId, data: updatePayload }, {
-        onSuccess: () => setTimeout(() => navigate(`/events/${editId}`), 500),
+        onSuccess: () => navigate(`/events/${editId}`),
       });
     } else {
       createEvent.mutate(
         { ...payload, invites: selectedMembers },
-        { onSuccess: () => setTimeout(() => navigate('/events'), 500) }
+        { onSuccess: () => navigate('/events') }
       );
     }
   };
@@ -152,6 +188,28 @@ export default function EventForm() {
       <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="h-1 w-full bg-gradient-to-r from-primary/80 to-primary" />
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
+          {!isEditing && (
+            <div className="space-y-1.5">
+              <Label className="text-[13px]">{t('events.presets.title', 'Start from a template')}</Label>
+              <div className="flex flex-wrap gap-2">
+                {EVENT_PRESETS.map(preset => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    className="px-3 py-1.5 rounded-full border border-border text-[11px] hover:border-primary/60 hover:text-primary transition-colors"
+                    onClick={() => {
+                      setForm(f => ({
+                        ...f,
+                        ...preset.values,
+                      }));
+                    }}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label className="text-[13px]">{t('events.eventTitle')}</Label>
             <Input placeholder={t('events.eventTitle')} className="h-10 text-[13px]" required

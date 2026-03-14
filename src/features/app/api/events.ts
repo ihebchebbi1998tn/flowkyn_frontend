@@ -160,4 +160,25 @@ export const eventsApi = {
   /** Upsert the current user's per-event profile */
   upsertMyProfile: (eventId: string, payload: { display_name: string; avatar_url?: string | null }) =>
     api.put(`/events/${eventId}/profile`, payload),
+
+  /** Get the currently pinned chat message for an event (if any) */
+  getPinnedMessage: (eventId: string) =>
+    api.get<{
+      id: string;
+      event_id: string;
+      participant_id: string;
+      message: string;
+      created_at: string;
+      user_id?: string | null;
+      user_name?: string | null;
+      avatar_url?: string | null;
+    } | null>(`/events/${eventId}/pinned-message`),
+
+  /** Pin a chat message (host/admin only) */
+  pinMessage: (eventId: string, messageId: string) =>
+    api.post<void>(`/events/${eventId}/pin-message`, { message_id: messageId }),
+
+  /** Unpin the current chat message (host/admin only) */
+  unpinMessage: (eventId: string) =>
+    api.del<void>(`/events/${eventId}/pin-message`),
 };

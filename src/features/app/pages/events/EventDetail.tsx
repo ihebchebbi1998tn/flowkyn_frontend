@@ -17,6 +17,7 @@ import { ROUTES } from '@/constants/routes';
 import { copyToClipboard } from '@/utils/clipboard';
 import { toast } from 'sonner';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
+import { useApiError } from '@/hooks/useApiError';
 
 const gradientMap = {
   primary: 'from-primary/80 to-primary',
@@ -59,6 +60,7 @@ function InviteDialog({ eventId }: { eventId: string }) {
   const [open, setOpen] = useState(false);
   const inviteMutation = useInviteToEvent();
   const lang = navigator.language?.split('-')[0] || 'en';
+  const { showError } = useApiError();
 
   const handleInvite = () => {
     if (!email.trim()) return;
@@ -70,8 +72,9 @@ function InviteDialog({ eventId }: { eventId: string }) {
           setOpen(false);
         },
         onError: (err) => {
-          // Component-level error handler to log the error
+          // Component-level error handler: log + rich toast with code/requestId
           console.error('Invite error:', err);
+          showError(err, t('events.inviteFailed'));
         },
       }
     );

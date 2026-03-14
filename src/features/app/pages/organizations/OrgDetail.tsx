@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { useMyOrganization, useOrgMembers, useInviteOrgMember, useRemoveOrgMember, useUploadOrgLogo } from '@/hooks/queries';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import type { OrgMember } from '@/types';
+import { useApiError } from '@/hooks/useApiError';
 
 const roleStyle: Record<string, { bg: string; text: string; border: string }> = {
   owner: { bg: 'bg-warning/10', text: 'text-warning', border: 'border-warning/20' },
@@ -32,6 +33,7 @@ export default function OrgDetail() {
   const [inviteRole, setInviteRole] = useState('member');
   const [removeTarget, setRemoveTarget] = useState<OrgMember | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { showError } = useApiError();
 
   const { data: org, isLoading: orgLoading } = useMyOrganization();
   const orgId = org?.id || '';
@@ -51,6 +53,7 @@ export default function OrgDetail() {
     if (file.size > 5 * 1024 * 1024) { toast.error(t('orgDetail.logoSizeError')); return; }
     uploadLogo.mutate({ orgId, file }, {
       onSuccess: () => trackEvent(TRACK.ORG_LOGO_UPLOADED, { orgId }),
+      onError: (err) => showError(err, t('orgDetail.logoUploadFailed')),
     });
   };
 

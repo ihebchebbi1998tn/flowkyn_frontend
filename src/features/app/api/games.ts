@@ -51,4 +51,13 @@ export const gamesApi = {
   /** Finish a game session and compute results/rankings */
   finishSession: (sessionId: string) =>
     api.post(`/game-sessions/${sessionId}/finish`),
+
+  /** List prompts for a given game type (for icebreakers) */
+  getPrompts: (gameTypeId: string, category?: string) =>
+    api.get<Array<{
+      id: string;
+      game_type_id: string;
+      text: string;
+      category?: string | null;
+    }>>(`/game-types/${gameTypeId}/prompts`, category ? { category } : undefined),
 };

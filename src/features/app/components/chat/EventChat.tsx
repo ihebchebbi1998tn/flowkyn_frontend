@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send, MessageCircle, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,12 @@ interface EventChatProps {
   currentUserAvatarUrl?: string | null;
   /** Whether the chat transport is currently usable */
   isOnline?: boolean;
+  /** Optional ID of the host participant for host badge rendering */
+  hostParticipantId?: string;
+  /** Currently pinned message ID, if any */
+  pinnedMessageId?: string | null;
+  /** Called when host wants to pin/unpin a message */
+  onTogglePinMessage?: (messageId: string) => void;
 }
 
 function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: string | null; isOwn: boolean }) {
@@ -55,10 +61,19 @@ function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: st
   );
 }
 
-import React from 'react';
-
-export const EventChat = React.memo(function EventChat({
-  eventId, messages, onSendMessage, onTyping, typingUsers = [], className, currentUserId, currentUserAvatarUrl, isOnline = true,
+export const EventChat = memo(function EventChat({
+  eventId,
+  messages,
+  onSendMessage,
+  onTyping,
+  typingUsers = [],
+  className,
+  currentUserId,
+  currentUserAvatarUrl,
+  isOnline = true,
+  hostParticipantId,
+  pinnedMessageId,
+  onTogglePinMessage,
 }: EventChatProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
@@ -160,6 +175,8 @@ export const EventChat = React.memo(function EventChat({
               const isOwn = msg.isOwn || msg.userId === currentUserId;
               // Use the message's own avatarUrl, or fall back to currentUserAvatarUrl for own messages
               const avatarUrl = msg.senderAvatarUrl || (isOwn ? currentUserAvatarUrl : null);
+              const isHost = hostParticipantId && msg.participantId === hostParticipantId;
+              const isPinned = pinnedMessageId === msg.id;
               return (
                 <motion.div
                   key={msg.id}
@@ -180,7 +197,18 @@ export const EventChat = React.memo(function EventChat({
                   <div className={cn("max-w-[72%] min-w-0 space-y-0.5", isOwn && "items-end flex flex-col")}>
                     {msg.showAvatar && (
                       <p className={cn("text-[10px] font-semibold px-1", isOwn ? "text-right text-primary" : "text-muted-foreground")}>
-                        {isOwn ? 'You' : msg.senderName}
+                        <span>{isOwn ? 'You' : msg.senderName}</span>
+                        {isHost && (
+                          <span className="ml-1 inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-full">
+                            ★
+                            <span>Host</span>
+                          </span>
+                        )}
+                        {isPinned && (
+                          <span className="ml-1 inline-flex items-center gap-0.5 text-[9px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">
+                            📌
+                          </span>
+                        )}
                       </p>
                     )}
                     <div className={cn(
@@ -192,9 +220,29 @@ export const EventChat = React.memo(function EventChat({
                       {msg.message}
                     </div>
                     {(msg as any).isLastInGroup && (
-                      <p className={cn("text-[9px] text-muted-foreground/50 px-1", isOwn && "text-right")}>
-                        {formatTime(msg.timestamp)}
-                      </p>
+                      <div className="flex items-center justify-between px-1">
+                        <p className={cn("text-[9px] text-muted-foreground/50", isOwn && "text-right")}>
+                          {formatTime(msg.timestamp)}
+                        </p>
+                        {onTogglePinMessage && !isPinned && isHost && (
+                          <button
+                            type="button"
+                            onClick={() => onTogglePinMessage(msg.id)}
+                            className="ml-2 text-[9px] text-muted-foreground hover:text-primary"
+                          >
+                            {`Pin`}
+                          </button>
+                        )}
+                        {onTogglePinMessage && isPinned && isHost && (
+                          <button
+                            type="button"
+                            onClick={() => onTogglePinMessage(msg.id)}
+                            className="ml-2 text-[9px] text-primary hover:text-primary/80"
+                          >
+                            {`Unpin`}
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 </motion.div>
@@ -208,11 +256,27 @@ export const EventChat = React.memo(function EventChat({
             initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             className="flex items-center gap-2 px-2 pt-2"
           >
-            <div className="flex gap-0.5 bg-muted/70 px-3 py-2 rounded-2xl rounded-bl-sm">
-              {[0, 1, 2].map((i) => (
-                <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"
-                  animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }} />
-              ))}
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-1">
+                {typingUsers.slice(0, 3).map((name) => (
+                  <div
+                    key={name}
+                    className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[8px] font-semibold border border-background"
+                  >
+                    {name.slice(0, 2).toUpperCase()}
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-0.5 bg-muted/70 px-3 py-2 rounded-2xl rounded-bl-sm">
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50"
+                    animate={{ y: [0, -3, 0] }}
+                    transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+                  />
+                ))}
+              </div>
             </div>
             <span className="text-[10px] text-muted-foreground/60">
               {typingUsers.length === 1 ? t('chat.isTyping', { name: typingUsers[0] }) : t('chat.peopleTyping', { count: typingUsers.length })}

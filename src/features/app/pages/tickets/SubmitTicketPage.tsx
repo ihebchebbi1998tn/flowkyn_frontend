@@ -19,6 +19,7 @@ import { bugReportsApi, type BugReportType, type BugReportPriority } from '@/fea
 import { PageHeader } from '@/components/common/PageHeader';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useApiError } from '@/hooks/useApiError';
 
 interface Attachment {
   file: File;
@@ -49,6 +50,7 @@ export default function SubmitTicketPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { showError } = useApiError();
 
   const handleFileSelect = async (files: FileList | null) => {
     if (!files) return;
@@ -137,7 +139,7 @@ export default function SubmitTicketPage() {
     } catch (err: any) {
       console.error('Failed to submit ticket:', err);
       setError(err?.message || 'Failed to submit ticket');
-      toast.error(err?.message || 'Failed to submit ticket');
+      showError(err, 'Failed to submit ticket');
     } finally {
       setLoading(false);
     }

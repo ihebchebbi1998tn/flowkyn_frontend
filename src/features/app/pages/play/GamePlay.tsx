@@ -18,6 +18,7 @@ import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { eventsApi } from '@/features/app/api/events';
 import { postsApi } from '@/features/app/api/posts';
+import { useApiError } from '@/hooks/useApiError';
 
 // ─── Profile helpers (same keys as EventLobby) ────────────────────────────────
 const profileKey = (eventId: string) => `event_profile_${eventId}`;
@@ -62,6 +63,7 @@ function GamePlayWithoutBoundary() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useTranslation();
+  const { showError } = useApiError();
 
   const gameTypeId = searchParams.get('game') || '1';
   const config = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
@@ -178,10 +180,12 @@ function GamePlayWithoutBoundary() {
     status: 'joined' as const,
     joinedAt: p.joined_at || null,
     score: 0,
+    isHost: !!p.is_host,
   }));
 
   // ─── Chat messages (persistent API load + live WebSocket) ─────────────────
   const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
+  const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
 
   const rawMessages = (messagesData as any)?.data || [];
   const initialMessages: ChatMessage[] = rawMessages.map((m: any) => ({
@@ -200,9 +204,9 @@ function GamePlayWithoutBoundary() {
       : !!(m.user_id && m.user_id === user?.id),
   }));
 
-  // Merge initial (from API) + live (from WebSocket) — deduplicate by id
+  // Merge pinned (if any) + initial (from API) + live (from WebSocket) — deduplicate by id
   const seenIds = new Set<string>();
-  const allMessages = [...initialMessages, ...liveMessages].filter(m => {
+  const allMessages = [...(pinnedMessage ? [pinnedMessage] : []), ...initialMessages, ...liveMessages].filter(m => {
     if (seenIds.has(m.id)) return false;
     seenIds.add(m.id);
     return true;
@@ -212,11 +216,13 @@ function GamePlayWithoutBoundary() {
   const eventsSocket = useEventsSocket({
     // Pass eventId so the socket hook can resolve the correct per-event guest token
     eventId: eventId || undefined,
+    onError: (e) => showError(e, 'Chat error'),
   });
 
   const gamesSocket = useGamesSocket({
     // Use eventId so guests can authenticate with their per-event guest token
     eventId: eventId || undefined,
+    onError: (e) => showError(e, 'Game connection error'),
   });
 
   // 3. Ensure socket connects when joined
@@ -248,9 +254,10 @@ function GamePlayWithoutBoundary() {
         })
         .catch(err => {
           console.error('[GamePlay] Failed to join event room:', err?.message || err);
+          showError(err, 'Failed to join event room');
         });
     }
-  }, [eventsSocket.isConnected, eventId, eventsSocket, isGuest]);
+  }, [eventsSocket.isConnected, eventId, eventsSocket, isGuest, showError]);
 
   // Listen for incoming chat messages
   const liveMessagesRef = useRef(liveMessages);
@@ -290,6 +297,33 @@ function GamePlayWithoutBoundary() {
     const unsub = eventsSocket.on('chat:message', handleChatMessage);
     return unsub;
   }, [eventsSocket.isConnected, eventId, isGuest, guestParticipantId, user?.id]);
+
+  // Fetch pinned message for in-game chat once the eventId is known
+  useEffect(() => {
+    if (!eventId) return;
+    eventsApi.getPinnedMessage(eventId)
+      .then((row: any) => {
+        if (!row) {
+          setPinnedMessage(null);
+          return;
+        }
+        const name = row.user_name || 'Player';
+        setPinnedMessage({
+          id: row.id,
+          userId: row.user_id || row.participant_id,
+          participantId: row.participant_id,
+          senderName: name,
+          senderAvatar: (name || '??').slice(0, 2).toUpperCase(),
+          senderAvatarUrl: getSafeImageUrl(row.avatar_url) || null,
+          message: row.message,
+          timestamp: row.created_at,
+          isOwn: false,
+        });
+      })
+      .catch(() => {
+        // Non-fatal; ignore errors here to avoid breaking game play
+      });
+  }, [eventId]);
 
   // Cleanup: leave event room on unmount
   useEffect(() => {
@@ -344,9 +378,10 @@ function GamePlayWithoutBoundary() {
         })
         .catch((err: any) => {
           console.error('[GamePlay] Failed to join game room:', err?.message || err);
+          showError(err, 'Failed to join game room');
         });
     }
-  }, [gamesSocket.isConnected, sessionId, gamesSocket]);
+  }, [gamesSocket.isConnected, sessionId, gamesSocket, showError]);
 
   useEffect(() => {
     if (!eventId) return;
@@ -390,8 +425,9 @@ function GamePlayWithoutBoundary() {
       })
       .catch(err => {
         console.error('[GamePlay] Failed to join game session room:', err.message);
+        showError(err, 'Failed to join game session');
       });
-  }, [sessionId, gamesSocket.isConnected]);
+  }, [sessionId, gamesSocket.isConnected, showError]);
 
   // Listen for game snapshots pushed by server
   useEffect(() => {
@@ -411,7 +447,7 @@ function GamePlayWithoutBoundary() {
     return () => { unsubState?.(); unsubData?.(); };
   }, [gamesSocket.isConnected]);
 
-  // Reconnect backfill: when events socket reconnects, refetch messages/participants
+  // Reconnect backfill: when events socket reconnects, refetch messages/participants/posts
   const wasEventsConnectedRef = useRef(false);
   useEffect(() => {
     if (eventsSocket.status === 'connected') {
@@ -426,7 +462,7 @@ function GamePlayWithoutBoundary() {
     } else {
       wasEventsConnectedRef.current = false;
     }
-  }, [eventsSocket.status, eventId, refetchMessages, refetchParticipants]);
+  }, [eventsSocket.status, eventId, refetchMessages, refetchParticipants, refetchPosts]);
 
   // Listen for async post updates (Wins of the Week) via event notifications
   useEffect(() => {
@@ -485,17 +521,43 @@ function GamePlayWithoutBoundary() {
       eventsSocket.emit('chat:message', { eventId, message })
         .catch(err => {
           console.error('[GamePlay] Failed to send message:', err.message);
+          showError(err, 'Failed to send message');
         });
     } else {
       console.warn('[GamePlay] Socket not connected, cannot send message — will retry when reconnected.');
     }
-  }, [eventsSocket.isConnected, eventId]);
+  }, [eventsSocket.isConnected, eventId, showError]);
 
   const handleTyping = useCallback((isTyping: boolean) => {
     if (eventsSocket.isConnected && eventId) {
       eventsSocket.emit('chat:typing', { eventId, isTyping });
     }
   }, [eventsSocket.isConnected, eventId]);
+
+  const hostParticipantId = participants.find(p => p.isHost)?.id;
+
+  const handleTogglePinMessage = useCallback(async (messageId: string) => {
+    if (!eventId) return;
+    try {
+      if (pinnedMessage && pinnedMessage.id === messageId) {
+        await eventsApi.unpinMessage(eventId);
+        setPinnedMessage(null);
+      } else {
+        await eventsApi.pinMessage(eventId, messageId);
+        // Try to find the full message in current history for optimistic UI
+        const source = [...initialMessages, ...liveMessages];
+        const msg = source.find(m => m.id === messageId);
+        if (msg) {
+          setPinnedMessage({ ...msg, isOwn: false });
+        } else {
+          // If not found, leave pinnedMessage as-is; it will refresh on next fetch
+        }
+      }
+    } catch (err: any) {
+      console.error('[GamePlay] Failed to toggle pinned message:', err?.message || err);
+      showError(err, 'Failed to update pinned message');
+    }
+  }, [eventId, pinnedMessage, initialMessages, liveMessages, showError]);
 
   // ─── Chat sidebar ──────────────────────────────────────────────────────────
   const chatSidebar = (
@@ -525,6 +587,9 @@ function GamePlayWithoutBoundary() {
         currentUserAvatarUrl={currentUserAvatarUrl}
         typingUsers={typingUsers}
         isOnline={eventsSocket.status === 'connected'}
+        hostParticipantId={hostParticipantId}
+        pinnedMessageId={pinnedMessage?.id}
+        onTogglePinMessage={hostParticipantId ? handleTogglePinMessage : undefined}
       />
     </div>
   );
@@ -573,6 +638,7 @@ function GamePlayWithoutBoundary() {
           }
         } catch (err: any) {
           console.error('[GamePlay] Failed to auto-create game session:', err?.message || err);
+          showError(err, 'Failed to start game session');
           return;
         }
       }

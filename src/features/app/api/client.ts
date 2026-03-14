@@ -15,17 +15,27 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private getHeaders(isMultipart = false): HeadersInit {
+  /** Extract eventId from an API path like /events/:eventId/... for guest token lookup */
+  private extractEventIdFromPath(path: string): string | null {
+    const match = path.match(/^\/events\/([a-zA-Z0-9-]+)(?:\/|$)/);
+    return match?.[1] ?? null;
+  }
+
+  private getHeaders(isMultipart = false, requestPath?: string): HeadersInit {
     const headers: HeadersInit = {};
     if (!isMultipart) headers['Content-Type'] = 'application/json';
     // Prefer the real user JWT
     let token = localStorage.getItem('access_token') || localStorage.getItem('guest_token');
     
-    if (!token && !localStorage.getItem('access_token')) {
-      // Try to extract eventId from the current URL to find an event-specific guest token
-      const match = window.location.pathname.match(/\/(join|play|lobby|events)\/([a-zA-Z0-9-]+)/);
-      if (match && match[2]) {
-        token = localStorage.getItem(`guest_token_${match[2]}`);
+    if (!token) {
+      // Prefer eventId from the request path (most accurate for event-scoped API calls)
+      let eventId = requestPath ? this.extractEventIdFromPath(requestPath) : null;
+      if (!eventId) {
+        const match = window.location.pathname.match(/\/(join|play|lobby|events)\/([a-zA-Z0-9-]+)/);
+        eventId = match?.[2] ?? null;
+      }
+      if (eventId) {
+        token = localStorage.getItem(`guest_token_${eventId}`);
       }
     }
 
@@ -42,11 +52,32 @@ class ApiClient {
 
   async request<T>(path: string, options: RequestOptions = {}, _retried = false): Promise<T> {
     const { params, ...fetchOptions } = options;
-    const res = await fetch(this.buildUrl(path, params), {
-      ...fetchOptions,
-      headers: { ...this.getHeaders(), ...fetchOptions.headers },
-      credentials: 'include',
-    });
+    const url = this.buildUrl(path, params);
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        ...fetchOptions,
+        headers: { ...this.getHeaders(false, path), ...fetchOptions.headers },
+        credentials: 'include',
+      });
+    } catch (networkErr: any) {
+      const msg = networkErr?.message?.toLowerCase?.() || '';
+      const isCors = msg.includes('cors') || msg.includes('cross-origin');
+      const isNetwork = msg.includes('failed to fetch') || msg.includes('network') || msg.includes('load failed');
+      const userMessage = isCors
+        ? 'Unable to connect to the API. The server may not allow requests from this origin. Please try again or contact support.'
+        : isNetwork
+          ? 'Network error. Please check your connection and try again.'
+          : 'The request could not be completed. Please try again.';
+      throw new ApiError({
+        error: userMessage,
+        message: userMessage,
+        code: 'SERVICE_UNAVAILABLE',
+        statusCode: 0,
+        requestId: 'unknown',
+        timestamp: new Date().toISOString(),
+      });
+    }
     if (res.status === 401 && !_retried) {
       // Auth endpoints (login, refresh, register) should never trigger a redirect —
       // they return 401 as a legitimate "wrong credentials / expired token" response.
@@ -77,15 +108,18 @@ class ApiClient {
     if (!res.ok) {
       const body = await res.json().catch(() => ({
         error: 'Request failed',
+        message: 'Request failed',
         code: 'INTERNAL_ERROR' as const,
         statusCode: res.status,
         requestId: 'unknown',
         timestamp: new Date().toISOString(),
       }));
+      const displayMsg = body.message ?? body.error ?? `Request failed (${res.status})`;
       throw new ApiError({
-        error: body.error || `HTTP ${res.status}`,
+        error: body.error ?? displayMsg,
+        message: displayMsg,
         code: body.code || 'INTERNAL_ERROR',
-        statusCode: body.statusCode || res.status,
+        statusCode: body.statusCode ?? res.status,
         requestId: body.requestId || 'unknown',
         details: body.details,
         timestamp: body.timestamp || new Date().toISOString(),
@@ -179,13 +213,30 @@ class ApiClient {
   /** Upload file using multipart/form-data (with 401 refresh support) */
   upload<T>(path: string, formData: FormData) {
     const doUpload = async (retry = true): Promise<T> => {
-      const headers = this.getHeaders(true) as Record<string, string>;
-      const res = await fetch(this.buildUrl(path), {
-        method: 'POST',
-        body: formData,
-        headers,
-        credentials: 'include',
-      });
+      const headers = this.getHeaders(true, path) as Record<string, string>;
+      let res: Response;
+      try {
+        res = await fetch(this.buildUrl(path), {
+          method: 'POST',
+          body: formData,
+          headers,
+          credentials: 'include',
+        });
+      } catch (networkErr: any) {
+        const msg = networkErr?.message?.toLowerCase?.() || '';
+        const isCors = msg.includes('cors') || msg.includes('cross-origin');
+        const userMessage = isCors
+          ? 'Unable to upload. The API may not allow requests from this origin. Please try again or contact support.'
+          : 'Network error. Please check your connection and try again.';
+        throw new ApiError({
+          error: userMessage,
+          message: userMessage,
+          code: 'SERVICE_UNAVAILABLE',
+          statusCode: 0,
+          requestId: 'unknown',
+          timestamp: new Date().toISOString(),
+        });
+      }
 
       // Handle 401 with token refresh (same pattern as request())
       if (res.status === 401 && retry) {
@@ -206,15 +257,18 @@ class ApiClient {
       if (!res.ok) {
         const body = await res.json().catch(() => ({
           error: 'Upload failed',
+          message: 'Upload failed',
           code: 'INTERNAL_ERROR' as const,
           statusCode: res.status,
           requestId: 'unknown',
           timestamp: new Date().toISOString(),
         }));
+        const displayMsg = body.message ?? body.error ?? `Upload failed (${res.status})`;
         throw new ApiError({
-          error: body.error || `HTTP ${res.status}`,
+          error: body.error ?? displayMsg,
+          message: displayMsg,
           code: body.code || 'INTERNAL_ERROR',
-          statusCode: body.statusCode || res.status,
+          statusCode: body.statusCode ?? res.status,
           requestId: body.requestId || 'unknown',
           details: body.details,
           timestamp: body.timestamp || new Date().toISOString(),

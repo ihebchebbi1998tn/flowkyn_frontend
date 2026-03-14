@@ -18,6 +18,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useApiError } from '@/hooks/useApiError';
 
 export function SecuritySection() {
   const { t } = useTranslation();
@@ -30,6 +31,7 @@ export function SecuritySection() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState('');
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const { showError } = useApiError();
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,8 +56,10 @@ export function SecuritySection() {
     } catch (err) {
       if (ApiError.is(err)) {
         setError(err.message);
+        showError(err, t('settings.passwordUpdateFailed'));
       } else {
         setError(t('settings.passwordUpdateFailed'));
+        showError(err, t('settings.passwordUpdateFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -71,9 +75,9 @@ export function SecuritySection() {
       navigate(ROUTES.LOGIN);
     } catch (err) {
       if (ApiError.is(err)) {
-        toast.error(err.message);
+        showError(err, t('settings.accountDeleteFailed'));
       } else {
-        toast.error(t('settings.accountDeleteFailed'));
+        showError(err, t('settings.accountDeleteFailed'));
       }
     } finally {
       setIsDeleting(false);
