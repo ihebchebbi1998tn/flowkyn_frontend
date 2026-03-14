@@ -8,6 +8,8 @@ import { notificationsApi } from '@/features/app/api/notifications';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useNotificationsSocket } from '@/hooks/useSocket';
 import { useApiError } from '@/hooks/useApiError';
+import { useLocation } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -20,29 +22,35 @@ interface NotificationContextType {
 
 const NotificationContext = createContext<NotificationContextType | null>(null);
 
+// Module-level state to survive component unmounts (prevents loops during remount cycles)
+let lastFetchTime = 0;
+
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { showError } = useApiError();
-  const lastFetchRef = useRef<number>(0);
+  const isLoadingRef = useRef(false);
 
   // useAuth() must be called unconditionally (Rules of Hooks).
-  // When NotificationProvider is rendered outside an AuthProvider (e.g. admin mode),
-  // useAuth returns null — we guard against that with the null check below.
   const auth = useAuth();
   const isAuthenticated = auth?.isAuthenticated ?? false;
 
   const unreadCount = notifications.filter(n => !n.read_at).length;
 
   const fetchNotifications = useCallback(async (forced = false) => {
-    if (!isAuthenticated) return;
+    // Basic guards
+    if (!isAuthenticated || isLoadingRef.current) return;
     
+    // Don't poll while in onboarding (reduces noise during setup)
+    if (window.location.pathname.includes('/onboarding')) return;
+
     // Throttle: don't fetch more than once every 2 seconds unless forced
     const now = Date.now();
-    if (!forced && now - lastFetchRef.current < 2000) return;
-    lastFetchRef.current = now;
+    if (!forced && now - lastFetchTime < 2000) return;
+    lastFetchTime = now;
 
     setIsLoading(true);
+    isLoadingRef.current = true;
     try {
       const result = await notificationsApi.list(1, 50);
       setNotifications(result.data);
@@ -50,6 +58,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       showError(err, 'Failed to fetch notifications');
     } finally {
       setIsLoading(false);
+      isLoadingRef.current = false;
     }
   }, [isAuthenticated, showError]);
 
@@ -59,7 +68,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       fetchNotifications();
     } else {
       setNotifications([]);
-      lastFetchRef.current = 0;
+      lastFetchTime = 0;
     }
   }, [isAuthenticated, fetchNotifications]);
 

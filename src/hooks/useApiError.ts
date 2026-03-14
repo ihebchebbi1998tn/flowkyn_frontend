@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ApiError } from '@/lib/apiError';
@@ -9,14 +9,17 @@ import { ApiError } from '@/lib/apiError';
  */
 export function useApiError() {
   const { t } = useTranslation();
+  const tRef = useRef(t);
+  tRef.current = t;
 
   /** Show a localized error toast. Accepts any error — gracefully handles non-API errors. */
   const showError = useCallback((err: unknown, fallbackMessage?: string) => {
+    const translate = tRef.current;
     try {
       if (ApiError.is(err)) {
         try {
           // Safely attempt to use translation function
-          const localizedMessage = typeof t === 'function' ? t(`apiErrors.${err.code}`, { defaultValue: '' }) : '';
+          const localizedMessage = typeof translate === 'function' ? translate(`apiErrors.${err.code}`, { defaultValue: '' }) : '';
           const message = localizedMessage || err.message;
 
           // If there are field-level details, append them
@@ -41,7 +44,7 @@ export function useApiError() {
         message = fallbackMessage;
       } else {
         try {
-          message = typeof t === 'function' ? t('apiErrors.UNKNOWN') : 'An error occurred';
+          message = typeof translate === 'function' ? translate('apiErrors.UNKNOWN') : 'An error occurred';
         } catch {
           message = 'An error occurred';
         }
@@ -52,7 +55,7 @@ export function useApiError() {
       toast.error('An unexpected error occurred');
       console.error('Error in showError:', error);
     }
-  }, [t]);
+  }, []); // Perfect stability — no dependencies
 
   return { showError };
 }

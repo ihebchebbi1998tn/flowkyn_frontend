@@ -74,9 +74,9 @@ const App = () => (
     <ThemeProvider>
       <AuthWrapper>
         <Suspense fallback={<AuthPageSkeleton />}>
+          <Sonner />
           <NotificationProvider>
             <TooltipProvider>
-              <Sonner />
               <DeploymentNotificationSystem />
               <BrowserRouter>
                 <ErrorBoundary>
