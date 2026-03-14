@@ -447,13 +447,26 @@ export default function EventLobby() {
   }, [navigate, id, gameParam]);
 
   const handleSendMessage = useCallback((message: string) => {
-    if (eventsSocket.isConnected && id) {
-      eventsSocket.emit('chat:message', { eventId: id, message }).catch((err: any) => {
-        console.error('[EventLobby] Failed to send message:', err?.message || err);
-        showError(err, 'Failed to send message');
-      });
+    if (!id) return;
+
+    // Optimistically refresh HTTP messages after server acks the socket emit,
+    // so users see their message even if they joined the room slightly late.
+    if (eventsSocket.isConnected) {
+      eventsSocket.emit('chat:message', { eventId: id, message })
+        .then(() => {
+          console.log('[EventLobby] chat:message ack received, refetching messages', { eventId: id });
+          refetchMessages();
+        })
+        .catch((err: any) => {
+          console.error('[EventLobby] Failed to send message:', err?.message || err);
+          showError(err, 'Failed to send message');
+        });
+    } else {
+      console.warn('[EventLobby] Socket not connected, cannot send message — falling back to HTTP refetch');
+      // Even if socket isn't connected, trigger a refetch so the UI can pick up messages
+      refetchMessages();
     }
-  }, [eventsSocket.isConnected, id, eventsSocket, showError]);
+  }, [eventsSocket.isConnected, id, eventsSocket, refetchMessages, showError]);
 
   const handleTyping = useCallback((isTyping: boolean) => {
     if (eventsSocket.isConnected && id) {

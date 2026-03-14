@@ -129,7 +129,14 @@ export function useJoinEvent() {
         localStorage.setItem(`member_participant_id_${eventId}`, (result as any).participant_id);
       }
     },
-    onError: (err) => showError(err),
+    onError: (err) => {
+      // Joining is idempotent from a UX perspective; if the backend says we're already a participant,
+      // don't show an error toast. The calling code will handle 409s as a "success" case.
+      if (ApiError.is?.(err) && err.statusCode === 409 && err.code === 'ALREADY_PARTICIPANT') {
+        return;
+      }
+      showError(err);
+    },
   });
 }
 
