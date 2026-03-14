@@ -12,22 +12,7 @@ import Register from './Register';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 
-export type AuthView = 'login' | 'register' | 'forgot' | 'reset';
-
-export interface AuthSwitchContextProps {
-  currentView: AuthView;
-  switchView: (view: AuthView) => void;
-}
-
-export const AuthSwitchContext = createContext<AuthSwitchContextProps | undefined>(undefined);
-
-export const useAuthSwitch = () => {
-  const context = useContext(AuthSwitchContext);
-  if (!context) {
-    throw new Error('useAuthSwitch must be used within AuthContainer');
-  }
-  return context;
-};
+import { AuthSwitchContext, type AuthView } from './AuthSwitchContext';
 
 export default function AuthContainer() {
   const [searchParams] = useSearchParams();

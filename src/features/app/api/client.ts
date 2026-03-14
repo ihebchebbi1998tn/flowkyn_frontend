@@ -132,11 +132,10 @@ class ApiClient {
   }
 
   /** Recursively rewrites localhost URLs from the backend to the current API domain */
-  private transformResponseUrls(obj: any): any {
-    if (obj === null || obj === undefined) return obj;
+  private transformResponseUrls(obj: any, seen = new Set()): any {
+    if (obj === null || obj === undefined || seen.has(obj)) return obj;
+    
     if (typeof obj === 'string') {
-      // If string is an absolute URL pointing to /uploads/..., rewrite its origin
-      // so it matches the current API API_BASE (regardless of what host it was saved with).
       const match = obj.match(/^https?:\/\/[^\/]+(\/uploads\/.*)/);
       if (match) {
         const baseRoot = API_BASE.replace(/\/v1$/, '');
@@ -144,16 +143,25 @@ class ApiClient {
       }
       return obj;
     }
+
     if (Array.isArray(obj)) {
-      return obj.map(item => this.transformResponseUrls(item));
+      seen.add(obj);
+      return obj.map(item => this.transformResponseUrls(item, seen));
     }
-    if (typeof obj === 'object') {
+
+    // Only transform plain objects to avoid crashing on class instances/DOM/etc
+    if (obj && typeof obj === 'object') {
+      const proto = Object.getPrototypeOf(obj);
+      if (proto !== null && proto !== Object.prototype) return obj;
+
+      seen.add(obj);
       const newObj: any = {};
       for (const [k, v] of Object.entries(obj)) {
-        newObj[k] = this.transformResponseUrls(v);
+        newObj[k] = this.transformResponseUrls(v, seen);
       }
       return newObj;
     }
+
     return obj;
   }
 

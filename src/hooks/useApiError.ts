@@ -14,21 +14,16 @@ export function useApiError() {
   const showError = (err: unknown, fallbackMessage?: string) => {
     try {
       if (ApiError.is(err)) {
-        try {
-          // Safely attempt to use translation function
-          const localizedMessage = typeof t === 'function' ? t(`apiErrors.${err.code}`, { defaultValue: '' }) : '';
-          const message = localizedMessage || err.message || fallbackMessage || '';
-          const formatted = formatErrorForToast(
-            // Keep err as-is so requestId/details are included
-            Object.assign(err, { message }),
-            { fallbackTitle: fallbackMessage || t('apiErrors.UNKNOWN', { defaultValue: 'An error occurred' }) }
-          );
-          toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
-        } catch {
-          // If translation fails, fall back to error message
-          const formatted = formatErrorForToast(err, { fallbackTitle: fallbackMessage || 'An error occurred' });
-          toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
-        }
+        // Safely attempt to use translation function
+        const localizedMessage = typeof t === 'function' ? t(`apiErrors.${err.code}`, { defaultValue: '' }) : '';
+        const message = localizedMessage || err.message || fallbackMessage || '';
+        
+        // Don't mutate the original error object
+        const formatted = formatErrorForToast(
+          { ...err, message } as ApiError,
+          { fallbackTitle: fallbackMessage || (typeof t === 'function' ? t('apiErrors.UNKNOWN', { defaultValue: 'An error occurred' }) : 'An error occurred') }
+        );
+        toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
         return;
       }
 

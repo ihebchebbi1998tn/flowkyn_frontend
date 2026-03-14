@@ -36,11 +36,11 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {(dev || mode === 'landing') && landingRoutes}
-      {(dev || mode === 'app') && appRoutes}
-      {(dev || mode === 'admin') && adminRoutes}
-      {(dev || mode === 'tests') && testRoutes}
-      {dev && templatesRoutes}
+      {mode === 'landing' && landingRoutes}
+      {mode === 'app' && appRoutes}
+      {mode === 'admin' && adminRoutes}
+      {mode === 'tests' && testRoutes}
+      {mode === 'templates' && templatesRoutes}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -73,19 +73,19 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthWrapper>
-        <NotificationProvider>
-          <TooltipProvider>
-            <Sonner />
-            <DeploymentNotificationSystem />
-            <BrowserRouter>
-              <ErrorBoundary>
-                <Suspense fallback={<AuthPageSkeleton />}>
+        <Suspense fallback={<AuthPageSkeleton />}>
+          <NotificationProvider>
+            <TooltipProvider>
+              <Sonner />
+              <DeploymentNotificationSystem />
+              <BrowserRouter>
+                <ErrorBoundary>
                   <AppRoutes />
-                </Suspense>
-              </ErrorBoundary>
-            </BrowserRouter>
-          </TooltipProvider>
-        </NotificationProvider>
+                </ErrorBoundary>
+              </BrowserRouter>
+            </TooltipProvider>
+          </NotificationProvider>
+        </Suspense>
       </AuthWrapper>
     </ThemeProvider>
   </QueryClientProvider>

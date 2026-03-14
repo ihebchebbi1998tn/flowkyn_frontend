@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuthSwitch } from './AuthContainer';
+import { useAuthSwitch } from './AuthSwitchContext';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Label } from '@/components/ui/label';
