@@ -175,8 +175,8 @@ export default function LaunchActivity() {
         }
       }
 
-      // Navigate to the actual event with correct ID
-      navigate(ROUTES.PLAY(createdEvent.id) + `?game=${id}`);
+      // Navigate to lobby first so creator joins, then they can enter play (fixes 404/403/500/409)
+      navigate(ROUTES.EVENT_LOBBY(createdEvent.id) + (id ? `?game=${id}` : ''));
     } catch (err: any) {
       console.error('Launch failed:', err);
       const errorMessage = err?.response?.data?.message || err?.message || 'Failed to launch activity. Please try again.';

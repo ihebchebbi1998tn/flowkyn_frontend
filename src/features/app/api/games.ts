@@ -22,14 +22,14 @@ export const gamesApi = {
 
   /** Start a new game session within an event */
   startSession: (eventId: string, gameTypeId: string) =>
-    api.post<GameSession>(`/events/${eventId}/game-sessions`, { game_type_id: gameTypeId }),
+    api.post<GameSession>(`/events/${eventId}/game-sessions`, { game_type_id: gameTypeId }, eventId),
 
   /**
    * Resolve the currently active game session for a given event + game type key.
    * Returns null if no active session exists.
    */
   getActiveSession: (eventId: string, gameKey: string) =>
-    api.get<GameSession | null>(`/events/${eventId}/game-sessions/active`, { game_key: gameKey }),
+    api.get<GameSession | null>(`/events/${eventId}/game-sessions/active`, { game_key: gameKey }, eventId),
 
   /** Start the next round in a game session */
   startRound: (sessionId: string) =>

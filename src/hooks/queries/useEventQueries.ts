@@ -45,19 +45,19 @@ export function useEventParticipants(eventId: string, page = 1, limit = 50) {
   });
 }
 
-export function useEventMessages(eventId: string, page = 1, limit = 50) {
+export function useEventMessages(eventId: string, page = 1, limit = 50, enabled = true) {
   return useQuery({
     queryKey: eventKeys.messages(eventId),
     queryFn: () => eventsApi.getMessages(eventId, page, limit),
-    enabled: !!eventId,
+    enabled: !!eventId && enabled,
   });
 }
 
-export function useEventPosts(eventId: string, page = 1, limit = 50) {
+export function useEventPosts(eventId: string, page = 1, limit = 50, enabled = true) {
   return useQuery({
     queryKey: eventKeys.posts(eventId),
     queryFn: () => eventsApi.getPosts(eventId, page, limit),
-    enabled: !!eventId,
+    enabled: !!eventId && enabled,
   });
 }
 

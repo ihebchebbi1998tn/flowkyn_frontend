@@ -1,10 +1,17 @@
 /**
  * App API client with shared refresh promise to prevent concurrent refresh race conditions.
- * Uses localStorage keys (access_token, refresh_token) for user sessions.
+ * Uses localStorage: access_token, refresh_token for logged-in users;
+ * guest_token_${eventId} for guest participants on event-scoped requests.
  */
 import { ApiError } from '@/lib/apiError';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://api.flowkyn.com/v1';
+
+export type RequestOptions = RequestInit & {
+  params?: Record<string, string>;
+  /** For event-scoped endpoints: use guest_token_${eventId} when no access_token (guests) */
+  eventId?: string;
+};
 
 class ApiClient {
   private baseUrl: string;
@@ -14,9 +21,12 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private getHeaders(): HeadersInit {
+  private getHeaders(eventId?: string): HeadersInit {
     const headers: HeadersInit = { 'Content-Type': 'application/json' };
-    const token = localStorage.getItem('access_token');
+    let token = localStorage.getItem('access_token');
+    if (!token && eventId) {
+      token = localStorage.getItem(`guest_token_${eventId}`) || localStorage.getItem('guest_token');
+    }
     if (token) headers['Authorization'] = `Bearer ${token}`;
     return headers;
   }
@@ -28,22 +38,26 @@ class ApiClient {
     return url.toString();
   }
 
-  async request<T>(path: string, options: RequestInit & { params?: Record<string, string> } = {}): Promise<T> {
-    const { params, ...fetchOptions } = options as any;
+  async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+    const { params, eventId, ...fetchOptions } = options;
     const res = await fetch(this.buildUrl(path, params), {
       ...fetchOptions,
-      headers: { ...this.getHeaders(), ...fetchOptions.headers },
+      headers: { ...this.getHeaders(eventId), ...(fetchOptions.headers as HeadersInit) },
     });
 
     if (res.status === 401) {
-      const refreshed = await this.refreshToken();
+      const usedAccessToken = !!localStorage.getItem('access_token');
+      const refreshed = usedAccessToken ? await this.refreshToken() : false;
       if (refreshed) return this.request<T>(path, options);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
+      // Only redirect to login when we had an expired JWT; guests should not be redirected
+      if (usedAccessToken) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+      }
       throw new ApiError({
         error: 'Unauthorized',
-        code: 'AUTH_TOKEN_EXPIRED',
+        code: 'AUTH_TOKEN_INVALID',
         statusCode: 401,
         requestId: 'unknown',
         timestamp: new Date().toISOString(),
@@ -101,20 +115,24 @@ class ApiClient {
     return this.refreshPromise;
   }
 
-  get<T>(path: string, params?: Record<string, string>) {
-    return this.request<T>(path, { method: 'GET', params } as any);
+  get<T>(path: string, params?: Record<string, string>, eventId?: string) {
+    return this.request<T>(path, { method: 'GET', params, eventId } as RequestOptions);
   }
 
-  post<T>(path: string, body?: unknown) {
-    return this.request<T>(path, { method: 'POST', body: JSON.stringify(body) });
+  post<T>(path: string, body?: unknown, eventId?: string) {
+    return this.request<T>(path, { method: 'POST', body: JSON.stringify(body), eventId } as RequestOptions);
   }
 
-  patch<T>(path: string, body?: unknown) {
-    return this.request<T>(path, { method: 'PATCH', body: JSON.stringify(body) });
+  patch<T>(path: string, body?: unknown, eventId?: string) {
+    return this.request<T>(path, { method: 'PATCH', body: JSON.stringify(body), eventId } as RequestOptions);
   }
 
-  del<T>(path: string) {
-    return this.request<T>(path, { method: 'DELETE' });
+  put<T>(path: string, body?: unknown, eventId?: string) {
+    return this.request<T>(path, { method: 'PUT', body: JSON.stringify(body), eventId } as RequestOptions);
+  }
+
+  del<T>(path: string, eventId?: string) {
+    return this.request<T>(path, { method: 'DELETE', eventId } as RequestOptions);
   }
 }
 

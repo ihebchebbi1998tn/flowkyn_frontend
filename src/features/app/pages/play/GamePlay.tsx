@@ -12,6 +12,7 @@ import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { ROUTES } from '@/constants/routes';
 import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts, useJoinEvent, useJoinAsGuest, useAcceptEventInvitation } from '@/hooks/queries/useEventQueries';
 import { useEventIdentity } from '@/hooks/useEventIdentity';
+import { hasEventToken } from '@/hooks/queries/useMyEventParticipant';
 import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
 import { gamesApi } from '@/features/app/api/games';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
@@ -168,8 +169,9 @@ function GamePlayWithoutBoundary() {
   // ─── Real data from API ────────────────────────────────────────────────────
   const { data: eventData } = useEventPublicInfo(eventId || '');
   const { data: participantsData, refetch: refetchParticipants } = useEventParticipants(eventId || '');
-  const { data: messagesData, refetch: refetchMessages } = useEventMessages(eventId || '');
-  const { data: postsData, refetch: refetchPosts } = useEventPosts(eventId || '');
+  const canFetchParticipantData = hasEventToken(eventId || undefined) && (!!participantId || hasJoined);
+  const { data: messagesData, refetch: refetchMessages } = useEventMessages(eventId || '', 1, 50, canFetchParticipantData);
+  const { data: postsData, refetch: refetchPosts } = useEventPosts(eventId || '', 1, 50, canFetchParticipantData);
 
   const eventPublicObj = eventData as any;
 
@@ -588,6 +590,7 @@ function GamePlayWithoutBoundary() {
         onSendMessage={handleSendMessage}
         onTyping={handleTyping}
         currentUserId={currentUserId}
+        isGuest={isGuest}
         currentUserAvatarUrl={currentUserAvatarUrl}
         typingUsers={typingUsers}
         isOnline={eventsSocket.status === 'connected'}
@@ -696,7 +699,7 @@ function GamePlayWithoutBoundary() {
             }}
             onToggleReaction={async (postId: string, reactionType: string) => {
               if (!postParticipantId) return;
-              await postsApi.react(postId, postParticipantId, reactionType);
+              await postsApi.react(postId, postParticipantId, reactionType, eventId || undefined);
               await refetchPosts();
             }}
           />

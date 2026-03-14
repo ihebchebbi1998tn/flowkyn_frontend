@@ -13,7 +13,8 @@ export const postsApi = {
   /**
    * React to an activity post.
    * Participant ownership is verified server-side to prevent impersonation.
+   * Pass eventId when caller is a guest so the API client can use guest_token_${eventId}.
    */
-  react: (postId: string, participantId: string, reactionType: string) =>
-    api.post(`/posts/${postId}/reactions`, { participant_id: participantId, reaction_type: reactionType }),
+  react: (postId: string, participantId: string, reactionType: string, eventId?: string) =>
+    api.post(`/posts/${postId}/reactions`, { participant_id: participantId, reaction_type: reactionType }, eventId),
 };

@@ -108,7 +108,7 @@ export const eventsApi = {
 
   /** Get paginated chat messages */
   getMessages: (eventId: string, page = 1, limit = 50) =>
-    api.get(`/events/${eventId}/messages`, { page: String(page), limit: String(limit) }),
+    api.get(`/events/${eventId}/messages`, { page: String(page), limit: String(limit) }, eventId),
 
   /** Get paginated activity posts for async games like Wins of the Week */
   getPosts: (eventId: string, page = 1, limit = 50) =>
@@ -124,17 +124,17 @@ export const eventsApi = {
     }>>(`/events/${eventId}/posts`, {
       page: String(page),
       limit: String(limit),
-    }),
+    }, eventId),
 
   /** Send a chat message */
   sendMessage: (eventId: string, participantId: string, message: string) =>
-    api.post(`/events/${eventId}/messages`, { participant_id: participantId, message }),
+    api.post(`/events/${eventId}/messages`, { participant_id: participantId, message }, eventId),
 
   // ── Posts ──────────────────────────────────────────────────────────────────
 
   /** Create an activity post */
   createPost: (eventId: string, participantId: string, content: string) =>
-    api.post(`/events/${eventId}/posts`, { participant_id: participantId, content }),
+    api.post(`/events/${eventId}/posts`, { participant_id: participantId, content }, eventId),
 
   // ── Identity helpers ────────────────────────────────────────────────────────
 
@@ -146,7 +146,7 @@ export const eventsApi = {
       name: string | null;
       avatar: string | null;
       isGuest: boolean;
-    }>(`/events/${eventId}/me`),
+    }>(`/events/${eventId}/me`, undefined, eventId),
 
   /** Get the current user's per-event profile (display name + avatar) */
   getMyProfile: (eventId: string) =>
@@ -155,13 +155,13 @@ export const eventsApi = {
       id: string | null;
       display_name: string;
       avatar_url: string | null;
-    }>(`/events/${eventId}/profile`),
+    }>(`/events/${eventId}/profile`, undefined, eventId),
 
   /** Upsert the current user's per-event profile */
   upsertMyProfile: (eventId: string, payload: { display_name: string; avatar_url?: string | null }) =>
-    api.put(`/events/${eventId}/profile`, payload),
+    api.put(`/events/${eventId}/profile`, payload, eventId),
 
-  /** Get the currently pinned chat message for an event (if any) */
+  /** Get the currently pinned chat message for an event (if any) — public, no auth */
   getPinnedMessage: (eventId: string) =>
     api.get<{
       id: string;
@@ -176,9 +176,9 @@ export const eventsApi = {
 
   /** Pin a chat message (host/admin only) */
   pinMessage: (eventId: string, messageId: string) =>
-    api.post<void>(`/events/${eventId}/pin-message`, { message_id: messageId }),
+    api.post<void>(`/events/${eventId}/pin-message`, { message_id: messageId }, eventId),
 
   /** Unpin the current chat message (host/admin only) */
   unpinMessage: (eventId: string) =>
-    api.del<void>(`/events/${eventId}/pin-message`),
+    api.del<void>(`/events/${eventId}/pin-message`, eventId),
 };

@@ -30,6 +30,7 @@ import {
   useJoinAsGuest,
   useAcceptEventInvitation,
 } from '@/hooks/queries/useEventQueries';
+import { hasEventToken } from '@/hooks/queries/useMyEventParticipant';
 import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
 import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { useAuth } from '@/features/app/context/AuthContext';
@@ -69,11 +70,13 @@ export default function EventLobby() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const inviteToken = searchParams.get('token');
+  const gameParam = searchParams.get('game');
   const { isAuthenticated, user } = useAuth();
 
   const { data: event, isLoading: eventLoading } = useEventPublicInfo(id || '');
   const { data: participantsData, refetch: refetchParticipants } = useEventParticipants(id || '');
-  const { data: messagesData, refetch: refetchMessages } = useEventMessages(id || '');
+  const hasToken = hasEventToken(id || undefined);
+  const { data: messagesData, refetch: refetchMessages } = useEventMessages(id || '', 1, 50, hasToken);
   const joinEvent = useJoinEvent();
   const joinAsGuest = useJoinAsGuest();
   const acceptInvitation = useAcceptEventInvitation();
@@ -139,7 +142,11 @@ export default function EventLobby() {
       }
       setHasJoined(true);
     } catch (err: any) {
-      setJoinError(err?.message || t('events.joinFailed'));
+      if (err?.statusCode === 409 || err?.status === 409 || err?.code === 'ALREADY_PARTICIPANT') {
+        setHasJoined(true);
+      } else {
+        setJoinError(err?.message || t('events.joinFailed'));
+      }
     } finally {
       setIsJoining(false);
     }
@@ -376,19 +383,29 @@ export default function EventLobby() {
     };
   }, [id, eventsSocket.socket]);
 
-  /** Called when user completes profile setup */
+  /** Called when user completes profile setup — join happens in useEffect; upsert only after join */
   const handleProfileComplete = (data: ProfileSetupData) => {
     if (!id) return;
     saveProfile(id, data);
     setProfile(data);
-    // Persist to backend event profile for server-driven identity
-    upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
     setShowProfileForm(false);
+    if (hasJoined) upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
   };
 
+  // Persist profile to backend only AFTER join succeeds (upsert requires participant)
+  const hasUpsertedProfileRef = useRef(false);
+  useEffect(() => {
+    if (hasJoined && profile && id && !hasUpsertedProfileRef.current) {
+      hasUpsertedProfileRef.current = true;
+      upsertProfile.mutate({ display_name: profile.displayName, avatar_url: profile.avatarUrl || null });
+    }
+    if (!hasJoined) hasUpsertedProfileRef.current = false;
+  }, [hasJoined, profile, id, upsertProfile]);
+
   const handleCountdownComplete = useCallback(() => {
-    navigate(ROUTES.PLAY(id));
-  }, [navigate, id]);
+    const playPath = ROUTES.PLAY(id) + (gameParam ? `?game=${gameParam}` : '');
+    navigate(playPath);
+  }, [navigate, id, gameParam]);
 
   const handleSendMessage = useCallback((message: string) => {
     if (eventsSocket.isConnected && id) {
@@ -630,6 +647,7 @@ export default function EventLobby() {
                     onSendMessage={handleSendMessage}
                     onTyping={handleTyping}
                     currentUserId={currentUserId}
+                    isGuest={isGuest}
                     currentUserAvatarUrl={avatarUrl}
                     typingUsers={typingUsers}
                     isOnline={eventsSocket.status === 'connected'}

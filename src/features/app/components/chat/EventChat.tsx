@@ -29,6 +29,8 @@ interface EventChatProps {
   typingUsers?: string[];
   className?: string;
   currentUserId?: string;
+  /** When true, backend sends userId as guest:${participantId}; currentUserId is participant ID */
+  isGuest?: boolean;
   /** Current user's avatar URL for their own messages */
   currentUserAvatarUrl?: string | null;
   /** Whether the chat transport is currently usable */
@@ -74,6 +76,7 @@ export const EventChat = memo(function EventChat({
   hostParticipantId,
   pinnedMessageId,
   onTogglePinMessage,
+  isGuest = false,
 }: EventChatProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
@@ -172,7 +175,7 @@ export const EventChat = memo(function EventChat({
         ) : (
           <AnimatePresence initial={false}>
             {groupedMessages.map((msg) => {
-              const isOwn = msg.isOwn || msg.userId === currentUserId;
+              const isOwn = msg.isOwn || msg.userId === currentUserId || (isGuest && !!currentUserId && msg.userId === `guest:${currentUserId}`);
               // Use the message's own avatarUrl, or fall back to currentUserAvatarUrl for own messages
               const avatarUrl = msg.senderAvatarUrl || (isOwn ? currentUserAvatarUrl : null);
               const isHost = hostParticipantId && msg.participantId === hostParticipantId;
