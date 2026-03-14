@@ -98,6 +98,13 @@ function GamePlayWithoutBoundary() {
   const inviteToken = searchParams.get('token');
   const { isAuthenticated } = useAuth();
 
+  const identityRef = useRef(identity);
+  const userRef = useRef(user);
+  useEffect(() => {
+    identityRef.current = identity;
+    userRef.current = user;
+  }, [identity, user]);
+
   const currentUserName = profile?.displayName || displayName;
   const currentUserAvatarUrl = profile?.avatarUrl || avatarUrl;
 
@@ -246,12 +253,16 @@ function GamePlayWithoutBoundary() {
   }));
 
   // Merge pinned (if any) + initial (from API) + live (from WebSocket) — deduplicate by id
-  const seenIds = new Set<string>();
-  const allMessages = [...(pinnedMessage ? [pinnedMessage] : []), ...initialMessages, ...liveMessages].filter(m => {
-    if (seenIds.has(m.id)) return false;
-    seenIds.add(m.id);
-    return true;
-  });
+  const allMessages = [...(pinnedMessage ? [pinnedMessage] : []), ...initialMessages, ...liveMessages].filter((m, i, self) => 
+    i === self.findIndex((t) => t.id === m.id)
+  );
+
+  // ─── Game session state (moved up for use in callbacks) ────────────────────
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isResolvingSession, setIsResolvingSession] = useState(false);
+  const [activeRoundId, setActiveRoundId] = useState<string | null>(null);
+  const [initialSnapshot, setInitialSnapshot] = useState<any>(null);
+  const [gameData, setGameData] = useState<any>(null);
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
@@ -280,11 +291,13 @@ function GamePlayWithoutBoundary() {
     }
   }, [hasJoined, gamesSocket]);
 
-  // Join the event room robustly when connected
-  useEffect(() => {
+  // ─── WebSocket room management (ensure we are in the rooms) ────────────────
+  const joinEventRoom = useCallback(() => {
     if (eventsSocket.isConnected && eventId) {
+      console.log('[GamePlay] Emitting event:join for', eventId);
       eventsSocket.emit('event:join', { eventId })
         .then((ack: any) => {
+          console.log('[GamePlay] event:join ack:', ack);
           if (ack?.data?.participantId) {
             if (isGuest) {
               localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
@@ -298,7 +311,58 @@ function GamePlayWithoutBoundary() {
           showError(err, 'Failed to join event room');
         });
     }
-  }, [eventsSocket.isConnected, eventId, eventsSocket, isGuest, showError]);
+  }, [eventsSocket.isConnected, eventId, isGuest, showError]);
+
+  const joinGameRoom = useCallback(() => {
+    if (gamesSocket.isConnected && sessionId) {
+      console.log('[GamePlay] Emitting game:join for', sessionId);
+      gamesSocket.emit<any>('game:join', { sessionId })
+        .then((resp: any) => {
+          const data = resp?.data || resp;
+          console.log('[GamePlay] game:join resp:', data);
+          if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
+          if (data?.snapshot) {
+            setInitialSnapshot(data.snapshot);
+            setGameData(data.snapshot);
+          }
+        })
+        .catch((err: any) => {
+          console.error('[GamePlay] Failed to join game room:', err?.message || err);
+          showError(err, 'Failed to join game room');
+        });
+    }
+  }, [gamesSocket.isConnected, sessionId, showError]);
+
+  // Initial joins
+  useEffect(() => {
+    if (eventsSocket.isConnected && eventId) joinEventRoom();
+  }, [eventsSocket.isConnected, eventId, joinEventRoom]);
+
+  useEffect(() => {
+    if (gamesSocket.isConnected && sessionId) joinGameRoom();
+  }, [gamesSocket.isConnected, sessionId, joinGameRoom]);
+
+  // Re-join on socket reconnection
+  useEffect(() => {
+    if (!eventsSocket.socket) return;
+    const onConnect = () => {
+      console.log('[GamePlay] Events socket reconnected, re-joining room...');
+      joinEventRoom();
+    };
+    eventsSocket.socket.on('connect', onConnect);
+    return () => { eventsSocket.socket?.off('connect', onConnect); };
+  }, [eventsSocket.socket, joinEventRoom]);
+
+  useEffect(() => {
+    if (!gamesSocket.socket) return;
+    const onConnect = () => {
+      console.log('[GamePlay] Games socket reconnected, re-joining room...');
+      joinGameRoom();
+      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+    };
+    gamesSocket.socket.on('connect', onConnect);
+    return () => { gamesSocket.socket?.off('connect', onConnect); };
+  }, [gamesSocket.socket, sessionId, joinGameRoom]);
 
   // Listen for incoming chat messages
   const liveMessagesRef = useRef(liveMessages);
@@ -313,14 +377,15 @@ function GamePlayWithoutBoundary() {
     console.log('[GamePlay] Setting up chat message listener for eventId:', eventId);
 
     const handleChatMessage = (data: any) => {
-      console.log('[GamePlay] Received chat message:', data);
+      console.log('[GamePlay] Socket message received:', data);
+      const idCurrent = identityRef.current;
+      const usr = userRef.current;
+      
       const name = data.senderName || 'Player';
-      // Server sends: userId (real user ID for auth users) and participantId (UUID for all)
-      // isOwn for auth users: compare data.userId with user?.id
-      // isOwn for guests: compare data.participantId with guestParticipantId
-      const isOwn = isGuest
-        ? data.participantId === guestParticipantId
-        : !!(data.userId && data.userId === user?.id);
+      const isOwn = idCurrent?.isGuest
+        ? data.participantId === idCurrent.participantId
+        : !!(data.userId && data.userId === usr?.id);
+        
       const msg: ChatMessage = {
         id: data.id || `ws-${crypto.randomUUID()}`,
         userId: data.userId,
@@ -332,12 +397,17 @@ function GamePlayWithoutBoundary() {
         timestamp: data.timestamp || new Date().toISOString(),
         isOwn,
       };
-      setLiveMessages(prev => [...prev, msg]);
+      
+      console.log('[GamePlay] Appending to liveMessages:', msg);
+      setLiveMessages(prev => {
+        if (prev.some(m => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
     };
 
     const unsub = eventsSocket.on('chat:message', handleChatMessage);
     return unsub;
-  }, [eventsSocket.isConnected, eventId, isGuest, guestParticipantId, user?.id]);
+  }, [eventsSocket.isConnected, eventId]);
 
   // Fetch pinned message for in-game chat once the eventId is known
   useEffect(() => {
@@ -398,12 +468,7 @@ function GamePlayWithoutBoundary() {
     })),
   }));
 
-  // ─── Game session resolution (per event + game type) ───────────────────────
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [isResolvingSession, setIsResolvingSession] = useState(false);
-  const [activeRoundId, setActiveRoundId] = useState<string | null>(null);
-  const [initialSnapshot, setInitialSnapshot] = useState<any>(null);
-  const [gameData, setGameData] = useState<any>(null);
+
 
   // Re-join the session robustly when connected
   useEffect(() => {

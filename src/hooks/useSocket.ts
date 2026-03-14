@@ -2,7 +2,7 @@
  * Socket.io client hook — connects to backend namespaces with JWT auth.
  * Uses refs for callbacks to prevent infinite reconnect loops.
  */
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://api.flowkyn.com';
@@ -159,7 +159,10 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
     };
   }, [autoConnect, connect]);
 
-  return { socket: socketRef.current, isConnected, status, connect, disconnect, emit, on, off };
+  return useMemo(
+    () => ({ socket: socketRef.current, isConnected, status, connect, disconnect, emit, on, off }),
+    [isConnected, status, connect, disconnect, emit, on, off]
+  );
 }
 
 // ─── Convenience hooks for each namespace ───

@@ -383,12 +383,18 @@ export default function EventLobby() {
     if (!eventsSocket.isConnected || !id) return;
 
     const handleChatMessage = (data: any) => {
+      console.log('[EventLobby] Socket message received:', data);
       const idCurrent = identityRef.current;
       const usr = userRef.current;
+      
+      if (!idCurrent) {
+        console.warn('[EventLobby] Received chat message but identity is not loaded. Defaulting to isOwn=false.');
+      }
+
       const name = data.senderName || 'Player';
-      const isOwn = idCurrent.isGuest
+      const isOwn = idCurrent?.isGuest
         ? data.participantId === idCurrent.participantId
-        : !!(data.userId && data.userId === usr?.id);
+        : !!(data.userId && idCurrent?.participantId && data.userId === usr?.id);
 
       const msg: ChatMessage = {
         id: data.id || `ws-${crypto.randomUUID()}`,
@@ -401,6 +407,8 @@ export default function EventLobby() {
         timestamp: data.timestamp || new Date().toISOString(),
         isOwn,
       };
+      
+      console.log('[EventLobby] Appending to liveMessages:', msg);
       setLiveMessages(prev => [...prev, msg]);
     };
 
@@ -429,6 +437,7 @@ export default function EventLobby() {
   useEffect(() => {
     return () => {
       if (id && eventsSocket.socket?.connected) {
+        console.log('[EventLobby] Leaving event room', id);
         eventsSocket.socket.emit('event:leave', { eventId: id });
       }
     };
