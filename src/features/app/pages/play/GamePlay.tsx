@@ -570,6 +570,25 @@ function GamePlayWithoutBoundary() {
     }
   }, [eventsSocket.status, eventId, refetchMessages, refetchParticipants, refetchPosts]);
 
+  // Fallback polling: when events socket is offline, periodically refetch messages
+  // so in-game chat still updates without requiring a full page reload.
+  useEffect(() => {
+    if (!eventId) return;
+    if (eventsSocket.status === 'connected') return;
+
+    const interval = setInterval(() => {
+      if (eventsSocket.status !== 'connected') {
+        console.log('[GamePlay] Polling messages because events socket is not connected', {
+          eventId,
+          socketStatus: eventsSocket.status,
+        });
+        refetchMessages();
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [eventId, eventsSocket.status, refetchMessages]);
+
   // Listen for async post updates (Wins of the Week) via event notifications
   useEffect(() => {
     if (!eventsSocket.isConnected || !eventId) return;

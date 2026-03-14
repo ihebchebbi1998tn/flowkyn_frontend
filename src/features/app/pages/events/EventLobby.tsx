@@ -268,14 +268,18 @@ export default function EventLobby() {
     }
   }, [hasJoined, eventsSocket]);
 
-  // Join the event room when connected AND officially joined — must re-join on every connect/reconnect
-  // (socket.io removes clients from rooms on disconnect). Use stable deps to avoid spamming.
+  // Join the event room whenever the events socket is connected.
+  // We intentionally do NOT gate this on hasJoined anymore:
+  // - The backend verifyParticipant() will auto-insert organization members who haven't gone
+  //   through the lobby join flow yet, so they can still participate in chat.
+  // - This ensures that anyone who can successfully send chat messages is also in the room
+  //   to receive real-time updates, instead of only seeing new messages after a reload.
   const eventsSocketRef = useRef(eventsSocket);
   eventsSocketRef.current = eventsSocket;
   useEffect(() => {
-    if (!hasJoined || !id || !eventsSocket.isConnected) return;
+    if (!id || !eventsSocket.isConnected) return;
     const sock = eventsSocketRef.current;
-    console.log('[EventLobby] events socket connected & hasJoined, emitting event:join', {
+    console.log('[EventLobby] events socket connected, emitting event:join', {
       eventId: id,
       socketConnected: sock.isConnected,
     });
@@ -330,7 +334,7 @@ export default function EventLobby() {
     };
   }, [eventsSocket.isConnected, id, refetchParticipants, eventsSocket]);
 
-  // Reconnect backfill: when socket transitions back to connected, refetch messages and participants
+  // Reconnect backfill: when socket transitions back to connected, refetch messages and participants.
   const wasConnectedRef = useRef(false);
   useEffect(() => {
     if (eventsSocket.status === 'connected') {
@@ -349,6 +353,26 @@ export default function EventLobby() {
       wasConnectedRef.current = false;
     }
   }, [eventsSocket.status, id, refetchParticipants, refetchMessages]);
+
+  // Fallback polling: when socket is disconnected but we still have access to the HTTP API,
+  // periodically refetch messages so users are not forced to reload to see new chat.
+  useEffect(() => {
+    if (!id) return;
+    if (eventsSocket.status === 'connected') return;
+
+    const interval = setInterval(() => {
+      // Only poll when socket is not currently connected
+      if (eventsSocket.status !== 'connected') {
+        console.log('[EventLobby] Polling messages because socket is not connected', {
+          eventId: id,
+          socketStatus: eventsSocket.status,
+        });
+        refetchMessages();
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [id, eventsSocket.status, refetchMessages]);
 
   // Fetch pinned message once for lobby display
   useEffect(() => {

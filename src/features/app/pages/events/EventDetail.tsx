@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, Users, Globe, Clock, Loader2, Mail, Send, Copy, CheckCircle, Pause, Square, Trash2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, Globe, Clock, Loader2, Mail, Send, Copy, CheckCircle, Pause, Square, Trash2, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -224,6 +224,12 @@ export default function EventDetail() {
         ? new Date(event.end_time).toLocaleString()
         : '—',
       gradient: 'info' as const,
+    },
+    {
+      icon: Gamepad2,
+      label: 'events.gameType',
+      value: event.game_type_name || event.game_type || t('events.gameTypeUnknown', 'Not configured'),
+      gradient: 'primary' as const,
     },
     {
       icon: Globe,

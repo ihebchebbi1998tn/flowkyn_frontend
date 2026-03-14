@@ -17,9 +17,13 @@ import type { OnboardingData, TeamInvite } from '../types';
 interface TeamInviteStepProps {
   data: OnboardingData;
   onChange: (partial: Partial<OnboardingData>) => void;
+  inviteResults?: {
+    success: string[];
+    failed: Array<{ email: string; reason: string }>;
+  } | null;
 }
 
-export function TeamInviteStep({ data, onChange }: TeamInviteStepProps) {
+export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStepProps) {
   const { t } = useTranslation();
   const [emailInput, setEmailInput] = useState('');
   const [inputError, setInputError] = useState('');
@@ -141,14 +145,16 @@ export function TeamInviteStep({ data, onChange }: TeamInviteStepProps) {
                     : 'border-border bg-muted/30'
                 )}
               >
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <Mail className={cn(
-                    'h-4 w-4 shrink-0',
-                    invite.error ? 'text-destructive' : 'text-primary'
-                  )} />
-                  <span className="text-sm text-foreground truncate">{invite.email}</span>
-                  {!invite.error && <Check className="h-4 w-4 text-success shrink-0" />}
-                </div>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <Mail className={cn(
+                  'h-4 w-4 shrink-0',
+                  invite.error ? 'text-destructive' : 'text-primary'
+                )} />
+                <span className="text-sm text-foreground truncate">{invite.email}</span>
+                {!invite.error && (
+                  <Check className="h-4 w-4 text-success shrink-0" />
+                )}
+              </div>
                 <button
                   onClick={() => handleRemoveEmail(invite.email)}
                   className="text-muted-foreground hover:text-foreground transition-colors p-1"

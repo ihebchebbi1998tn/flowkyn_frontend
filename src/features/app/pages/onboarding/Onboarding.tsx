@@ -50,6 +50,10 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inviteResults, setInviteResults] = useState<{
+    success: string[];
+    failed: Array<{ email: string; reason: string }>;
+  } | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const [onboardingError, setOnboardingError] = useState<string>('');
   const navigationTimeoutRef = useRef<NodeJS.Timeout>();
@@ -144,7 +148,8 @@ export default function Onboarding() {
       // 3. Send team invitations (if provided)
       if (data.teamInvites.length > 0) {
         try {
-          await usersApi.sendOnboardingInvites(org.id, data.teamInvites, data.language);
+          const result = await usersApi.sendOnboardingInvites(org.id, data.teamInvites, data.language);
+          setInviteResults(result);
         } catch (err) {
           console.warn('Team invites not sent:', err);
           // Don't fail the whole onboarding due to invites
@@ -208,7 +213,7 @@ export default function Onboarding() {
       case 1: return <IndustryStep data={data} onChange={updateData} />;
       case 2: return <GoalsStep data={data} onToggleGoal={toggleGoal} />;
       case 3: return <BrandingStep data={data} onChange={updateData} onLogoUpload={handleLogoUpload} />;
-      case 4: return <TeamInviteStep data={data} onChange={updateData} />;
+      case 4: return <TeamInviteStep data={data} onChange={updateData} inviteResults={inviteResults} />;
       default: return null;
     }
   };
