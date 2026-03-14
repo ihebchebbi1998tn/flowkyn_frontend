@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -74,13 +75,15 @@ export default function EventForm() {
     },
   ] as const;
 
-  // Auto-populate org ID from localStorage (set during onboarding)
+  const { user } = useAuth();
+
+  // Auto-populate org ID from auth context or localStorage (fallback)
   useEffect(() => {
-    const cachedOrgId = localStorage.getItem('flowkyn_org_id');
-    if (cachedOrgId && !form.organization_id) {
-      setForm(f => ({ ...f, organization_id: cachedOrgId }));
+    const orgId = user?.organization_id || localStorage.getItem('flowkyn_org_id');
+    if (orgId && !form.organization_id) {
+      setForm(f => ({ ...f, organization_id: orgId }));
     }
-  }, []);
+  }, [user?.organization_id]);
 
   // Populate form when editing
   useEffect(() => {

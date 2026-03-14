@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import {
   ArrowLeft, ArrowRight, Users, Clock, Timer, MessageSquare, Coffee, Trophy,
   Lightbulb, Crosshair, Flame, Mail, Plus, X, Send, CalendarDays, Settings2, Check,
@@ -67,6 +68,8 @@ export default function LaunchActivity() {
   const [error, setError] = useState('');
   const [invitationProgress, setInvitationProgress] = useState({ sent: 0, total: 0 });
 
+  const { user } = useAuth();
+  
   if (!activity) { navigate('/games'); return null; }
 
   const Icon = activity.icon;
@@ -93,8 +96,8 @@ export default function LaunchActivity() {
     setLaunching(true);
     
     try {
-      // Get organization ID from localStorage
-      const orgId = localStorage.getItem('flowkyn_org_id');
+      // Get organization ID from auth context
+      const orgId = user?.organization_id;
       if (!orgId) {
         throw new Error('Organization ID not found. Please complete onboarding first.');
       }

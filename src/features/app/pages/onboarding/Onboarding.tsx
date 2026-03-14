@@ -127,6 +127,11 @@ export default function Onboarding() {
       // Cache org ID for EventForm auto-population
       localStorage.setItem('flowkyn_org_id', org.id);
 
+      // Also update user state so components using useAuth() see it immediately
+      if (user) {
+        setUser({ ...user, organization_id: org.id });
+      }
+
       // 2. Upload logo (if provided)
       if (data.logoFile) {
         await organizationsApi.uploadLogo(org.id, data.logoFile);
