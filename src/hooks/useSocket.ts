@@ -43,6 +43,8 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
 
     setStatus(prev => (prev === 'disconnected' ? 'connecting' : 'reconnecting'));
 
+    console.log('[useSocket] connect called', { namespace, eventId, hasGuestToken: !!guestToken, hasAccessToken: !!localStorage.getItem('access_token') });
+
     const socket = io(`${SOCKET_URL}${namespace}`, {
       auth: (cb) => {
         // Fetch fresh token at the exact moment of connection/reconnection
@@ -58,12 +60,14 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
     });
 
     socket.on('connect', () => {
+      console.log('[useSocket] connected', { namespace, eventId, socketId: socket.id });
       setIsConnected(true);
       setStatus('connected');
       onConnectRef.current?.();
     });
 
     socket.on('disconnect', (reason) => {
+      console.log('[useSocket] disconnected', { namespace, eventId, reason });
       setIsConnected(false);
       // Socket.io will attempt to reconnect automatically unless we explicitly called disconnect,
       // but from the client's perspective we can treat this as either reconnecting or disconnected.
@@ -73,23 +77,27 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
     });
 
     socket.io.on('reconnect_attempt', () => {
+      console.log('[useSocket] reconnect_attempt', { namespace, eventId });
       setStatus('reconnecting');
     });
 
     socket.io.on('reconnect_error', () => {
+      console.warn('[useSocket] reconnect_error', { namespace, eventId });
       setStatus('reconnecting');
     });
 
     socket.io.on('reconnect_failed', () => {
+      console.error('[useSocket] reconnect_failed', { namespace, eventId });
       setStatus('disconnected');
     });
 
     socket.on('error', (data: { message: string; code?: string }) => {
+      console.error('[useSocket] socket error', { namespace, eventId, error: data });
       onErrorRef.current?.(data);
     });
 
     socket.on('connect_error', (err) => {
-      console.warn(`[Socket ${namespace}] Connection error:`, err.message);
+      console.warn(`[Socket ${namespace}] Connection error:`, err.message, { eventId });
       setIsConnected(false);
       setStatus('reconnecting');
       onErrorRef.current?.({ message: err.message || 'Socket connection error', code: 'CONNECT_ERROR' });

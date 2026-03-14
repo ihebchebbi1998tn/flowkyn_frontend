@@ -9,7 +9,6 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
-import { eventsApi } from '@/features/app/api/events';
 import {
   Users, Clock, Gamepad2, ArrowRight, Copy, CheckCircle,
   Link2, Wifi, Sparkles, Shield, Loader2, AlertCircle, X, User,
@@ -43,6 +42,7 @@ import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useApiError } from '@/hooks/useApiError';
+import { eventsApi } from '@/features/app/api/events';
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
 
@@ -74,6 +74,8 @@ export default function EventLobby() {
   const gameParam = searchParams.get('game');
   const { isAuthenticated, user } = useAuth();
 
+  console.log('[EventLobby] mount', { eventId: id });
+
   const { data: event, isLoading: eventLoading } = useEventPublicInfo(id || '');
   const { data: participantsData, refetch: refetchParticipants } = useEventParticipants(id || '');
   const hasToken = hasEventToken(id || undefined);
@@ -93,6 +95,7 @@ export default function EventLobby() {
     : null;
 
   const storedProfile = id ? getStoredProfile(id) : null;
+  console.log('[EventLobby] identity & storedProfile', { id, identity, storedProfile });
 
   const [profile, setProfile] = useState<ProfileSetupData | null>(storedProfile);
   const [showProfileForm, setShowProfileForm] = useState(!storedProfile);
@@ -111,6 +114,13 @@ export default function EventLobby() {
   /** Join logic — defined before effect that depends on it */
   const handleJoin = useCallback(async () => {
     if (!id || !profile) return;
+    console.log('[EventLobby] handleJoin start', {
+      eventId: id,
+      isAuthenticated,
+      isGuest,
+      hasInviteToken: !!inviteToken,
+      profile,
+    });
     setJoinError('');
     setIsJoining(true);
     try {
@@ -141,11 +151,14 @@ export default function EventLobby() {
         }
         trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: id, guestName: profile.displayName });
       }
+      console.log('[EventLobby] handleJoin success', { eventId: id, mode: isAuthenticated ? 'member' : 'guest' });
       setHasJoined(true);
     } catch (err: any) {
       if (err?.statusCode === 409 || err?.status === 409 || err?.code === 'ALREADY_PARTICIPANT') {
+        console.warn('[EventLobby] handleJoin already participant (409)', { eventId: id, error: err });
         setHasJoined(true);
       } else {
+        console.error('[EventLobby] handleJoin error', err);
         setJoinError(err?.message || t('events.joinFailed'));
       }
     } finally {
@@ -158,6 +171,10 @@ export default function EventLobby() {
   // 1. If returning user (already has a participant entry on server), set joined status immediately
   useEffect(() => {
     if (identity.participantId && !hasJoined) {
+      console.log('[EventLobby] detected existing participant on server, marking hasJoined=true', {
+        eventId: id,
+        participantId: identity.participantId,
+      });
       setHasJoined(true);
     }
   }, [identity.participantId, hasJoined]);
@@ -165,6 +182,12 @@ export default function EventLobby() {
   // 2. Auto-trigger join when profile is ready and form is dismissed (first-time joiners)
   useEffect(() => {
     if (profile && !showProfileForm && !hasJoined && !isJoining && !joinError) {
+      console.log('[EventLobby] auto-joining after profile ready', {
+        eventId: id,
+        hasJoined,
+        isJoining,
+        hasJoinError: !!joinError,
+      });
       handleJoin();
     }
   }, [profile, showProfileForm, hasJoined, isJoining, joinError, handleJoin]);
@@ -209,6 +232,7 @@ export default function EventLobby() {
   const copyLink = async () => {
     const success = await copyToClipboard(joinLink);
     if (success) {
+      console.log('[EventLobby] copy link success', { joinLink });
       trackEvent(TRACK.EVENT_LINK_COPIED, { eventId: id });
       setCopied(true);
       if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
@@ -231,6 +255,7 @@ export default function EventLobby() {
   // Ensure socket connects when user successfully joins (especially guests who just got their token)
   useEffect(() => {
     if (hasJoined && !eventsSocket.isConnected && eventsSocket.status === 'disconnected') {
+      console.log('[EventLobby] hasJoined=true, connecting events socket', { eventId: id });
       eventsSocket.connect();
     }
   }, [hasJoined, eventsSocket]);
@@ -238,8 +263,13 @@ export default function EventLobby() {
   // Join the event room when connected AND officially joined
   useEffect(() => {
     if (hasJoined && id && eventsSocket.isConnected) {
+      console.log('[EventLobby] events socket connected & hasJoined, emitting event:join', {
+        eventId: id,
+        socketConnected: eventsSocket.isConnected,
+      });
       eventsSocket.emit('event:join', { eventId: id })
         .then((ack: any) => {
+          console.log('[EventLobby] event:join ack', ack);
           if (ack?.data?.participantId) {
             if (isGuest) {
               localStorage.setItem(`guest_participant_id_${id}`, ack.data.participantId);
@@ -262,15 +292,18 @@ export default function EventLobby() {
 
     const handlePresence = (payload: any) => {
       if (payload?.eventId !== id || !Array.isArray(payload.onlineUserIds)) return;
+      console.log('[EventLobby] event:presence payload', payload);
       setOnlineCount(payload.onlineUserIds.length);
     };
 
     const handleUserJoined = () => {
+      console.log('[EventLobby] event:user_joined');
       refetchParticipants();
       eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
     };
 
     const handleUserLeft = () => {
+      console.log('[EventLobby] event:user_left');
       refetchParticipants();
       eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
     };
@@ -295,7 +328,9 @@ export default function EventLobby() {
         if (id) {
           setIsSyncing(true);
           Promise.all([refetchParticipants(), refetchMessages()])
-            .catch(() => {})
+            .catch((err) => {
+              console.error('[EventLobby] reconnect backfill error', err);
+            })
             .finally(() => setIsSyncing(false));
         }
       }
@@ -307,6 +342,7 @@ export default function EventLobby() {
   // Fetch pinned message once for lobby display
   useEffect(() => {
     if (!id) return;
+    console.log('[EventLobby] fetching pinned message', { eventId: id });
     eventsApi.getPinnedMessage(id)
       .then((row: any) => {
         if (!row) {
@@ -327,7 +363,7 @@ export default function EventLobby() {
         });
       })
       .catch(() => {
-        // Non-fatal for lobby UX; ignore errors
+        console.warn('[EventLobby] getPinnedMessage failed (non-fatal)');
       });
   }, [id]);
 
@@ -336,6 +372,7 @@ export default function EventLobby() {
     if (!eventsSocket.isConnected || !id) return;
 
     const handleChatMessage = (data: any) => {
+      console.log('[EventLobby] chat:message', data);
       const name = data.senderName || 'Player';
       const isOwn = isGuest
         ? data.participantId === identity.participantId
@@ -387,6 +424,7 @@ export default function EventLobby() {
   /** Called when user completes profile setup — join happens in useEffect; upsert only after join */
   const handleProfileComplete = (data: ProfileSetupData) => {
     if (!id) return;
+    console.log('[EventLobby] profile complete', { eventId: id, data });
     saveProfile(id, data);
     setProfile(data);
     setShowProfileForm(false);

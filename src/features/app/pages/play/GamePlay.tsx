@@ -72,6 +72,7 @@ function GamePlayWithoutBoundary() {
   // ─── Current user identity (server-driven) ─────────────────────────────────
   const identity = useEventIdentity(eventId || undefined);
   const { isGuest, userId: currentUserId, participantId, displayName, avatarUrl } = identity;
+  console.log('[GamePlay] mount', { eventId, identity, gameTypeId, config });
 
   const guestParticipantId = isGuest ? participantId : null;
   const memberParticipantId = !isGuest ? participantId : null;
@@ -102,6 +103,7 @@ function GamePlayWithoutBoundary() {
 
   const handleProfileSave = useCallback((data: ProfileSetupData) => {
     if (!eventId) return;
+    console.log('[GamePlay] profile save', { eventId, data });
     saveProfile(eventId, data);
     setProfile(data);
     upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
@@ -111,6 +113,13 @@ function GamePlayWithoutBoundary() {
   /** Join logic — ensures tokens are obtained and rooms joined */
   const handleJoin = useCallback(async () => {
     if (!eventId || !profile) return;
+    console.log('[GamePlay] handleJoin start', {
+      eventId,
+      isAuthenticated,
+      isGuest,
+      hasInviteToken: !!inviteToken,
+      profile,
+    });
     setJoinError('');
     setIsJoining(true);
     try {
@@ -140,11 +149,14 @@ function GamePlayWithoutBoundary() {
           localStorage.setItem(`guest_name_${eventId}`, result.guest_name);
         }
       }
+      console.log('[GamePlay] handleJoin success', { eventId, mode: isAuthenticated ? 'member' : 'guest' });
       setHasJoined(true);
     } catch (err: any) {
       if (err?.status === 409 || err?.response?.status === 409) {
+        console.warn('[GamePlay] handleJoin already participant (409)', { eventId, error: err });
         setHasJoined(true);
       } else {
+        console.error('[GamePlay] handleJoin error', err);
         setJoinError(err?.message || 'Failed to join event');
       }
     } finally {
@@ -155,6 +167,10 @@ function GamePlayWithoutBoundary() {
   // 1. If we already have a participant identity from server, we are "joined"
   useEffect(() => {
     if (participantId && !hasJoined) {
+      console.log('[GamePlay] detected existing participant on server, marking hasJoined=true', {
+        eventId,
+        participantId,
+      });
       setHasJoined(true);
     }
   }, [participantId, hasJoined]);
@@ -162,6 +178,11 @@ function GamePlayWithoutBoundary() {
   // 2. Auto-join after profile is confirmed
   useEffect(() => {
     if (profile && !showProfileEdit && !hasJoined && !isJoining) {
+      console.log('[GamePlay] auto-joining after profile ready', {
+        eventId,
+        hasJoined,
+        isJoining,
+      });
       handleJoin();
     }
   }, [profile, showProfileEdit, hasJoined, isJoining, handleJoin]);
@@ -174,6 +195,13 @@ function GamePlayWithoutBoundary() {
   const { data: postsData, refetch: refetchPosts } = useEventPosts(eventId || '', 1, 50, canFetchParticipantData);
 
   const eventPublicObj = eventData as any;
+  console.log('[GamePlay] data load', {
+    eventId,
+    canFetchParticipantData,
+    hasMessagesData: !!messagesData,
+    hasPostsData: !!postsData,
+    hasParticipantsData: !!participantsData,
+  });
 
   // Map API participants to GameParticipant shape
   const rawParticipants = (participantsData as any)?.data || [];
