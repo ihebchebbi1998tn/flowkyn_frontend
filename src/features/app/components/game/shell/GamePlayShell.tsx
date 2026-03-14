@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { copyToClipboard } from '@/utils/clipboard';
 import { LeaderboardSidebar } from './LeaderboardSidebar';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import type { GameParticipant } from './types';
@@ -107,11 +108,15 @@ export function GamePlayShell({
     return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
   };
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(joinLink);
-    if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
-    setCopied(true);
-    copyLinkTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
+  const copyLink = async () => {
+    const success = await copyToClipboard(joinLink);
+    if (success) {
+      if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
+      setCopied(true);
+      copyLinkTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
+    } else {
+      toast.error(t('common.copyFailed', 'Failed to copy link. Please manually copy the URL.'));
+    }
   };
 
   const leaderboard = <LeaderboardSidebar participants={participants} />;

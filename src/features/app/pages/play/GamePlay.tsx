@@ -10,8 +10,9 @@ import { EventChat, type ChatMessage } from '@/features/app/components/chat/Even
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { ROUTES } from '@/constants/routes';
-import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts } from '@/hooks/queries/useEventQueries';
+import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts, useJoinEvent, useJoinAsGuest, useAcceptEventInvitation } from '@/hooks/queries/useEventQueries';
 import { useEventIdentity } from '@/hooks/useEventIdentity';
+import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
 import { gamesApi } from '@/features/app/api/games';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
@@ -81,6 +82,18 @@ function GamePlayWithoutBoundary() {
   const [profile, setProfile] = useState<ProfileSetupData | null>(initialProfile);
   const [showProfileEdit, setShowProfileEdit] = useState(() => !initialProfile);
 
+  const [hasJoined, setHasJoined] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+  const [joinError, setJoinError] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+  
+  const joinEvent = useJoinEvent();
+  const joinAsGuest = useJoinAsGuest();
+  const acceptInvitation = useAcceptEventInvitation();
+  const upsertProfile = useUpsertEventProfile(eventId || undefined);
+  const inviteToken = searchParams.get('token');
+  const { isAuthenticated } = useAuth();
+
   const currentUserName = profile?.displayName || displayName;
   const currentUserAvatarUrl = profile?.avatarUrl || avatarUrl;
 
@@ -88,8 +101,63 @@ function GamePlayWithoutBoundary() {
     if (!eventId) return;
     saveProfile(eventId, data);
     setProfile(data);
+    upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
     setShowProfileEdit(false);
-  }, [eventId]);
+  }, [eventId, upsertProfile]);
+
+  /** Join logic — ensures tokens are obtained and rooms joined */
+  const handleJoin = async () => {
+    if (!eventId || !profile) return;
+    setJoinError('');
+    setIsJoining(true);
+    try {
+      if (isAuthenticated && user) {
+        if (inviteToken) {
+          await acceptInvitation.mutateAsync({ eventId, token: inviteToken });
+        } else {
+          const result = await joinEvent.mutateAsync(eventId);
+          if ((result as any)?.participant_id) {
+            localStorage.setItem(`member_participant_id_${eventId}`, (result as any).participant_id);
+          }
+        }
+      } else {
+        const safeAvatarUrl = profile.avatarUrl?.startsWith('http') ? profile.avatarUrl : undefined;
+        const result = await joinAsGuest.mutateAsync({
+          eventId,
+          data: {
+            name: profile.displayName,
+            email: guestEmail || undefined,
+            avatar_url: safeAvatarUrl,
+            token: inviteToken || undefined,
+          },
+        });
+        if (result.guest_token) {
+          localStorage.setItem(`guest_token_${eventId}`, result.guest_token);
+          localStorage.setItem(`guest_participant_id_${eventId}`, result.participant_id);
+          localStorage.setItem(`guest_name_${eventId}`, result.guest_name);
+        }
+      }
+      setHasJoined(true);
+    } catch (err: any) {
+      setJoinError(err?.message || 'Failed to join event');
+    } finally {
+      setIsJoining(false);
+    }
+  };
+
+  // 1. If we already have a participant identity from server, we are "joined"
+  useEffect(() => {
+    if (participantId && !hasJoined) {
+      setHasJoined(true);
+    }
+  }, [participantId, hasJoined]);
+
+  // 2. Auto-join after profile is confirmed
+  useEffect(() => {
+    if (profile && !showProfileEdit && !hasJoined && !isJoining) {
+      handleJoin();
+    }
+  }, [profile, showProfileEdit, hasJoined, isJoining]);
 
   // ─── Real data from API ────────────────────────────────────────────────────
   const { data: eventData } = useEventPublicInfo(eventId || '');
@@ -145,6 +213,25 @@ function GamePlayWithoutBoundary() {
     // Pass eventId so the socket hook can resolve the correct per-event guest token
     eventId: eventId || undefined,
   });
+
+  const gamesSocket = useGamesSocket({
+    // Use eventId so guests can authenticate with their per-event guest token
+    eventId: eventId || undefined,
+  });
+
+  // 3. Ensure socket connects when joined
+  useEffect(() => {
+    if (hasJoined && !eventsSocket.isConnected && eventsSocket.status === 'disconnected') {
+      eventsSocket.connect();
+    }
+  }, [hasJoined, eventsSocket]);
+
+  // Ensure games socket also connects when joined (for game states)
+  useEffect(() => {
+    if (hasJoined && !gamesSocket.isConnected && gamesSocket.status === 'disconnected') {
+      gamesSocket.connect();
+    }
+  }, [hasJoined, gamesSocket]);
 
   // Join the event room robustly when connected
   useEffect(() => {
@@ -215,12 +302,6 @@ function GamePlayWithoutBoundary() {
       }
     };
   }, [eventId, eventsSocket.socket]);
-
-  // ─── WebSocket: Games namespace ────────────────────────────────────────────
-  const gamesSocket = useGamesSocket({
-    // Use eventId so guests can authenticate with their per-event guest token
-    eventId: eventId || undefined,
-  });
 
   // ─── Async game data: activity posts (Wins of the Week) ─────────────────────
   const rawPosts = (postsData as any)?.data || [];

@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
+import { copyToClipboard } from '@/utils/clipboard';
 import { CountdownOverlay } from '@/features/app/components/game/shared';
 import {
   useEventPublicInfo,
@@ -75,18 +76,20 @@ export default function EventLobby() {
   const joinAsGuest = useJoinAsGuest();
   const acceptInvitation = useAcceptEventInvitation();
 
-  // Profile state — prefer server profile (via identity) and fall back to localStorage
+  // Profile state — strictly rely on localStorage to test if the user explicitly clicked "Continue to Lobby" for this specific event device sessions.
   const identity = useEventIdentity(id || undefined);
   const { isGuest, userId: currentUserId, displayName, avatarUrl } = identity;
+
+  // We use the server profile purely for pre-filling the UserProfileSetup form if they are authenticated,
+  // we DO NOT use it to silently bypass the form anymore.
   const serverBackedProfile: ProfileSetupData | null = displayName
     ? { displayName, avatarUrl: avatarUrl || '' }
     : null;
 
-  const storedProfile = !serverBackedProfile && id ? getStoredProfile(id) : null;
-  const initialProfile = serverBackedProfile || storedProfile;
+  const storedProfile = id ? getStoredProfile(id) : null;
 
-  const [profile, setProfile] = useState<ProfileSetupData | null>(initialProfile);
-  const [showProfileForm, setShowProfileForm] = useState(!initialProfile);
+  const [profile, setProfile] = useState<ProfileSetupData | null>(storedProfile);
+  const [showProfileForm, setShowProfileForm] = useState(!storedProfile);
 
   const [guestEmail, setGuestEmail] = useState('');
   const [hasJoined, setHasJoined] = useState(false);
@@ -97,6 +100,22 @@ export default function EventLobby() {
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const upsertProfile = useUpsertEventProfile(id || undefined);
+
+  // ─── Auto-Join Logic ──────────────────────────────────────────────────────
+
+  // 1. If returning user (already has a participant entry on server), set joined status immediately
+  useEffect(() => {
+    if (identity.participantId && !hasJoined) {
+      setHasJoined(true);
+    }
+  }, [identity.participantId, hasJoined]);
+
+  // 2. Auto-trigger join when profile is ready and form is dismissed (first-time joiners)
+  useEffect(() => {
+    if (profile && !showProfileForm && !hasJoined && !isJoining && !joinError) {
+      handleJoin();
+    }
+  }, [profile, showProfileForm, hasJoined, isJoining, joinError]);
 
   const joinLink = `${window.location.origin}/join/${id}`;
   const participants = (participantsData as any)?.data ?? [];
@@ -129,12 +148,16 @@ export default function EventLobby() {
 
   const copyLinkTimeoutRef = useRef<NodeJS.Timeout>();
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(joinLink);
-    trackEvent(TRACK.EVENT_LINK_COPIED, { eventId: id });
-    setCopied(true);
-    if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
-    copyLinkTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
+  const copyLink = async () => {
+    const success = await copyToClipboard(joinLink);
+    if (success) {
+      trackEvent(TRACK.EVENT_LINK_COPIED, { eventId: id });
+      setCopied(true);
+      if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
+      copyLinkTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
+    } else {
+      toast.error(t('common.copyFailed', 'Failed to copy link. Please manually copy the URL.'));
+    }
   };
 
   useEffect(() => {
@@ -375,8 +398,8 @@ export default function EventLobby() {
         <UserProfileSetup
           title={t('events.setupGameProfile')}
           subtitle={t('events.chooseAppearIn', { eventTitle: event.title })}
-          defaultName={isAuthenticated && user ? user.name : ''}
-          defaultAvatarUrl={storedProfile?.avatarUrl}
+          defaultName={serverBackedProfile?.displayName || (isAuthenticated && user ? user.name : '')}
+          defaultAvatarUrl={serverBackedProfile?.avatarUrl || storedProfile?.avatarUrl}
           submitLabel={t('events.continueToLobby')}
           showEmail={!isAuthenticated}
           email={guestEmail}

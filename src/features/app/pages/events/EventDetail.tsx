@@ -14,6 +14,7 @@ import { useEvent, useEventParticipants, useJoinEvent, useInviteToEvent, usePaus
 import { ErrorState } from '@/components/common/ErrorState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ROUTES } from '@/constants/routes';
+import { copyToClipboard } from '@/utils/clipboard';
 import { toast } from 'sonner';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 
@@ -112,10 +113,14 @@ function InviteDialog({ eventId }: { eventId: string }) {
                 size="sm"
                 variant="outline"
                 className="h-8 text-label-xs gap-1 shrink-0 rounded-lg"
-              onClick={() => {
-                navigator.clipboard.writeText(`${window.location.origin}/join/${eventId}`);
-                trackEvent(TRACK.EVENT_LINK_COPIED, { eventId });
-                toast.success(t('events.linkCopied'));
+              onClick={async () => {
+                const success = await copyToClipboard(`${window.location.origin}/join/${eventId}`);
+                if (success) {
+                  trackEvent(TRACK.EVENT_LINK_COPIED, { eventId });
+                  toast.success(t('events.linkCopied'));
+                } else {
+                  toast.error(t('common.copyFailed', 'Failed to copy link. Please manually copy the URL.'));
+                }
               }}
             >
               <Copy className="h-3 w-3" /> {t('events.copy')}
