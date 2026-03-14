@@ -4,7 +4,7 @@
  */
 
 import { lazy } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { FocusedLayout } from './layouts/FocusedLayout';
@@ -68,7 +68,7 @@ export const appRoutes = (
 
     {/* ─── Dashboard Layout (sidebar + topbar) ─── */}
     <Route element={<AuthGuard><DashboardLayout /></AuthGuard>}>
-      <Route path={ROUTES.HOME} element={<RouteErrorBoundary section="Dashboard"><Dashboard /></RouteErrorBoundary>} />
+      <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
       <Route path={ROUTES.DASHBOARD} element={<RouteErrorBoundary section="Dashboard"><Dashboard /></RouteErrorBoundary>} />
       <Route path={ROUTES.PROFILE} element={<RouteErrorBoundary section="Profile"><Profile /></RouteErrorBoundary>} />
       <Route path={ROUTES.USERS} element={<RouteErrorBoundary section="Users"><UserList /></RouteErrorBoundary>} />

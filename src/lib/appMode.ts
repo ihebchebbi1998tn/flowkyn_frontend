@@ -16,7 +16,7 @@
  * - Tests: API test runner UI
  */
 
-export type AppMode = 'landing' | 'app' | 'admin' | 'tests' | 'templates';
+export type AppMode = 'landing' | 'app' | 'admin' | 'tests';
 
 export function detectAppMode(): AppMode {
   const hostname = window.location.hostname;
@@ -25,7 +25,7 @@ export function detectAppMode(): AppMode {
 
   // Dev/preview: allow switching via ?app=landing|app|admin|tests
   const override = searchParams.get('app') as AppMode | null;
-  if (override && ['landing', 'app', 'admin', 'tests', 'templates'].includes(override)) {
+  if (override && ['landing', 'app', 'admin', 'tests'].includes(override)) {
     return override;
   }
 

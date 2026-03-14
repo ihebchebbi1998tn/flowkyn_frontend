@@ -1,7 +1,7 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ApiError } from '@/lib/apiError';
-import { formatErrorForToast } from '@/lib/formatError';
 
 /**
  * Hook that returns a function to show localized toast errors from API responses.
@@ -11,34 +11,48 @@ export function useApiError() {
   const { t } = useTranslation();
 
   /** Show a localized error toast. Accepts any error — gracefully handles non-API errors. */
-  const showError = (err: unknown, fallbackMessage?: string) => {
+  const showError = useCallback((err: unknown, fallbackMessage?: string) => {
     try {
       if (ApiError.is(err)) {
-        // Safely attempt to use translation function
-        const localizedMessage = typeof t === 'function' ? t(`apiErrors.${err.code}`, { defaultValue: '' }) : '';
-        const message = localizedMessage || err.message || fallbackMessage || '';
-        
-        // Don't mutate the original error object
-        const formatted = formatErrorForToast(
-          { ...err, message } as ApiError,
-          { fallbackTitle: fallbackMessage || (typeof t === 'function' ? t('apiErrors.UNKNOWN', { defaultValue: 'An error occurred' }) : 'An error occurred') }
-        );
-        toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
+        try {
+          // Safely attempt to use translation function
+          const localizedMessage = typeof t === 'function' ? t(`apiErrors.${err.code}`, { defaultValue: '' }) : '';
+          const message = localizedMessage || err.message;
+
+          // If there are field-level details, append them
+          if (err.details?.length) {
+            const detailText = err.details.map(d => `${d.field}: ${d.message}`).join(', ');
+            toast.error(message, { description: detailText });
+          } else {
+            toast.error(message);
+          }
+        } catch {
+          // If translation fails, fall back to error message
+          toast.error(err.message);
+        }
         return;
       }
 
       // Fallback for non-structured errors
-      const fallback = (typeof fallbackMessage === 'string' && fallbackMessage.trim())
-        ? fallbackMessage
-        : (typeof t === 'function' ? t('apiErrors.UNKNOWN', { defaultValue: 'An error occurred' }) : 'An error occurred');
-      const formatted = formatErrorForToast(err, { fallbackTitle: fallback });
-      toast.error(formatted.title, formatted.description ? { description: formatted.description } : undefined);
+      let message = '';
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof fallbackMessage === 'string') {
+        message = fallbackMessage;
+      } else {
+        try {
+          message = typeof t === 'function' ? t('apiErrors.UNKNOWN') : 'An error occurred';
+        } catch {
+          message = 'An error occurred';
+        }
+      }
+      toast.error(message);
     } catch (error) {
       // Last resort fallback
       toast.error('An unexpected error occurred');
       console.error('Error in showError:', error);
     }
-  };
+  }, [t]);
 
   return { showError };
 }

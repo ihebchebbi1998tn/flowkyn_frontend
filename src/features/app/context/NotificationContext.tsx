@@ -2,7 +2,7 @@
  * Notification Context — wired to real backend API + socket for real-time updates.
  * Subscribes to the /notifications WebSocket namespace for live push notifications.
  */
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { Notification } from '@/types';
 import { notificationsApi } from '@/features/app/api/notifications';
 import { useAuth } from '@/features/app/context/AuthContext';
@@ -24,6 +24,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { showError } = useApiError();
+  const lastFetchRef = useRef<number>(0);
 
   // useAuth() must be called unconditionally (Rules of Hooks).
   // When NotificationProvider is rendered outside an AuthProvider (e.g. admin mode),
@@ -33,8 +34,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   const unreadCount = notifications.filter(n => !n.read_at).length;
 
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async (forced = false) => {
     if (!isAuthenticated) return;
+    
+    // Throttle: don't fetch more than once every 2 seconds unless forced
+    const now = Date.now();
+    if (!forced && now - lastFetchRef.current < 2000) return;
+    lastFetchRef.current = now;
+
     setIsLoading(true);
     try {
       const result = await notificationsApi.list(1, 50);
@@ -52,6 +59,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       fetchNotifications();
     } else {
       setNotifications([]);
+      lastFetchRef.current = 0;
     }
   }, [isAuthenticated, fetchNotifications]);
 
@@ -105,10 +113,19 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     for (const id of unreadIds) {
       notificationsApi.markAsRead(id).catch(() => {});
     }
-  }, [notifications]);
+  }, [notifications.length]); // Only depend on length to avoid inner loops if content changes but not count
+
+  const contextValue = useMemo(() => ({
+    notifications,
+    unreadCount,
+    isLoading,
+    markAsRead,
+    markAllRead,
+    refetch: fetchNotifications
+  }), [notifications, unreadCount, isLoading, markAsRead, markAllRead, fetchNotifications]);
 
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, isLoading, markAsRead, markAllRead, refetch: fetchNotifications }}>
+    <NotificationContext.Provider value={contextValue}>
       {children}
     </NotificationContext.Provider>
   );
