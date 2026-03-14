@@ -18,6 +18,7 @@ import { ApiError } from '@/lib/apiError';
 import { useApiError } from '@/hooks/useApiError';
 import { ROUTES } from '@/constants/routes';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
+import { toast } from 'sonner';
 import logoImg from '@/assets/logo.png';
 
 export default function OTPVerify() {

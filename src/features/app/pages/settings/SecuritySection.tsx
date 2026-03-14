@@ -10,7 +10,7 @@ import { api } from '@/features/app/api/client';
 import { ApiError } from '@/lib/apiError';
 import { toast } from 'sonner';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/features/app/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
 import {

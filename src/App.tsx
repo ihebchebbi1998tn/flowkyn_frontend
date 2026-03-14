@@ -36,11 +36,11 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {mode === 'landing' && landingRoutes}
-      {mode === 'app' && appRoutes}
-      {mode === 'admin' && adminRoutes}
-      {mode === 'tests' && testRoutes}
-      {mode === 'templates' && templatesRoutes}
+      {(dev || mode === 'landing') && landingRoutes}
+      {(dev || mode === 'app') && appRoutes}
+      {(dev || mode === 'admin') && adminRoutes}
+      {(dev || mode === 'tests') && testRoutes}
+      {(dev || mode === 'templates') && templatesRoutes}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
