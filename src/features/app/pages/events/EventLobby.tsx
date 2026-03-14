@@ -246,7 +246,8 @@ export default function EventLobby() {
     };
 
     const handleTyping = (data: { userId: string; userName?: string; isTyping: boolean }) => {
-      if (data.userId === currentUserId) return;
+      // Ignore our own typing events (accounts for guest synthetic socket userIds)
+      if (data.userId === currentUserId || (isGuest && data.userId === `guest:${currentUserId}`)) return;
       const displayId = data.userName || data.userId;
       setTypingUsers(prev => {
         if (data.isTyping && !prev.includes(displayId)) return [...prev, displayId];

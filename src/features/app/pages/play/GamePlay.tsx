@@ -368,7 +368,8 @@ function GamePlayWithoutBoundary() {
     if (!eventsSocket.isConnected) return;
 
     const handleTyping = (data: { userId: string; userName?: string; isTyping: boolean }) => {
-      if (data.userId === currentUserId) return;
+      // Ignore our own typing events (accounts for guest synthetic socket userIds)
+      if (data.userId === currentUserId || (isGuest && data.userId === `guest:${currentUserId}`)) return;
       const displayId = data.userName || data.userId;
       setTypingUsers(prev => {
         if (data.isTyping && !prev.includes(displayId)) return [...prev, displayId];
@@ -434,12 +435,15 @@ function GamePlayWithoutBoundary() {
 
   // ─── Game board ────────────────────────────────────────────────────────────
   const renderBoard = () => {
+    // --- Pass `participantId` to boards (since backend game states strictly use participant IDs)
     const boardProps = {
       participants,
-      currentUserId,
+      currentUserId: participantId || '',
       currentUserName,
       currentUserAvatar: (currentUserName || '??').slice(0, 2).toUpperCase(),
       currentUserAvatarUrl,
+      round: activeRoundId as any || 1, // Will be updated dynamically
+      onRoundComplete: (r: number) => console.log('Round complete:', r),
     };
 
     const onEmitAction = async (actionType: string, payload?: any) => {
@@ -503,7 +507,7 @@ function GamePlayWithoutBoundary() {
         return (
           <CoffeeRouletteBoard
             participants={participants}
-            currentUserId={currentUserId}
+            currentUserId={participantId || ''}
             initialSnapshot={initialSnapshot}
             gameData={gameData}
             onEmitAction={onEmitAction}
@@ -513,7 +517,7 @@ function GamePlayWithoutBoundary() {
         return (
           <WinsOfTheWeekBoard
             prompt={config.promptKey ? t(config.promptKey) : undefined}
-            currentUserId={currentUserId}
+            currentUserId={participantId || ''}
             currentUserName={currentUserName}
             currentUserAvatar={(currentUserName || '??').slice(0, 2).toUpperCase()}
             currentUserAvatarUrl={currentUserAvatarUrl}
