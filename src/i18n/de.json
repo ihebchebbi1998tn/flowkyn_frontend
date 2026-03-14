@@ -564,6 +564,30 @@
       "showingFiltered": "{{count}} von {{total}} Aktivitäten",
       "noResults": "Keine Aktivitäten entsprechen Ihren Filtern",
       "noResultsHint": "Versuchen Sie, Ihre Filter oder Ihren Suchbegriff anzupassen"
+    },
+    "detail": {
+      "category": "Kategorie",
+      "teamSize": "Teamgröße",
+      "materials": "Material",
+      "materialsNone": "Keins",
+      "difficulty": "Schwierigkeit",
+      "difficultyBeginner": "Einsteigerfreundlich",
+      "difficultyIntermediate": "Fortgeschritten",
+      "difficultyAdvanced": "Expertenlevel",
+      "typeSync": "Sync (Live)",
+      "typeAsync": "Async (Flexibel)",
+      "badgeSync": "Live",
+      "badgeAsync": "Async",
+      "whyThisWorks": "Warum das funktioniert",
+      "launchActivity": "Diese Aktivität starten",
+      "saveToLibrary": "In Bibliothek speichern",
+      "sectionBefore": "📋 Vor der Aktivität",
+      "sectionDuring": "▶️ Während der Aktivität",
+      "sectionAfter": "✅ Nach der Aktivität",
+      "proTips": "💡 Profi-Tipps",
+      "readyTitle": "Bereit, {{name}} zu starten?",
+      "readySubtitle": "Richten Sie Ihre Sitzung ein, laden Sie Ihr Team ein und starten Sie in wenigen Minuten.",
+      "launchNow": "Jetzt starten"
     }
   },
   "notifications": {
@@ -1039,6 +1063,7 @@
       "spotTheLie": "Finden Sie die Lüge — wählen Sie sorgfältig!",
       "lockVote": "Stimme abgeben",
       "voteLocked": "Stimme abgegeben — warte auf Ergebnisse...",
+      "revealAsHost": "Aufdecken, wenn bereit — Sie müssen nicht sperren",
       "theReveal": "Die Auflösung",
       "seeVotes": "Sehen Sie, wie alle abgestimmt haben",
       "lie": "LÜGE",

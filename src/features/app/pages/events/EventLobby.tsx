@@ -111,6 +111,12 @@ export default function EventLobby() {
   const upsertProfile = useUpsertEventProfile(id || undefined);
   const { showError } = useApiError();
 
+  // Refs for chat handler to avoid re-registering listener when identity loads (prevents missing real-time messages)
+  const identityRef = useRef(identity);
+  const userRef = useRef(user);
+  identityRef.current = identity;
+  userRef.current = user;
+
   /** Join logic — defined before effect that depends on it */
   const handleJoin = useCallback(async () => {
     if (!id || !profile) return;
@@ -168,16 +174,18 @@ export default function EventLobby() {
 
   // ─── Auto-Join Logic ──────────────────────────────────────────────────────
 
-  // 1. If returning user (already has a participant entry on server), set joined status immediately
+  // 1. If returning user (already has participant + completed profile before), set joined immediately.
+  //    Do NOT set hasJoined from participantId alone — the creator is auto-joined on the backend
+  //    but must still choose avatar/nickname. Only skip the profile form when they have storedProfile.
   useEffect(() => {
-    if (identity.participantId && !hasJoined) {
-      console.log('[EventLobby] detected existing participant on server, marking hasJoined=true', {
+    if (identity.participantId && storedProfile && !hasJoined) {
+      console.log('[EventLobby] detected returning participant with stored profile, marking hasJoined=true', {
         eventId: id,
         participantId: identity.participantId,
       });
       setHasJoined(true);
     }
-  }, [identity.participantId, hasJoined]);
+  }, [identity.participantId, storedProfile, hasJoined]);
 
   // 2. Auto-trigger join when profile is ready and form is dismissed (first-time joiners)
   useEffect(() => {
@@ -260,31 +268,34 @@ export default function EventLobby() {
     }
   }, [hasJoined, eventsSocket]);
 
-  // Join the event room when connected AND officially joined
+  // Join the event room when connected AND officially joined — must re-join on every connect/reconnect
+  // (socket.io removes clients from rooms on disconnect). Use stable deps to avoid spamming.
+  const eventsSocketRef = useRef(eventsSocket);
+  eventsSocketRef.current = eventsSocket;
   useEffect(() => {
-    if (hasJoined && id && eventsSocket.isConnected) {
-      console.log('[EventLobby] events socket connected & hasJoined, emitting event:join', {
-        eventId: id,
-        socketConnected: eventsSocket.isConnected,
-      });
-      eventsSocket.emit('event:join', { eventId: id })
-        .then((ack: any) => {
-          console.log('[EventLobby] event:join ack', ack);
-          if (ack?.data?.participantId) {
-            if (isGuest) {
-              localStorage.setItem(`guest_participant_id_${id}`, ack.data.participantId);
-            } else {
-              localStorage.setItem(`member_participant_id_${id}`, ack.data.participantId);
-            }
+    if (!hasJoined || !id || !eventsSocket.isConnected) return;
+    const sock = eventsSocketRef.current;
+    console.log('[EventLobby] events socket connected & hasJoined, emitting event:join', {
+      eventId: id,
+      socketConnected: sock.isConnected,
+    });
+    sock.emit('event:join', { eventId: id })
+      .then((ack: any) => {
+        console.log('[EventLobby] event:join ack', ack);
+        if (ack?.data?.participantId) {
+          if (identityRef.current.isGuest) {
+            localStorage.setItem(`guest_participant_id_${id}`, ack.data.participantId);
+          } else {
+            localStorage.setItem(`member_participant_id_${id}`, ack.data.participantId);
           }
-          eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
-        })
-        .catch((err: any) => {
-           console.error('[EventLobby] Failed to join event room:', err?.message || err);
-           showError(err, 'Failed to join event room');
-        });
-    }
-  }, [hasJoined, id, eventsSocket.isConnected, eventsSocket, showError]);
+        }
+        sock.emit('event:presence', { eventId: id }).catch(() => {});
+      })
+      .catch((err: any) => {
+        console.error('[EventLobby] Failed to join event room:', err?.message || err);
+        showError(err, 'Failed to join event room');
+      });
+  }, [hasJoined, id, eventsSocket.isConnected, showError]);
 
   // Listen for presence updates and participant join/leave to keep lobby live
   useEffect(() => {
@@ -367,16 +378,17 @@ export default function EventLobby() {
       });
   }, [id]);
 
-  // Live chat listeners in lobby
+  // Live chat listeners — use refs for identity so we don't re-register on identity load (prevents missing real-time messages)
   useEffect(() => {
     if (!eventsSocket.isConnected || !id) return;
 
     const handleChatMessage = (data: any) => {
-      console.log('[EventLobby] chat:message', data);
+      const idCurrent = identityRef.current;
+      const usr = userRef.current;
       const name = data.senderName || 'Player';
-      const isOwn = isGuest
-        ? data.participantId === identity.participantId
-        : !!(data.userId && data.userId === user?.id);
+      const isOwn = idCurrent.isGuest
+        ? data.participantId === idCurrent.participantId
+        : !!(data.userId && data.userId === usr?.id);
 
       const msg: ChatMessage = {
         id: data.id || `ws-${crypto.randomUUID()}`,
@@ -393,8 +405,9 @@ export default function EventLobby() {
     };
 
     const handleTyping = (data: { userId: string; userName?: string; isTyping: boolean }) => {
-      // Ignore our own typing events (accounts for guest synthetic socket userIds)
-      if (data.userId === currentUserId || (isGuest && data.userId === `guest:${currentUserId}`)) return;
+      const idCurrent = identityRef.current;
+      const uid = idCurrent.userId || idCurrent.participantId;
+      if (data.userId === uid || (idCurrent.isGuest && data.userId === `guest:${uid}`)) return;
       const displayId = data.userName || data.userId;
       setTypingUsers(prev => {
         if (data.isTyping && !prev.includes(displayId)) return [...prev, displayId];
@@ -410,7 +423,7 @@ export default function EventLobby() {
       unsubMessage?.();
       unsubTyping?.();
     };
-  }, [eventsSocket.isConnected, id, isGuest, identity.participantId, user?.id, currentUserId, eventsSocket]);
+  }, [eventsSocket.isConnected, id, eventsSocket]);
 
   // Leave event room when lobby unmounts
   useEffect(() => {

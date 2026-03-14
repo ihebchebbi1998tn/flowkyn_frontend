@@ -195,6 +195,7 @@ export function TwoTruthsBoard({
           onSelect={(id) => !voted && setSelectedVote(id as any)}
           onSubmitVote={submitVote}
           disableSubmit={!selectedVote || voted}
+          isPresenter={isPresenter}
         />
       )}
 

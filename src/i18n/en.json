@@ -531,6 +531,30 @@
       "showingFiltered": "{{count}} of {{total}} activities",
       "noResults": "No activities match your filters",
       "noResultsHint": "Try adjusting your filters or search term"
+    },
+    "detail": {
+      "category": "Category",
+      "teamSize": "Team size",
+      "materials": "Materials",
+      "materialsNone": "None",
+      "difficulty": "Difficulty",
+      "difficultyBeginner": "Beginner-friendly",
+      "difficultyIntermediate": "Intermediate",
+      "difficultyAdvanced": "Advanced",
+      "typeSync": "Sync (Live)",
+      "typeAsync": "Async (Flexible)",
+      "badgeSync": "Live",
+      "badgeAsync": "Async",
+      "whyThisWorks": "Why This Works",
+      "launchActivity": "Launch This Activity",
+      "saveToLibrary": "Save to Library",
+      "sectionBefore": "📋 Before the Activity",
+      "sectionDuring": "▶️ During the Activity",
+      "sectionAfter": "✅ After the Activity",
+      "proTips": "💡 Pro Tips",
+      "readyTitle": "Ready to run {{name}}?",
+      "readySubtitle": "Set up your session, invite your team, and launch in minutes.",
+      "launchNow": "Launch Now"
     }
   },
   "activities": {
@@ -1068,6 +1092,7 @@
       "spotTheLie": "Spot the lie — choose carefully!",
       "lockVote": "Lock In Vote",
       "voteLocked": "Vote locked in — awaiting results...",
+      "revealAsHost": "Reveal when ready — you don't need to lock",
       "theReveal": "The Reveal",
       "seeVotes": "See how everyone voted",
       "lie": "LIE",

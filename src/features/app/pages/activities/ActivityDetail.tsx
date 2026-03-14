@@ -27,10 +27,35 @@ export default function ActivityDetail() {
   const gradient = categoryGradient[activity.category] || 'from-primary/60 to-primary';
 
   const infoItems = [
-    { label: 'Category', value: t(`games.categories.${activity.category}`), icon: Icon, color: activity.color },
-    { label: 'Team Size', value: activity.teamSize, icon: Users, color: 'text-muted-foreground' },
-    { label: 'Materials', value: activity.materials || 'None', icon: Package, color: 'text-muted-foreground' },
-    { label: 'Difficulty', value: activity.difficulty === 'beginner' ? 'Beginner-friendly' : activity.difficulty === 'intermediate' ? 'Intermediate' : 'Advanced', icon: Shield, color: 'text-muted-foreground' },
+    {
+      label: t('games.detail.category'),
+      value: t(`games.categories.${activity.category}`),
+      icon: Icon,
+      color: activity.color,
+    },
+    {
+      label: t('games.detail.teamSize'),
+      value: activity.teamSize,
+      icon: Users,
+      color: 'text-muted-foreground',
+    },
+    {
+      label: t('games.detail.materials'),
+      value: activity.materials || t('games.detail.materialsNone'),
+      icon: Package,
+      color: 'text-muted-foreground',
+    },
+    {
+      label: t('games.detail.difficulty'),
+      value:
+        activity.difficulty === 'beginner'
+          ? t('games.detail.difficultyBeginner')
+          : activity.difficulty === 'intermediate'
+            ? t('games.detail.difficultyIntermediate')
+            : t('games.detail.difficultyAdvanced'),
+      icon: Shield,
+      color: 'text-muted-foreground',
+    },
   ];
 
   return (
@@ -41,9 +66,15 @@ export default function ActivityDetail() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">{activity.name}</h1>
+          <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">
+            {activity.i18nKey ? t(`${activity.i18nKey}.name`, { defaultValue: activity.name }) : activity.name}
+          </h1>
           <p className="text-[12px] sm:text-[13px] text-muted-foreground mt-0.5">
-            {t(`games.categories.${activity.category}`)} · {activity.type === 'sync' ? 'Sync (Live)' : 'Async (Flexible)'} · ⏱️ {activity.duration}
+            {t(`games.categories.${activity.category}`)} ·{' '}
+            {activity.type === 'sync'
+              ? t('games.detail.typeSync')
+              : t('games.detail.typeAsync')}{' '}
+            · ⏱️ {activity.duration}
           </p>
         </div>
       </div>
@@ -57,7 +88,11 @@ export default function ActivityDetail() {
               <Icon className={cn("h-5 w-5 sm:h-7 sm:w-7", activity.color)} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] sm:text-[14px] text-foreground leading-relaxed">{activity.description}</p>
+              <p className="text-[13px] sm:text-[14px] text-foreground leading-relaxed">
+                {activity.i18nKey
+                  ? t(`${activity.i18nKey}.description`, { defaultValue: activity.description })
+                  : activity.description}
+              </p>
               <div className="flex items-center gap-2 sm:gap-4 mt-2 sm:mt-3 flex-wrap">
                 <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-[12px] text-muted-foreground">
                   <Timer className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {activity.duration}
@@ -66,12 +101,31 @@ export default function ActivityDetail() {
                   <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {activity.teamSize}
                 </div>
                 <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-[12px] text-muted-foreground hidden sm:flex">
-                  <Shield className="h-3.5 w-3.5" /> {activity.difficulty === 'beginner' ? 'Beginner-friendly' : activity.difficulty}
+                  <Shield className="h-3.5 w-3.5" />{' '}
+                  {activity.difficulty === 'beginner'
+                    ? t('games.detail.difficultyBeginner')
+                    : activity.difficulty === 'intermediate'
+                      ? t('games.detail.difficultyIntermediate')
+                      : t('games.detail.difficultyAdvanced')}
                 </div>
-                <Badge variant="outline" className={cn("text-[9px] sm:text-[10px] gap-0.5",
-                  activity.type === 'sync' ? 'border-primary/20 text-primary bg-primary/5' : 'border-success/20 text-success bg-success/5'
-                )}>
-                  {activity.type === 'sync' ? <><Radio className="h-2.5 w-2.5" /> Live</> : <><Clock className="h-2.5 w-2.5" /> Async</>}
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "text-[9px] sm:text-[10px] gap-0.5",
+                    activity.type === 'sync'
+                      ? 'border-primary/20 text-primary bg-primary/5'
+                      : 'border-success/20 text-success bg-success/5'
+                  )}
+                >
+                  {activity.type === 'sync' ? (
+                    <>
+                      <Radio className="h-2.5 w-2.5" /> {t('games.detail.badgeSync')}
+                    </>
+                  ) : (
+                    <>
+                      <Clock className="h-2.5 w-2.5" /> {t('games.detail.badgeAsync')}
+                    </>
+                  )}
                 </Badge>
               </div>
             </div>
@@ -93,7 +147,9 @@ export default function ActivityDetail() {
           <div className="mb-4 sm:mb-6">
             <div className="flex items-center gap-2 mb-2 sm:mb-3">
               <Lightbulb className="h-4 w-4 text-warning" />
-              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">Why This Works</h3>
+              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">
+                {t('games.detail.whyThisWorks')}
+              </h3>
             </div>
             <p className="text-[12px] sm:text-[13px] text-muted-foreground leading-relaxed pl-6">{activity.whyItWorks}</p>
           </div>
@@ -101,10 +157,10 @@ export default function ActivityDetail() {
           {/* CTA */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
             <Button onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))} className="h-10 px-6 text-[13px] gap-2 shadow-sm">
-              <Play className="h-4 w-4" /> Launch This Activity
+              <Play className="h-4 w-4" /> {t('games.detail.launchActivity')}
             </Button>
             <Button variant="outline" className="h-10 px-5 text-[13px]">
-              <BookOpen className="h-4 w-4 mr-2" /> Save to Library
+              <BookOpen className="h-4 w-4 mr-2" /> {t('games.detail.saveToLibrary')}
             </Button>
           </div>
         </div>
@@ -113,10 +169,10 @@ export default function ActivityDetail() {
       {/* How to Run It */}
       <div className="grid gap-3 sm:gap-4 md:grid-cols-3">
         {[
-          { key: 'before', label: '📋 Before the Activity', items: activity.before, icon: ListChecks, color: 'text-info', bg: 'bg-info/10', gradient: 'from-info/60 to-info', ItemIcon: CheckCircle },
-          { key: 'during', label: '▶️ During the Activity', items: activity.during, icon: Play, color: 'text-success', bg: 'bg-success/10', gradient: 'from-success/60 to-success', ItemIcon: null },
-          { key: 'after', label: '✅ After the Activity', items: activity.after, icon: CheckCircle, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-warning/60 to-warning', ItemIcon: CheckCircle },
-        ].map(section => (
+          { key: 'before', label: t('games.detail.sectionBefore'), items: activity.before, icon: ListChecks, color: 'text-info', bg: 'bg-info/10', gradient: 'from-info/60 to-info', ItemIcon: CheckCircle },
+          { key: 'during', label: t('games.detail.sectionDuring'), items: activity.during, icon: Play, color: 'text-success', bg: 'bg-success/10', gradient: 'from-success/60 to-success', ItemIcon: null },
+          { key: 'after', label: t('games.detail.sectionAfter'), items: activity.after, icon: CheckCircle, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-warning/60 to-warning', ItemIcon: CheckCircle },
+        ].map((section) => (
           <div key={section.key} className="rounded-xl border border-border bg-card overflow-hidden">
             <div className={cn("h-1 w-full bg-gradient-to-r", section.gradient)} />
             <div className="p-4 sm:p-5">
@@ -151,7 +207,9 @@ export default function ActivityDetail() {
             <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-primary/10">
               <Lightbulb className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             </div>
-            <h3 className="text-[12px] sm:text-[13px] font-semibold text-foreground">💡 Pro Tips</h3>
+            <h3 className="text-[12px] sm:text-[13px] font-semibold text-foreground">
+              {t('games.detail.proTips')}
+            </h3>
           </div>
           <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2">
             {activity.tips.map((tip, i) => (
@@ -167,11 +225,19 @@ export default function ActivityDetail() {
       {/* Bottom CTA */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 sm:p-5 rounded-xl border border-primary/20 bg-primary/[0.03]">
         <div>
-          <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">Ready to run {activity.name}?</h3>
-          <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5">Set up your session, invite your team, and launch in minutes.</p>
+          <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">
+            {t('games.detail.readyTitle', {
+              name: activity.i18nKey
+                ? t(`${activity.i18nKey}.name`, { defaultValue: activity.name })
+                : activity.name,
+            })}
+          </h3>
+          <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5">
+            {t('games.detail.readySubtitle')}
+          </p>
         </div>
         <Button onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))} className="h-9 sm:h-10 px-5 sm:px-6 text-[12px] sm:text-[13px] gap-2 shadow-sm shrink-0">
-          Launch Now <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          {t('games.detail.launchNow')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </Button>
       </div>
     </div>

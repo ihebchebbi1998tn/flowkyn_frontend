@@ -564,6 +564,30 @@
       "showingFiltered": "{{count}} sur {{total}} activités",
       "noResults": "Aucune activité ne correspond à vos filtres",
       "noResultsHint": "Essayez d'ajuster vos filtres ou votre recherche"
+    },
+    "detail": {
+      "category": "Catégorie",
+      "teamSize": "Taille d'équipe",
+      "materials": "Matériel",
+      "materialsNone": "Aucun",
+      "difficulty": "Difficulté",
+      "difficultyBeginner": "Accessible aux débutants",
+      "difficultyIntermediate": "Intermédiaire",
+      "difficultyAdvanced": "Avancé",
+      "typeSync": "Sync (En direct)",
+      "typeAsync": "Async (Flexible)",
+      "badgeSync": "En direct",
+      "badgeAsync": "Async",
+      "whyThisWorks": "Pourquoi ça fonctionne",
+      "launchActivity": "Lancer cette activité",
+      "saveToLibrary": "Enregistrer dans la bibliothèque",
+      "sectionBefore": "📋 Avant l'activité",
+      "sectionDuring": "▶️ Pendant l'activité",
+      "sectionAfter": "✅ Après l'activité",
+      "proTips": "💡 Conseils pro",
+      "readyTitle": "Prêt à lancer {{name}} ?",
+      "readySubtitle": "Configurez votre session, invitez votre équipe et lancez en quelques minutes.",
+      "launchNow": "Lancer maintenant"
     }
   },
   "notifications": {
@@ -1039,6 +1063,7 @@
       "spotTheLie": "Trouvez le mensonge — choisissez bien !",
       "lockVote": "Verrouiller le vote",
       "voteLocked": "Vote verrouillé — en attente des résultats...",
+      "revealAsHost": "Révéler quand vous êtes prêt — vous n'avez pas besoin de verrouiller",
       "theReveal": "La Révélation",
       "seeVotes": "Voir les votes de chacun",
       "lie": "MENSONGE",

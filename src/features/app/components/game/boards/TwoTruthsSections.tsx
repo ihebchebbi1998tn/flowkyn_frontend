@@ -205,6 +205,8 @@ export interface TwoTruthsVoteSectionProps {
   onSelect: (id: string) => void;
   onSubmitVote: () => void;
   disableSubmit: boolean;
+  /** When true, user is the presenter (host) and sees "Reveal" instead of "Lock In Vote" */
+  isPresenter?: boolean;
 }
 
 export function TwoTruthsVoteSection({
@@ -216,6 +218,7 @@ export function TwoTruthsVoteSection({
   onSelect,
   onSubmitVote,
   disableSubmit,
+  isPresenter = false,
 }: TwoTruthsVoteSectionProps) {
   const { t } = useTranslation();
 
@@ -293,7 +296,7 @@ export function TwoTruthsVoteSection({
           </motion.button>
         ))}
 
-        {!voted && (
+        {!isPresenter && !voted && (
           <div className="flex justify-end pt-3">
             <Button
               onClick={onSubmitVote}
@@ -305,7 +308,15 @@ export function TwoTruthsVoteSection({
           </div>
         )}
 
-        {voted && (
+        {isPresenter && (
+          <div className="p-3 rounded-xl bg-info/[0.06] border border-info/20 text-center animate-fade-in">
+            <p className="text-[12px] text-info font-medium">
+              {t('gamePlay.twoTruths.revealAsHost', 'Reveal when ready — you don\'t need to lock')}
+            </p>
+          </div>
+        )}
+
+        {!isPresenter && voted && (
           <div className="p-3 rounded-xl bg-success/[0.06] border border-success/20 text-center animate-fade-in">
             <div className="flex items-center justify-center gap-2">
               <CheckCircle className="h-4 w-4 text-success" />

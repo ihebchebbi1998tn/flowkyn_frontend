@@ -203,9 +203,16 @@ function GamePlayWithoutBoundary() {
     hasParticipantsData: !!participantsData,
   });
 
-  // Map API participants to GameParticipant shape
+  // Map API participants to GameParticipant shape (dedupe by id to avoid any duplicates)
   const rawParticipants = (participantsData as any)?.data || [];
-  const participants: GameParticipant[] = rawParticipants.map((p: any) => ({
+  const seenParticipantIds = new Set<string>();
+  const participants: GameParticipant[] = rawParticipants
+    .filter((p: any) => {
+      if (!p?.id || seenParticipantIds.has(p.id)) return false;
+      seenParticipantIds.add(p.id);
+      return true;
+    })
+    .map((p: any) => ({
     id: p.id,
     name: p.name || 'Unknown',
     email: p.email || null,
