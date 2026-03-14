@@ -9,6 +9,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { eventsApi } from '@/features/app/api/events';
 import {
   Users, Clock, Gamepad2, ArrowRight, Copy, CheckCircle,
   Link2, Wifi, Sparkles, Shield, Loader2, AlertCircle, X, User,
