@@ -33,7 +33,6 @@ export function AppSidebar() {
   ];
 
   const manageNav = [
-    { title: t('nav.users'), url: ROUTES.USERS, icon: UsersRound },
     { title: t('nav.settings'), url: ROUTES.SETTINGS, icon: Cog },
     { title: t('nav.support'), url: ROUTES.SUPPORT_REPORTS, icon: LifeBuoy },
   ];

@@ -221,7 +221,7 @@ export function Topbar() {
                     {results.members.map(member => (
                       <button
                         key={member.id}
-                        onClick={() => { navigate(`${ROUTES.USERS}?search=${member.email}`); setQuery(''); setFocused(false); setIsExpanded(false); }}
+                        onClick={() => { navigate(ROUTES.ORGANIZATIONS); setQuery(''); setFocused(false); setIsExpanded(false); }}
                         className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-primary/5 transition-all group rounded-lg"
                       >
                         <Avatar className="h-8 w-8 ring-1 ring-border group-hover:ring-primary/20 transition-all">
