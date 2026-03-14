@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,6 +27,7 @@ export interface WinsOfTheWeekBoardProps {
     id: string;
     authorName: string;
     authorAvatar: string;
+    authorAvatarUrl?: string | null;
     content: string;
     timestamp: string;
     reactions: { type: string; count: number; reacted: boolean }[];
@@ -151,6 +152,7 @@ export function WinsOfTheWeekBoard({
                 {/* Author */}
                 <div className="flex items-center gap-2.5 mb-3">
                   <Avatar className="h-8 w-8">
+                    {post.authorAvatarUrl ? <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} /> : null}
                     <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-semibold">{post.authorAvatar}</AvatarFallback>
                   </Avatar>
                   <div>

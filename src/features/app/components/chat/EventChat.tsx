@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export interface ChatMessage {
   id: string;
-  userId: string;
+  userId: string | null;
   participantId: string;
   senderName: string;
   /** Initials fallback (2 chars) */

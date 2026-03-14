@@ -5,9 +5,10 @@ import {
   Zap, CheckCircle, ArrowRight, Sparkles, Heart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { motion } from 'framer-motion';
 import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
 import { GAME_TYPES } from '@/features/app/pages/play/GamePlay';
@@ -17,8 +18,8 @@ type CoffeeSnapshot = {
   phase: 'waiting' | 'matching' | 'chatting' | 'complete';
   pairs: Array<{
     id: string;
-    person1: { participantId: string; name: string; avatar: string };
-    person2: { participantId: string; name: string; avatar: string };
+    person1: { participantId: string; name: string; avatar: string; avatarUrl?: string | null };
+    person2: { participantId: string; name: string; avatar: string; avatarUrl?: string | null };
     topic: string;
   }>;
   startedChatAt: string | null;
@@ -188,6 +189,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                     className="flex items-center gap-2 flex-1 min-w-0"
                   >
                     <Avatar className="h-10 w-10 ring-2 ring-info/20">
+                      {pair.person1.avatarUrl ? <AvatarImage src={getSafeImageUrl(pair.person1.avatarUrl) || pair.person1.avatarUrl} alt={pair.person1.name} /> : null}
                       <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person1.avatar}</AvatarFallback>
                     </Avatar>
                     <span className="text-[13px] font-medium text-foreground truncate">{pair.person1.name}</span>
@@ -216,6 +218,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                   >
                     <span className="text-[13px] font-medium text-foreground truncate">{pair.person2.name}</span>
                     <Avatar className="h-10 w-10 ring-2 ring-info/20">
+                      {pair.person2.avatarUrl ? <AvatarImage src={getSafeImageUrl(pair.person2.avatarUrl) || pair.person2.avatarUrl} alt={pair.person2.name} /> : null}
                       <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person2.avatar}</AvatarFallback>
                     </Avatar>
                   </motion.div>
@@ -257,6 +260,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               <div className="flex items-center justify-center gap-6 mb-6">
                 <div className="text-center">
                   <Avatar className="h-16 w-16 ring-4 ring-info/20 mx-auto mb-2">
+                    {myPair.person1.avatarUrl ? <AvatarImage src={getSafeImageUrl(myPair.person1.avatarUrl) || myPair.person1.avatarUrl} alt={myPair.person1.name} /> : null}
                     <AvatarFallback className="bg-info/10 text-info text-lg font-bold">{myPair.person1.avatar}</AvatarFallback>
                   </Avatar>
                   <p className="text-[13px] font-semibold text-foreground">{myPair.person1.name}</p>
@@ -267,6 +271,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 </div>
                 <div className="text-center">
                   <Avatar className="h-16 w-16 ring-4 ring-info/20 mx-auto mb-2">
+                    {myPair.person2.avatarUrl ? <AvatarImage src={getSafeImageUrl(myPair.person2.avatarUrl) || myPair.person2.avatarUrl} alt={myPair.person2.name} /> : null}
                     <AvatarFallback className="bg-info/10 text-info text-lg font-bold">{myPair.person2.avatar}</AvatarFallback>
                   </Avatar>
                   <p className="text-[13px] font-semibold text-foreground">{myPair.person2.name}</p>

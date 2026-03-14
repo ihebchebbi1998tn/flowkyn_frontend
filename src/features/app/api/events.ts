@@ -120,7 +120,7 @@ export const eventsApi = {
       created_at: string;
       author_name: string;
       author_avatar: string | null;
-      reactions: { type: string; count: number }[];
+      reactions: { type: string; count: number; reacted?: boolean }[];
     }>>(`/events/${eventId}/posts`, {
       page: String(page),
       limit: String(limit),

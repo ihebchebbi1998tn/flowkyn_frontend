@@ -106,7 +106,7 @@ function GamePlayWithoutBoundary() {
   }, [eventId, upsertProfile]);
 
   /** Join logic — ensures tokens are obtained and rooms joined */
-  const handleJoin = async () => {
+  const handleJoin = useCallback(async () => {
     if (!eventId || !profile) return;
     setJoinError('');
     setIsJoining(true);
@@ -143,7 +143,7 @@ function GamePlayWithoutBoundary() {
     } finally {
       setIsJoining(false);
     }
-  };
+  }, [eventId, profile, isAuthenticated, user, inviteToken, acceptInvitation, joinEvent, joinAsGuest, guestEmail]);
 
   // 1. If we already have a participant identity from server, we are "joined"
   useEffect(() => {
@@ -157,7 +157,7 @@ function GamePlayWithoutBoundary() {
     if (profile && !showProfileEdit && !hasJoined && !isJoining) {
       handleJoin();
     }
-  }, [profile, showProfileEdit, hasJoined, isJoining]);
+  }, [profile, showProfileEdit, hasJoined, isJoining, handleJoin]);
 
   // ─── Real data from API ────────────────────────────────────────────────────
   const { data: eventData } = useEventPublicInfo(eventId || '');
@@ -289,7 +289,7 @@ function GamePlayWithoutBoundary() {
 
     const unsub = eventsSocket.on('chat:message', handleChatMessage);
     return unsub;
-  }, [eventsSocket.isConnected, currentUserId, eventId]); // Added eventId to deps
+  }, [eventsSocket.isConnected, eventId, isGuest, guestParticipantId, user?.id]);
 
   // Cleanup: leave event room on unmount
   useEffect(() => {
@@ -312,14 +312,14 @@ function GamePlayWithoutBoundary() {
   const winsPosts = rawPosts.map((p: any) => ({
     id: p.id,
     authorName: p.author_name,
-    authorAvatar: (p.author_avatar || p.author_name || '??').slice(0, 2).toUpperCase(),
+    authorAvatar: (p.author_name || '??').slice(0, 2).toUpperCase(),
+    authorAvatarUrl: getSafeImageUrl(p.author_avatar) || null,
     content: p.content,
     timestamp: p.created_at,
     reactions: (p.reactions || []).map((r: any) => ({
       type: r.type,
       count: r.count,
-      // We don't yet track per-user "reacted" flags server-side; treat all as not-reacted in UI.
-      reacted: false,
+      reacted: !!r.reacted,
     })),
   }));
 
@@ -420,12 +420,27 @@ function GamePlayWithoutBoundary() {
         if (eventId) {
           refetchMessages();
           refetchParticipants();
+          refetchPosts();
         }
       }
     } else {
       wasEventsConnectedRef.current = false;
     }
   }, [eventsSocket.status, eventId, refetchMessages, refetchParticipants]);
+
+  // Listen for async post updates (Wins of the Week) via event notifications
+  useEffect(() => {
+    if (!eventsSocket.isConnected || !eventId) return;
+
+    const handleEventNotification = (data: { type: string; payload: any }) => {
+      if (data.type === 'post:created' || data.type === 'post:reacted') {
+        refetchPosts();
+      }
+    };
+
+    const unsub = eventsSocket.on('event:notification', handleEventNotification);
+    return unsub;
+  }, [eventsSocket.isConnected, eventId, refetchPosts]);
 
   // Reconnect backfill for games: when games socket reconnects, always issue game:state_sync
   const wasGamesConnectedRef = useRef(false);
@@ -461,7 +476,7 @@ function GamePlayWithoutBoundary() {
 
     const unsub = eventsSocket.on('chat:typing', handleTyping);
     return unsub;
-  }, [eventsSocket.isConnected, currentUserId]);
+  }, [eventsSocket.isConnected, currentUserId, isGuest]);
 
   // ─── Send message via WebSocket ────────────────────────────────────────────
   const handleSendMessage = useCallback((message: string) => {

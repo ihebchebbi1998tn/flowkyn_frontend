@@ -38,6 +38,7 @@ import { EventChat, type ChatMessage } from '@/features/app/components/chat/Even
 import { useEventsSocket } from '@/hooks/useSocket';
 import logoImg from '@/assets/logo.png';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
+import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
@@ -115,7 +116,7 @@ export default function EventLobby() {
     if (profile && !showProfileForm && !hasJoined && !isJoining && !joinError) {
       handleJoin();
     }
-  }, [profile, showProfileForm, hasJoined, isJoining, joinError]);
+  }, [profile, showProfileForm, hasJoined, isJoining, joinError, handleJoin]);
 
   const joinLink = `${window.location.origin}/join/${id}`;
   const participants = (participantsData as any)?.data ?? [];
@@ -308,7 +309,7 @@ export default function EventLobby() {
   };
 
   /** Join logic — runs AFTER profile is set */
-  const handleJoin = async () => {
+  const handleJoin = useCallback(async () => {
     if (!id || !profile) return;
     setJoinError('');
     setIsJoining(true);
@@ -354,7 +355,7 @@ export default function EventLobby() {
     } finally {
       setIsJoining(false);
     }
-  };
+  }, [id, profile, isAuthenticated, user, inviteToken, acceptInvitation, joinEvent, joinAsGuest, guestEmail, t]);
 
   const handleCountdownComplete = useCallback(() => {
     navigate(ROUTES.PLAY(id));
