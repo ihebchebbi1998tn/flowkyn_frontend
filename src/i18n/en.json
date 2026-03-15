@@ -571,6 +571,184 @@
       "launchNow": "Launch Now"
     }
   },
+  "gamePlay": {
+    "configs": {
+      "twoTruthsTitle": "Two Truths & a Lie",
+      "twoTruthsSubtitle": "Fast, fun icebreaker for live sessions.",
+      "coffeeRouletteTitle": "Coffee Roulette",
+      "coffeeRouletteSubtitle": "Random 1:1 chats to build real connections.",
+      "winsOfWeekTitle": "Wins of the Week",
+      "winsOfWeekSubtitle": "Async ritual to celebrate progress every week.",
+      "defaultPrompt": "Share one highlight from your week.",
+      "strategicEscapeTitle": "Strategic Escape Challenge",
+      "strategicEscapeSubtitle": "Async crisis simulation where every role sees something different.",
+      "strategicEscapePrompt": "Your team faces a high‑stakes launch under pressure. Use your role’s lens to surface risks, trade‑offs, and bold moves."
+    }
+  },
+  "strategic": {
+    "label": "Strategic Escape Challenge",
+    "configure": {
+      "title": "Customize your scenario",
+      "subtitle": "Choose an industry, crisis, and difficulty so the scenario feels real for your team.",
+      "industryLabel": "What's your industry?",
+      "crisisLabel": "Choose your crisis type",
+      "difficultyLabel": "Difficulty level"
+    },
+    "preview": {
+      "title": "What your team will experience",
+      "body": "Each participant receives a private email with their secret role and instructions. When they join, they see a role card that reminds them how to think and speak during the challenge.",
+      "hint": "This activity is async: people can join from any time zone, share perspectives in their own time, and then debrief together.",
+      "hostOnly": "Your facilitator is configuring the scenario. You will see your secret role here as soon as the challenge is launched."
+    },
+    "actions": {
+      "createSession": "Create strategic session",
+      "creating": "Creating session…",
+      "createHelp": "Once created, you can assign roles, trigger emails, and start the async discussion.",
+      "assignRoles": "Assign roles & send emails",
+      "assigningRoles": "Assigning roles and sending emails…",
+      "assignHelp": "First, assign roles so everyone receives their email. Then start the async discussion when you are ready.",
+      "startDiscussion": "Start async discussion",
+      "endDiscussion": "End discussion & move to debrief"
+    },
+    "industries": {
+      "techSaaS": {
+        "label": "Tech / SaaS",
+        "description": "Product launches, outages, roadmap shifts, and high‑growth trade‑offs."
+      },
+      "finance": {
+        "label": "Finance",
+        "description": "Regulation changes, market swings, and risk versus growth decisions."
+      },
+      "healthcare": {
+        "label": "Healthcare",
+        "description": "Patient safety, compliance, and capacity planning under pressure."
+      },
+      "retail": {
+        "label": "Retail / E‑commerce",
+        "description": "Campaigns, inventory, and customer experience during peak demand."
+      },
+      "manufacturing": {
+        "label": "Manufacturing",
+        "description": "Supply chain disruptions, quality issues, and production bottlenecks."
+      },
+      "education": {
+        "label": "Education",
+        "description": "Enrollment shifts, stakeholder expectations, and blended‑learning trade‑offs."
+      }
+    },
+    "crises": {
+      "marketDisruption": {
+        "label": "Market Disruption",
+        "meta": "Difficulty: Medium · Focus: Strategy & competition",
+        "description": "A new competitor launches and threatens your market share. You must respond without overreacting or losing focus."
+      },
+      "productLaunchCrisis": {
+        "label": "Product Launch Crisis",
+        "meta": "Difficulty: Hard · Focus: Crisis management",
+        "description": "Your product launch is in 7 days and everything is going wrong. You must decide what to cut, what to save, and how to communicate."
+      },
+      "budgetCuts": {
+        "label": "Budget Cuts",
+        "meta": "Difficulty: Medium · Focus: Resource allocation",
+        "description": "The board demands a 30% cost reduction while maintaining growth targets. Every role feels the impact differently."
+      },
+      "teamConflict": {
+        "label": "Team Conflict",
+        "meta": "Difficulty: Easy · Focus: Communication & alignment",
+        "description": "Critical departments are not communicating and projects are slipping. You must rebuild trust and shared priorities."
+      }
+    },
+    "difficulties": {
+      "easy": {
+        "label": "Easy — clear right answer",
+        "hint": "Best for a first run or new teams."
+      },
+      "medium": {
+        "label": "Medium — multiple solutions",
+        "hint": "Teams must weigh trade‑offs and align on a path."
+      },
+      "hard": {
+        "label": "Hard — high ambiguity",
+        "hint": "Great for senior teams that want to stress‑test strategy under pressure."
+      }
+    },
+    "roles": {
+      "product_lead": {
+        "name": "Product Lead",
+        "brief": "Owns product outcomes, roadmap trade‑offs, and what ships when.",
+        "secret": "You are under pressure to show progress. You want to keep as much of the launch scope as possible — but you know quality and trust are on the line. Push for a small, coherent slice that still tells a strong story."
+      },
+      "marketing_lead": {
+        "name": "Marketing Lead",
+        "brief": "Owns narrative, launch readiness, and demand generation.",
+        "secret": "You already have campaigns booked and stakeholders watching. You need a launch you can stand behind — even if it means shrinking scope — and a clear story for customers if things change."
+      },
+      "cfo": {
+        "name": "CFO / Finance Lead",
+        "brief": "Owns budget guardrails, runway, and growth targets.",
+        "secret": "You care about runway, CAC, and revenue predictability. You are not here to say “no” — you are here to keep the team honest about trade‑offs and to highlight where money is being silently burned."
+      },
+      "ops_lead": {
+        "name": "Operations Lead",
+        "brief": "Owns how plans turn into real delivery across teams.",
+        "secret": "You see capacity, dependencies, and process friction. Your role is to show what is realistically possible in the next 7 days — and what must change to hit the plan without burning people out."
+      },
+      "customer_success_lead": {
+        "name": "Customer Success Lead",
+        "brief": "Owns frontline customer impact and trust.",
+        "secret": "You carry the relationship with existing customers. You will be the first to hear complaints. Push for decisions that protect trust, reduce surprises, and give you honest talking points."
+      }
+    },
+    "rolesSection": {
+      "title": "Your secret role",
+      "subtitle": "Check your inbox for full instructions. This card is a quick visual summary."
+    },
+    "discussion": {
+      "title": "Async crisis discussion",
+      "subtitle": "Share updates, decisions, and trade‑offs in your day‑to‑day tools. Use this space to keep the scenario visible.",
+      "prompt": "Your team faces a last‑minute product launch crisis with competing priorities and limited resources.",
+      "promptHint": "Each role brings a unique lens. Capture points of tension, decisions, and risks as you go.",
+      "guidingQuestions": "Guiding questions",
+      "q1": "What is the single biggest risk if we do nothing in the next 7 days?",
+      "q2": "Where are we mis‑aligned across product, marketing, and operations?",
+      "q3": "What trade‑off are you personally willing to own?",
+      "teamInstructions": "For your team",
+      "i1": "Post updates in your existing tools (Slack, Teams, Notion, etc.).",
+      "i2": "Reply in‑thread so conversations stay connected rather than fragmented.",
+      "i3": "Capture one decision log you will review together in the debrief.",
+      "hostToolsTitle": "Host controls",
+      "hostToolsBody": "You can end the async discussion once you feel the team has explored enough perspectives."
+    },
+    "rolesMeta": {
+      "playerLabel": "You",
+      "unknownPlayer": "Participant",
+      "secret": "Secret role",
+      "loading": "Waiting for your role…",
+      "pending": "Pending assignment",
+      "pendingHint": "Your facilitator is assigning roles. Stay tuned — your perspective will matter.",
+      "secretHint": "Once you know your role, think about what only you can see that others might miss.",
+      "refreshing": "Refreshing your role…",
+      "swapTitle": "Quick swap & alignment",
+      "swapBody": "During the short swap window, teammates can agree to mentally trade roles if another perspective fits them better. Use chat or your meeting to confirm.",
+      "swapWindow": "Role swap window: {{seconds}}s",
+      "swapCountdown": "Swap window closes in {{seconds}}s",
+      "swapClosed": "Role swap window has closed. Keep your current role for the discussion."
+    },
+    "debrief": {
+      "title": "Debrief: what did we learn?",
+      "subtitle": "Use a retro or leadership session to reflect on how you made decisions, what you missed, and what this means for real work.",
+      "questionsTitle": "Suggested debrief questions",
+      "q1": "Where did we move too fast, and where did we move too slow?",
+      "q2": "Which roles saw risk earliest — and were they heard?",
+      "q3": "What would we do differently in a real incident starting tomorrow?",
+      "actionsTitle": "Turn insights into actions",
+      "a1": "Capture 2–3 concrete changes you will make to process, communication, or ownership.",
+      "a2": "Assign clear owners and deadlines for each action.",
+      "a3": "Schedule a follow‑up in 4–6 weeks to review impact.",
+      "summaryTitle": "Summary for leadership",
+      "summaryBody": "Share three bullets: what you simulated, what you learned about how you work under pressure, and what you will change as a result."
+    }
+  },
   "activities": {
     "twoTruths": {
       "name": "Two Truths and a Lie",

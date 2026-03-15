@@ -57,11 +57,13 @@ export function WinsOfTheWeekBoard({
 
   const handlePost = async () => {
     if (!newPost.trim()) return;
+    console.log('[WinsOfTheWeekBoard] handlePost', { length: newPost.trim().length });
     await onPost(newPost.trim());
     setNewPost('');
   };
 
   const toggleReaction = (postId: string, reactionType: string) => {
+    console.log('[WinsOfTheWeekBoard] toggleReaction', { postId, reactionType });
     onToggleReaction(postId, reactionType);
   };
 
@@ -74,6 +76,11 @@ export function WinsOfTheWeekBoard({
     if (!text || !canPost) return;
     setSubmittingReply(postId);
     try {
+      console.log('[WinsOfTheWeekBoard] handleReply', {
+        postId,
+        authorName,
+        length: text.length,
+      });
       await onPost(`@${authorName}: ${text}`);
       setReplyInputs(prev => ({ ...prev, [postId]: '' }));
       setShowReplyFor(null);

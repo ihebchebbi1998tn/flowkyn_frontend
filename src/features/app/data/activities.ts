@@ -1,4 +1,4 @@
-import { MessageSquare, Coffee, Trophy } from 'lucide-react';
+import { MessageSquare, Coffee, Trophy, Target } from 'lucide-react';
 
 export type ActivityCategory = 'icebreaker' | 'connection' | 'wellness' | 'competition';
 export type ActivityType = 'sync' | 'async';
@@ -175,6 +175,51 @@ export const ACTIVITIES: Activity[] = [
       'Make it a habit — same day, same time, every week',
       'If participation drops, remind the team why this matters',
       'This is the easiest async activity and has huge cultural impact',
+    ],
+  },
+  {
+    id: '4',
+    name: 'Strategic Escape Challenge',
+    i18nKey: 'activities.strategicEscape',
+    icon: Target,
+    category: 'competition',
+    type: 'async',
+    description:
+      'An async strategic simulation where your team navigates a realistic crisis scenario from different roles and perspectives.',
+    duration: '45–60 min (async)',
+    durationTag: 'ongoing',
+    teamSize: '4–12 people',
+    teamSizeTag: 'medium',
+    minPlayers: 4,
+    maxPlayers: 12,
+    difficulty: 'intermediate',
+    color: 'text-destructive',
+    bgColor: 'bg-destructive/10',
+    popular: true,
+    materials: 'Slack/Teams/Notion (or your usual tools)',
+    whyItWorks:
+      'Simulates real strategic tension without real‑world risk. Helps teams practice cross‑functional alignment, decision‑making under pressure, and resource trade‑offs.',
+    before: [
+      'Choose an industry and crisis that feels realistic for your team.',
+      'Invite a cross‑functional group (product, engineering, marketing, operations, leadership).',
+      'Decide where the async discussion will live (Slack, Teams, Notion, etc.).',
+    ],
+    during: [
+      'Introduce the scenario and make sure everyone understands their secret role.',
+      'Give people 2–3 days to share updates, decisions, and trade‑offs from their role’s perspective.',
+      'Encourage short, frequent updates rather than long reports.',
+      'Ask people to capture tensions and disagreements explicitly — they are the most valuable part.',
+    ],
+    after: [
+      'Run a 30–45 minute debrief session using the in‑product prompts.',
+      'Summarize 2–3 key changes you want to make to how you handle real crises.',
+      'Share a short written summary with leadership linking insights to concrete actions.',
+    ],
+    tips: [
+      'Make it feel real: use your own product, customers, and timelines in the scenario.',
+      'Invite people who rarely sit in the same room together — that is where the magic happens.',
+      'Time‑box the async window so it stays focused and energetic.',
+      'Don’t water down tension — disagreement is where the best learning happens.',
     ],
   },
 ];

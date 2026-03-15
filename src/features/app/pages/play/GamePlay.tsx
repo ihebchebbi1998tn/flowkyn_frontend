@@ -5,7 +5,6 @@ import { AnimatePresence } from 'framer-motion';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { GamePlayShell } from '@/features/app/components/game/shell';
 import type { GameParticipant } from '@/features/app/components/game/shell';
-import { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard } from '@/features/app/components/game/boards';
 import { EventChat, type ChatMessage } from '@/features/app/components/chat/EventChat';
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
@@ -14,12 +13,11 @@ import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPos
 import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { hasEventToken } from '@/hooks/queries/useMyEventParticipant';
 import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
-import { gamesApi } from '@/features/app/api/games';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
-import { eventsApi } from '@/features/app/api/events';
-import { postsApi } from '@/features/app/api/posts';
 import { useApiError } from '@/hooks/useApiError';
+import { GameBoardRouter } from './GameBoardRouter';
+import { GAME_CONFIGS } from './gameTypes';
 
 // ─── Profile helpers (same keys as EventLobby) ────────────────────────────────
 const profileKey = (eventId: string) => `event_profile_${eventId}`;
@@ -36,27 +34,7 @@ function saveProfile(eventId: string, data: ProfileSetupData) {
   localStorage.setItem(profileKey(eventId), JSON.stringify(data));
 }
 
-// ─── Game Types & Phases ───────────────────────────────────────────────────
-export const GAME_TYPES = {
-  TWO_TRUTHS: 'two-truths',
-  COFFEE_ROULETTE: 'coffee-roulette',
-  WINS_OF_WEEK: 'wins-of-week',
-} as const;
-
-export type GameTypeKey = typeof GAME_TYPES[keyof typeof GAME_TYPES];
-
-// ─── Game type configs ─────────────────────────────────────────────────────
-const GAME_CONFIGS: Record<string, {
-  titleKey: string;
-  subtitleKey: string;
-  type: 'sync' | 'async';
-  gameTypeKey: GameTypeKey;
-  promptKey?: string;
-}> = {
-  '1': { titleKey: 'gamePlay.configs.twoTruthsTitle', subtitleKey: 'gamePlay.configs.twoTruthsSubtitle', type: 'sync', gameTypeKey: GAME_TYPES.TWO_TRUTHS },
-  '2': { titleKey: 'gamePlay.configs.coffeeRouletteTitle', subtitleKey: 'gamePlay.configs.coffeeRouletteSubtitle', type: 'sync', gameTypeKey: GAME_TYPES.COFFEE_ROULETTE },
-  '3': { titleKey: 'gamePlay.configs.winsOfWeekTitle', subtitleKey: 'gamePlay.configs.winsOfWeekSubtitle', type: 'async', gameTypeKey: GAME_TYPES.WINS_OF_WEEK, promptKey: 'gamePlay.configs.defaultPrompt' },
-};
+// GAME_CONFIGS and GAME_TYPES live in ./gameTypes to keep this file smaller.
 
 function GamePlayWithoutBoundary() {
   const { id: eventId } = useParams();
@@ -720,123 +698,6 @@ function GamePlayWithoutBoundary() {
     </div>
   );
 
-  // ─── Game board ────────────────────────────────────────────────────────────
-  const renderBoard = () => {
-    // --- Pass `participantId` to boards (since backend game states strictly use participant IDs)
-    const boardProps = {
-      participants,
-      currentUserId: participantId || '',
-      currentUserName,
-      currentUserAvatar: (currentUserName || '??').slice(0, 2).toUpperCase(),
-      currentUserAvatarUrl,
-      round: activeRoundId as any || 1, // Will be updated dynamically
-      onRoundComplete: (r: number) => console.log('Round complete:', r),
-    };
-
-    const onEmitAction = async (actionType: string, payload?: any) => {
-      let sid = sessionId;
-
-      // Auto-create a game session if one doesn't exist yet (e.g. first "Start Round")
-      if (!sid && eventId) {
-        try {
-          // Resolve the game type UUID from its key
-          const types = await gamesApi.listTypes();
-          const typeRow = (types as any[]).find((t: any) => t.key === config.gameTypeKey);
-          if (!typeRow) {
-            console.error('[GamePlay] Unknown game type key:', config.gameTypeKey);
-            return;
-          }
-          // Create session (also creates an initial active round)
-          const newSession = await gamesApi.startSession(eventId, typeRow.id) as any;
-          sid = newSession.id;
-          setSessionId(sid);
-          if (newSession.active_round_id) setActiveRoundId(newSession.active_round_id);
-
-          // Join the new game room
-          if (gamesSocket.isConnected) {
-            const resp: any = await gamesSocket.emit<any>('game:join', { sessionId: sid });
-            const data = resp?.data || resp;
-            if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
-            if (data?.snapshot) {
-              setInitialSnapshot(data.snapshot);
-              setGameData(data.snapshot);
-            }
-          }
-        } catch (err: any) {
-          console.error('[GamePlay] Failed to auto-create game session:', err?.message || err);
-          showError(err, 'Failed to start game session');
-          return;
-        }
-      }
-
-      if (!sid) return;
-
-      await gamesSocket.emit('game:action', {
-        sessionId: sid,
-        roundId: activeRoundId || undefined,
-        actionType,
-        payload: payload || {},
-      });
-    };
-
-    switch (config.gameTypeKey) {
-      case GAME_TYPES.TWO_TRUTHS:
-        return (
-          <TwoTruthsBoard
-            {...boardProps}
-            sessionId={sessionId}
-            activeRoundId={activeRoundId}
-            initialSnapshot={initialSnapshot}
-            gameData={gameData}
-            onEmitAction={onEmitAction}
-          />
-        );
-      case GAME_TYPES.COFFEE_ROULETTE:
-        return (
-          <CoffeeRouletteBoard
-            participants={participants}
-            currentUserId={participantId || ''}
-            initialSnapshot={initialSnapshot}
-            gameData={gameData}
-            onEmitAction={onEmitAction}
-          />
-        );
-      case GAME_TYPES.WINS_OF_WEEK:
-        return (
-          <WinsOfTheWeekBoard
-            prompt={config.promptKey ? t(config.promptKey) : undefined}
-            currentUserId={participantId || ''}
-            currentUserName={currentUserName}
-            currentUserAvatar={(currentUserName || '??').slice(0, 2).toUpperCase()}
-            currentUserAvatarUrl={currentUserAvatarUrl}
-            posts={winsPosts}
-            canPost={canPostWins}
-            onPost={async (content: string) => {
-              if (!eventId || !postParticipantId) return;
-              await eventsApi.createPost(eventId, postParticipantId, content);
-              await refetchPosts();
-            }}
-            onToggleReaction={async (postId: string, reactionType: string) => {
-              if (!postParticipantId) return;
-              await postsApi.react(postId, postParticipantId, reactionType, eventId || undefined);
-              await refetchPosts();
-            }}
-          />
-        );
-      default:
-        return (
-          <TwoTruthsBoard
-            {...boardProps}
-            sessionId={sessionId}
-            activeRoundId={activeRoundId}
-            initialSnapshot={initialSnapshot}
-            gameData={gameData}
-            onEmitAction={onEmitAction}
-          />
-        );
-    }
-  };
-
   return (
     <>
       <GamePlayShell
@@ -855,7 +716,28 @@ function GamePlayWithoutBoundary() {
         organizationName={eventPublicObj?.organization_name}
         hideBackButton={true}
       >
-        {renderBoard()}
+        <GameBoardRouter
+          config={config}
+          eventId={eventId || ''}
+          participants={participants}
+          participantId={participantId || null}
+          currentUserName={currentUserName}
+          currentUserAvatarUrl={currentUserAvatarUrl}
+          sessionId={sessionId}
+          setSessionId={setSessionId}
+          activeRoundId={activeRoundId}
+          setActiveRoundId={setActiveRoundId}
+          initialSnapshot={initialSnapshot}
+          setInitialSnapshot={setInitialSnapshot}
+          gameData={gameData}
+          setGameData={setGameData}
+          winsPosts={winsPosts}
+          canPostWins={canPostWins}
+          postParticipantId={postParticipantId}
+          refetchPosts={refetchPosts}
+          gamesSocket={gamesSocket}
+          showError={showError}
+        />
       </GamePlayShell>
 
       {/* In-game profile edit modal */}

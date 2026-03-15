@@ -25,6 +25,21 @@ export const gamesApi = {
     api.post<GameSession>(`/events/${eventId}/game-sessions`, { game_type_id: gameTypeId }, eventId),
 
   /**
+   * Strategic Escape Challenge — create a configured session for an event.
+   * Only owners/admins/moderators can call this.
+   */
+  createStrategicSession: (eventId: string, config: {
+    industry: string;
+    crisisType: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+  }) =>
+    api.post<{ sessionId: string; eventId: string; config: typeof config }>(
+      `/events/${eventId}/strategic-sessions`,
+      config,
+      eventId
+    ),
+
+  /**
    * Resolve the currently active game session for a given event + game type key.
    * Returns null if no active session exists.
    */
@@ -34,6 +49,26 @@ export const gamesApi = {
   /** Start the next round in a game session */
   startRound: (sessionId: string) =>
     api.post(`/game-sessions/${sessionId}/rounds`),
+
+  /**
+   * Strategic Escape Challenge — assign roles for a configured session
+   * and trigger localized secret-role emails.
+   */
+  assignStrategicRoles: (sessionId: string) =>
+    api.post<{ assignments: Array<{ participantId: string; roleKey: string }> }>(
+      `/strategic-sessions/${sessionId}/assign-roles`
+    ),
+
+  /**
+   * Strategic Escape Challenge — get the current caller's role for a session.
+   * Supports both authenticated members and guests.
+   */
+  getMyStrategicRole: (sessionId: string, eventId?: string) =>
+    api.get<{ roleKey: string } | null>(
+      `/strategic-sessions/${sessionId}/roles/me`,
+      undefined,
+      eventId
+    ),
 
   /**
    * Submit a game action (vote, answer, etc.)

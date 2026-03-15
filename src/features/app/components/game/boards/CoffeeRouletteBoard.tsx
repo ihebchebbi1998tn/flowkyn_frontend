@@ -55,19 +55,25 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
   const [showCountdown, setShowCountdown] = useState(false);
 
   const startMatching = () => {
+    console.log('[CoffeeRouletteBoard] startMatching', {
+      participantsCount: participants.length,
+    });
     setShowCountdown(true);
   };
 
   const handleCountdownDone = useCallback(() => {
     setShowCountdown(false);
+    console.log('[CoffeeRouletteBoard] handleCountdownDone -> coffee:shuffle');
     onEmitAction('coffee:shuffle', {});
   }, [onEmitAction]);
 
   const startChatting = () => {
+    console.log('[CoffeeRouletteBoard] startChatting -> coffee:start_chat');
     onEmitAction('coffee:start_chat', {});
   };
 
   const endSession = () => {
+    console.log('[CoffeeRouletteBoard] endSession -> coffee:end');
     onEmitAction('coffee:end', {});
   };
 

@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import {
   ArrowLeft, ArrowRight, Users, Clock, Timer, MessageSquare, Coffee, Trophy,
   Lightbulb, Crosshair, Flame, Mail, Plus, X, Send, CalendarDays, Settings2, Check,
-  Globe, Lock, AlertCircle,
+  Globe, Lock, AlertCircle, Target,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,7 @@ const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; col
   '1': { name: 'Two Truths & a Lie', icon: MessageSquare, color: 'text-primary', bgColor: 'bg-primary/10', type: 'sync', duration: '15' },
   '2': { name: 'Coffee Roulette', icon: Coffee, color: 'text-info', bgColor: 'bg-info/10', type: 'sync', duration: '30' },
   '3': { name: 'Wins of the Week', icon: Trophy, color: 'text-warning', bgColor: 'bg-warning/10', type: 'async', duration: '0' },
-  '4': { name: 'Icebreaker Trivia', icon: Lightbulb, color: 'text-success', bgColor: 'bg-success/10', type: 'sync', duration: '20' },
+  '4': { name: 'Strategic Escape Challenge', icon: Target, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'async', duration: '45' },
   '5': { name: 'Team Scavenger Hunt', icon: Crosshair, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'sync', duration: '45' },
   '6': { name: 'Gratitude Circle', icon: Flame, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'async', duration: '0' },
 };
@@ -35,8 +35,7 @@ const ACTIVITY_GAME_KEYS: Record<string, string> = {
   '1': 'two-truths',
   '2': 'coffee-roulette',
   '3': 'wins-of-week',
-  // Future activities (4–6) can be wired to trivia/scavenger-hunt/gratitude keys as needed
-  '4': 'trivia',
+  '4': 'strategic-escape',
   '5': 'scavenger-hunt',
   '6': 'gratitude',
 };
@@ -70,6 +69,22 @@ export default function LaunchActivity() {
 
   const { user } = useAuth();
   
+  // Prepopulate invite emails from onboarding (per-organization cache)
+  useEffect(() => {
+    if (!user?.organization_id) return;
+    try {
+      const raw = localStorage.getItem(`onboarding_team_invites_${user.organization_id}`);
+      if (!raw) return;
+      const cached: string[] = JSON.parse(raw);
+      if (Array.isArray(cached) && cached.length > 0 && emails.length === 0) {
+        setEmails(cached);
+      }
+    } catch {
+      // Best-effort only; ignore parse errors
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.organization_id]);
+
   if (!activity) { navigate('/games'); return null; }
 
   const Icon = activity.icon;
@@ -77,7 +92,9 @@ export default function LaunchActivity() {
   const addEmail = () => {
     const trimmed = emailInput.trim().toLowerCase();
     if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) && !emails.includes(trimmed)) {
-      setEmails([...emails, trimmed]);
+      const next = [...emails, trimmed];
+      console.log('[LaunchActivity] addEmail', { email: trimmed, total: next.length });
+      setEmails(next);
       setEmailInput('');
     }
   };
@@ -85,11 +102,16 @@ export default function LaunchActivity() {
   const addBulk = (text: string) => {
     const parsed = text.split(/[,;\n\s]+/).filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim().toLowerCase()));
     const unique = [...new Set([...emails, ...parsed.map(e => e.trim().toLowerCase())])];
+    console.log('[LaunchActivity] addBulk', { added: parsed.length, total: unique.length });
     setEmails(unique);
     setEmailInput('');
   };
 
   const removeEmail = (email: string) => setEmails(emails.filter(e => e !== email));
+  const removeEmail = (email: string) => {
+    console.log('[LaunchActivity] removeEmail', { email });
+    setEmails(emails.filter(e => e !== email));
+  };
 
   const handleLaunch = async () => {
     setError('');
