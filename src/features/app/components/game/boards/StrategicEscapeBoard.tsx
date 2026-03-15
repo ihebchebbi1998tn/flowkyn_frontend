@@ -539,6 +539,7 @@ export function StrategicEscapeBoard({
                           'Once you know your role, think about what only you can see that others might miss.'
                         )}
                     </p>
+                    </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
