@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Input } from '@/components/ui/input';
 import { AlertBanner } from '@/components/notifications/AlertBanner';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/features/app/context/AuthContext';
 import { authApi } from '@/features/app/api/auth';
 import { ApiError } from '@/lib/apiError';
 import { useApiError } from '@/hooks/useApiError';

@@ -44,8 +44,11 @@ export default function EventForm() {
       id: 'onboarding',
       label: t('events.presets.onboarding', 'Team Onboarding'),
       values: {
-        title: 'Team Onboarding Mixer',
-        description: '30-minute welcome session with light icebreakers and weekly wins.',
+        title: t('events.presets.onboardingTitle', 'Team Onboarding Mixer'),
+        description: t(
+          'events.presets.onboardingDescription',
+          '30-minute welcome session with light icebreakers and weekly wins.'
+        ),
         event_mode: 'sync' as const,
         visibility: 'private' as const,
         max_participants: 25,
@@ -55,8 +58,11 @@ export default function EventForm() {
       id: 'weekly_wins',
       label: t('events.presets.weeklyWins', 'Weekly Wins'),
       values: {
-        title: 'Weekly Wins Celebration',
-        description: 'Async check-in where everyone shares their wins of the week.',
+        title: t('events.presets.weeklyWinsTitle', 'Weekly Wins Celebration'),
+        description: t(
+          'events.presets.weeklyWinsDescription',
+          'Async check-in where everyone shares their wins of the week.'
+        ),
         event_mode: 'async' as const,
         visibility: 'private' as const,
         max_participants: 50,
@@ -66,8 +72,11 @@ export default function EventForm() {
       id: 'icebreakers',
       label: t('events.presets.icebreakers', 'Icebreaker Session'),
       values: {
-        title: 'Icebreaker Session',
-        description: 'Fast-paced icebreakers to help the team connect.',
+        title: t('events.presets.icebreakersTitle', 'Icebreaker Session'),
+        description: t(
+          'events.presets.icebreakersDescription',
+          'Fast-paced icebreakers to help the team connect.'
+        ),
         event_mode: 'sync' as const,
         visibility: 'public' as const,
         max_participants: 40,
@@ -114,11 +123,41 @@ export default function EventForm() {
         const all = [
           ...members.map((m: any) => ({ email: m.email, name: m.name, status: 'active' })),
           ...invites
-            .filter((i: any) => i.status === 'pending')
+            // Include all non-accepted invitations so organizers see everyone
+            // they have tried to invite, including onboarding invites.
+            .filter((i: any) => i.status !== 'accepted')
             .map((i: any) => ({ email: i.email, status: 'invited' })),
         ];
+        // Also include any onboarding invite emails we persisted locally during onboarding,
+        // in case some invitations failed or have not yet propagated.
+        let localOnboardingEmails: string[] = [];
+        try {
+          const raw = localStorage.getItem(`onboarding_team_invites_${orgId}`);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              localOnboardingEmails = parsed
+                .map((e: any) => (typeof e === 'string' ? e.trim().toLowerCase() : null))
+                .filter(Boolean);
+            }
+          }
+        } catch {
+          // Ignore localStorage parse errors
+        }
+
+        const localInvites = localOnboardingEmails
+          .filter(
+            (email) =>
+              !all.some((item) => item.email && item.email.toLowerCase() === email)
+          )
+          .map((email) => ({ email, status: 'invited' as const }));
+
+        const combined = [...all, ...localInvites];
+
         // Deduplicate emails
-        const uniqueTeamMembers = Array.from(new Map(all.map(item => [item.email, item])).values());
+        const uniqueTeamMembers = Array.from(
+          new Map(combined.map((item) => [item.email, item])).values()
+        );
         setTeamMembers(uniqueTeamMembers);
 
         // Auto-select everyone by default if we are creating a new event

@@ -150,6 +150,20 @@ export default function Onboarding() {
         try {
           const result = await usersApi.sendOnboardingInvites(org.id, data.teamInvites, data.language);
           setInviteResults(result);
+
+          // Persist the attempted invite emails per-organization so we can
+          // surface them as defaults when creating the first events.
+          try {
+            const attemptedEmails = data.teamInvites
+              .map((i) => i.email?.trim().toLowerCase())
+              .filter(Boolean);
+            localStorage.setItem(
+              `onboarding_team_invites_${org.id}`,
+              JSON.stringify(attemptedEmails)
+            );
+          } catch {
+            // Best-effort only; ignore storage errors
+          }
         } catch (err) {
           console.warn('Team invites not sent:', err);
           // Don't fail the whole onboarding due to invites

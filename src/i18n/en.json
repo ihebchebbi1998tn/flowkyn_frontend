@@ -454,6 +454,20 @@
     "stopEventDescription": "Stop this event immediately. It will be marked as completed and participants can no longer join.",
     "deleteEvent": "Delete Event",
     "deleteEventDescription": "Permanently delete this event and all related data. This action cannot be undone.",
+    "presets": {
+      "title": "Start from a template",
+      "onboarding": "Team Onboarding",
+      "onboardingTitle": "Team Onboarding Mixer",
+      "onboardingDescription": "30-minute welcome session with light icebreakers and weekly wins.",
+      "weeklyWins": "Weekly Wins",
+      "weeklyWinsTitle": "Weekly Wins Celebration",
+      "weeklyWinsDescription": "Async check-in where everyone shares their wins of the week.",
+      "icebreakers": "Icebreaker Session",
+      "icebreakersTitle": "Icebreaker Session",
+      "icebreakersDescription": "Fast-paced icebreakers to help the team connect."
+    },
+    "gameType": "Game",
+    "gameTypeUnknown": "Not configured",
     "status": {
       "draft": "Draft",
       "active": "Active",

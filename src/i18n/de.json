@@ -487,6 +487,20 @@
     "stopEventDescription": "Stoppen Sie diese Veranstaltung sofort. Sie wird als abgeschlossen gekennzeichnet und weitere Teilnehmer können nicht mehr beitreten.",
     "deleteEvent": "Veranstaltung löschen",
     "deleteEventDescription": "Löschen Sie diese Veranstaltung und alle zugehörigen Daten dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "presets": {
+      "title": "Mit einer Vorlage starten",
+      "onboarding": "Team-Onboarding",
+      "onboardingTitle": "Team-Onboarding-Mixer",
+      "onboardingDescription": "30‑minütige Willkommenssession mit leichten Eisbrechern und Erfolgen der Woche.",
+      "weeklyWins": "Erfolge der Woche",
+      "weeklyWinsTitle": "Erfolge der Woche feiern",
+      "weeklyWinsDescription": "Asynchrones Check-in, bei dem alle ihre Erfolge der Woche teilen.",
+      "icebreakers": "Eisbrecher-Session",
+      "icebreakersTitle": "Eisbrecher-Session",
+      "icebreakersDescription": "Schnelle Eisbrecher, um das Team zu verbinden."
+    },
+    "gameType": "Spiel",
+    "gameTypeUnknown": "Nicht konfiguriert",
     "status": {
       "draft": "Entwurf",
       "active": "Aktiv",

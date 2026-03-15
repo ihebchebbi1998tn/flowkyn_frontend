@@ -354,21 +354,17 @@ export default function EventLobby() {
     }
   }, [eventsSocket.status, id, refetchParticipants, refetchMessages]);
 
-  // Fallback polling: when socket is disconnected but we still have access to the HTTP API,
-  // periodically refetch messages so users are not forced to reload to see new chat.
+  // Fallback polling: even if sockets misbehave, ensure messages stay fresh in the lobby
+  // by periodically refetching from HTTP while the user is in this screen.
   useEffect(() => {
     if (!id) return;
-    if (eventsSocket.status === 'connected') return;
 
     const interval = setInterval(() => {
-      // Only poll when socket is not currently connected
-      if (eventsSocket.status !== 'connected') {
-        console.log('[EventLobby] Polling messages because socket is not connected', {
-          eventId: id,
-          socketStatus: eventsSocket.status,
-        });
-        refetchMessages();
-      }
+      console.log('[EventLobby] Polling messages (interval fallback)', {
+        eventId: id,
+        socketStatus: eventsSocket.status,
+      });
+      refetchMessages();
     }, 5000);
 
     return () => clearInterval(interval);

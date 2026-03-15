@@ -487,6 +487,20 @@
     "stopEventDescription": "Arrêtez cet événement immédiatement. Il sera marqué comme terminé et les participants ne pourront plus rejoindre.",
     "deleteEvent": "Supprimer l'événement",
     "deleteEventDescription": "Supprimez définitivement cet événement et toutes les données connexes. Cette action ne peut pas être annulée.",
+    "presets": {
+      "title": "Commencer avec un modèle",
+      "onboarding": "Onboarding d'équipe",
+      "onboardingTitle": "Session d'onboarding d'équipe",
+      "onboardingDescription": "Session de 30 minutes avec brise-glaces légers et victoires de la semaine.",
+      "weeklyWins": "Victoires de la semaine",
+      "weeklyWinsTitle": "Célébration des victoires de la semaine",
+      "weeklyWinsDescription": "Check-in asynchrone où chacun partage ses victoires de la semaine.",
+      "icebreakers": "Session brise-glace",
+      "icebreakersTitle": "Session brise-glace",
+      "icebreakersDescription": "Brise-glaces rapides pour aider l'équipe à se connecter."
+    },
+    "gameType": "Jeu",
+    "gameTypeUnknown": "Non configuré",
     "status": {
       "draft": "Brouillon",
       "active": "Actif",
