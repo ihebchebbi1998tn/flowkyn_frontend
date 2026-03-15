@@ -281,6 +281,7 @@
     "email": "Email Admin",
     "support": "Support",
     "logout": "Log Out",
+      "suppliers": "Suppliers",
     "language": "Language"
   },
   "auth": {
