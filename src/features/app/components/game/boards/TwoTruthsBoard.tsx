@@ -9,7 +9,7 @@ import {
   TwoTruthsVoteSection,
   TwoTruthsRevealSection,
 } from './TwoTruthsSections';
-import { GAME_TYPES } from '@/features/app/pages/play/GamePlay';
+import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
 
 type TwoTruthsSnapshot = {
   kind: typeof GAME_TYPES.TWO_TRUTHS;
