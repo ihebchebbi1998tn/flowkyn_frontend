@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, AlertTriangle, Flag, Clock, Shuffle } from 'lucide-react';
 import type { GameParticipant } from '../shell';
-import { PhaseBadge, PhaseTimer } from '../shared';
+import { PhaseBadge, PhaseTimer, type GamePhase } from '../shared';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { gamesApi } from '@/features/app/api/games';
@@ -237,7 +237,7 @@ export function StrategicEscapeBoard({
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <PhaseBadge phase={phase} />
+            <PhaseBadge phase={phase as GamePhase} />
             {selectedIndustryLabel && (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
                 <span>🏢</span>
