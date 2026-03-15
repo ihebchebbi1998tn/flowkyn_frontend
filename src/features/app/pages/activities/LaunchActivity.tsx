@@ -107,7 +107,6 @@ export default function LaunchActivity() {
     setEmailInput('');
   };
 
-  const removeEmail = (email: string) => setEmails(emails.filter(e => e !== email));
   const removeEmail = (email: string) => {
     console.log('[LaunchActivity] removeEmail', { email });
     setEmails(emails.filter(e => e !== email));
