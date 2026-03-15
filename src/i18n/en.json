@@ -634,6 +634,10 @@
       "title": "Configure strategic scenario",
       "subtitle": "Choose the industry, crisis, and difficulty for this async simulation."
     },
+    "errors": {
+      "createFailed": "Failed to create strategic session. Please check your permissions and try again.",
+      "assignFailed": "Failed to assign roles. Make sure participants have joined and you are the host or admin."
+    },
     "actions": {
       "createSession": "Create strategic session",
       "creating": "Creating session…",

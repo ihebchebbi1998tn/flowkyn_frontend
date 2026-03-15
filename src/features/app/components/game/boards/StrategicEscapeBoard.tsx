@@ -73,6 +73,8 @@ export function StrategicEscapeBoard({
   const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const [isAssigningRoles, setIsAssigningRoles] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [assignError, setAssignError] = useState<string | null>(null);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [myRoleKey, setMyRoleKey] = useState<string | null>(null);
   const [roleLoading, setRoleLoading] = useState(false);
@@ -93,26 +95,50 @@ export function StrategicEscapeBoard({
   const discussionEndsAt = snapshot?.discussionEndsAt || null;
 
   const isHost = participants.some(p => p.id === currentUserId && p.isHost);
+  console.log('[StrategicEscapeBoard] render', {
+    isHost,
+    currentUserId,
+    participantsCount: participants.length,
+    phase,
+    rolesAssigned,
+    sessionId,
+    hasSnapshot: !!snapshot,
+    hasGameData: !!gameData,
+    hasInitialSnapshot: !!initialSnapshot,
+  });
 
   const [localIndustry, setLocalIndustry] = useState<string | null>(null);
   const [localCrisis, setLocalCrisis] = useState<string | null>(null);
   const [localDifficulty, setLocalDifficulty] = useState<'easy' | 'medium' | 'hard'>(selectedDifficulty || 'medium');
 
   useEffect(() => {
-    if (selectedDifficulty) setLocalDifficulty(selectedDifficulty as 'easy' | 'medium' | 'hard');
+    if (selectedDifficulty) {
+      console.log('[StrategicEscapeBoard] sync localDifficulty from snapshot', { selectedDifficulty });
+      setLocalDifficulty(selectedDifficulty as 'easy' | 'medium' | 'hard');
+    }
   }, [selectedDifficulty]);
 
   // Auto-load my strategic role once a session exists and roles are assigned
   useEffect(() => {
-    if (!sessionId || !rolesAssigned || !eventId) return;
+    if (!sessionId || !rolesAssigned || !eventId) {
+      console.log('[StrategicEscapeBoard] skip getMyStrategicRole', {
+        sessionId,
+        rolesAssigned,
+        eventId,
+      });
+      return;
+    }
     let cancelled = false;
     setRoleLoading(true);
+    console.log('[StrategicEscapeBoard] getMyStrategicRole start', { sessionId, eventId });
     gamesApi
       .getMyStrategicRole(sessionId, eventId)
       .then(res => {
+        console.log('[StrategicEscapeBoard] getMyStrategicRole success', res);
         if (!cancelled) setMyRoleKey(res?.roleKey || null);
       })
       .catch(() => {
+        console.error('[StrategicEscapeBoard] getMyStrategicRole error');
         if (!cancelled) setMyRoleKey(null);
       })
       .finally(() => {
@@ -126,9 +152,11 @@ export function StrategicEscapeBoard({
   // Local 20s "swap window" after roles are assigned (purely UX-level)
   useEffect(() => {
     if (!rolesAssigned) {
+      console.log('[StrategicEscapeBoard] swap window cleared (roles not assigned)');
       setSwapWindowSeconds(null);
       return;
     }
+    console.log('[StrategicEscapeBoard] swap window started (20s)');
     setSwapWindowSeconds(20);
   }, [rolesAssigned]);
 
@@ -137,13 +165,21 @@ export function StrategicEscapeBoard({
     const interval = setInterval(() => {
       setSwapWindowSeconds(prev => (prev !== null ? prev - 1 : prev));
     }, 1000);
+    console.log('[StrategicEscapeBoard] swap window ticking', { swapWindowSeconds });
     return () => clearInterval(interval);
   }, [swapWindowSeconds]);
 
   const isConfigured = !!localIndustry && !!localCrisis && !!localDifficulty;
+  console.log('[StrategicEscapeBoard] local config state', {
+    localIndustry,
+    localCrisis,
+    localDifficulty,
+    isConfigured,
+  });
 
   const handleCreateSession = useCallback(async () => {
     if (!isHost || !eventId || sessionId || !isConfigured) return;
+    setCreateError(null);
     console.log('[StrategicEscapeBoard] handleCreateSession', {
       eventId,
       localIndustry,
@@ -171,8 +207,16 @@ export function StrategicEscapeBoard({
         config: res.config,
       });
       onSessionCreated(res.sessionId);
-    } catch {
-      // Errors surfaced via global handler
+    } catch (err: any) {
+      console.error('[StrategicEscapeBoard] createStrategicSession error', err);
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        t(
+          'strategic.errors.createFailed',
+          'Failed to create strategic session. Please check your permissions and try again.'
+        );
+      setCreateError(message);
     } finally {
       setIsCreating(false);
     }
@@ -180,6 +224,7 @@ export function StrategicEscapeBoard({
 
   const handleAssignRoles = useCallback(async () => {
     if (!isHost || !sessionId || rolesAssigned) return;
+    setAssignError(null);
     console.log('[StrategicEscapeBoard] handleAssignRoles', {
       sessionId,
       rolesAssigned,
@@ -188,8 +233,16 @@ export function StrategicEscapeBoard({
     try {
       await gamesApi.assignStrategicRoles(sessionId);
       await onEmitSocketAction('strategic:assign_roles');
-    } catch {
-      // Errors handled globally
+    } catch (err: any) {
+      console.error('[StrategicEscapeBoard] assignStrategicRoles error', err);
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        t(
+          'strategic.errors.assignFailed',
+          'Failed to assign roles. Make sure participants have joined and you are the host or admin.'
+        );
+      setAssignError(message);
     } finally {
       setIsAssigningRoles(false);
     }
@@ -201,7 +254,12 @@ export function StrategicEscapeBoard({
       sessionId,
       rolesAssigned,
     });
-    await onEmitSocketAction('strategic:start_discussion');
+    try {
+      await onEmitSocketAction('strategic:start_discussion');
+      console.log('[StrategicEscapeBoard] strategic:start_discussion emitted');
+    } catch (err) {
+      console.error('[StrategicEscapeBoard] strategic:start_discussion error', err);
+    }
   }, [isHost, sessionId, rolesAssigned, onEmitSocketAction]);
 
   const handleEndDiscussion = useCallback(async () => {
@@ -209,7 +267,12 @@ export function StrategicEscapeBoard({
     console.log('[StrategicEscapeBoard] handleEndDiscussion', {
       sessionId,
     });
-    await onEmitSocketAction('strategic:end_discussion');
+    try {
+      await onEmitSocketAction('strategic:end_discussion');
+      console.log('[StrategicEscapeBoard] strategic:end_discussion emitted');
+    } catch (err) {
+      console.error('[StrategicEscapeBoard] strategic:end_discussion error', err);
+    }
   }, [isHost, sessionId, onEmitSocketAction]);
 
   const discussionEndsAtDate = useMemo(
@@ -428,6 +491,11 @@ export function StrategicEscapeBoard({
                   ? t('strategic.actions.creating', 'Creating session…')
                   : t('strategic.actions.createSession', 'Create strategic session')}
               </Button>
+              {createError && (
+                <p className="text-[10px] text-destructive">
+                  {createError}
+                </p>
+              )}
               <p className="text-[10px] text-muted-foreground">
                 {t(
                   'strategic.actions.createHelp',
@@ -683,6 +751,11 @@ export function StrategicEscapeBoard({
                       ? t('strategic.actions.assigningRoles', 'Assigning roles and sending emails…')
                       : t('strategic.actions.assignRoles', 'Assign roles & send emails')}
                   </Button>
+                  {assignError && (
+                    <p className="text-[10px] text-destructive">
+                      {assignError}
+                    </p>
+                  )}
                   <Button
                     className="w-full h-9 text-[12px]"
                     disabled={!sessionId || !rolesAssigned}
