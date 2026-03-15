@@ -5,7 +5,8 @@
  */
 import { ApiError } from '@/lib/apiError';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://api.flowkyn.com/v1';
+// Hard-coded API base URL to ensure consistent production behavior
+const API_BASE = 'https://api.flowkyn.com/v1';
 
 export type RequestOptions = RequestInit & {
   params?: Record<string, string>;

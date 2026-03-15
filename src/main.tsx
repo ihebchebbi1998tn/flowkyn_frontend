@@ -2,9 +2,14 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { restoreAppState } from "./lib/appStatePreservation";
+import { ApiError } from "./lib/apiError";
 
 // Restore app state from previous auto-reload
 restoreAppState();
+
+// Ensure ApiError is available globally for any legacy or external error handlers
+// that might reference it outside of ES module scope.
+(window as any).ApiError = ApiError;
 
 createRoot(document.getElementById("root")!).render(<App />);
 

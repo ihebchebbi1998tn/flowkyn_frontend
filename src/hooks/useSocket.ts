@@ -5,7 +5,8 @@
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://api.flowkyn.com';
+// Hard-coded socket base URL to ensure consistent production behavior
+const SOCKET_URL = 'https://api.flowkyn.com';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
