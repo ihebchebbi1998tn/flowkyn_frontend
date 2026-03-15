@@ -51,17 +51,17 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="lg:hidden mb-4">
         <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
       </div>
 
-      <div className="space-y-1.5">
-        <h1 className="text-[22px] font-bold text-foreground tracking-tight">{t('auth.resetTitle')}</h1>
-        <p className="text-[13px] text-muted-foreground leading-relaxed">{t('auth.resetSubtitle')}</p>
+      <div className="space-y-1">
+        <h1 className="text-xl font-semibold text-foreground tracking-tight">{t('auth.resetTitle')}</h1>
+        <p className="text-xs text-muted-foreground leading-relaxed">{t('auth.resetSubtitle')}</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3.5">
+      <form onSubmit={handleSubmit} className="space-y-3">
         {error && <AlertBanner type="error" message={error} onClose={() => setError('')} />}
         <div className="space-y-1.5">
           <Label className="text-[13px] font-medium">{t('auth.newPassword')}</Label>

@@ -665,7 +665,7 @@ function GamePlayWithoutBoundary() {
 
   // ─── Chat sidebar ──────────────────────────────────────────────────────────
   const chatSidebar = (
-    <div className="space-y-4 sticky top-16">
+    <div className="space-y-3 sticky top-20 max-h-[calc(100vh-96px)] flex flex-col">
       <div className="flex items-center justify-between text-label-xs text-muted-foreground px-1">
         <span>
           {eventsSocket.status === 'connected' && t('chat.connected', 'Live & synced')}
@@ -682,20 +682,22 @@ function GamePlayWithoutBoundary() {
           </button>
         )}
       </div>
-      <EventChat
-        eventId={eventId || ''}
-        messages={allMessages}
-        onSendMessage={handleSendMessage}
-        onTyping={handleTyping}
-        currentUserId={currentUserId}
-        isGuest={isGuest}
-        currentUserAvatarUrl={currentUserAvatarUrl}
-        typingUsers={typingUsers}
-        isOnline={eventsSocket.status === 'connected'}
-        hostParticipantId={hostParticipantId}
-        pinnedMessageId={pinnedMessage?.id}
-        onTogglePinMessage={hostParticipantId ? handleTogglePinMessage : undefined}
-      />
+      <div className="flex-1 min-h-[260px]">
+        <EventChat
+          eventId={eventId || ''}
+          messages={allMessages}
+          onSendMessage={handleSendMessage}
+          onTyping={handleTyping}
+          currentUserId={currentUserId}
+          isGuest={isGuest}
+          currentUserAvatarUrl={currentUserAvatarUrl}
+          typingUsers={typingUsers}
+          isOnline={eventsSocket.status === 'connected'}
+          hostParticipantId={hostParticipantId}
+          pinnedMessageId={pinnedMessage?.id}
+          onTogglePinMessage={hostParticipantId ? handleTogglePinMessage : undefined}
+        />
+      </div>
     </div>
   );
 

@@ -308,11 +308,11 @@ export function StrategicEscapeBoard({
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{option.icon}</span>
                           <span className="font-semibold text-foreground">
-                            {t(`${option.value}.label`)}
+                            {t(`strategic.industries.${option.value}.label`)}
                           </span>
                         </div>
                         <p className="text-[10px] text-muted-foreground line-clamp-2">
-                          {t(`${option.value}.description`)}
+                          {t(`strategic.industries.${option.value}.description`)}
                         </p>
                       </button>
                     );
@@ -343,14 +343,14 @@ export function StrategicEscapeBoard({
                         <div className="flex items-center gap-2">
                           <AlertTriangle className="h-3.5 w-3.5 text-warning" />
                           <span className="font-semibold text-foreground">
-                            {t(`${option.value}.label`)}
+                            {t(`strategic.crises.${option.value}.label`)}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                          <span>{t(`${option.value}.meta`)}</span>
+                          <span>{t(`strategic.crises.${option.value}.meta`)}</span>
                         </div>
                         <p className="text-[10px] text-muted-foreground line-clamp-2">
-                          {t(`${option.value}.description`)}
+                          {t(`strategic.crises.${option.value}.description`)}
                         </p>
                       </button>
                     );
@@ -457,11 +457,11 @@ export function StrategicEscapeBoard({
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm font-semibold text-foreground">
-                    {t('strategic.roles.title', 'Your secret role')}
+                    {t('strategic.rolesSection.title', 'Your secret role')}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {t(
-                      'strategic.roles.subtitle',
+                      'strategic.rolesSection.subtitle',
                       'Check your inbox for a detailed email. This card is a quick visual summary.'
                     )}
                   </p>
@@ -470,7 +470,7 @@ export function StrategicEscapeBoard({
                   {swapWindowSeconds !== null && swapWindowSeconds > 0 && (
                     <div className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[10px] text-muted-foreground">
                       <Shuffle className="h-3 w-3" />
-                      {t('strategic.roles.swapWindow', {
+                      {t('strategic.rolesMeta.swapWindow', {
                         defaultValue: 'Role swap window: {{seconds}}s',
                         seconds: swapWindowSeconds,
                       })}
@@ -495,31 +495,31 @@ export function StrategicEscapeBoard({
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[11px] text-primary-foreground/80">
-                            {t('strategic.roles.playerLabel', 'You')}
+                            {t('strategic.rolesMeta.playerLabel', 'You')}
                           </span>
                           <span className="text-[12px] font-semibold text-primary-foreground">
-                            {currentUserName || t('strategic.roles.unknownPlayer', 'Participant')}
+                            {currentUserName || t('strategic.rolesMeta.unknownPlayer', 'Participant')}
                           </span>
                         </div>
                       </div>
                       <span className="rounded-full bg-background/10 px-2 py-1 text-[10px] font-semibold text-primary-foreground">
-                        {t('strategic.roles.secret', 'Secret role')}
+                        {t('strategic.rolesMeta.secret', 'Secret role')}
                       </span>
                     </div>
 
                     <div className="space-y-1">
                       <p className="text-[11px] font-medium text-primary-foreground/70">
                         {myRoleKey
-                          ? t('strategic.roles.roleNameLabel', 'Role')
-                          : t('strategic.roles.loading', 'Waiting for your role…')}
+                          ? t('strategic.rolesMeta.roleNameLabel', 'Role')
+                          : t('strategic.rolesMeta.loading', 'Waiting for your role…')}
                       </p>
                       <p className="text-[15px] font-semibold tracking-tight text-primary-foreground">
-                        {myRoleName || t('strategic.roles.pending', 'Pending assignment')}
+                        {myRoleName || t('strategic.rolesMeta.pending', 'Pending assignment')}
                       </p>
                       <p className="text-[11px] text-primary-foreground/85 line-clamp-2">
                         {myRoleBrief ||
                           t(
-                            'strategic.roles.pendingHint',
+                            'strategic.rolesMeta.pendingHint',
                             'Your facilitator is assigning roles. Stay tuned — your perspective will be crucial.'
                           )}
                       </p>
@@ -528,7 +528,7 @@ export function StrategicEscapeBoard({
                     <p className="text-[10px] text-primary-foreground/70 line-clamp-2">
                       {myRoleSecret ||
                         t(
-                          'strategic.roles.secretHint',
+                          'strategic.rolesMeta.secretHint',
                           'Once you know your role, think about what only you can see that others might miss.'
                         )}
                     </p>
@@ -538,7 +538,7 @@ export function StrategicEscapeBoard({
 
               {roleLoading && (
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  {t('strategic.roles.refreshing', 'Refreshing your role…')}
+                  {t('strategic.rolesMeta.refreshing', 'Refreshing your role…')}
                 </p>
               )}
             </div>
@@ -549,12 +549,12 @@ export function StrategicEscapeBoard({
               <div className="flex items-center gap-2">
                 <Shuffle className="h-4 w-4 text-info" />
                 <p className="text-sm font-semibold text-foreground">
-                  {t('strategic.roles.swapTitle', 'Quick swap & alignment')}
+                  {t('strategic.rolesMeta.swapTitle', 'Quick swap & alignment')}
                 </p>
               </div>
               <p className="text-xs text-muted-foreground">
-                {t(
-                  'strategic.roles.swapBody',
+                  {t(
+                      'strategic.rolesMeta.swapBody',
                   'Use the next few seconds to align in chat: if two people feel their roles should be swapped, they can agree and mentally trade perspectives before the challenge starts.'
                 )}
               </p>
@@ -563,7 +563,7 @@ export function StrategicEscapeBoard({
                 <div className="rounded-xl bg-info/5 border border-info/30 px-3 py-2.5 text-[11px] text-info flex items-center justify-between gap-2">
                   <span>
                     {t(
-                      'strategic.roles.swapCountdown',
+                      'strategic.rolesMeta.swapCountdown',
                       'Swap window closes in {{seconds}}s',
                       { seconds: swapWindowSeconds }
                     )}
@@ -574,7 +574,7 @@ export function StrategicEscapeBoard({
                   <AlertTriangle className="h-3 w-3" />
                   <span>
                     {t(
-                      'strategic.roles.swapClosed',
+                      'strategic.rolesMeta.swapClosed',
                       'Role swap window has closed. Stick with your current role for the discussion.'
                     )}
                   </span>

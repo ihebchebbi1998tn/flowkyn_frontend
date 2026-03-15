@@ -58,17 +58,17 @@ export default function Register() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="lg:hidden mb-4">
         <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
       </div>
 
-      <div className="space-y-1.5">
-        <h1 className="text-page-title text-foreground">{t('auth.registerTitle')}</h1>
-        <p className="text-body-sm text-muted-foreground leading-relaxed">{t('auth.registerSubtitle')}</p>
+      <div className="space-y-1">
+        <h1 className="text-xl font-semibold text-foreground">{t('auth.registerTitle')}</h1>
+        <p className="text-xs text-muted-foreground leading-relaxed">{t('auth.registerSubtitle')}</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3.5">
+      <form onSubmit={handleSubmit} className="space-y-3">
         {error && <AlertBanner type="error" message={error} onClose={() => setError('')} />}
 
         <div className="grid grid-cols-2 gap-3">

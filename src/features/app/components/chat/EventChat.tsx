@@ -164,7 +164,7 @@ export const EventChat = memo(function EventChat({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto px-3 py-4 space-y-1 min-h-[300px] max-h-[520px] scrollbar-hide"
+        className="flex-1 overflow-y-auto px-3 py-4 space-y-1 min-h-[260px] max-h-[360px] scrollbar-hide"
       >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">

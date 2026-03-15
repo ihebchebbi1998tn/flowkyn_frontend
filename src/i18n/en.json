@@ -767,6 +767,12 @@
       "description": "Weekly Slack/Teams thread where everyone shares one win from their week — work or personal. Builds positive culture and celebrates progress.",
       "duration": "Ongoing",
       "teamSize": "Any size"
+    },
+    "strategicEscape": {
+      "name": "Strategic Escape Challenge",
+      "description": "An async strategic simulation where your team navigates a realistic crisis scenario from different roles and perspectives.",
+      "duration": "45–60 min (async)",
+      "teamSize": "4–12 people"
     }
   },
   "chat": {

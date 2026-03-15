@@ -268,7 +268,7 @@ export function GamePlayShell({
       </div>
 
       {/* ─── Content ─── */}
-      <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,0.9fr)] items-start">
         <div className="space-y-4">{children}</div>
         <div className="hidden lg:block space-y-4">
           {sidebar || leaderboard}
