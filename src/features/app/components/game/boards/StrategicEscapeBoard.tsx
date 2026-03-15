@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, AlertTriangle, Flag, Clock, Shuffle } from 'lucide-react';
+import { Sparkles, AlertTriangle, Flag, Clock, Shuffle, Settings2 } from 'lucide-react';
 import type { GameParticipant } from '../shell';
 import { PhaseBadge, PhaseTimer, type GamePhase } from '../shared';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { gamesApi } from '@/features/app/api/games';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 type StrategicPhase = 'setup' | 'roles_assignment' | 'discussion' | 'debrief';
 
@@ -72,6 +73,7 @@ export function StrategicEscapeBoard({
   const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const [isAssigningRoles, setIsAssigningRoles] = useState(false);
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [myRoleKey, setMyRoleKey] = useState<string | null>(null);
   const [roleLoading, setRoleLoading] = useState(false);
   const [swapWindowSeconds, setSwapWindowSeconds] = useState<number | null>(null);
@@ -227,7 +229,7 @@ export function StrategicEscapeBoard({
   const myRoleSecret = myRoleKey ? t(`strategic.roles.${myRoleKey}.secret`) : '';
 
   return (
-    <div className="space-y-4 lg:space-y-5 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">
+    <div className="space-y-4 lg:space-y-5">
       {/* Header with phase + scenario chips */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
@@ -260,32 +262,48 @@ export function StrategicEscapeBoard({
           </div>
         </div>
 
-        {phase === 'discussion' && discussionEndsAtDate && (
-          <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2">
-            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-            <PhaseTimer targetTime={discussionEndsAtDate.toISOString()} />
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {phase === 'discussion' && discussionEndsAtDate && (
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2">
+              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+              <PhaseTimer targetTime={discussionEndsAtDate.toISOString()} />
+            </div>
+          )}
+
+          {isHost && phase === 'setup' && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-[11px] gap-1"
+              onClick={() => setIsConfigModalOpen(true)}
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+              {t('strategic.modal.openLabel', 'Configure scenario')}
+            </Button>
+          )}
+        </div>
       </div>
 
-      {/* Phase: setup — host configures scenario */}
-      {phase === 'setup' && (
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]">
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-4">
-              <div className="space-y-1">
-                <p className="text-sm font-semibold text-foreground">
-                  {t('strategic.configure.title', 'Customize your scenario')}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t(
-                    'strategic.configure.subtitle',
-                    'Choose the industry, crisis, and difficulty so the challenge feels real for your team.'
-                  )}
-                </p>
-              </div>
+      {/* Config modal (host only, setup phase) */}
+      <Dialog open={isConfigModalOpen} onOpenChange={setIsConfigModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Settings2 className="h-4 w-4 text-primary" />
+              {t('strategic.modal.title', 'Configure strategic scenario')}
+            </DialogTitle>
+          </DialogHeader>
 
-              <div className="space-y-3">
+          <div className="space-y-5 pt-1">
+            <p className="text-xs text-muted-foreground">
+              {t(
+                'strategic.modal.subtitle',
+                'Choose the industry, crisis, and difficulty for this async simulation.'
+              )}
+            </p>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                   {t('strategic.configure.industryLabel', "What's your industry?")}
                 </p>
@@ -321,7 +339,7 @@ export function StrategicEscapeBoard({
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                   {t('strategic.configure.crisisLabel', 'Choose your crisis type')}
                 </p>
@@ -359,7 +377,7 @@ export function StrategicEscapeBoard({
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                   {t('strategic.configure.difficultyLabel', 'Difficulty level')}
                 </p>
@@ -396,22 +414,49 @@ export function StrategicEscapeBoard({
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-border bg-gradient-to-b from-primary/5 via-background to-background p-4 sm:p-5 space-y-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <p className="text-sm font-semibold text-foreground">
-                  {t('strategic.preview.title', 'What your team will experience')}
-                </p>
-              </div>
-              <p className="text-xs text-muted-foreground">
+            <div className="flex flex-col gap-2 border-t border-border pt-3">
+              <Button
+                className="w-full h-10 text-[13px]"
+                disabled={!isHost || !isConfigured || !!sessionId || isCreating}
+                onClick={async () => {
+                  await handleCreateSession();
+                  setIsConfigModalOpen(false);
+                }}
+              >
+                {isCreating
+                  ? t('strategic.actions.creating', 'Creating session…')
+                  : t('strategic.actions.createSession', 'Create strategic session')}
+              </Button>
+              <p className="text-[10px] text-muted-foreground">
                 {t(
-                  'strategic.preview.body',
-                  'Each participant receives a private email with their secret role and instructions. When they join, they see a 3D role card they can reveal and discuss before diving into the crisis.'
+                  'strategic.actions.createHelp',
+                  'Once created, you can assign roles, trigger emails, and start the async discussion.'
                 )}
               </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Phase: setup — host configures scenario */}
+      {phase === 'setup' && (
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]">
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    {t('strategic.preview.title', 'What your team will experience')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t(
+                      'strategic.preview.body',
+                      'Each participant receives a private email with their secret role and instructions. When they join, they see a 3D role card they can reveal and discuss before diving into the crisis.'
+                    )}
+                  </p>
+                </div>
+              </div>
               <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 px-3 py-2.5 text-[11px] text-primary">
                 {t(
                   'strategic.preview.hint',
@@ -421,19 +466,10 @@ export function StrategicEscapeBoard({
 
               {isHost ? (
                 <div className="space-y-2 pt-1">
-                  <Button
-                    className="w-full h-10 text-[13px]"
-                    disabled={!isHost || !isConfigured || !!sessionId || isCreating}
-                    onClick={handleCreateSession}
-                  >
-                    {isCreating
-                      ? t('strategic.actions.creating', 'Creating session…')
-                      : t('strategic.actions.createSession', 'Create strategic session')}
-                  </Button>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground">
                     {t(
-                      'strategic.actions.createHelp',
-                      'Once created, you can assign roles, trigger emails, and start the async discussion.'
+                      'strategic.preview.configureHint',
+                      'Use the Configure button to choose industry, crisis, and difficulty before you launch.'
                     )}
                   </p>
                 </div>
@@ -447,6 +483,51 @@ export function StrategicEscapeBoard({
               )}
             </div>
           </div>
+
+          {isHost && (
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('strategic.preview.summaryTitle', 'Current configuration')}
+                </p>
+                <div className="space-y-2 text-[11px] text-muted-foreground">
+                  <div className="flex items-center justify-between">
+                    <span>{t('strategic.preview.summaryIndustry', 'Industry')}</span>
+                    <span className="font-medium">
+                      {localIndustry
+                        ? t(`strategic.industries.${localIndustry}.label`)
+                        : t('strategic.preview.summaryUnset', 'Not set')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>{t('strategic.preview.summaryCrisis', 'Crisis type')}</span>
+                    <span className="font-medium">
+                      {localCrisis
+                        ? t(`strategic.crises.${localCrisis}.label`)
+                        : t('strategic.preview.summaryUnset', 'Not set')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>{t('strategic.preview.summaryDifficulty', 'Difficulty')}</span>
+                    <span className="font-medium">
+                      {localDifficulty
+                        ? t(`${difficultyLabelKey}.label`)
+                        : t('strategic.preview.summaryUnset', 'Not set')}
+                    </span>
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full h-9 text-[12px] mt-2"
+                  variant="outline"
+                  onClick={() => setIsConfigModalOpen(true)}
+                >
+                  <Settings2 className="h-4 w-4 mr-1.5" />
+                  {t('strategic.modal.openLabel', 'Configure scenario')}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

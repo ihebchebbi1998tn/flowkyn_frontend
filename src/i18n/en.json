@@ -604,6 +604,12 @@
   },
   "strategic": {
     "label": "Strategic Escape Challenge",
+    "phases": {
+      "setup": "Setup",
+      "rolesAssignment": "Roles & emails",
+      "discussion": "Discussion",
+      "debrief": "Debrief"
+    },
     "configure": {
       "title": "Customize your scenario",
       "subtitle": "Choose an industry, crisis, and difficulty so the scenario feels real for your team.",
@@ -615,7 +621,18 @@
       "title": "What your team will experience",
       "body": "Each participant receives a private email with their secret role and instructions. When they join, they see a role card that reminds them how to think and speak during the challenge.",
       "hint": "This activity is async: people can join from any time zone, share perspectives in their own time, and then debrief together.",
-      "hostOnly": "Your facilitator is configuring the scenario. You will see your secret role here as soon as the challenge is launched."
+      "hostOnly": "Your facilitator is configuring the scenario. You will see your secret role here as soon as the challenge is launched.",
+      "configureHint": "Use the Configure button to choose industry, crisis, and difficulty before you launch.",
+      "summaryTitle": "Current configuration",
+      "summaryIndustry": "Industry",
+      "summaryCrisis": "Crisis type",
+      "summaryDifficulty": "Difficulty",
+      "summaryUnset": "Not set"
+    },
+    "modal": {
+      "openLabel": "Configure scenario",
+      "title": "Configure strategic scenario",
+      "subtitle": "Choose the industry, crisis, and difficulty for this async simulation."
     },
     "actions": {
       "createSession": "Create strategic session",
@@ -1401,7 +1418,10 @@
       "coffeeRouletteSubtitle": "Connection · Live",
       "winsOfWeekTitle": "Wins of the Week",
       "winsOfWeekSubtitle": "Wellness · Async",
-      "defaultPrompt": "Share your win from this week — work or personal, big or small!"
+      "defaultPrompt": "Share your win from this week — work or personal, big or small!",
+      "strategicEscapeTitle": "Strategic Escape Challenge",
+      "strategicEscapeSubtitle": "Async crisis simulation where every role sees something different.",
+      "strategicEscapePrompt": "Your team faces a high‑stakes launch under pressure. Use your role’s lens to surface risks, trade‑offs, and bold moves."
     }
   },
   "analyticsPage": {
