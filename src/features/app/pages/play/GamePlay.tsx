@@ -16,6 +16,7 @@ import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useApiError } from '@/hooks/useApiError';
+import { eventsApi } from '@/features/app/api/events';
 import { GameBoardRouter } from './GameBoardRouter';
 import { GAME_CONFIGS } from './gameTypes';
 
