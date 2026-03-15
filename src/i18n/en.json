@@ -583,6 +583,23 @@
       "strategicEscapeTitle": "Strategic Escape Challenge",
       "strategicEscapeSubtitle": "Async crisis simulation where every role sees something different.",
       "strategicEscapePrompt": "Your team faces a high‑stakes launch under pressure. Use your role’s lens to surface risks, trade‑offs, and bold moves."
+    },
+    "shell": {
+      "liveSession": "Live session",
+      "asyncSession": "Async session",
+      "statusWaiting": "Waiting for your team",
+      "statusLive": "Live team session",
+      "statusAsync": "Async check‑in session",
+      "readyToConnect": "Ready to connect!",
+      "invite": "Invite",
+      "end": "End",
+      "duration": "Duration",
+      "joined": "Joined",
+      "pending": "Pending",
+      "participation": "Participation",
+      "copied": "Copied!",
+      "copy": "Copy",
+      "inviteHelp": "Share this link with teammates you want to bring into this session."
     }
   },
   "strategic": {

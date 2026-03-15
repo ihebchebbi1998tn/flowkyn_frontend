@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, AlertTriangle, Flag, Clock, Shuffle } from 'lucide-react';
 import type { GameParticipant } from '../shell';
 import { PhaseBadge, PhaseTimer, type GamePhase } from '../shared';
@@ -226,7 +227,7 @@ export function StrategicEscapeBoard({
   const myRoleSecret = myRoleKey ? t(`strategic.roles.${myRoleKey}.secret`) : '';
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 lg:space-y-5 max-h-[calc(100vh-220px)] overflow-y-auto pr-1">
       {/* Header with phase + scenario chips */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
@@ -422,7 +423,7 @@ export function StrategicEscapeBoard({
                 <div className="space-y-2 pt-1">
                   <Button
                     className="w-full h-10 text-[13px]"
-                    disabled={!isConfigured || !!sessionId || isCreating}
+                    disabled={!isHost || !isConfigured || !!sessionId || isCreating}
                     onClick={handleCreateSession}
                   >
                     {isCreating
@@ -479,15 +480,21 @@ export function StrategicEscapeBoard({
                 </div>
               </div>
 
-              <div
-                className={cn(
-                  'relative mt-2 w-full max-w-md mx-auto perspective-1000',
-                  !myRoleKey && 'opacity-60'
-                )}
-              >
-                <div className="relative h-44 w-full rounded-2xl bg-gradient-to-br from-primary/80 via-primary to-primary/60 shadow-xl shadow-primary/40 overflow-hidden border border-primary/40">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_0_0,rgba(255,255,255,0.25),transparent_55%),radial-gradient(circle_at_100%_0,rgba(129,230,217,0.25),transparent_55%)]" />
-                  <div className="relative h-full w-full p-4 flex flex-col justify-between">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={myRoleKey ? 'role-revealed' : 'role-pending'}
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                  className={cn(
+                    'relative mt-2 w-full max-w-md mx-auto',
+                    !myRoleKey && 'opacity-70'
+                  )}
+                >
+                  <div className="relative h-44 w-full rounded-2xl bg-card border border-border shadow-sm">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_0_0,rgba(148,163,184,0.18),transparent_55%),radial-gradient(circle_at_100%_0,rgba(59,130,246,0.16),transparent_55%)]" />
+                    <div className="relative h-full w-full p-4 flex flex-col justify-between">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-full bg-background/10 flex items-center justify-center text-[11px] font-bold text-primary-foreground">
@@ -533,8 +540,8 @@ export function StrategicEscapeBoard({
                         )}
                     </p>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </AnimatePresence>
 
               {roleLoading && (
                 <p className="text-[11px] text-muted-foreground mt-1">

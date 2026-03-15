@@ -909,6 +909,12 @@
       "description": "Wöchentlicher Slack/Teams-Thread, in dem alle einen Erfolg aus der Woche teilen — beruflich oder privat. Fördert eine positive Kultur und feiert Fortschritt.",
       "duration": "Fortlaufend",
       "teamSize": "Beliebige Größe"
+    },
+    "strategicEscape": {
+      "name": "Strategic Escape Challenge",
+      "description": "Eine asynchrone strategische Simulation, in der Ihr Team ein realistisches Krisenszenario aus unterschiedlichen Rollen und Perspektiven durchspielt.",
+      "duration": "45–60 Min. (async)",
+      "teamSize": "4–12 Personen"
     }
   },
   "chat": {

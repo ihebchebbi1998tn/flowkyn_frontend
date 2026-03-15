@@ -909,6 +909,12 @@
       "description": "Fil Slack/Teams hebdomadaire où chacun partage une victoire de sa semaine — pro ou perso. Renforce la culture positive et célèbre les progrès.",
       "duration": "En continu",
       "teamSize": "Toute taille"
+    },
+    "strategicEscape": {
+      "name": "Défi d'évasion stratégique",
+      "description": "Une simulation stratégique asynchrone où votre équipe gère une crise réaliste depuis différents rôles et perspectives.",
+      "duration": "45–60 min (async)",
+      "teamSize": "4–12 personnes"
     }
   },
   "chat": {
