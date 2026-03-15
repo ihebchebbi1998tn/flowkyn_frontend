@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { motion } from 'framer-motion';
 import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
-import { GAME_TYPES } from '@/features/app/pages/play/GamePlay';
+import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
 
 type CoffeeSnapshot = {
   kind: typeof GAME_TYPES.COFFEE_ROULETTE;
