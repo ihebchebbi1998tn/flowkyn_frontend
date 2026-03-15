@@ -138,7 +138,14 @@ export default function Onboarding() {
 
       // 2. Upload logo (if provided)
       if (data.logoFile) {
-        await organizationsApi.uploadLogo(org.id, data.logoFile);
+        try {
+          console.log('[Onboarding] uploading logo', { orgId: org.id, fileName: data.logoFile.name, fileSize: data.logoFile.size });
+          await organizationsApi.uploadLogo(org.id, data.logoFile);
+          console.log('[Onboarding] logo uploaded successfully');
+        } catch (err) {
+          console.error('[Onboarding] logo upload failed', err);
+          throw err; // Re-throw to stop the flow
+        }
       }
 
       // 2b. Fetch latest org data to ensure logo_url is up-to-date

@@ -136,9 +136,13 @@ class ApiClient {
     return this.request<T>(path, { method: 'DELETE', eventId } as RequestOptions);
   }
 
-  upload<T>(path: string, formData: FormData, eventId?: string) {
+  upload<T>(path: string, formData: FormData, eventId?: string): Promise<T> {
     // For file uploads, we need to send FormData without Content-Type header
     // (the browser will set it with the correct boundary)
+    return this.uploadRequest<T>(path, formData, eventId);
+  }
+
+  private async uploadRequest<T>(path: string, formData: FormData, eventId?: string): Promise<T> {
     const headers: HeadersInit = {};
     let token = localStorage.getItem('access_token');
     if (!token && eventId) {
@@ -146,51 +150,50 @@ class ApiClient {
     }
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    return fetch(this.buildUrl(path), {
+    const res = await fetch(this.buildUrl(path), {
       method: 'POST',
       headers,
       body: formData,
-    })
-      .then(async res => {
-        if (res.status === 401) {
-          const usedAccessToken = !!localStorage.getItem('access_token');
-          const refreshed = usedAccessToken ? await this.refreshToken() : false;
-          if (refreshed) return this.upload<T>(path, formData, eventId);
-          if (usedAccessToken) {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            window.location.href = '/login';
-          }
-          throw new ApiError({
-            error: 'Unauthorized',
-            code: 'AUTH_TOKEN_INVALID',
-            statusCode: 401,
-            requestId: 'unknown',
-            timestamp: new Date().toISOString(),
-          });
-        }
+    });
 
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({
-            error: 'Request failed',
-            code: 'INTERNAL_ERROR' as const,
-            statusCode: res.status,
-            requestId: 'unknown',
-            timestamp: new Date().toISOString(),
-          }));
-          throw new ApiError({
-            error: body.error || `HTTP ${res.status}`,
-            code: body.code || 'INTERNAL_ERROR',
-            statusCode: body.statusCode || res.status,
-            requestId: body.requestId || 'unknown',
-            details: body.details,
-            timestamp: body.timestamp || new Date().toISOString(),
-          });
-        }
-
-        if (res.status === 204) return undefined as T;
-        return res.json();
+    if (res.status === 401) {
+      const usedAccessToken = !!localStorage.getItem('access_token');
+      const refreshed = usedAccessToken ? await this.refreshToken() : false;
+      if (refreshed) return this.uploadRequest<T>(path, formData, eventId);
+      if (usedAccessToken) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+      }
+      throw new ApiError({
+        error: 'Unauthorized',
+        code: 'AUTH_TOKEN_INVALID',
+        statusCode: 401,
+        requestId: 'unknown',
+        timestamp: new Date().toISOString(),
       });
+    }
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({
+        error: 'Request failed',
+        code: 'INTERNAL_ERROR' as const,
+        statusCode: res.status,
+        requestId: 'unknown',
+        timestamp: new Date().toISOString(),
+      }));
+      throw new ApiError({
+        error: body.error || `HTTP ${res.status}`,
+        code: body.code || 'INTERNAL_ERROR',
+        statusCode: body.statusCode || res.status,
+        requestId: body.requestId || 'unknown',
+        details: body.details,
+        timestamp: body.timestamp || new Date().toISOString(),
+      });
+    }
+
+    if (res.status === 204) return undefined as T;
+    return res.json();
   }
 }
 
