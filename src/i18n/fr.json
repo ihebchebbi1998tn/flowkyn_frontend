@@ -327,7 +327,13 @@
       "missingToken": "Jeton invalide ou manquant. Veuillez demander un nouveau lien.",
       "orgRequired": "L'organisation est requise. Veuillez d'abord compléter l'intégration."
     },
-    "passwordPlaceholder": "Min. 8 caractères",
+    "passwordRules": {
+      "title": "Le mot de passe doit contenir :",
+      "minLength": "Au moins 7 caractères",
+      "number": "Au moins 1 chiffre",
+      "uppercase": "Au moins 1 lettre majuscule"
+    },
+    "passwordPlaceholder": "Min. 7 caractères",
     "secureVerification": "Vérification sécurisée",
     "verifying": "Vérification…",
     "resendIn": "Renvoyer dans {{seconds}}s",

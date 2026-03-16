@@ -326,7 +326,13 @@
       "missingToken": "Ungültiger oder fehlender Token. Bitte fordern Sie einen neuen Link an.",
       "orgRequired": "Organisation erforderlich. Bitte schließen Sie zuerst das Onboarding ab."
     },
-    "passwordPlaceholder": "Min. 8 Zeichen",
+    "passwordRules": {
+      "title": "Passwort muss enthalten:",
+      "minLength": "Mindestens 7 Zeichen",
+      "number": "Mindestens 1 Zahl",
+      "uppercase": "Mindestens 1 Großbuchstabe"
+    },
+    "passwordPlaceholder": "Min. 7 Zeichen",
     "secureVerification": "Sichere Verifizierung",
     "verifying": "Wird überprüft…",
     "resendIn": "Erneut senden in {{seconds}}s",

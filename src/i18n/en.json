@@ -327,7 +327,13 @@
       "missingToken": "Invalid or missing reset token. Please request a new link.",
       "orgRequired": "Organization is required. Please complete onboarding first."
     },
-    "passwordPlaceholder": "Min. 8 characters",
+    "passwordRules": {
+      "title": "Password must contain:",
+      "minLength": "At least 7 characters",
+      "number": "At least 1 number",
+      "uppercase": "At least 1 uppercase letter"
+    },
+    "passwordPlaceholder": "Min. 7 characters",
     "secureVerification": "Secure Verification",
     "verifying": "Verifying…",
     "resendIn": "Resend in {{seconds}}s",

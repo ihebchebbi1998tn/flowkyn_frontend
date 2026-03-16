@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Label } from '@/components/ui/label';
 import { AlertBanner } from '@/components/notifications/AlertBanner';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Check, X } from 'lucide-react';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { ApiError } from '@/lib/apiError';
 import logoImg from '@/assets/logo.png';
@@ -28,11 +28,15 @@ export default function Register() {
 
   const update = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
 
+  const hasMinLength = form.password.length >= 7;
+  const hasUppercase = /[A-Z]/.test(form.password);
+  const hasNumber = /[0-9]/.test(form.password);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!form.email || !form.password || !form.firstName || !form.lastName) { setError(t('auth.errors.required')); return; }
-    if (form.password.length < 8) { setError(t('auth.errors.passwordMin')); return; }
+    if (!hasMinLength || !hasUppercase || !hasNumber) { setError(t('auth.errors.passwordMin')); return; }
     if (form.password !== form.confirmPassword) { setError(t('auth.errors.passwordMatch')); return; }
     setIsLoading(true);
     trackEvent(TRACK.REGISTER_START, { email: form.email });
@@ -107,6 +111,25 @@ export default function Register() {
             value={form.password} onChange={e => update('password', e.target.value)}
             placeholder={t('auth.passwordPlaceholder')}
           />
+          {form.password.length > 0 && (
+            <div className="space-y-1.5 mt-2 p-3 bg-muted/40 rounded-lg border border-border/50">
+              <p className="text-[11px] font-semibold text-foreground uppercase tracking-wider mb-2">{t('auth.passwordRules.title')}</p>
+              <ul className="space-y-2">
+                <li className={`flex items-center gap-2 text-xs font-medium transition-colors ${hasMinLength ? 'text-primary' : 'text-muted-foreground'}`}>
+                  {hasMinLength ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5 opacity-50" />}
+                  {t('auth.passwordRules.minLength')}
+                </li>
+                <li className={`flex items-center gap-2 text-xs font-medium transition-colors ${hasUppercase ? 'text-primary' : 'text-muted-foreground'}`}>
+                  {hasUppercase ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5 opacity-50" />}
+                  {t('auth.passwordRules.uppercase')}
+                </li>
+                <li className={`flex items-center gap-2 text-xs font-medium transition-colors ${hasNumber ? 'text-primary' : 'text-muted-foreground'}`}>
+                  {hasNumber ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5 opacity-50" />}
+                  {t('auth.passwordRules.number')}
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="space-y-1.5">
