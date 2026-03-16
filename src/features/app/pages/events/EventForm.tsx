@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft } from 'lucide-react';
 import { useCreateEvent, useUpdateEvent, useEvent } from '@/hooks/queries';
 import { organizationsApi } from '@/features/app/api/organizations';
+import { JoinAfterCreateModal } from '@/features/app/components/events/JoinAfterCreateModal';
 
 export default function EventForm() {
   const { t } = useTranslation();
@@ -42,6 +43,8 @@ export default function EventForm() {
 
   const [teamMembers, setTeamMembers] = useState<{ email: string; name?: string; status: string }[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [createdEventId, setCreatedEventId] = useState<string | null>(null);
 
   const EVENT_PRESETS = [
     {
@@ -177,9 +180,26 @@ export default function EventForm() {
     } else {
       createEvent.mutate(
         { ...payload, invites: selectedMembers },
-        { onSuccess: () => navigate('/events') }
+        { 
+          onSuccess: (data: any) => {
+            setCreatedEventId(data.id);
+            setShowJoinModal(true);
+          } 
+        }
       );
     }
+  };
+
+  const handleJoinEvent = () => {
+    if (createdEventId) {
+      navigate(`/events/${createdEventId}`);
+    }
+    setShowJoinModal(false);
+  };
+
+  const handleCloseModal = () => {
+    navigate('/events');
+    setShowJoinModal(false);
   };
 
   if (isEditing && eventLoading) {
@@ -404,6 +424,12 @@ export default function EventForm() {
           </div>
         </div>
       </form>
+      
+      <JoinAfterCreateModal 
+        isOpen={showJoinModal}
+        onClose={handleCloseModal}
+        onJoin={handleJoinEvent}
+      />
     </div>
   );
 }

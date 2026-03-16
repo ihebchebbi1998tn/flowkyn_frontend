@@ -446,6 +446,12 @@
       "notMember": "You’re not a member of this workspace for this event.",
       "notActive": "This event isn’t active yet — your host needs to start it."
     },
+    "postCreate": {
+      "title": "Event Created Successfully!",
+      "description": "Your event has been created and invitations have been sent. Would you like to join the lobby now?",
+      "joinButton": "Join Lobby",
+      "closeButton": "Go to Dashboard"
+    },
     "yourGameProfile": "Your game profile",
     "joinedCount": "joined",
     "invitedCount": "invited",

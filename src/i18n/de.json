@@ -478,6 +478,12 @@
       "notMember": "Sie sind kein Mitglied dieses Arbeitsbereichs für diese Veranstaltung.",
       "notActive": "Diese Veranstaltung ist noch nicht aktiv — Ihr Gastgeber muss sie starten."
     },
+    "postCreate": {
+      "title": "Veranstaltung erfolgreich erstellt!",
+      "description": "Ihre Veranstaltung wurde erstellt und Einladungen wurden versandt. Möchten Sie der Lobby jetzt beitreten?",
+      "joinButton": "Lobby beitreten",
+      "closeButton": "Zum Dashboard"
+    },
     "yourGameProfile": "Ihr Spielprofil",
     "joinedCount": "beigetreten",
     "invitedCount": "eingeladen",
@@ -580,7 +586,7 @@
     "activeSessions": "Aktive Sitzungen",
     "sessionDashboard": "Sitzungs-Dashboard",
     "participants": "Teilnehmer",
-    "actions": "Aktionen",
+    "tableActions": "Aktionen",
     "submitAction": "Absenden",
     "gameStatus": "Status",
     "statuses": { "waiting": "Wartend", "inProgress": "Läuft", "completed": "Abgeschlossen", "cancelled": "Abgebrochen", "active": "Aktiv", "paused": "Pausiert" },

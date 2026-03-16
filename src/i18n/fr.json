@@ -479,6 +479,12 @@
       "notMember": "Vous n'êtes pas membre de cet espace pour cet événement.",
       "notActive": "Cet événement n'est pas encore actif — votre hôte doit le démarrer."
     },
+    "postCreate": {
+      "title": "Événement créé avec succès !",
+      "description": "Votre événement a été créé et les invitations ont été envoyées. Souhaitez-vous rejoindre le salon maintenant ?",
+      "joinButton": "Rejoindre le salon",
+      "closeButton": "Aller au tableau de bord"
+    },
     "yourGameProfile": "Votre profil de jeu",
     "joinedCount": "inscrits",
     "invitedCount": "invités",
@@ -593,7 +599,7 @@
     "activeSessions": "Sessions actives",
     "sessionDashboard": "Tableau de bord de session",
     "participants": "Participants",
-    "actions": "Actions",
+    "tableActions": "Actions",
     "submitAction": "Soumettre",
     "gameStatus": "Statut",
     "statuses": { "waiting": "En attente", "inProgress": "En cours", "completed": "Terminé", "cancelled": "Annulé", "active": "Actif", "paused": "En pause" },
