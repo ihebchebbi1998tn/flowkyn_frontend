@@ -1,0 +1,150 @@
+/**
+ * @fileoverview Register page — premium split-panel with smooth animations.
+ */
+
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/features/app/context/AuthContext';
+import { useAuthSwitch } from './AuthSwitchContext';
+import { LoadingButton } from '@/components/ui/loading-button';
+import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
+import { Label } from '@/components/ui/label';
+import { AlertBanner } from '@/components/notifications/AlertBanner';
+import { ArrowRight } from 'lucide-react';
+import { trackEvent, TRACK } from '@/hooks/useTracker';
+import { ApiError } from '@/lib/apiError';
+import logoImg from '@/assets/logo.png';
+
+export default function Register() {
+  const { t } = useTranslation();
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const { switchView } = useAuthSwitch();
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const update = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    if (!form.email || !form.password || !form.firstName || !form.lastName) { setError(t('auth.errors.required')); return; }
+    if (form.password.length < 8) { setError(t('auth.errors.passwordMin')); return; }
+    if (form.password !== form.confirmPassword) { setError(t('auth.errors.passwordMatch')); return; }
+    setIsLoading(true);
+    trackEvent(TRACK.REGISTER_START, { email: form.email });
+    try {
+      const lang = navigator.language?.split('-')[0] || 'en';
+      await register({ email: form.email, password: form.password, name: `${form.firstName} ${form.lastName}`.trim(), lang });
+      trackEvent(TRACK.REGISTER_SUCCESS, { email: form.email });
+      navigate('/verify-otp', { state: { email: form.email, password: form.password } });
+    } catch (err: unknown) {
+      if (ApiError.is(err)) {
+        const errorMessage = t(`apiErrors.${err.code}`, null);
+        if (errorMessage && errorMessage !== `apiErrors.${err.code}`) {
+          setError(errorMessage);
+        } else {
+          setError(t('auth.errors.registerFailed'));
+        }
+      } else {
+        setError(t('auth.errors.registerFailed'));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="lg:hidden mb-4">
+        <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
+      </div>
+
+      <div className="space-y-1">
+        <h1 className="text-xl font-semibold text-foreground">{t('auth.registerTitle')}</h1>
+        <p className="text-xs text-muted-foreground leading-relaxed">{t('auth.registerSubtitle')}</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-3">
+        {error && <AlertBanner type="error" message={error} onClose={() => setError('')} />}
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label className="text-body-sm font-medium">{t('auth.firstName')}</Label>
+            <Input
+              className="h-11 text-body-sm rounded-xl"
+              value={form.firstName}
+              onChange={e => update('firstName', e.target.value)}
+              autoFocus
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-body-sm font-medium">{t('auth.lastName')}</Label>
+            <Input
+              className="h-11 text-body-sm rounded-xl"
+              value={form.lastName}
+              onChange={e => update('lastName', e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label className="text-body-sm font-medium">{t('auth.email')}</Label>
+          <Input
+            type="email" className="h-11 text-body-sm rounded-xl"
+            value={form.email} onChange={e => update('email', e.target.value)}
+            placeholder="you@company.com"
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label className="text-body-sm font-medium">{t('auth.password')}</Label>
+          <PasswordInput
+            className="h-11 text-body-sm rounded-xl"
+            value={form.password} onChange={e => update('password', e.target.value)}
+            placeholder={t('auth.passwordPlaceholder')}
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label className="text-body-sm font-medium">{t('auth.confirmPassword')}</Label>
+          <PasswordInput
+            className="h-11 text-body-sm rounded-xl"
+            value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)}
+          />
+        </div>
+
+        <LoadingButton
+          type="submit" loading={isLoading}
+          className="w-full h-11 text-body-sm gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
+        >
+          {t('auth.register')}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </LoadingButton>
+      </form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border/60" /></div>
+        <div className="relative flex justify-center">
+          <span className="bg-background px-3 text-label-xs text-muted-foreground/60 uppercase tracking-wider font-medium">
+            {t('auth.or')}
+          </span>
+        </div>
+      </div>
+
+      <p className="text-center text-body-sm text-muted-foreground">
+        {t('auth.hasAccount')}{' '}
+        <button
+          type="button"
+          onClick={() => switchView('login')}
+          className="text-primary hover:underline font-semibold transition-colors cursor-pointer"
+        >
+          {t('auth.login')}
+        </button>
+      </p>
+    </div>
+  );
+}
