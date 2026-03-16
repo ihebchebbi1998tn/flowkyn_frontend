@@ -6,6 +6,9 @@ export const GAME_TYPES = {
   COFFEE_ROULETTE: 'coffee-roulette',
   WINS_OF_WEEK: 'wins-of-week',
   STRATEGIC_ESCAPE: 'strategic-escape',
+  TRIVIA: 'trivia',
+  SCAVENGER_HUNT: 'scavenger-hunt',
+  GRATITUDE: 'gratitude',
 } as const;
 
 export type GameTypeKey = typeof GAME_TYPES[keyof typeof GAME_TYPES];
@@ -27,6 +30,9 @@ export const GAME_CONFIGS: Record<string, {
     gameTypeKey: GAME_TYPES.STRATEGIC_ESCAPE,
     promptKey: 'gamePlay.configs.strategicEscapePrompt',
   },
+  '5': { titleKey: 'games.triviaTitle', subtitleKey: 'games.triviaSubtitle', type: 'sync', gameTypeKey: GAME_TYPES.TRIVIA },
+  '6': { titleKey: 'games.scavengerHuntTitle', subtitleKey: 'games.scavengerHuntSubtitle', type: 'sync', gameTypeKey: GAME_TYPES.SCAVENGER_HUNT },
+  '7': { titleKey: 'games.gratitudeTitle', subtitleKey: 'games.gratitudeSubtitle', type: 'async', gameTypeKey: GAME_TYPES.GRATITUDE },
 };
 
 export const GAME_KEY_TO_CONFIG_ID: Record<GameTypeKey, string> = {
@@ -34,5 +40,8 @@ export const GAME_KEY_TO_CONFIG_ID: Record<GameTypeKey, string> = {
   [GAME_TYPES.COFFEE_ROULETTE]: '2',
   [GAME_TYPES.WINS_OF_WEEK]: '3',
   [GAME_TYPES.STRATEGIC_ESCAPE]: '4',
+  [GAME_TYPES.TRIVIA]: '5',
+  [GAME_TYPES.SCAVENGER_HUNT]: '6',
+  [GAME_TYPES.GRATITUDE]: '7',
 };
 

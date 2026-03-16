@@ -47,11 +47,19 @@ export default function Register() {
       navigate('/verify-otp', { state: { email: form.email, password: form.password } });
     } catch (err: unknown) {
       if (ApiError.is(err)) {
-        const errorMessage = t(`apiErrors.${err.code}`, null);
-        if (errorMessage && errorMessage !== `apiErrors.${err.code}`) {
-          setError(errorMessage);
+        // 1. Try to find a localized message for the specific error code
+        const localizedMessage = t(`apiErrors.${err.code}`, '');
+        
+        if (localizedMessage) {
+          setError(localizedMessage);
+        } else if (err.details && err.details.length > 0) {
+          // 2. Fallback to detailed validation errors if available
+          // Join multiple errors or just show the first one for clarity
+          const detailMsg = err.details.map(d => d.message).join('. ');
+          setError(detailMsg);
         } else {
-          setError(t('auth.errors.registerFailed'));
+          // 3. Last resort: use the raw error message from backend or generic failure
+          setError(err.message || t('auth.errors.registerFailed'));
         }
       } else {
         setError(t('auth.errors.registerFailed'));

@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard, StrategicEscapeBoard } from '@/features/app/components/game/boards';
+import { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard, StrategicEscapeBoard, ComingSoonBoard } from '@/features/app/components/game/boards';
 import type { GameParticipant } from '@/features/app/components/game/shell';
 import { eventsApi } from '@/features/app/api/events';
 import { postsApi } from '@/features/app/api/posts';
 import { gamesApi } from '@/features/app/api/games';
 import type { GameTypeKey } from './gameTypes';
-import { GAME_TYPES } from './gameTypes';
+import { GAME_TYPES, GAME_CONFIGS, GAME_KEY_TO_CONFIG_ID } from './gameTypes';
 import { toast } from 'sonner';
 
 interface GameBoardRouterProps {
@@ -267,6 +267,17 @@ export function GameBoardRouter({
             setSessionId(newSessionId);
           }}
           onEmitSocketAction={onEmitAction}
+        />
+      );
+    case GAME_TYPES.TRIVIA:
+    case GAME_TYPES.SCAVENGER_HUNT:
+    case GAME_TYPES.GRATITUDE:
+      return (
+        <ComingSoonBoard
+          gameName={t(GAME_CONFIGS[GAME_KEY_TO_CONFIG_ID[config.gameTypeKey]].titleKey)}
+          onBack={() => {
+            window.history.back();
+          }}
         />
       );
     default:

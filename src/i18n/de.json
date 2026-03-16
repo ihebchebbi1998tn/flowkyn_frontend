@@ -417,13 +417,11 @@
     "editEvent": "Veranstaltung bearbeiten",
     "eventTitle": "Titel",
     "description": "Beschreibung",
-    "mode": "Modus",
     "visibility": "Sichtbarkeit",
     "maxParticipants": "Max. Teilnehmer",
     "startTime": "Startzeit",
     "endTime": "Endzeit",
     "participants": "Teilnehmer",
-    "settings": "Einstellungen",
     "modes": { "online": "Online", "inPerson": "Vor Ort", "hybrid": "Hybrid" },
     "visibilities": { "public": "Öffentlich", "private": "Privat", "organization": "Nur Arbeitsbereich" },
     "filters": { "all": "Alle", "upcoming": "Kommende", "past": "Vergangene", "active": "Aktive", "draft": "Entwurf", "completed": "Abgeschlossen" },
@@ -552,12 +550,6 @@
     "emptyParticipants": {
       "title": "Sie sind zuerst hier",
       "body": "Teilen Sie den Link unten, um Ihr Team einzuladen, und starten Sie dann gemeinsam."
-    },
-    "errors": {
-      "full": "Dieses Event ist voll. Fragen Sie Ihren Host, ob er das Limit erhöhen kann.",
-      "notActive": "Dieses Event ist noch nicht aktiv — der Host muss es starten.",
-      "guestsNotAllowed": "Dieses Event ist nur für Mitglieder. Bitte anmelden oder den Host um Zugriff bitten.",
-      "notMember": "Sie sind kein Mitglied dieses Arbeitsbereichs für dieses Event."
     }
   },
   "profileSetup": {

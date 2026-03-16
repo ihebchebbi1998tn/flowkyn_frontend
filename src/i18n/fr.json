@@ -418,13 +418,11 @@
     "editEvent": "Modifier l'événement",
     "eventTitle": "Titre",
     "description": "Description",
-    "mode": "Mode",
     "visibility": "Visibilité",
     "maxParticipants": "Participants max",
     "startTime": "Heure de début",
     "endTime": "Heure de fin",
     "participants": "Participants",
-    "settings": "Paramètres",
     "modes": { "online": "En ligne", "inPerson": "En présentiel", "hybrid": "Hybride" },
     "visibilities": { "public": "Public", "private": "Privé", "organization": "Espace uniquement" },
     "filters": { "all": "Tous", "upcoming": "À venir", "past": "Passés", "active": "Actifs", "draft": "Brouillon", "completed": "Terminés" },
@@ -565,12 +563,6 @@
     "emptyParticipants": {
       "title": "Vous êtes le premier ici",
       "body": "Partagez le lien ci-dessous pour inviter votre équipe, puis revenez ici pour démarrer ensemble."
-    },
-    "errors": {
-      "full": "Cet événement est complet. Demandez à votre hôte d’augmenter la limite si possible.",
-      "notActive": "Cet événement n’est pas encore actif — votre hôte doit le démarrer.",
-      "guestsNotAllowed": "Cet événement est réservé aux membres. Connectez-vous ou demandez l’accès à votre hôte.",
-      "notMember": "Vous n’êtes pas membre de cet espace de travail pour cet événement."
     }
   },
   "profileSetup": {
