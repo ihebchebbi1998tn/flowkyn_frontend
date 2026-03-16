@@ -26,10 +26,10 @@ export function AppSidebar() {
   const location = useLocation();
 
   const mainNav = [
-    { title: t('nav.dashboard'), url: ROUTES.DASHBOARD, icon: LayoutGrid },
-    { title: t('nav.games'), url: ROUTES.GAMES, icon: Gamepad2 },
-    { title: t('nav.organizations'), url: ROUTES.ORGANIZATIONS, icon: Building },
-    { title: t('nav.analytics'), url: ROUTES.ANALYTICS, icon: TrendingUp },
+    { title: t('nav.dashboard'), url: ROUTES.DASHBOARD, icon: LayoutGrid, id: 'tour-dashboard' },
+    { title: t('nav.games'), url: ROUTES.GAMES, icon: Gamepad2, id: 'tour-games' },
+    { title: t('nav.organizations'), url: ROUTES.ORGANIZATIONS, icon: Building, id: 'tour-organizations' },
+    { title: t('nav.analytics'), url: ROUTES.ANALYTICS, icon: TrendingUp, id: 'tour-analytics' },
   ];
 
   const manageNav = [
@@ -49,10 +49,10 @@ export function AppSidebar() {
     if (isMobile) setOpenMobile(false);
   };
 
-  const renderNavItem = (item: { title: string; url: string; icon: React.ComponentType<any>; badge?: number }) => {
+  const renderNavItem = (item: { title: string; url: string; icon: React.ComponentType<any>; badge?: number; id?: string }) => {
     const active = isActive(item.url);
     return (
-      <SidebarMenuItem key={item.url}>
+      <SidebarMenuItem key={item.url} id={item.id}>
         <SidebarMenuButton asChild isActive={active}>
           <NavLink to={item.url} end={item.url === ROUTES.DASHBOARD}
             onClick={handleNavClick}

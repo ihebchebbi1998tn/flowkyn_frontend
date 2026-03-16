@@ -1547,5 +1547,32 @@
   },
   "search": {
     "noResults": "No results for \"{{query}}\""
+  },
+  "tour": {
+    "welcome": {
+      "title": "Welcome to Flowkyn!",
+      "content": "Let's take a quick tour to help you get started with engaging your remote team."
+    },
+    "dashboard": {
+      "title": "Your Dashboard",
+      "content": "Here you can see a high-level overview of your team's engagement, active sessions, and upcoming events."
+    },
+    "activities": {
+      "title": "Activities & Games",
+      "content": "Explore our library of over 50 icebreakers, games, and wellness rituals ready to be launched."
+    },
+    "organizations": {
+      "title": "Organizations",
+      "content": "Manage your workspaces, invite team members, and configure permissions here."
+    },
+    "analytics": {
+      "title": "Analytics",
+      "content": "Measure engagement and track the impact of your team building over time."
+    },
+    "next": "Next",
+    "back": "Back",
+    "skip": "Skip Tour",
+    "close": "Close",
+    "last": "Finish"
   }
 }

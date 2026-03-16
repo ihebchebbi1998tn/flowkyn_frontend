@@ -1308,5 +1308,32 @@
   },
   "search": {
     "noResults": "Aucun résultat pour \"{{query}}\""
+  },
+  "tour": {
+    "welcome": {
+      "title": "Bienvenue sur Flowkyn !",
+      "content": "Faisons un tour rapide pour vous aider à engager votre équipe à distance."
+    },
+    "dashboard": {
+      "title": "Votre Tableau de bord",
+      "content": "Ici, vous pouvez voir une vue d'ensemble de l'engagement de votre équipe, des sessions actives et des événements à venir."
+    },
+    "activities": {
+      "title": "Activités & Jeux",
+      "content": "Explorez notre bibliothèque de plus de 50 brise-glaces, jeux et rituels prêts à être lancés."
+    },
+    "organizations": {
+      "title": "Espaces de travail",
+      "content": "Gérez vos espaces, invitez des membres et configurez les permissions ici."
+    },
+    "analytics": {
+      "title": "Analytique",
+      "content": "Mesurez l'engagement et suivez l'impact de votre team building au fil du temps."
+    },
+    "next": "Suivant",
+    "back": "Retour",
+    "skip": "Passer",
+    "close": "Fermer",
+    "last": "Terminer"
   }
 }
