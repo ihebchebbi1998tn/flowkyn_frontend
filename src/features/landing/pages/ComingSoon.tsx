@@ -81,45 +81,6 @@ export default function ComingSoon() {
       >
         <div className="bg-card/60 backdrop-blur-2xl border border-border/60 shadow-2xl rounded-3xl p-7 sm:p-9 relative overflow-hidden group">
 
-          {/* Subtle app preview in glass panel */}
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -right-10 -top-6 sm:-right-6 sm:-top-4 w-60 sm:w-72 rounded-2xl bg-background/60 border border-border/60 shadow-lg shadow-primary/10 backdrop-blur-xl overflow-hidden">
-              <div className="h-1 w-full bg-gradient-to-r from-amber-400/80 via-primary/70 to-violet-500/70" />
-              <div className="p-3 space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-xl bg-amber-400/15 flex items-center justify-center">
-                    <span className="text-[11px] font-semibold text-amber-500">W</span>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold text-foreground/90 truncate">Wins of the Week</p>
-                    <p className="text-[10px] text-muted-foreground truncate">Team ritual · async</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-1.5 text-[9px] text-muted-foreground/80">
-                  <div className="rounded-lg bg-muted/40 h-12 flex flex-col justify-center px-2">
-                    <p className="font-medium text-[10px] text-foreground/90">Share</p>
-                    <p className="mt-0.5 leading-tight">Post your weekly win.</p>
-                  </div>
-                  <div className="rounded-lg bg-muted/40 h-12 flex flex-col justify-center px-2">
-                    <p className="font-medium text-[10px] text-foreground/90">React</p>
-                    <p className="mt-0.5 leading-tight">Celebrate teammates.</p>
-                  </div>
-                  <div className="rounded-lg bg-muted/40 h-12 flex flex-col justify-center px-2">
-                    <p className="font-medium text-[10px] text-foreground/90">Track</p>
-                    <p className="mt-0.5 leading-tight">See engagement over time.</p>
-                  </div>
-                </div>
-              </div>
-              <div className="px-3 pb-3 flex items-center justify-between text-[9px] text-muted-foreground/80">
-                <span>Sample board</span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80" />
-                  Live
-                </span>
-              </div>
-            </div>
-          </div>
-
           {/* Top Edge Highlight */}
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
 
