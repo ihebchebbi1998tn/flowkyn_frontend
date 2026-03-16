@@ -125,7 +125,10 @@ export function useUploadOrgLogo() {
     mutationFn: ({ orgId, file }: { orgId: string; file: File }) =>
       organizationsApi.uploadLogo(orgId, file),
     onSuccess: (_, { orgId }) => {
+      // Org detail screens may use either /organizations/:id or /organizations/current
+      // so invalidate both keys to ensure logo_url updates everywhere immediately.
       queryClient.invalidateQueries({ queryKey: orgKeys.detail(orgId) });
+      queryClient.invalidateQueries({ queryKey: orgKeys.detail('current') });
       toast.success('Logo updated');
     },
     onError: (err) => showError(err),

@@ -87,8 +87,14 @@ export default function AdminOrganizations() {
                   <tr key={org.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                          <Users className="h-4 w-4 text-primary" />
+                        <div className="h-8 w-8 rounded-lg border border-border bg-background/50 flex items-center justify-center shrink-0 overflow-hidden">
+                          {org.logo_url ? (
+                            <img src={org.logo_url} alt={org.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="h-full w-full bg-primary/10 flex items-center justify-center">
+                              <Users className="h-4 w-4 text-primary" />
+                            </div>
+                          )}
                         </div>
                         <div>
                           <p className="font-medium text-foreground">{org.name}</p>
