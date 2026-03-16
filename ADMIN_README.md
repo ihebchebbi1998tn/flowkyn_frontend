@@ -7,7 +7,7 @@ The Flowkyn Admin Panel is a separate interface accessible at `admin.flowkyn.com
 ---
 
 ## Access & Authentication
-
+de
 | Feature | Description |
 |---------|-------------|
 | **Admin Login** | Dedicated login page at `/login` with admin credentials |
