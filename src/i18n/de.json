@@ -473,6 +473,13 @@
     "continueToLobby": "Weiter zur Lobby",
     "invalidInvitationToken": "Ungültiger Einladungslink. Bitte prüfen Sie den Link.",
     "joinFailed": "Beitritt fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "errors": {
+      "nameTaken": "Dieser Name ist in dieser Lobby bereits vergeben. Bitte wählen Sie einen anderen.",
+      "full": "Diese Veranstaltung ist voll. Fragen Sie Ihren Gastgeber, ob er das Limit erhöhen kann.",
+      "guestsNotAllowed": "Diese Veranstaltung ist nur für Mitglieder. Bitte melden Sie sich an oder fragen Sie Ihren Gastgeber nach Zugang.",
+      "notMember": "Sie sind kein Mitglied dieses Arbeitsbereichs für diese Veranstaltung.",
+      "notActive": "Diese Veranstaltung ist noch nicht aktiv — Ihr Gastgeber muss sie starten."
+    },
     "yourGameProfile": "Ihr Spielprofil",
     "joinedCount": "beigetreten",
     "invitedCount": "eingeladen",

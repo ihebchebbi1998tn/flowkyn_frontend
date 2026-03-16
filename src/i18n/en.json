@@ -441,6 +441,13 @@
     "continueToLobby": "Continue to Lobby",
     "invalidInvitationToken": "Invalid invitation token. Please check the link.",
     "joinFailed": "Failed to join. Please try again.",
+    "errors": {
+      "nameTaken": "This name is already taken in this lobby. Please choose a slightly different one.",
+      "full": "This event is full. Ask your host if they can increase the limit.",
+      "guestsNotAllowed": "This event is for members only. Please sign in or ask your host for access.",
+      "notMember": "You’re not a member of this workspace for this event.",
+      "notActive": "This event isn’t active yet — your host needs to start it."
+    },
     "yourGameProfile": "Your game profile",
     "joinedCount": "joined",
     "invitedCount": "invited",

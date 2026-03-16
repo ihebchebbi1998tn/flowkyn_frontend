@@ -168,6 +168,8 @@ export default function EventLobby() {
         const code = err?.response?.data?.code || err?.code;
         if (code === 'EVENT_FULL') {
           setJoinError(t('events.errors.full', 'This event is full. Ask your host if they can increase the limit.'));
+        } else if (code === 'NAME_TAKEN') {
+          setJoinError(t('events.errors.nameTaken', 'This name is already taken in this lobby. Please choose a slightly different one.'));
         } else if (code === 'GUESTS_NOT_ALLOWED') {
           setJoinError(t('events.errors.guestsNotAllowed', 'This event is for members only. Please sign in or ask your host for access.'));
         } else if (code === 'NOT_A_MEMBER') {

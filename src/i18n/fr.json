@@ -474,6 +474,13 @@
     "continueToLobby": "Continuer vers le salon",
     "invalidInvitationToken": "Jeton d'invitation invalide. Vérifiez le lien.",
     "joinFailed": "Impossible de rejoindre. Veuillez réessayer.",
+    "errors": {
+      "nameTaken": "Ce nom est déjà utilisé dans ce salon. Veuillez en choisir un autre.",
+      "full": "Cet événement est complet. Demandez à votre hôte d'augmenter la limite.",
+      "guestsNotAllowed": "Cet événement est réservé aux membres. Veuillez vous connecter ou demander l'accès à votre hôte.",
+      "notMember": "Vous n'êtes pas membre de cet espace pour cet événement.",
+      "notActive": "Cet événement n'est pas encore actif — votre hôte doit le démarrer."
+    },
     "yourGameProfile": "Votre profil de jeu",
     "joinedCount": "inscrits",
     "invitedCount": "invités",
