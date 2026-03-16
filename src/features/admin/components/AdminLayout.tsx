@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Building2, Gamepad2, ScrollText,
-  Settings, LogOut, Shield, ChevronLeft, ChevronRight, Moon, Sun, MessageSquare,
+  Settings, LogOut, Shield, ChevronLeft, ChevronRight, Moon, Sun, MessageSquare, Inbox,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { key: 'organizations', path: ADMIN_ROUTES.ORGANIZATIONS, icon: Building2 },
   { key: 'games', path: ADMIN_ROUTES.GAMES, icon: Gamepad2 },
   { key: 'contacts', path: ADMIN_ROUTES.CONTACTS, icon: MessageSquare },
+  { key: 'earlyAccess', path: ADMIN_ROUTES.EARLY_ACCESS, icon: Inbox },
   { key: 'auditLogs', path: ADMIN_ROUTES.AUDIT_LOGS, icon: ScrollText },
   { key: 'settings', path: ADMIN_ROUTES.SETTINGS, icon: Settings },
 ];
@@ -29,6 +30,7 @@ const LABELS: Record<string, string> = {
   organizations: 'Organizations',
   games: 'Game Sessions',
   contacts: 'Contact Messages',
+  earlyAccess: 'Early Access',
   auditLogs: 'Audit Logs',
   settings: 'Settings',
 };

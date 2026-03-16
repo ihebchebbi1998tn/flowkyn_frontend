@@ -42,6 +42,16 @@ export interface ContactEntry {
   updated_at: string;
 }
 
+export interface EarlyAccessEntry {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  company_name?: string | null;
+  ip_address?: string | null;
+  created_at: string;
+}
+
 export interface BugReportEntry {
   id: string;
   user_id: string;
@@ -171,6 +181,13 @@ export const adminApi = {
 
   deleteContact: (id: string) =>
     adminClient.del(`/admin/contact/${id}`),
+
+  // Early access submissions
+  listEarlyAccess: (page = 1, limit = 20) =>
+    adminClient.get<PaginatedResponse<EarlyAccessEntry>>('/admin/early-access', {
+      page: String(page),
+      limit: String(limit),
+    }),
 
   // Bug Reports / Ticket System
   listBugReports: (page = 1, limit = 20, filters?: { status?: string; priority?: string; type?: string; search?: string }) =>

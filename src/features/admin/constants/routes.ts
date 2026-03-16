@@ -11,6 +11,7 @@ export const ADMIN_ROUTES = {
   ORG_DETAIL: (id = ':id') => `/organizations/${id}`,
   GAMES: '/games',
   CONTACTS: '/contacts',
+  EARLY_ACCESS: '/early-access',
   AUDIT_LOGS: '/audit-logs',
   BUG_REPORTS: '/bug-reports',
   SETTINGS: '/settings',
