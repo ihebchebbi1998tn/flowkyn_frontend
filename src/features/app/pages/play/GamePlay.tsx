@@ -545,6 +545,29 @@ function GamePlayWithoutBoundary() {
     return unsub;
   }, [eventsSocket.isConnected, eventId, refetchPosts]);
 
+  // Real-time participant sync (Event level & Game level)
+  useEffect(() => {
+    if (!eventsSocket.isConnected || !eventId) return;
+    const triggerRefetch = () => {
+      console.log('[GamePlay] Participant joined/left event, refetching...');
+      refetchParticipants();
+    };
+    const unsubJoin = eventsSocket.on('event:user_joined', triggerRefetch);
+    const unsubLeave = eventsSocket.on('event:user_left', triggerRefetch);
+    return () => { unsubJoin?.(); unsubLeave?.(); };
+  }, [eventsSocket.isConnected, eventId, refetchParticipants]);
+
+  useEffect(() => {
+    if (!gamesSocket.isConnected || !sessionId) return;
+    const triggerRefetch = () => {
+      console.log('[GamePlay] Player joined/left game, refetching participants...');
+      refetchParticipants();
+    };
+    const unsubJoin = gamesSocket.on('game:player_joined', triggerRefetch);
+    const unsubLeave = gamesSocket.on('game:player_left', triggerRefetch);
+    return () => { unsubJoin?.(); unsubLeave?.(); };
+  }, [gamesSocket.isConnected, sessionId, refetchParticipants]);
+
   // Reconnect backfill for games: when games socket reconnects, always issue game:state_sync
   const wasGamesConnectedRef = useRef(false);
   useEffect(() => {
