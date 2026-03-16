@@ -14,6 +14,7 @@ import { ApiError } from '@/lib/apiError';
 import { ROUTES } from '@/constants/routes';
 import logoImg from '@/assets/logo.png';
 import { LogoLoader } from '@/components/loading/LogoLoader';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 
 export default function VerifyEmail() {
   const { t } = useTranslation();
@@ -54,7 +55,10 @@ export default function VerifyEmail() {
   }, [token, navigate, t]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageSelector align="end" />
+      </div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm text-center space-y-6">
         {status !== 'verifying' && (
           <img src={logoImg} alt="Flowkyn" className="h-14 w-14 mx-auto object-contain" />

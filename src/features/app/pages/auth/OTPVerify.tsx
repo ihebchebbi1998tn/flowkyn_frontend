@@ -20,6 +20,7 @@ import { ROUTES } from '@/constants/routes';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { toast } from 'sonner';
 import logoImg from '@/assets/logo.png';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 
 export default function OTPVerify() {
   const { t } = useTranslation();
@@ -135,7 +136,10 @@ export default function OTPVerify() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageSelector align="end" />
+      </div>
       <AnimatePresence mode="wait">
         {verified ? (
           <motion.div

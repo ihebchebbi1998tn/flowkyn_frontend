@@ -25,12 +25,9 @@ import logoImg from '@/assets/logo.png';
 import { formatNotificationCopy } from '@/features/app/utils/notificationCopy';
 import { useOrgMembers, useUpdateOrg } from '@/hooks/queries/useOrgQueries';
 import { useUpdateProfile } from '@/hooks/queries/useUserQueries';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 
-const LANGUAGES = [
-  { code: 'en', name: 'English', flag: 'https://flagcdn.com/w40/us.png' },
-  { code: 'fr', name: 'Français', flag: 'https://flagcdn.com/w40/fr.png' },
-  { code: 'de', name: 'Deutsch', flag: 'https://flagcdn.com/w40/de.png' },
-];
+// Redundant LANGUAGES array removed
 
 export function Topbar() {
   const { t, i18n } = useTranslation();
@@ -51,7 +48,7 @@ export function Topbar() {
 
   const handleLogout = () => { logout(); navigate(ROUTES.LOGIN); };
 
-  const currentLanguage = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
+  // Local currentLanguage calculation removed
 
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode);
@@ -272,32 +269,7 @@ export function Topbar() {
 
       <div className="flex items-center gap-0.5">
         {/* Language Switcher */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted rounded-lg group transition-all">
-              <img src={currentLanguage.flag} alt={currentLanguage.name} className="h-3.5 w-5 object-cover rounded shadow-sm ring-1 ring-border group-hover:ring-primary/40" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40 animate-in fade-in zoom-in-95 duration-200">
-            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 px-3 py-2">
-              {t('common.language', 'Language')}
-            </DropdownMenuLabel>
-            {LANGUAGES.map((lang) => (
-              <DropdownMenuItem
-                key={lang.code}
-                onClick={() => handleLanguageChange(lang.code)}
-                className={cn(
-                  "flex items-center gap-2.5 px-3 py-2 cursor-pointer transition-colors",
-                  i18n.language === lang.code ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted text-foreground"
-                )}
-              >
-                <img src={lang.flag} alt={lang.name} className="h-3 w-4.5 object-cover rounded-sm shadow-sm ring-1 ring-border/50" />
-                <span className="text-body-sm">{lang.name}</span>
-                {i18n.language === lang.code && <CheckCheck className="h-3.5 w-3.5 ml-auto" />}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <LanguageSelector align="end" onChange={handleLanguageChange} />
 
         <Button variant="ghost" size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-foreground rounded-lg"

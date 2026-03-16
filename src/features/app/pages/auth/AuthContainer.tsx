@@ -13,6 +13,7 @@ import Login from './Login';
 import Register from './Register';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
+import { LanguageSelector } from '@/components/common/LanguageSelector';
 
 export default function AuthContainer() {
   const { isAuthenticated } = useAuth();
@@ -66,8 +67,12 @@ export default function AuthContainer() {
 
   return (
     <AuthSwitchContext.Provider value={{ currentView, switchView }}>
-      <div className="min-h-screen flex animate-in fade-in duration-500">
+      <div className="min-h-screen flex animate-in fade-in duration-500 relative">
         <AuthBrandingPanel mode={brandingMode} />
+
+        <div className="absolute top-4 right-4 z-50">
+          <LanguageSelector align="end" />
+        </div>
 
         <div className="flex-1 flex items-center justify-center bg-background p-6 overflow-hidden">
           <motion.div
