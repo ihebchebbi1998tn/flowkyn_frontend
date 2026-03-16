@@ -93,29 +93,38 @@ export function AppJoyride() {
       callback={handleJoyrideCallback}
       styles={{
         options: {
-          primaryColor: '#10b981', // Tailwind Emerald-500 matching the flowkyn green
+          primaryColor: '#6C5CE7', // Flowkyn Primary Purple
           zIndex: 10000,
-          backgroundColor: 'hsl(var(--background))',
-          textColor: 'hsl(var(--foreground))',
-          arrowColor: 'hsl(var(--background))',
-          overlayColor: 'hsl(var(--background)/0.8)',
+          backgroundColor: '#FFFFFF',
+          textColor: '#111827',
+          arrowColor: '#FFFFFF',
+          overlayColor: 'rgba(17, 24, 39, 0.7)',
+        },
+        tooltip: {
+          borderRadius: '16px',
+          padding: '24px',
         },
         tooltipContainer: {
           textAlign: 'left'
         },
         buttonNext: {
-          backgroundColor: '#10b981',
-          borderRadius: '8px',
-          padding: '8px 16px',
+          backgroundColor: '#6C5CE7',
+          borderRadius: '10px',
+          padding: '10px 20px',
           fontWeight: 600,
-          color: '#ffffff'
+          color: '#ffffff',
+          boxShadow: '0 4px 12px rgba(108, 92, 231, 0.25)',
+          transition: 'all 0.2s ease',
         },
         buttonBack: {
           marginRight: '8px',
-          color: 'hsl(var(--muted-foreground))',
+          color: '#6B7280',
+          fontWeight: 500,
         },
         buttonSkip: {
-          color: 'hsl(var(--muted-foreground))',
+          color: '#6B7280',
+          fontSize: '13px',
+          fontWeight: 500,
         }
       }}
       locale={{
