@@ -89,7 +89,7 @@ export function TwoTruthsBoard({
   }, [selectedVote, onEmitAction]);
 
   const reveal = useCallback(async () => {
-    await onEmitAction('two_truths:reveal', { lieId: 's2' });
+    await onEmitAction('two_truths:reveal', {});
   }, [onEmitAction]);
 
   const nextRound = useCallback(async () => {
