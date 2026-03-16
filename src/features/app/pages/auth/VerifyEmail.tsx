@@ -14,7 +14,7 @@ import { ApiError } from '@/lib/apiError';
 import { ROUTES } from '@/constants/routes';
 import logoImg from '@/assets/logo.png';
 import { LogoLoader } from '@/components/loading/LogoLoader';
-import { LanguageSelector } from '@/components/common/LanguageSelector';
+import { LanguageSelector } from '@/components/common';
 
 export default function VerifyEmail() {
   const { t } = useTranslation();

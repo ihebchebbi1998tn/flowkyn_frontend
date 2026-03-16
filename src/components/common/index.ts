@@ -5,3 +5,4 @@
 export { PageHeader } from './PageHeader';
 export { FLAGS, LANGUAGES } from './LanguageFlags';
 export { ErrorState } from './ErrorState';
+export { LanguageSelector } from './LanguageSelector';

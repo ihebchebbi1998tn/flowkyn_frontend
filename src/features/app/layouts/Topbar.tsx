@@ -25,7 +25,7 @@ import logoImg from '@/assets/logo.png';
 import { formatNotificationCopy } from '@/features/app/utils/notificationCopy';
 import { useOrgMembers, useUpdateOrg } from '@/hooks/queries/useOrgQueries';
 import { useUpdateProfile } from '@/hooks/queries/useUserQueries';
-import { LanguageSelector } from '@/components/common/LanguageSelector';
+import { LanguageSelector } from '@/components/common';
 
 // Redundant LANGUAGES array removed
 

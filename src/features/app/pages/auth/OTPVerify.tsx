@@ -20,7 +20,7 @@ import { ROUTES } from '@/constants/routes';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { toast } from 'sonner';
 import logoImg from '@/assets/logo.png';
-import { LanguageSelector } from '@/components/common/LanguageSelector';
+import { LanguageSelector } from '@/components/common';
 
 export default function OTPVerify() {
   const { t } = useTranslation();
@@ -84,7 +84,7 @@ export default function OTPVerify() {
     } catch (err: unknown) {
       if (ApiError.is(err)) {
         // Check for specific error codes and handle accordingly
-        if (err.code === 'AUTH_ALREADY_VERIFIED') {
+        if ((err.code as string) === 'AUTH_ALREADY_VERIFIED') {
           // Already verified is a normal flow — show info but no error
           toast.info(t('auth.alreadyVerified'));
           navigate(ROUTES.LOGIN, { replace: true });

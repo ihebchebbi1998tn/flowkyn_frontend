@@ -25,8 +25,10 @@ export function LanguageSelector({ className, align = 'end', onChange }: Languag
     onChange?.(langCode);
   };
 
-  const currentLang = i18n.language.split('-')[0]; // Handle cases like 'en-US'
+  const currentLang = (i18n.language || 'en').split('-')[0]; // Handle cases like 'en-US'
   const Flag = FLAGS[currentLang] || FLAGS.en;
+
+  if (!Flag) return null; // Safety check
 
   return (
     <DropdownMenu>
