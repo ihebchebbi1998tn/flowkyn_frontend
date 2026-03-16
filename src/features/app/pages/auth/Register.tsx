@@ -119,7 +119,7 @@ export default function Register() {
 
         <LoadingButton
           type="submit" loading={isLoading}
-          className="w-full h-11 text-body-sm gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
+          className="w-full h-11 text-body-sm text-white gap-2 rounded-xl font-semibold shadow-md shadow-primary/15"
         >
           {t('auth.register')}
           <ArrowRight className="h-3.5 w-3.5" />
