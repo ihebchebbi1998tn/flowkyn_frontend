@@ -52,7 +52,11 @@ function GamePlayWithoutBoundary() {
   // ─── Current user identity (server-driven) ─────────────────────────────────
   const identity = useEventIdentity(eventId || undefined);
   const { isGuest, userId: currentUserId, participantId, displayName, avatarUrl } = identity;
-  console.log('[GamePlay] mount', { eventId, identity, gameTypeId, config });
+
+  // We start with the URL param config, but will update it if the server tells us a different game is active.
+  const [activeConfig, setActiveConfig] = useState(GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1']);
+
+  console.log('[GamePlay] mount', { eventId, identity, gameTypeId, activeConfig });
 
   const guestParticipantId = isGuest ? participantId : null;
   const memberParticipantId = !isGuest ? participantId : null;
@@ -457,9 +461,19 @@ function GamePlayWithoutBoundary() {
     const resolveSession = async () => {
       setIsResolvingSession(true);
       try {
-        const session = await gamesApi.getActiveSession(eventId, config.gameTypeKey);
+        // Fetch the currently active session regardless of type (omit the specific gameTypeKey parameter).
+        // This ensures that if a user follows a generic join link, they are instantly routed to the active game.
+        const session = await gamesApi.getActiveSession(eventId);
         if (!cancelled) {
           setSessionId(session ? session.id : null);
+          if (session && session.game_key) {
+            import('./gameTypes').then(({ GAME_KEY_TO_CONFIG_ID, GAME_CONFIGS }) => {
+              const correctConfigId = GAME_KEY_TO_CONFIG_ID[session.game_key as keyof typeof GAME_KEY_TO_CONFIG_ID];
+              if (correctConfigId && GAME_CONFIGS[correctConfigId]) {
+                setActiveConfig(GAME_CONFIGS[correctConfigId]);
+              }
+            });
+          }
         }
       } catch (err: any) {
         if (!cancelled) {
@@ -492,8 +506,31 @@ function GamePlayWithoutBoundary() {
     const unsubData = gamesSocket.on('game:data', (payload: any) => {
       if (payload?.gameData) setGameData(payload.gameData);
     });
-    return () => { unsubState?.(); unsubData?.(); };
-  }, [gamesSocket.isConnected]);
+
+    // Handle game lifecycle events emitted by host actions
+    const unsubStarted = gamesSocket.on('game:started', () => {
+      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+    });
+    const unsubRoundStarted = gamesSocket.on('game:round_started', (payload: any) => {
+      if (payload?.roundId) setActiveRoundId(payload.roundId);
+      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+    });
+    const unsubRoundEnded = gamesSocket.on('game:round_ended', () => {
+      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+    });
+    const unsubEnded = gamesSocket.on('game:ended', () => {
+      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+    });
+
+    return () => { 
+      unsubState?.(); 
+      unsubData?.(); 
+      unsubStarted?.();
+      unsubRoundStarted?.();
+      unsubRoundEnded?.();
+      unsubEnded?.();
+    };
+  }, [gamesSocket.isConnected, sessionId, gamesSocket]);
 
   // Reconnect backfill: when events socket reconnects, refetch messages/participants/posts
   const wasEventsConnectedRef = useRef(false);

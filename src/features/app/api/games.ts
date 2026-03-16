@@ -46,10 +46,11 @@ export const gamesApi = {
 
   /**
    * Resolve the currently active game session for a given event + game type key.
-   * Returns null if no active session exists.
+   * Returns null
    */
-  getActiveSession: (eventId: string, gameKey: string) =>
-    api.get<GameSession | null>(`/events/${eventId}/game-sessions/active`, { game_key: gameKey }, eventId),
+  /** Get active session for event for a specific game type, or the latest active overall if gameKey is omitted */
+  getActiveSession: (eventId: string, gameKey?: string) =>
+    api.get<any | null>(`/events/${eventId}/game-sessions/active`, gameKey ? { game_key: gameKey } : undefined, eventId),
 
   /** Start the next round in a game session */
   startRound: (sessionId: string) =>
