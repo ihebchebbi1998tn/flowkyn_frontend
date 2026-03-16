@@ -9,12 +9,13 @@ export interface EventIdentity {
   participantId: string | null;
   displayName: string;
   avatarUrl: string | null;
+  isLoading: boolean;
 }
 
 export function useEventIdentity(eventId: string | undefined): EventIdentity {
-  const { user, isAuthenticated } = useAuth();
-  const { data: participant } = useMyEventParticipant(eventId);
-  const { data: profile } = useEventProfile(eventId);
+  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { data: participant, isLoading: isParticipantLoading } = useMyEventParticipant(eventId);
+  const { data: profile, isLoading: isProfileLoading } = useEventProfile(eventId);
 
   const isGuest = !!participant?.isGuest;
 
@@ -42,6 +43,7 @@ export function useEventIdentity(eventId: string | undefined): EventIdentity {
     participantId,
     displayName,
     avatarUrl,
+    isLoading: isAuthLoading || isParticipantLoading || isProfileLoading,
   };
 }
 

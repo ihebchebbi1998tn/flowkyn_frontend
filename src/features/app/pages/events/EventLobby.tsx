@@ -86,7 +86,7 @@ export default function EventLobby() {
 
   // Profile state — strictly rely on localStorage to test if the user explicitly clicked "Continue to Lobby" for this specific event device sessions.
   const identity = useEventIdentity(id || undefined);
-  const { isGuest, userId: currentUserId, displayName, avatarUrl } = identity;
+  const { isGuest, userId: currentUserId, displayName, avatarUrl, isLoading: isIdentityLoading } = identity;
 
   // We use the server profile purely for pre-filling the UserProfileSetup form if they are authenticated,
   // we DO NOT use it to silently bypass the form anymore.
@@ -119,7 +119,7 @@ export default function EventLobby() {
 
   /** Join logic — defined before effect that depends on it */
   const handleJoin = useCallback(async () => {
-    if (!id || !profile) return;
+    if (!id || !profile || isJoining || hasJoined) return;
     console.log('[EventLobby] handleJoin start', {
       eventId: id,
       isAuthenticated,
@@ -200,7 +200,7 @@ export default function EventLobby() {
 
   // 2. Auto-trigger join when profile is ready and form is dismissed (first-time joiners)
   useEffect(() => {
-    if (profile && !showProfileForm && !hasJoined && !isJoining && !joinError) {
+    if (!isIdentityLoading && profile && !showProfileForm && !hasJoined && !isJoining && !joinError) {
       console.log('[EventLobby] auto-joining after profile ready', {
         eventId: id,
         hasJoined,

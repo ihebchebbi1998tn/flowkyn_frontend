@@ -51,7 +51,7 @@ function GamePlayWithoutBoundary() {
 
   // ─── Current user identity (server-driven) ─────────────────────────────────
   const identity = useEventIdentity(eventId || undefined);
-  const { isGuest, userId: currentUserId, participantId, displayName, avatarUrl } = identity;
+  const { isGuest, userId: currentUserId, participantId, displayName, avatarUrl, isLoading: isIdentityLoading } = identity;
 
   // We start with the URL param config, but will update it if the server tells us a different game is active.
   const [activeConfig, setActiveConfig] = useState(GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1']);
@@ -103,7 +103,7 @@ function GamePlayWithoutBoundary() {
 
   /** Join logic — ensures tokens are obtained and rooms joined */
   const handleJoin = useCallback(async () => {
-    if (!eventId || !profile) return;
+    if (!eventId || !profile || isJoining || hasJoined) return;
     console.log('[GamePlay] handleJoin start', {
       eventId,
       isAuthenticated,
@@ -168,6 +168,7 @@ function GamePlayWithoutBoundary() {
 
   // 2. Auto-join after profile is confirmed
   useEffect(() => {
+    if (isIdentityLoading) return; // Wait for server to confirm whether we already have a participant account
     if (profile && !showProfileEdit && !hasJoined && !isJoining) {
       console.log('[GamePlay] auto-joining after profile ready', {
         eventId,
@@ -176,7 +177,7 @@ function GamePlayWithoutBoundary() {
       });
       handleJoin();
     }
-  }, [profile, showProfileEdit, hasJoined, isJoining, handleJoin]);
+  }, [profile, showProfileEdit, hasJoined, isJoining, handleJoin, isIdentityLoading]);
 
   // ─── Real data from API ────────────────────────────────────────────────────
   const { data: eventData } = useEventPublicInfo(eventId || '');
