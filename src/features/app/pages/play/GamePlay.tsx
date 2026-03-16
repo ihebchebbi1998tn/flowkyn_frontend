@@ -327,16 +327,18 @@ function GamePlayWithoutBoundary() {
     if (gamesSocket.isConnected && sessionId) joinGameRoom();
   }, [gamesSocket.isConnected, sessionId, joinGameRoom]);
 
-  // Re-join on socket reconnection
+  // Re-join on socket reconnection + refetch messages that may have been missed
   useEffect(() => {
     if (!eventsSocket.socket) return;
     const onConnect = () => {
-      console.log('[GamePlay] Events socket reconnected, re-joining room...');
+      console.log('[GamePlay] Events socket reconnected, re-joining room + refetching messages...');
       joinEventRoom();
+      // Refetch HTTP messages to recover any missed during the disconnection window
+      refetchMessages();
     };
     eventsSocket.socket.on('connect', onConnect);
     return () => { eventsSocket.socket?.off('connect', onConnect); };
-  }, [eventsSocket.socket, joinEventRoom]);
+  }, [eventsSocket.socket, joinEventRoom, refetchMessages]);
 
   useEffect(() => {
     if (!gamesSocket.socket) return;
@@ -393,6 +395,16 @@ function GamePlayWithoutBoundary() {
     const unsub = eventsSocket.on('chat:message', handleChatMessage);
     return unsub;
   }, [eventsSocket.isConnected, eventId]);
+
+  // Fallback polling: periodically refetch messages via HTTP so chat
+  // stays in sync even if a socket broadcast is missed.
+  useEffect(() => {
+    if (!eventId) return;
+    const interval = setInterval(() => {
+      refetchMessages();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [eventId, refetchMessages]);
 
   // Fetch pinned message for in-game chat once the eventId is known
   useEffect(() => {
@@ -655,14 +667,19 @@ function GamePlayWithoutBoundary() {
     if (eventsSocket.isConnected && eventId) {
       console.log('[GamePlay] Sending message to eventId:', eventId, 'message:', message);
       eventsSocket.emit('chat:message', { eventId, message })
+        .then(() => {
+          console.log('[GamePlay] chat:message ack received, refetching messages', { eventId });
+          refetchMessages();
+        })
         .catch(err => {
           console.error('[GamePlay] Failed to send message:', err.message);
           showError(err, 'Failed to send message');
         });
     } else {
-      console.warn('[GamePlay] Socket not connected, cannot send message — will retry when reconnected.');
+      console.warn('[GamePlay] Socket not connected, cannot send message — falling back to HTTP refetch');
+      refetchMessages();
     }
-  }, [eventsSocket.isConnected, eventId, showError]);
+  }, [eventsSocket.isConnected, eventId, showError, refetchMessages]);
 
   const handleTyping = useCallback((isTyping: boolean) => {
     if (eventsSocket.isConnected && eventId) {
