@@ -3,10 +3,10 @@ import ComingSoon from '../pages/ComingSoon';
 
 /**
  * Guard that protects the landing page and routes with a "Coming Soon" screen.
- * Access is granted if 'flowkyn_early_access' is set to 'granted' in localStorage.
+ * Access is granted for the current browser session only.
  */
 export function EarlyAccessGuard() {
-  const isAccessGranted = localStorage.getItem('flowkyn_early_access') === 'granted';
+  const isAccessGranted = sessionStorage.getItem('flowkyn_early_access') === 'granted';
 
   if (!isAccessGranted) {
     return <ComingSoon />;

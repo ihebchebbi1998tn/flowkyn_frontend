@@ -50,7 +50,10 @@ export default function ComingSoon() {
 
     setTimeout(() => {
       if (password === 'Flowkyn2026') {
-        localStorage.setItem('flowkyn_early_access', 'granted');
+        // Session-only unlock: require password again next visit/session
+        sessionStorage.setItem('flowkyn_early_access', 'granted');
+        // Clean up any old persistent flag from previous versions
+        localStorage.removeItem('flowkyn_early_access');
         toast.success('Access Granted', {
           description: 'Welcome to Flowkyn early access.',
         });
