@@ -239,7 +239,7 @@ export function GamePlayShell({
         </div>
 
         {showLink && (
-          <div className="border-t border-border px-4 sm:px-5 py-3 bg-muted/30 flex flex-col gap-2 animate-fade-in">
+          <div className="relative z-10 border-t border-border px-4 sm:px-5 py-3 bg-muted/30 flex flex-col gap-2 animate-fade-in">
             <div className="flex items-center gap-2">
               <Link2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
               <Input
