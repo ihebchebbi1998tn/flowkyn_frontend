@@ -77,10 +77,49 @@ export default function ComingSoon() {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-md mx-auto"
+        className="relative z-10 w-full max-w-lg mx-auto"
       >
-        <div className="bg-card/40 backdrop-blur-2xl border border-white/10 dark:border-white/5 shadow-2xl rounded-3xl p-8 sm:p-12 relative overflow-hidden group">
-          
+        <div className="bg-card/60 backdrop-blur-2xl border border-border/60 shadow-2xl rounded-3xl p-7 sm:p-9 relative overflow-hidden group">
+
+          {/* Subtle app preview in glass panel */}
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -right-10 -top-6 sm:-right-6 sm:-top-4 w-60 sm:w-72 rounded-2xl bg-background/60 border border-border/60 shadow-lg shadow-primary/10 backdrop-blur-xl overflow-hidden">
+              <div className="h-1 w-full bg-gradient-to-r from-amber-400/80 via-primary/70 to-violet-500/70" />
+              <div className="p-3 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-7 w-7 rounded-xl bg-amber-400/15 flex items-center justify-center">
+                    <span className="text-[11px] font-semibold text-amber-500">W</span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold text-foreground/90 truncate">Wins of the Week</p>
+                    <p className="text-[10px] text-muted-foreground truncate">Team ritual · async</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5 text-[9px] text-muted-foreground/80">
+                  <div className="rounded-lg bg-muted/40 h-12 flex flex-col justify-center px-2">
+                    <p className="font-medium text-[10px] text-foreground/90">Share</p>
+                    <p className="mt-0.5 leading-tight">Post your weekly win.</p>
+                  </div>
+                  <div className="rounded-lg bg-muted/40 h-12 flex flex-col justify-center px-2">
+                    <p className="font-medium text-[10px] text-foreground/90">React</p>
+                    <p className="mt-0.5 leading-tight">Celebrate teammates.</p>
+                  </div>
+                  <div className="rounded-lg bg-muted/40 h-12 flex flex-col justify-center px-2">
+                    <p className="font-medium text-[10px] text-foreground/90">Track</p>
+                    <p className="mt-0.5 leading-tight">See engagement over time.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="px-3 pb-3 flex items-center justify-between text-[9px] text-muted-foreground/80">
+                <span>Sample board</span>
+                <span className="inline-flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80" />
+                  Live
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Top Edge Highlight */}
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
 
@@ -90,26 +129,40 @@ export default function ComingSoon() {
             <motion.button
               type="button"
               onClick={() => setShowPassword(true)}
-              initial={{ rotate: -10, scale: 0.9 }}
-              animate={{ rotate: 0, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.2 }}
-              className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-2 ring-1 ring-primary/20 shadow-inner group-hover:scale-105 transition-transform duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="mb-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-md"
             >
               <img
                 src={logoImg}
                 alt="Flowkyn"
-                className="w-10 h-10 object-contain"
+                className="h-8 sm:h-9 object-contain"
               />
             </motion.button>
 
             {/* Typography */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
                 Get early access to Flowkyn
               </h1>
-              <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[340px] mx-auto leading-relaxed">
+              <p className="text-sm sm:text-[15px] text-muted-foreground font-medium max-w-[420px] mx-auto leading-relaxed">
                 Flowkyn helps distributed teams run structured connection rituals that are measurable, repeatable, and easy to facilitate.
               </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-[11px] sm:text-[12px] text-muted-foreground/90 w-full max-w-[460px] mx-auto">
+                <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-left">
+                  <p className="font-semibold text-foreground text-[11px] sm:text-[12px]">Team rituals, productized</p>
+                  <p className="mt-1 leading-snug">Curated formats instead of ad‑hoc icebreakers.</p>
+                </div>
+                <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-left">
+                  <p className="font-semibold text-foreground text-[11px] sm:text-[12px]">Measurable engagement</p>
+                  <p className="mt-1 leading-snug">Track participation and sentiment over time.</p>
+                </div>
+                <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-left">
+                  <p className="font-semibold text-foreground text-[11px] sm:text-[12px]">Built for remote teams</p>
+                  <p className="mt-1 leading-snug">Works across time zones and team sizes.</p>
+                </div>
+              </div>
             </div>
 
             {/* Early access form */}
