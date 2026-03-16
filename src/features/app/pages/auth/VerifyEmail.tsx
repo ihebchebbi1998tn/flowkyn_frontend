@@ -3,7 +3,7 @@
  * When user clicks the link in the email, they land on /verify?token=xxx
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -23,15 +23,19 @@ export default function VerifyEmail() {
 
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [errorMessage, setErrorMessage] = useState('');
+  const hasAttempted = useRef(false);
 
   useEffect(() => {
-    if (!token) {
-      setStatus('error');
-      setErrorMessage(t('auth.missingVerificationToken'));
+    if (!token || hasAttempted.current) {
+      if (!token) {
+        setStatus('error');
+        setErrorMessage(t('auth.missingVerificationToken'));
+      }
       return;
     }
 
     async function verify() {
+      hasAttempted.current = true;
       try {
         await authApi.verifyEmail(token);
         setStatus('success');
