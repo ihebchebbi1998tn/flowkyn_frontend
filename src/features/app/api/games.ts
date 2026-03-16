@@ -29,9 +29,14 @@ export const gamesApi = {
    * Only owners/admins/moderators can call this.
    */
   createStrategicSession: (eventId: string, config: {
+    // Stable keys for analytics and backend snapshots
+    industryKey: string;
+    crisisKey: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+    // Human-readable labels for UI/email content
     industry: string;
     crisisType: string;
-    difficulty: 'easy' | 'medium' | 'hard';
+    difficultyLabel: string;
   }) =>
     api.post<{ sessionId: string; eventId: string; config: typeof config }>(
       `/events/${eventId}/strategic-sessions`,

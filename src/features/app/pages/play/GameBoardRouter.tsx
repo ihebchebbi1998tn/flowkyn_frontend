@@ -7,6 +7,7 @@ import { postsApi } from '@/features/app/api/posts';
 import { gamesApi } from '@/features/app/api/games';
 import type { GameTypeKey } from './gameTypes';
 import { GAME_TYPES } from './gameTypes';
+import { toast } from 'sonner';
 
 interface GameBoardRouterProps {
   config: {
@@ -116,9 +117,49 @@ export function GameBoardRouter({
               setGameData(data.snapshot);
             }
           }
+
+          toast.success(
+            t('games.toasts.launching', {
+              defaultValue: 'We’re launching {{gameName}} for this event. Hang tight — your screen will update in a moment.',
+              gameName: typeRow.name || config.gameTypeKey,
+            })
+          );
         } catch (err: any) {
           console.error('[GamePlay] Failed to auto-create game session:', err?.message || err);
-          showError(err, 'Failed to start game session');
+          const backendCode = err?.response?.data?.code || err?.code;
+          if (backendCode === 'SESSION_NOT_ACTIVE') {
+            showError(
+              err,
+              t(
+                'games.errors.sessionNotActive',
+                'Cannot start a game because the event is not active yet. Ask your workspace admin or host to start the event first.',
+              ),
+            );
+          } else if (backendCode === 'INSUFFICIENT_PERMISSIONS' || backendCode === 'FORBIDDEN') {
+            showError(
+              err,
+              t(
+                'games.errors.notAuthorizedToStart',
+                'Only event admins or moderators can start this game. Ask your facilitator to launch it for the group.',
+              ),
+            );
+          } else if (backendCode === 'NOT_A_MEMBER') {
+            showError(
+              err,
+              t(
+                'games.errors.notMember',
+                'You are not a member of this workspace for this event. Please contact your admin if this feels wrong.',
+              ),
+            );
+          } else {
+            showError(
+              err,
+              t(
+                'games.errors.genericStartFailed',
+                'Failed to start the game session. Please try again or ask your host to start it for you.',
+              ),
+            );
+          }
           return;
         }
       }

@@ -1,6 +1,58 @@
 {
   "common": {
     "appName": "Flowkyn",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "confirm": "Confirm",
+    "add": "Add",
+    "remove": "Remove",
+    "back": "Back",
+    "next": "Next",
+    "search": "Search...",
+    "filter": "Filter",
+    "sort": "Sort",
+    "loading": "Loading...",
+    "noData": "No data available",
+    "actions": "Actions",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "all": "All",
+    "yes": "Yes",
+    "no": "No",
+    "submit": "Submit",
+    "send": "Send",
+    "close": "Close",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload",
+    "refresh": "Refresh",
+    "rows": "rows",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "showing": "Showing",
+    "to": "to",
+    "entries": "entries",
+    "perPage": "per page",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "tbd": "TBD",
+    "backToEvents": "Back to events",
+    "live": "Live",
+    "async": "Async"
+  }
+}
+
+{
+  "common": {
+    "appName": "Flowkyn",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "delete": "Löschen",
@@ -507,6 +559,44 @@
       "paused": "Pausiert",
       "completed": "Abgeschlossen",
       "cancelled": "Abgebrochen"
+    },
+    "lifecycle": {
+      "draftNext": "Konfigurieren und einladen — dann starten, wenn Sie bereit sind.",
+      "activeNext": "Läuft — öffnen Sie die Lobby zum Spielen und Chatten.",
+      "completedNext": "Diese Veranstaltung ist beendet — Zusammenfassung und Ergebnisse ansehen.",
+      "startEvent": "Event starten",
+      "enterLobby": "Zur Lobby",
+      "viewRecap": "Zusammenfassung ansehen",
+      "startedToast": "Event gestartet",
+      "startFailed": "Event konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
+      "draftBannerTitle": "Ihr Host hat noch nicht gestartet",
+      "draftBannerBody": "Sie können trotzdem die Lobby betreten, chatten und sich vorbereiten."
+    },
+    "steps": {
+      "profile": "1. Profil",
+      "join": "2. Beitreten",
+      "play": "3. Spiel starten"
+    },
+    "returning": {
+      "welcomeBack": "Willkommen zurück, {{name}} — Sie können direkt ins Spiel springen.",
+      "jumpIntoGame": "Ins Spiel springen"
+    },
+    "guidance": {
+      "nextTitle": "Was passiert als Nächstes?",
+      "step1": "1) Warten Sie, bis alle beigetreten sind ({{count}} bisher).",
+      "step2": "2) Ihr Host startet die Aktivität.",
+      "step3": "3) Sie sehen das Spiel automatisch, sobald es startet.",
+      "hostPinHint": "Host-Tipp: Pinnen Sie eine Nachricht mit den wichtigsten Anweisungen."
+    },
+    "emptyParticipants": {
+      "title": "Sie sind zuerst hier",
+      "body": "Teilen Sie den Link unten, um Ihr Team einzuladen, und starten Sie dann gemeinsam."
+    },
+    "errors": {
+      "full": "Dieses Event ist voll. Fragen Sie Ihren Host, ob er das Limit erhöhen kann.",
+      "notActive": "Dieses Event ist noch nicht aktiv — der Host muss es starten.",
+      "guestsNotAllowed": "Dieses Event ist nur für Mitglieder. Bitte anmelden oder den Host um Zugriff bitten.",
+      "notMember": "Sie sind kein Mitglied dieses Arbeitsbereichs für dieses Event."
     }
   },
   "profileSetup": {
@@ -522,7 +612,10 @@
     "appearInGame": "So erscheinen Sie im Spiel",
     "saved": "Gespeichert!",
     "editProfile": "Profil bearbeiten",
-    "back": "Zurück"
+    "back": "Zurück",
+    "errors": {
+      "nameTooShort": "Der Name muss mindestens {{min}} Zeichen lang sein"
+    }
   },
   "games": {
     "title": "Aktivitäten",
@@ -578,6 +671,13 @@
       "showingFiltered": "{{count}} von {{total}} Aktivitäten",
       "noResults": "Keine Aktivitäten entsprechen Ihren Filtern",
       "noResultsHint": "Versuchen Sie, Ihre Filter oder Ihren Suchbegriff anzupassen"
+    },
+    "actions": {
+      "start": "Start",
+      "resume": "Fortsetzen"
+    },
+    "toasts": {
+      "launching": "Wir starten {{gameName}} für dieses Event. Bitte kurz warten — Ihr Bildschirm wird gleich aktualisiert."
     },
     "detail": {
       "category": "Kategorie",
@@ -890,6 +990,31 @@
     "participation": "Teilnahme",
     "copied": "Kopiert!",
     "copy": "Kopieren"
+  },
+  "strategic": {
+    "label": "Strategic Escape Challenge",
+    "phases": {
+      "setup": "Setup",
+      "rolesAssignment": "Rollen & E-Mails",
+      "discussion": "Diskussion",
+      "debrief": "Debrief"
+    },
+    "meta": {
+      "hostLabel": "Facilitator: {{name}}",
+      "phaseLabel": "Phase: {{phase}}"
+    },
+    "howItWorks": {
+      "label": "So funktioniert’s",
+      "point1": "Jede Person erhält eine geheime Rolle.",
+      "point2": "Sie erhalten eine E-Mail + eine In-App-Karte mit Anweisungen.",
+      "point3": "Am Ende machen wir ein gemeinsames Debrief."
+    },
+    "phaseIntro": {
+      "setup": "Gerade richtet der Facilitator das Szenario ein.",
+      "rolesAssignment": "Gerade werden geheime Rollen vergeben — prüfen Sie Ihren Posteingang.",
+      "discussion": "Gerade sollten Sie Perspektiven und Entscheidungen über die Zeit teilen.",
+      "debrief": "Gerade verwandeln Sie Erkenntnisse in konkrete Änderungen."
+    }
   },
   "activities": {
     "twoTruths": {

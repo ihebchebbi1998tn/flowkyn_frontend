@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Plus, CalendarDays, Users, Clock, Radio, Timer, Sparkles,
+  Plus, CalendarDays, Users, Clock, Radio, Timer, Sparkles, Play, ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,8 @@ import { CardGridSkeleton } from '@/components/loading/Skeletons';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
 import { useEvents } from '@/hooks/queries';
+import { eventsApi } from '@/features/app/api/events';
+import { toast } from 'sonner';
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-muted text-muted-foreground border-border',
@@ -106,6 +108,13 @@ export default function EventList() {
                 <h3 className="text-[15px] font-bold text-card-foreground group-hover:text-primary transition-colors leading-tight truncate mb-1.5">
                   {event.title}
                 </h3>
+                <p className="text-[11px] text-muted-foreground mb-2">
+                  {event.status === 'draft'
+                    ? t('events.lifecycle.draftNext', 'Configure & invite, then start when you’re ready.')
+                    : event.status === 'active'
+                      ? t('events.lifecycle.activeNext', 'In progress — open the lobby to play and chat.')
+                      : t('events.lifecycle.completedNext', 'This event is complete — view recap and results.')}
+                </p>
                 <p className="text-body-sm text-muted-foreground line-clamp-2 leading-relaxed mb-4">
                   {event.description}
                 </p>
@@ -123,10 +132,65 @@ export default function EventList() {
                   <CalendarDays className="h-3 w-3" />
                   {event.start_time ? new Date(event.start_time).toLocaleDateString() : '—'}
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <Timer className="h-3 w-3" />
-                  {event.event_mode === 'async' ? t('events.ongoing') : (event.end_time && event.start_time ? `${Math.round((new Date(event.end_time).getTime() - new Date(event.start_time).getTime()) / 60000)} min` : '—')}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5">
+                    <Timer className="h-3 w-3" />
+                    {event.event_mode === 'async'
+                      ? t('events.ongoing')
+                      : (event.end_time && event.start_time
+                          ? `${Math.round((new Date(event.end_time).getTime() - new Date(event.start_time).getTime()) / 60000)} min`
+                          : '—')}
+                  </span>
+                  {event.status === 'draft' && (
+                    <Button
+                      size="sm"
+                      className="h-7 px-2 text-[11px] gap-1"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        try {
+                          await eventsApi.update(event.id, { status: 'active' } as any);
+                          toast.success(t('events.lifecycle.startedToast', 'Event started'));
+                        } catch (err: any) {
+                          toast.error(
+                            err?.response?.data?.message ||
+                              t('events.lifecycle.startFailed', 'Failed to start event. Please try again.')
+                          );
+                        }
+                      }}
+                    >
+                      <Play className="h-3 w-3" />
+                      {t('events.lifecycle.startEvent', 'Start event')}
+                    </Button>
+                  )}
+                  {event.status === 'active' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 px-2 text-[11px] gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(ROUTES.JOIN(event.id));
+                      }}
+                    >
+                      <ArrowRight className="h-3 w-3" />
+                      {t('events.lifecycle.enterLobby', 'Enter lobby')}
+                    </Button>
+                  )}
+                  {event.status === 'completed' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 px-2 text-[11px] gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(ROUTES.EVENT_DETAIL(event.id));
+                      }}
+                    >
+                      <ArrowRight className="h-3 w-3" />
+                      {t('events.lifecycle.viewRecap', 'View recap')}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
             </motion.div>

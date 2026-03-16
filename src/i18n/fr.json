@@ -499,6 +499,18 @@
       "icebreakers": "Session brise-glace",
       "icebreakersTitle": "Session brise-glace",
       "icebreakersDescription": "Brise-glaces rapides pour aider l'équipe à se connecter."
+      },
+    "settings": {
+      "sectionTitle": "Paramètres jeux & collaboration",
+      "sectionDescription": "Contrôlez qui peut rejoindre, discuter et comment les jeux démarrent pour cet événement.",
+      "allowGuestsLabel": "Autoriser les participants invités",
+      "allowGuestsHelp": "Les invités peuvent rejoindre avec un simple pseudo (sans compte).",
+      "allowChatLabel": "Activer le chat pour cet événement",
+      "allowChatHelp": "Les participants peuvent envoyer des messages dans le chat de l'événement.",
+      "autoStartGamesLabel": "Lancer automatiquement les jeux en direct",
+      "autoStartGamesHelp": "Lorsque tout le monde a rejoint, démarrez automatiquement les jeux en direct.",
+      "maxRoundsLabel": "Tours maximum par jeu en direct",
+      "maxRoundsHelp": "Recommandé : 3 à 5 tours pour la plupart des équipes."
     },
     "gameType": "Jeu",
     "gameTypeUnknown": "Non configuré",
@@ -508,6 +520,44 @@
       "paused": "En pause",
       "completed": "Terminé",
       "cancelled": "Annulé"
+    },
+    "lifecycle": {
+      "draftNext": "Configurez et invitez, puis démarrez quand vous êtes prêt.",
+      "activeNext": "En cours — ouvrez le salon pour jouer et discuter.",
+      "completedNext": "Cet événement est terminé — consultez le récapitulatif et les résultats.",
+      "startEvent": "Démarrer l’événement",
+      "enterLobby": "Entrer dans le salon",
+      "viewRecap": "Voir le récapitulatif",
+      "startedToast": "Événement démarré",
+      "startFailed": "Impossible de démarrer l’événement. Veuillez réessayer.",
+      "draftBannerTitle": "Votre facilitateur n’a pas encore démarré",
+      "draftBannerBody": "Vous pouvez quand même rejoindre le salon, discuter et vous préparer en attendant."
+    },
+    "steps": {
+      "profile": "1. Profil",
+      "join": "2. Rejoindre",
+      "play": "3. Entrer dans le jeu"
+    },
+    "returning": {
+      "welcomeBack": "Bon retour, {{name}} — vous pouvez reprendre le jeu.",
+      "jumpIntoGame": "Reprendre le jeu"
+    },
+    "guidance": {
+      "nextTitle": "Que se passe-t-il ensuite ?",
+      "step1": "1) Attendez que tout le monde rejoigne ({{count}} déjà inscrits).",
+      "step2": "2) Votre hôte démarrera l’activité.",
+      "step3": "3) Vous verrez automatiquement le jeu au démarrage.",
+      "hostPinHint": "Astuce hôte : épinglez un message avec les consignes clés pour que tout le monde le voie."
+    },
+    "emptyParticipants": {
+      "title": "Vous êtes le premier ici",
+      "body": "Partagez le lien ci-dessous pour inviter votre équipe, puis revenez ici pour démarrer ensemble."
+    },
+    "errors": {
+      "full": "Cet événement est complet. Demandez à votre hôte d’augmenter la limite si possible.",
+      "notActive": "Cet événement n’est pas encore actif — votre hôte doit le démarrer.",
+      "guestsNotAllowed": "Cet événement est réservé aux membres. Connectez-vous ou demandez l’accès à votre hôte.",
+      "notMember": "Vous n’êtes pas membre de cet espace de travail pour cet événement."
     }
   },
   "profileSetup": {
@@ -523,7 +573,10 @@
     "appearInGame": "C'est ainsi que vous apparaîtrez dans le jeu",
     "saved": "Enregistré !",
     "editProfile": "Modifier votre profil",
-    "back": "Retour"
+    "back": "Retour",
+    "errors": {
+      "nameTooShort": "Le nom doit contenir au moins {{min}} caractères"
+    }
   },
   "games": {
     "title": "Activités",
@@ -579,6 +632,13 @@
       "showingFiltered": "{{count}} sur {{total}} activités",
       "noResults": "Aucune activité ne correspond à vos filtres",
       "noResultsHint": "Essayez d'ajuster vos filtres ou votre recherche"
+    },
+    "actions": {
+      "start": "Démarrer",
+      "resume": "Reprendre"
+    },
+    "toasts": {
+      "launching": "Nous lançons {{gameName}} pour cet événement. Patientez — votre écran va se mettre à jour."
     },
     "detail": {
       "category": "Catégorie",
@@ -891,6 +951,31 @@
     "participation": "Participation",
     "copied": "Copié !",
     "copy": "Copier"
+  },
+  "strategic": {
+    "label": "Défi d'évasion stratégique",
+    "phases": {
+      "setup": "Configuration",
+      "rolesAssignment": "Rôles & e-mails",
+      "discussion": "Discussion",
+      "debrief": "Débrief"
+    },
+    "meta": {
+      "hostLabel": "Facilitateur : {{name}}",
+      "phaseLabel": "Phase : {{phase}}"
+    },
+    "howItWorks": {
+      "label": "Comment ça marche",
+      "point1": "Tout le monde reçoit un rôle secret.",
+      "point2": "Vous recevrez un e-mail + une carte dans l’app avec les consignes.",
+      "point3": "Nous ferons un débrief à la fin."
+    },
+    "phaseIntro": {
+      "setup": "Pour l’instant, le facilitateur configure le scénario.",
+      "rolesAssignment": "Pour l’instant, les rôles secrets sont attribués — vérifiez votre boîte mail.",
+      "discussion": "Pour l’instant, partagez des perspectives et décisions dans le temps.",
+      "debrief": "Pour l’instant, transformez les enseignements en actions concrètes."
+    }
   },
   "activities": {
     "twoTruths": {

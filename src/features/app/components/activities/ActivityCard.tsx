@@ -24,6 +24,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
   const description = activity.i18nKey ? t(`${activity.i18nKey}.description`, { defaultValue: activity.description }) : activity.description;
   const duration = activity.i18nKey ? t(`${activity.i18nKey}.duration`, { defaultValue: activity.duration }) : activity.duration;
   const teamSize = activity.i18nKey ? t(`${activity.i18nKey}.teamSize`, { defaultValue: activity.teamSize }) : activity.teamSize;
+  const difficultyLabel = t(`games.filters.${activity.difficulty}`, { defaultValue: activity.difficulty });
 
   return (
     <button
@@ -54,6 +55,12 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                 activity.type === 'sync' ? 'border-primary/20 text-primary bg-primary/5' : 'border-success/20 text-success bg-success/5'
               )}>
                 {activity.type === 'sync' ? <><Radio className="h-2 w-2" /> {t('common.live')}</> : <><Clock className="h-2 w-2" /> {t('common.async')}</>}
+              </Badge>
+              <Badge
+                variant="outline"
+                className="text-[9px] border h-[18px] px-1.5 font-medium rounded-md bg-muted/40 text-muted-foreground border-border/60"
+              >
+                {difficultyLabel}
               </Badge>
             </div>
           </div>

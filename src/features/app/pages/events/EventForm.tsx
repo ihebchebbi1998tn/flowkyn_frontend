@@ -32,6 +32,10 @@ export default function EventForm() {
     start_time: '',
     end_time: '',
     organization_id: '',
+    allow_guests: true,
+    allow_chat: true,
+    auto_start_games: false,
+    max_rounds: 5,
   });
 
   const [orgIdError, setOrgIdError] = useState('');
@@ -106,6 +110,10 @@ export default function EventForm() {
         start_time: existingEvent.start_time ? new Date(existingEvent.start_time).toISOString().slice(0, 16) : '',
         end_time: existingEvent.end_time ? new Date(existingEvent.end_time).toISOString().slice(0, 16) : '',
         organization_id: existingEvent.organization_id || '',
+        allow_guests: existingEvent.allow_guests ?? true,
+        allow_chat: existingEvent.allow_chat ?? true,
+        auto_start_games: existingEvent.auto_start_games ?? false,
+        max_rounds: existingEvent.max_rounds ?? 5,
       });
     }
   }, [existingEvent, isEditing]);
@@ -128,35 +136,9 @@ export default function EventForm() {
             .filter((i: any) => i.status !== 'accepted')
             .map((i: any) => ({ email: i.email, status: 'invited' })),
         ];
-        // Also include any onboarding invite emails we persisted locally during onboarding,
-        // in case some invitations failed or have not yet propagated.
-        let localOnboardingEmails: string[] = [];
-        try {
-          const raw = localStorage.getItem(`onboarding_team_invites_${orgId}`);
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) {
-              localOnboardingEmails = parsed
-                .map((e: any) => (typeof e === 'string' ? e.trim().toLowerCase() : null))
-                .filter(Boolean);
-            }
-          }
-        } catch {
-          // Ignore localStorage parse errors
-        }
-
-        const localInvites = localOnboardingEmails
-          .filter(
-            (email) =>
-              !all.some((item) => item.email && item.email.toLowerCase() === email)
-          )
-          .map((email) => ({ email, status: 'invited' as const }));
-
-        const combined = [...all, ...localInvites];
-
         // Deduplicate emails
         const uniqueTeamMembers = Array.from(
-          new Map(combined.map((item) => [item.email, item])).values()
+          new Map(all.map((item) => [item.email, item])).values()
         );
         setTeamMembers(uniqueTeamMembers);
 
@@ -290,15 +272,107 @@ export default function EventForm() {
               value={form.max_participants} onChange={e => setForm(f => ({ ...f, max_participants: Number(e.target.value) }))} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="space-y-1.5">
+          <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.startTime')}</Label>
               <Input type="datetime-local" className="h-10 text-[13px]"
                 value={form.start_time} onChange={e => setForm(f => ({ ...f, start_time: e.target.value }))} />
             </div>
-            <div className="space-y-1.5">
+          <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.endTime')}</Label>
               <Input type="datetime-local" className="h-10 text-[13px]"
                 value={form.end_time} onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} />
+            </div>
+          </div>
+
+          <div className="space-y-2 pt-1 border-t border-border/60">
+            <div>
+              <Label className="text-[13px] font-semibold">
+                {t('events.settings.sectionTitle', 'Games & collaboration settings')}
+              </Label>
+              <p className="text-[11px] text-muted-foreground">
+                {t(
+                  'events.settings.sectionDescription',
+                  'Control who can join, chat, and how games start in this event.'
+                )}
+              </p>
+            </div>
+            <div className="space-y-1.5">
+              <label className="flex items-start gap-2 text-[13px]">
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={form.allow_guests}
+                  onChange={e => setForm(f => ({ ...f, allow_guests: e.target.checked }))}
+                />
+                <span>
+                  <span className="font-medium block">
+                    {t('events.settings.allowGuestsLabel', 'Allow guest participants')}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {t(
+                      'events.settings.allowGuestsHelp',
+                      'Guests can join with just a nickname (no account required).'
+                    )}
+                  </span>
+                </span>
+              </label>
+              <label className="flex items-start gap-2 text-[13px]">
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={form.allow_chat}
+                  onChange={e => setForm(f => ({ ...f, allow_chat: e.target.checked }))}
+                />
+                <span>
+                  <span className="font-medium block">
+                    {t('events.settings.allowChatLabel', 'Enable chat for this event')}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {t(
+                      'events.settings.allowChatHelp',
+                      'Participants can send messages in the event chat.'
+                    )}
+                  </span>
+                </span>
+              </label>
+              <label className="flex items-start gap-2 text-[13px]">
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={form.auto_start_games}
+                  onChange={e => setForm(f => ({ ...f, auto_start_games: e.target.checked }))}
+                />
+                <span>
+                  <span className="font-medium block">
+                    {t('events.settings.autoStartGamesLabel', 'Auto-start live games')}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {t(
+                      'events.settings.autoStartGamesHelp',
+                      'When everyone has joined, start live games automatically.'
+                    )}
+                  </span>
+                </span>
+              </label>
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-[13px]">
+                  {t('events.settings.maxRoundsLabel', 'Max rounds per live game')}
+                </Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={20}
+                  className="h-9 text-[13px] max-w-[140px]"
+                  value={form.max_rounds}
+                  onChange={e => setForm(f => ({ ...f, max_rounds: Number(e.target.value) || 1 }))}
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  {t(
+                    'events.settings.maxRoundsHelp',
+                    'Recommended: 3–5 rounds for most teams.'
+                  )}
+                </p>
+              </div>
             </div>
           </div>
           <div className="space-y-1.5">

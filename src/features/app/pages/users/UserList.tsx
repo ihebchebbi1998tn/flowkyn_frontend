@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageShell, PageHeader, ChartCard, EmptyState } from '@/features/app/components/dashboard';
 import { TableSkeleton } from '@/components/loading/Skeletons';
 import { Users } from 'lucide-react';
-import { useOrgMembers } from '@/hooks/queries/useOrgQueries';
+import { useOrgPeople } from '@/hooks/queries/useOrgQueries';
 import { useAuth } from '@/features/app/context/AuthContext';
 import type { User } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
@@ -14,12 +14,12 @@ import { formatDistanceToNow } from 'date-fns';
 export default function UserList() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
-  // Fetch org members instead of all users — scoped to the user's organization
-  const { data, isLoading } = useOrgMembers(page, 20);
+  // Fetch org people (active members + pending invitations) — scoped to the user's organization
+  const { data, isLoading } = useOrgPeople(user?.organization_id || '');
 
-  const members = data?.data ?? [];
+  const members = data?.members ?? [];
 
   const columns: Column<any>[] = [
     {

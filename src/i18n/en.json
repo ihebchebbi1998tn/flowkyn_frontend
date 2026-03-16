@@ -469,12 +469,62 @@
     },
     "gameType": "Game",
     "gameTypeUnknown": "Not configured",
+    "settings": {
+      "sectionTitle": "Games & collaboration settings",
+      "sectionDescription": "Control who can join, chat, and how games start in this event.",
+      "allowGuestsLabel": "Allow guest participants",
+      "allowGuestsHelp": "Guests can join with just a nickname (no account required).",
+      "allowChatLabel": "Enable chat for this event",
+      "allowChatHelp": "Participants can send messages in the event chat.",
+      "autoStartGamesLabel": "Auto-start live games",
+      "autoStartGamesHelp": "When everyone has joined, start live games automatically.",
+      "maxRoundsLabel": "Max rounds per live game",
+      "maxRoundsHelp": "Recommended: 3–5 rounds for most teams."
+    },
     "status": {
       "draft": "Draft",
       "active": "Active",
       "paused": "Paused",
       "completed": "Completed",
       "cancelled": "Cancelled"
+    },
+    "lifecycle": {
+      "draftNext": "Configure & invite, then start when you’re ready.",
+      "activeNext": "In progress — open the lobby to play and chat.",
+      "completedNext": "This event is complete — view recap and results.",
+      "startEvent": "Start event",
+      "enterLobby": "Enter lobby",
+      "viewRecap": "View recap",
+      "startedToast": "Event started",
+      "startFailed": "Failed to start event. Please try again.",
+      "draftBannerTitle": "Your facilitator hasn’t started yet",
+      "draftBannerBody": "You can still join the lobby, chat, and get ready while you wait."
+    },
+    "steps": {
+      "profile": "1. Set profile",
+      "join": "2. Join event",
+      "play": "3. Enter game"
+    },
+    "returning": {
+      "welcomeBack": "Welcome back, {{name}} — you can jump into the game.",
+      "jumpIntoGame": "Jump into game"
+    },
+    "guidance": {
+      "nextTitle": "What happens next",
+      "step1": "1) Wait for everyone to join ({{count}} joined so far).",
+      "step2": "2) Your host will start the activity.",
+      "step3": "3) You’ll automatically see the game when it starts.",
+      "hostPinHint": "Host tip: pin a message with key instructions so everyone sees it."
+    },
+    "emptyParticipants": {
+      "title": "You’re the first one here",
+      "body": "Share the link below to invite your team, then come back here to start together."
+    },
+    "errors": {
+      "full": "This event is full. Ask your host if they can increase the limit.",
+      "notActive": "This event isn’t active yet — your host needs to start it.",
+      "guestsNotAllowed": "This event is for members only. Please sign in or ask your host for access.",
+      "notMember": "You’re not a member of this workspace for this event."
     }
   },
   "profileSetup": {
@@ -490,7 +540,10 @@
     "appearInGame": "This is how you'll appear in the game",
     "saved": "Saved!",
     "editProfile": "Edit Your Profile",
-    "back": "Back"
+    "back": "Back",
+    "errors": {
+      "nameTooShort": "Name must be at least {{min}} characters"
+    }
   },
   "games": {
     "title": "Activities",
@@ -546,6 +599,13 @@
       "showingFiltered": "{{count}} of {{total}} activities",
       "noResults": "No activities match your filters",
       "noResultsHint": "Try adjusting your filters or search term"
+    },
+    "actions": {
+      "start": "Start",
+      "resume": "Resume"
+    },
+    "toasts": {
+      "launching": "We’re launching {{gameName}} for this event. Hang tight — your screen will update in a moment."
     },
     "detail": {
       "category": "Category",
@@ -610,6 +670,22 @@
       "rolesAssignment": "Roles & emails",
       "discussion": "Discussion",
       "debrief": "Debrief"
+    },
+    "meta": {
+      "hostLabel": "Facilitator: {{name}}",
+      "phaseLabel": "Phase: {{phase}}"
+    },
+    "howItWorks": {
+      "label": "How this works",
+      "point1": "Everyone gets a secret role.",
+      "point2": "You’ll get an email + in‑app card with instructions.",
+      "point3": "We’ll debrief what we learned at the end."
+    },
+    "phaseIntro": {
+      "setup": "Right now, the facilitator is configuring the scenario.",
+      "rolesAssignment": "Right now, secret roles are being assigned — check your inbox.",
+      "discussion": "Right now, share perspectives and decisions over time.",
+      "debrief": "Right now, turn insights into concrete changes."
     },
     "configure": {
       "title": "Customize your scenario",

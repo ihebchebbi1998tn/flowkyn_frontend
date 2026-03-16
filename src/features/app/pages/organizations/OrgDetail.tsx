@@ -14,7 +14,7 @@ import { PageShell, PageHeader, DashStat, ChartCard } from '@/features/app/compo
 import { TableSkeleton, StatCardSkeleton } from '@/components/loading/Skeletons';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useMyOrganization, useOrgMembers, useInviteOrgMember, useRemoveOrgMember, useUploadOrgLogo } from '@/hooks/queries';
+import { useMyOrganization, useOrgPeople, useInviteOrgMember, useRemoveOrgMember, useUploadOrgLogo } from '@/hooks/queries';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import type { OrgMember } from '@/types';
 import { useApiError } from '@/hooks/useApiError';
@@ -37,13 +37,15 @@ export default function OrgDetail() {
 
   const { data: org, isLoading: orgLoading } = useMyOrganization();
   const orgId = org?.id || '';
-  const { data: members, isLoading: membersLoading } = useOrgMembers(orgId);
+  const { data: people, isLoading: membersLoading } = useOrgPeople(orgId);
   const inviteMember = useInviteOrgMember();
   const removeMember = useRemoveOrgMember();
   const uploadLogo = useUploadOrgLogo();
 
   const isLoading = orgLoading || membersLoading;
-  const membersList = members || [];
+  const members = people?.members || [];
+  const invitations = people?.invitations || [];
+  const membersList = members;
   const owner = membersList.find(m => m.role_name === 'owner');
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,47 +73,97 @@ export default function OrgDetail() {
     });
   };
 
-  const columns: Column<OrgMember>[] = [
+  const columns: Column<OrgMember | { email: string; status: string; created_at?: string; id?: string }> = [
     {
       key: 'name', header: t('organizations.name'), sortable: true,
-      render: (m) => (
-        <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-primary/10 text-primary text-label-xs font-semibold">
-              {m.name.split(' ').map(n => n[0]).join('')}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="font-medium text-body-sm text-foreground truncate">{m.name}</p>
-            <p className="text-caption text-muted-foreground truncate">{m.email}</p>
+      render: (row) => {
+        const member = row as OrgMember;
+        const isMember = !!member.name;
+        const displayName = isMember ? member.name : t('organizations.invitedPending', 'Invited member');
+        const email = (row as any).email;
+
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-primary/10 text-primary text-label-xs font-semibold">
+                {isMember
+                  ? member.name.split(' ').map(n => n[0]).join('')
+                  : (email || '?').slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="font-medium text-body-sm text-foreground truncate">{displayName}</p>
+              <p className="text-caption text-muted-foreground truncate">{email}</p>
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       key: 'role_name', header: t('organizations.role'), sortable: true,
-      render: (m) => {
-        const s = roleStyle[m.role_name] || roleStyle.member;
+      render: (row) => {
+        const member = row as OrgMember;
+        const isMember = !!member.role_name;
+
+        if (!isMember) {
+          return (
+            <Badge variant="outline" className="text-label-xs border bg-amber-50 text-amber-700 border-amber-200">
+              {t('organizations.invitedPending', 'Invited (pending)')}
+            </Badge>
+          );
+        }
+
+        const s = roleStyle[member.role_name] || roleStyle.member;
         return (
           <Badge variant="outline" className={cn('text-label-xs border', s.bg, s.text, s.border)}>
-            {m.role_name === 'owner' && <Crown className="h-2.5 w-2.5 mr-1" />}
-            {m.role_name === 'admin' && <Shield className="h-2.5 w-2.5 mr-1" />}
-            {m.role_name}
+            {member.role_name === 'owner' && <Crown className="h-2.5 w-2.5 mr-1" />}
+            {member.role_name === 'admin' && <Shield className="h-2.5 w-2.5 mr-1" />}
+            {member.role_name}
           </Badge>
         );
       },
     },
     {
       key: 'joined_at', header: t('organizations.memberSince'), sortable: true, hideOnMobile: true,
-      render: (m) => <span className="text-body-sm text-muted-foreground">{new Date(m.joined_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>,
+      render: (row) => {
+        const member = row as OrgMember;
+        if (!member.joined_at) {
+          const created = (row as any).created_at;
+          if (!created) {
+            return <span className="text-body-sm text-muted-foreground">—</span>;
+          }
+          return (
+            <span className="text-body-sm text-muted-foreground">
+              {new Date(created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          );
+        }
+        return (
+          <span className="text-body-sm text-muted-foreground">
+            {new Date(member.joined_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </span>
+        );
+      },
     },
     {
       key: 'actions', header: '', hideOnMobile: true,
-      render: (m) => m.role_name !== 'owner' ? (
-        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => setRemoveTarget(m)}>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      ) : null,
+      render: (row) => {
+        const member = row as OrgMember;
+        const isMember = !!member.id;
+        if (!isMember || member.role_name === 'owner') {
+          return null;
+        }
+        return (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+            onClick={() => setRemoveTarget(member)}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        );
+      },
     },
   ];
 

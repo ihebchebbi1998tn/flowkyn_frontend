@@ -67,7 +67,15 @@ export function UserProfileSetup({
   const resolvedTitle = title ?? t('profileSetup.chooseIdentity');
   const resolvedSubtitle = subtitle ?? t('profileSetup.pickNickname');
   const resolvedSubmitLabel = submitLabel ?? t('profileSetup.continue');
-  const canSubmit = name.trim().length > 0;
+  const nameTrimmed = name.trim();
+  const MIN_NAME_LEN = 2;
+  const nameError =
+    nameTrimmed.length === 0
+      ? t('auth.errors.required')
+      : nameTrimmed.length < MIN_NAME_LEN
+        ? t('profileSetup.errors.nameTooShort', { min: MIN_NAME_LEN })
+        : null;
+  const canSubmit = !nameError;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
@@ -109,6 +117,9 @@ export function UserProfileSetup({
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             />
           </div>
+          {nameError && (
+            <p className="text-[11px] text-destructive">{nameError}</p>
+          )}
         </div>
 
         {/* Email (guests only) */}

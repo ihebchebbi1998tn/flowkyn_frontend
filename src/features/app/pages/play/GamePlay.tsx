@@ -17,6 +17,7 @@ import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useApiError } from '@/hooks/useApiError';
 import { eventsApi } from '@/features/app/api/events';
+import { gamesApi } from '@/features/app/api/games';
 import { GameBoardRouter } from './GameBoardRouter';
 import { GAME_CONFIGS } from './gameTypes';
 
@@ -599,6 +600,7 @@ function GamePlayWithoutBoundary() {
 
   // ─── Typing state ──────────────────────────────────────────────────────────
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const lastChatSentAtRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!eventsSocket.isConnected) return;
@@ -620,6 +622,13 @@ function GamePlayWithoutBoundary() {
 
   // ─── Send message via WebSocket ────────────────────────────────────────────
   const handleSendMessage = useCallback((message: string) => {
+    const now = Date.now();
+    if (lastChatSentAtRef.current && now - lastChatSentAtRef.current < 1000) {
+      console.warn('[GamePlay] Dropping chat send due to local rate limit');
+      return;
+    }
+    lastChatSentAtRef.current = now;
+
     if (eventsSocket.isConnected && eventId) {
       console.log('[GamePlay] Sending message to eventId:', eventId, 'message:', message);
       eventsSocket.emit('chat:message', { eventId, message })

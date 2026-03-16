@@ -14,6 +14,7 @@ import { ActivityCard } from '@/features/app/components/activities/ActivityCard'
 import { ActivityFilters, type ActivityFilterState } from '@/features/app/components/activities/ActivityFilters';
 import { ACTIVITIES } from '@/features/app/data/activities';
 import { useActiveSessions } from '@/hooks/queries/useAnalyticsQueries';
+import { GAME_KEY_TO_CONFIG_ID } from '@/features/app/pages/play/gameTypes';
 
 const statusStyle = (s: string) => {
   switch (s) {
@@ -71,8 +72,16 @@ export default function GameList() {
             </span>
           }>
           <div className="divide-y divide-border">
-            {liveSessionsList.map(session => (
-              <button key={session.id} onClick={() => navigate(ROUTES.PLAY(session.id) + `?game=${session.game_type_id}`)}
+            {liveSessionsList.map(session => {
+              const configId = GAME_KEY_TO_CONFIG_ID[session.game_type_key as keyof typeof GAME_KEY_TO_CONFIG_ID] || '1';
+              return (
+              <button
+                key={session.id}
+                onClick={() =>
+                  navigate(
+                    ROUTES.PLAY(session.event_id) + `?game=${configId}`
+                  )
+                }
                 className="flex items-center justify-between gap-3 w-full px-5 py-3 hover:bg-accent/50 transition-colors group text-left">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
@@ -90,7 +99,7 @@ export default function GameList() {
                   <ChevronRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary transition-colors" />
                 </div>
               </button>
-            ))}
+            )})}
           </div>
         </ChartCard>
       )}

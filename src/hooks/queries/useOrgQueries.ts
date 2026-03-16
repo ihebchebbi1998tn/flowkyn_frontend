@@ -7,6 +7,7 @@ export const orgKeys = {
   all: ['organizations'] as const,
   detail: (id: string) => ['organizations', id] as const,
   members: (id: string) => ['organizations', id, 'members'] as const,
+  people: (id: string) => ['organizations', id, 'people'] as const,
 };
 
 export function useMyOrganization() {
@@ -28,6 +29,14 @@ export function useOrgMembers(orgId: string) {
   return useQuery({
     queryKey: orgKeys.members(orgId),
     queryFn: () => organizationsApi.listMembers(orgId),
+    enabled: !!orgId,
+  });
+}
+
+export function useOrgPeople(orgId: string) {
+  return useQuery({
+    queryKey: orgKeys.people(orgId),
+    queryFn: () => organizationsApi.listPeople(orgId),
     enabled: !!orgId,
   });
 }
@@ -71,6 +80,7 @@ export function useInviteOrgMember() {
       organizationsApi.inviteMember(orgId, email, roleId, lang),
     onSuccess: (_, { orgId }) => {
       queryClient.invalidateQueries({ queryKey: orgKeys.members(orgId) });
+      queryClient.invalidateQueries({ queryKey: orgKeys.people(orgId) });
       toast.success('Invitation sent');
     },
     onError: (err) => showError(err),
@@ -100,6 +110,7 @@ export function useRemoveOrgMember() {
       organizationsApi.removeMember(orgId, memberId),
     onSuccess: (_, { orgId }) => {
       queryClient.invalidateQueries({ queryKey: orgKeys.members(orgId) });
+      queryClient.invalidateQueries({ queryKey: orgKeys.people(orgId) });
       toast.success('Member removed');
     },
     onError: (err) => showError(err),

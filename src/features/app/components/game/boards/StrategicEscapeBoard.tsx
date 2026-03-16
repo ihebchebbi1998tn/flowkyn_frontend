@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { gamesApi } from '@/features/app/api/games';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 type StrategicPhase = 'setup' | 'roles_assignment' | 'discussion' | 'debrief';
 
@@ -76,6 +77,7 @@ export function StrategicEscapeBoard({
   const [createError, setCreateError] = useState<string | null>(null);
   const [assignError, setAssignError] = useState<string | null>(null);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [myRoleKey, setMyRoleKey] = useState<string | null>(null);
   const [roleLoading, setRoleLoading] = useState(false);
   const [swapWindowSeconds, setSwapWindowSeconds] = useState<number | null>(null);
@@ -88,9 +90,14 @@ export function StrategicEscapeBoard({
         : null;
 
   const phase: StrategicPhase = (snapshot?.phase || 'setup') as StrategicPhase;
-  const selectedIndustryLabel = snapshot?.industry || null;
-  const selectedCrisisLabel = snapshot?.crisisType || null;
-  const selectedDifficulty = (snapshot?.difficulty as 'easy' | 'medium' | 'hard' | null) || 'medium';
+  const selectedIndustryLabel =
+    (snapshot as any)?.industryLabel || (snapshot as any)?.industry || null;
+  const selectedCrisisLabel =
+    (snapshot as any)?.crisisLabel || (snapshot as any)?.crisisType || null;
+  const selectedDifficulty =
+    ((snapshot as any)?.difficultyKey ||
+      (snapshot as any)?.difficulty ||
+      'medium') as 'easy' | 'medium' | 'hard';
   const rolesAssigned = !!snapshot?.rolesAssigned;
   const discussionEndsAt = snapshot?.discussionEndsAt || null;
 
@@ -110,6 +117,11 @@ export function StrategicEscapeBoard({
   const [localIndustry, setLocalIndustry] = useState<string | null>(null);
   const [localCrisis, setLocalCrisis] = useState<string | null>(null);
   const [localDifficulty, setLocalDifficulty] = useState<'easy' | 'medium' | 'hard'>(selectedDifficulty || 'medium');
+
+  const hostParticipant = useMemo(
+    () => participants.find(p => p.isHost) || null,
+    [participants]
+  );
 
   useEffect(() => {
     if (selectedDifficulty) {
@@ -198,15 +210,24 @@ export function StrategicEscapeBoard({
             : t('strategic.difficulties.medium.label');
 
       const res = await gamesApi.createStrategicSession(eventId, {
+        industryKey: localIndustry!,
+        crisisKey: localCrisis!,
+        difficulty: localDifficulty,
         industry: industryLabel,
         crisisType: crisisLabel,
-        difficulty: localDifficulty,
+        difficultyLabel,
       });
       console.log('[StrategicEscapeBoard] createStrategicSession success', {
         sessionId: res.sessionId,
         config: res.config,
       });
       onSessionCreated(res.sessionId);
+      toast.success(
+        t('games.toasts.launching', {
+          defaultValue: 'We’re launching {{gameName}} for this event. Hang tight — your screen will update in a moment.',
+          gameName: t('activities.strategicEscape.name', 'Strategic Escape Challenge'),
+        })
+      );
     } catch (err: any) {
       console.error('[StrategicEscapeBoard] createStrategicSession error', err);
       const message =
@@ -304,6 +325,23 @@ export function StrategicEscapeBoard({
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <PhaseBadge phase={phase as GamePhase} />
+            {hostParticipant && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
+                {t('strategic.meta.hostLabel', {
+                  defaultValue: 'Facilitator: {{name}}',
+                  name: hostParticipant.name || t('strategic.rolesMeta.unknownPlayer', 'Participant'),
+                })}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
+              {t('strategic.meta.phaseLabel', {
+                defaultValue: 'Phase: {{phase}}',
+                phase:
+                  phase === 'roles_assignment'
+                    ? t('strategic.phases.rolesAssignment')
+                    : t(`strategic.phases.${phase}`),
+              })}
+            </span>
             {selectedIndustryLabel && (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
                 <span>🏢</span>
@@ -344,7 +382,39 @@ export function StrategicEscapeBoard({
               {t('strategic.modal.openLabel', 'Configure scenario')}
             </Button>
           )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 text-[11px]"
+            onClick={() => setIsHowItWorksOpen(v => !v)}
+          >
+            {t('strategic.howItWorks.label', 'How this works')}
+          </Button>
         </div>
+      </div>
+
+      {/* How it works */}
+      {isHowItWorksOpen && (
+        <div className="rounded-2xl border border-border bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground">
+          <ul className="list-disc pl-4 space-y-1">
+            <li>{t('strategic.howItWorks.point1', 'Everyone gets a secret role.')}</li>
+            <li>{t('strategic.howItWorks.point2', 'You’ll get an email + in‑app card with instructions.')}</li>
+            <li>{t('strategic.howItWorks.point3', 'We’ll debrief what we learned at the end.')}</li>
+          </ul>
+        </div>
+      )}
+
+      {/* Phase intro */}
+      <div className="rounded-2xl border border-border bg-card px-4 py-3">
+        <p className="text-[12px] font-medium text-foreground">
+          {phase === 'setup'
+            ? t('strategic.phaseIntro.setup', 'Right now, the facilitator is configuring the scenario.')
+            : phase === 'roles_assignment'
+              ? t('strategic.phaseIntro.rolesAssignment', 'Right now, secret roles are being assigned — check your inbox.')
+              : phase === 'discussion'
+                ? t('strategic.phaseIntro.discussion', 'Right now, share perspectives and decisions over time.')
+                : t('strategic.phaseIntro.debrief', 'Right now, turn insights into concrete changes.')}
+        </p>
       </div>
 
       {/* Config modal (host only, setup phase) */}

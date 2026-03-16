@@ -165,7 +165,18 @@ export default function EventLobby() {
         setHasJoined(true);
       } else {
         console.error('[EventLobby] handleJoin error', err);
-        setJoinError(err?.message || t('events.joinFailed'));
+        const code = err?.response?.data?.code || err?.code;
+        if (code === 'EVENT_FULL') {
+          setJoinError(t('events.errors.full', 'This event is full. Ask your host if they can increase the limit.'));
+        } else if (code === 'GUESTS_NOT_ALLOWED') {
+          setJoinError(t('events.errors.guestsNotAllowed', 'This event is for members only. Please sign in or ask your host for access.'));
+        } else if (code === 'NOT_A_MEMBER') {
+          setJoinError(t('events.errors.notMember', "You’re not a member of this workspace for this event."));
+        } else if (code === 'SESSION_NOT_ACTIVE') {
+          setJoinError(t('events.errors.notActive', 'This event isn’t active yet — your host needs to start it.'));
+        } else {
+          setJoinError(err?.response?.data?.message || err?.message || t('events.joinFailed'));
+        }
       }
     } finally {
       setIsJoining(false);
@@ -211,6 +222,7 @@ export default function EventLobby() {
   // Chat state: initial history from API + live messages from WebSocket
   const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const lastChatSentAtRef = useRef<number | null>(null);
   const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
 
   const rawMessages = (messagesData as any)?.data || [];
@@ -414,7 +426,7 @@ export default function EventLobby() {
       const name = data.senderName || 'Player';
       const isOwn = idCurrent?.isGuest
         ? data.participantId === idCurrent.participantId
-        : !!(data.userId && idCurrent?.participantId && data.userId === usr?.id);
+        : !!(data.userId && data.userId === usr?.id);
 
       const msg: ChatMessage = {
         id: data.id || `ws-${crypto.randomUUID()}`,
@@ -491,6 +503,13 @@ export default function EventLobby() {
   const handleSendMessage = useCallback((message: string) => {
     if (!id) return;
 
+    const now = Date.now();
+    if (lastChatSentAtRef.current && now - lastChatSentAtRef.current < 1000) {
+      console.warn('[EventLobby] Dropping chat send due to local rate limit');
+      return;
+    }
+    lastChatSentAtRef.current = now;
+
     // Optimistically refresh HTTP messages after server acks the socket emit,
     // so users see their message even if they joined the room slightly late.
     if (eventsSocket.isConnected) {
@@ -559,11 +578,39 @@ export default function EventLobby() {
         <CountdownOverlay active={showCountdown} onComplete={handleCountdownComplete} />
         <div className="min-h-[80vh] flex items-center justify-center animate-fade-in">
           <div className="w-full max-w-2xl space-y-6">
+            {/* Step chips */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className={cn("text-[10px] border px-2 py-1", showProfileForm ? "bg-primary/5 text-primary border-primary/20" : "bg-muted/30 text-muted-foreground border-border/60")}>
+                {t('events.steps.profile', '1. Set profile')}
+              </Badge>
+              <Badge variant="outline" className={cn("text-[10px] border px-2 py-1", !showProfileForm && !hasJoined ? "bg-primary/5 text-primary border-primary/20" : "bg-muted/30 text-muted-foreground border-border/60")}>
+                {t('events.steps.join', '2. Join event')}
+              </Badge>
+              <Badge variant="outline" className={cn("text-[10px] border px-2 py-1", hasJoined ? "bg-primary/5 text-primary border-primary/20" : "bg-muted/30 text-muted-foreground border-border/60")}>
+                {t('events.steps.play', '3. Enter game')}
+              </Badge>
+            </div>
+
             <div className="relative rounded-2xl border border-border bg-card overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-primary/3" />
               <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
 
               <div className="relative p-6 sm:p-8 space-y-6">
+                {/* Draft banner */}
+                {event.status === 'draft' && (
+                  <div className="flex items-start gap-3 p-3 rounded-xl border border-border bg-muted/40">
+                    <Clock className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-[12px] font-semibold text-foreground">
+                        {t('events.lifecycle.draftBannerTitle', "Your facilitator hasn’t started yet")}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {t('events.lifecycle.draftBannerBody', 'You can still join the lobby, chat, and get ready while you wait.')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Error Banner */}
                 {joinError && (
                   <div className="flex items-start gap-3 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
@@ -694,6 +741,16 @@ export default function EventLobby() {
                 {/* Participants */}
                 <div className="space-y-3">
                   <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('events.waitingToStart')}</h3>
+                  {participants.length === 0 && (
+                    <div className="rounded-xl border border-border bg-muted/30 px-4 py-3">
+                      <p className="text-[12px] font-semibold text-foreground">
+                        {t('events.emptyParticipants.title', "You’re the first one here")}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {t('events.emptyParticipants.body', 'Share the link below to invite your team, then come back here to start together.')}
+                      </p>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 flex-wrap">
                     {participants.map((p: any) => (
                       <div key={p.id} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-background/50">
@@ -735,6 +792,27 @@ export default function EventLobby() {
 
                 {/* Live chat in lobby */}
                 <div className="pt-2">
+                  {/* Guidance card */}
+                  <div className="mb-3 rounded-2xl border border-border bg-card px-4 py-3">
+                    <p className="text-[12px] font-semibold text-foreground">
+                      {t('events.guidance.nextTitle', 'What happens next')}
+                    </p>
+                    <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground">
+                      <li>
+                        {t('events.guidance.step1', {
+                          defaultValue: '1) Wait for everyone to join ({{count}} joined so far).',
+                          count: participants.length,
+                        })}
+                      </li>
+                      <li>{t('events.guidance.step2', '2) Your host will start the activity.')}</li>
+                      <li>{t('events.guidance.step3', '3) You’ll automatically see the game when it starts.')}</li>
+                    </ul>
+                    {isHostSelf && (
+                      <p className="mt-2 text-[11px] text-muted-foreground">
+                        {t('events.guidance.hostPinHint', 'Host tip: pin a message with key instructions so everyone sees it.')}
+                      </p>
+                    )}
+                  </div>
                   <EventChat
                     eventId={id || ''}
                     messages={allMessages}
@@ -778,9 +856,19 @@ export default function EventLobby() {
                       {isAuthenticated ? t('events.joinEvent') : t('events.guestJoin')}
                     </Button>
                   ) : (
-                    <Button className="flex-1 h-12 gap-2 text-sm" onClick={() => setShowCountdown(true)}>
-                      <ArrowRight className="h-4 w-4" /> {t('events.enterGame')}
-                    </Button>
+                    <div className="flex-1 space-y-2">
+                      {identity.participantId && profile && (
+                        <div className="rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
+                          {t('events.returning.welcomeBack', {
+                            defaultValue: 'Welcome back, {{name}} — you can jump into the game.',
+                            name: profile.displayName,
+                          })}
+                        </div>
+                      )}
+                      <Button className="w-full h-12 gap-2 text-sm" onClick={() => setShowCountdown(true)}>
+                        <ArrowRight className="h-4 w-4" /> {t('events.returning.jumpIntoGame', t('events.enterGame'))}
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>

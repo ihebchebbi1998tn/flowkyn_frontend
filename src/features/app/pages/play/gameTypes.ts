@@ -29,3 +29,10 @@ export const GAME_CONFIGS: Record<string, {
   },
 };
 
+export const GAME_KEY_TO_CONFIG_ID: Record<GameTypeKey, string> = {
+  [GAME_TYPES.TWO_TRUTHS]: '1',
+  [GAME_TYPES.COFFEE_ROULETTE]: '2',
+  [GAME_TYPES.WINS_OF_WEEK]: '3',
+  [GAME_TYPES.STRATEGIC_ESCAPE]: '4',
+};
+
