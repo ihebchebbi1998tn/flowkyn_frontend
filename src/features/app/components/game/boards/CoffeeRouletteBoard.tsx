@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Coffee, Shuffle, MessageCircle, Clock, Users,
@@ -53,6 +53,9 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     return 30 * 60;
   });
   const [showCountdown, setShowCountdown] = useState(false);
+  // Capture elapsed chat time so the 'complete' phase shows the correct value
+  // instead of resetting to 0 when chatSecondsRemaining resets.
+  const capturedElapsedRef = useRef(0);
 
   const startMatching = () => {
     console.log('[CoffeeRouletteBoard] startMatching', {
@@ -79,7 +82,11 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
 
   useEffect(() => {
     if (phase !== 'chatting' || !chatEndsAt) {
-      if (phase !== 'chatting') setChatSecondsRemaining(30 * 60);
+      // When leaving chatting phase, capture the elapsed time before resetting
+      if (phase !== 'chatting') {
+        capturedElapsedRef.current = Math.floor((30 * 60 - chatSecondsRemaining) / 60);
+        setChatSecondsRemaining(30 * 60);
+      }
       return;
     }
 
@@ -96,11 +103,14 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     }, 1000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, chatEndsAt]);
 
   const displayMinutes = Math.floor(chatSecondsRemaining / 60);
   const displaySeconds = chatSecondsRemaining % 60;
-  const chatMinutesElapsed = Math.floor((30 * 60 - chatSecondsRemaining) / 60);
+  const chatMinutesElapsed = phase === 'complete'
+    ? (capturedElapsedRef.current || Math.floor((30 * 60 - chatSecondsRemaining) / 60))
+    : Math.floor((30 * 60 - chatSecondsRemaining) / 60);
 
   return (
     <div className="space-y-4">
@@ -245,20 +255,20 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               </div>
               <div>
                 <p className="text-[11px] font-semibold text-info uppercase tracking-wider mb-1">{t('gamePlay.coffeeRoulette.conversationStarter')}</p>
-                <p className="text-[14px] text-foreground font-medium leading-relaxed">"{myPair?.topic || pairs[0]?.topic}"</p>
+                <p className="text-[14px] text-foreground font-medium leading-relaxed">"{myPair?.topic || t('gamePlay.coffeeRoulette.defaultTopic', "What's the most interesting thing you've learned recently?")}"</p>
               </div>
             </div>
           </div>
 
           <div className="flex justify-center pt-2">
-            <Button variant="brand" onClick={startChatting} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
+          <Button variant="brand" onClick={startChatting} disabled={!myPair} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
               <MessageCircle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.startChatting')}
             </Button>
           </div>
         </div>
       )}
 
-      {/* CHATTING — Active session */}
+      {/* CHATTING — Active session (paired user) */}
       {phase === 'chatting' && myPair && (
         <div className="space-y-4">
           <div className="rounded-2xl border border-border bg-card overflow-hidden">
@@ -312,6 +322,36 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
         </div>
       )}
 
+      {/* CHATTING — Unpaired spectator (odd participant count) */}
+      {phase === 'chatting' && !myPair && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <div className="relative p-8 sm:p-10 text-center">
+            <div className="absolute inset-0 bg-gradient-to-b from-info/5 to-transparent" />
+            <div className="relative">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-info/10 mx-auto mb-4 ring-4 ring-info/5">
+                <Users className="h-8 w-8 text-info" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">
+                {t('gamePlay.coffeeRoulette.spectatorTitle', 'Sit tight!')}
+              </h3>
+              <p className="text-[13px] text-muted-foreground max-w-sm mx-auto mb-4">
+                {t('gamePlay.coffeeRoulette.spectatorMessage', 'There was an odd number of participants this round, so you are spectating. You will be matched in the next shuffle!')}
+              </p>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <span className="text-[20px] font-bold text-foreground tabular-nums">
+                  {String(displayMinutes).padStart(2, '0')}:{String(displaySeconds).padStart(2, '0')}
+                </span>
+                <span className="text-[12px] text-muted-foreground">/ 30:00 remaining</span>
+              </div>
+              <Button onClick={endSession} variant="outline" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+                <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* COMPLETE */}
       {phase === 'complete' && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden animate-fade-in">
@@ -332,7 +372,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               </div>
               <div className="flex items-center justify-center gap-3">
                 <Button variant="outline" size="lg" className="h-11 text-[13px] gap-2 rounded-xl"
-                  onClick={() => { onEmitAction('coffee:reset', {}); setChatSecondsRemaining(30 * 60); }}>
+                  onClick={() => { onEmitAction('coffee:reset', {}); setChatSecondsRemaining(30 * 60); capturedElapsedRef.current = 0; }}>
                   <Shuffle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.newPairing')}
                 </Button>
                 <Button variant="brand" size="lg" className="h-11 text-[13px] gap-2">

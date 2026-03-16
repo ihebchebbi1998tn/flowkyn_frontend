@@ -178,11 +178,6 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
                 </Avatar>
               </motion.div>
 
-              {i === 0 && (
-                <Badge className="text-[9px] bg-info/15 text-info border-info/25 shrink-0">
-                  {t('gamePlay.coffeeRoulette.you')}
-                </Badge>
-              )}
             </motion.div>
           ))}
         </div>

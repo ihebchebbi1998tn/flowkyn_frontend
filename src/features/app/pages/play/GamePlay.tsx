@@ -450,25 +450,6 @@ function GamePlayWithoutBoundary() {
 
 
 
-  // Re-join the session robustly when connected
-  useEffect(() => {
-    if (gamesSocket.isConnected && sessionId) {
-      gamesSocket.emit<any>('game:join', { sessionId })
-        .then((resp: any) => {
-          const data = resp?.data || resp;
-          if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
-          if (data?.snapshot) {
-            setInitialSnapshot(data.snapshot);
-            setGameData(data.snapshot);
-          }
-        })
-        .catch((err: any) => {
-          console.error('[GamePlay] Failed to join game room:', err?.message || err);
-          showError(err, 'Failed to join game room');
-        });
-    }
-  }, [gamesSocket.isConnected, sessionId, gamesSocket, showError]);
-
   useEffect(() => {
     if (!eventId) return;
     let cancelled = false;
@@ -494,26 +475,7 @@ function GamePlayWithoutBoundary() {
     return () => { cancelled = true; };
   }, [eventId, config.gameTypeKey]);
 
-  // Join the games namespace room once we have a session and socket is connected
-  useEffect(() => {
-    if (!sessionId || !gamesSocket.isConnected) return;
-    gamesSocket.emit<any>('game:join', { sessionId })
-      .then((resp: any) => {
-        // resp may be ack.data or full ack depending on socket wrapper
-        const data = resp?.data || resp;
-        if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
-        if (data?.snapshot) {
-          setInitialSnapshot(data.snapshot);
-          setGameData(data.snapshot);
-        }
-        // Ask for latest state snapshot too (in case join ack didn't include it)
-        gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
-      })
-      .catch(err => {
-        console.error('[GamePlay] Failed to join game session room:', err.message);
-        showError(err, 'Failed to join game session');
-      });
-  }, [sessionId, gamesSocket.isConnected, showError]);
+
 
   // Listen for game snapshots pushed by server
   useEffect(() => {

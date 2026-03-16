@@ -92,7 +92,7 @@ export function GameBoardRouter({
       if (!sid && eventId) {
         try {
           const types = await gamesApi.listTypes();
-          const typeRow = (types as any[]).find((t: any) => t.key === config.gameTypeKey);
+          const typeRow = (types as any[]).find((gt: any) => gt.key === config.gameTypeKey);
           if (!typeRow) {
             console.error('[GamePlay] Unknown game type key:', config.gameTypeKey);
             return;
