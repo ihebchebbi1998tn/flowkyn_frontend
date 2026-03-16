@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Users, Clock, Timer, Copy, Share2,
@@ -55,13 +55,15 @@ export function GamePlayShell({
   const [elapsed, setElapsed] = useState(0);
   const [copied, setCopied] = useState(false);
   const [showLink, setShowLink] = useState(false);
+  const [searchParams] = useSearchParams();
+  const gameId = searchParams.get('game');
   const [mobileSheet, setMobileSheet] = useState<MobileTab | null>(null);
   const copyLinkTimeoutRef = useRef<NodeJS.Timeout>();
 
   const joinedCount = participants.filter(p => p.status === 'joined').length;
   const pendingCount = participants.filter(p => p.status === 'pending').length;
   const totalInvited = participants.length;
-  const joinLink = `${window.location.origin}/join/${eventId}`;
+  const joinLink = `${window.location.origin}/join/${eventId}${gameId ? `?game=${gameId}` : ''}`;
   const joinPct = totalInvited > 0 ? Math.round((joinedCount / totalInvited) * 100) : 0;
 
   const isLobby = joinedCount < 2;

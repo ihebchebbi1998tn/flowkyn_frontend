@@ -11,15 +11,15 @@ import {
   Heart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 export interface CoffeeRoulettePair {
   id: string;
-  person1: { name: string; avatar: string };
-  person2: { name: string; avatar: string };
+  person1: { name: string; avatar: string; avatarUrl?: string | null };
+  person2: { name: string; avatar: string; avatarUrl?: string | null };
   topic: string;
 }
 
@@ -140,6 +140,7 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
                 className="flex items-center gap-2 flex-1 min-w-0"
               >
                 <Avatar className="h-10 w-10 ring-2 ring-info/20">
+                  {pair.person1.avatarUrl ? <AvatarImage src={pair.person1.avatarUrl} alt={pair.person1.name} className="object-cover" /> : null}
                   <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">
                     {pair.person1.avatar}
                   </AvatarFallback>
@@ -172,6 +173,7 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
                   {pair.person2.name}
                 </span>
                 <Avatar className="h-10 w-10 ring-2 ring-info/20">
+                  {pair.person2.avatarUrl ? <AvatarImage src={pair.person2.avatarUrl} alt={pair.person2.name} className="object-cover" /> : null}
                   <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">
                     {pair.person2.avatar}
                   </AvatarFallback>
@@ -239,6 +241,7 @@ export function CoffeeRouletteChattingView({
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="text-center">
               <Avatar className="h-16 w-16 ring-4 ring-info/20 mx-auto mb-2">
+                {pair.person1.avatarUrl ? <AvatarImage src={pair.person1.avatarUrl} alt={pair.person1.name} className="object-cover" /> : null}
                 <AvatarFallback className="bg-info/10 text-info text-lg font-bold">
                   {pair.person1.avatar}
                 </AvatarFallback>
@@ -251,6 +254,7 @@ export function CoffeeRouletteChattingView({
             </div>
             <div className="text-center">
               <Avatar className="h-16 w-16 ring-4 ring-info/20 mx-auto mb-2">
+                {pair.person2.avatarUrl ? <AvatarImage src={pair.person2.avatarUrl} alt={pair.person2.name} className="object-cover" /> : null}
                 <AvatarFallback className="bg-info/10 text-info text-lg font-bold">
                   {pair.person2.avatar}
                 </AvatarFallback>

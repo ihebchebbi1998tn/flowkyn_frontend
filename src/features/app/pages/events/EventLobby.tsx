@@ -211,7 +211,7 @@ export default function EventLobby() {
     }
   }, [profile, showProfileForm, hasJoined, isJoining, joinError, handleJoin]);
 
-  const joinLink = `${window.location.origin}/join/${id}`;
+  const joinLink = `${window.location.origin}/join/${id}${gameParam ? `?game=${gameParam}` : ''}`;
   const participants = (participantsData as any)?.data ?? [];
   const shouldShowYouPill =
     !!(hasJoined && profile) &&
