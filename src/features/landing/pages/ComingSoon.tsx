@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Lock, ArrowRight, ShieldCheck, Mail, Building2, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, ArrowRight, ShieldCheck, Mail, Building2, User, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -13,6 +13,7 @@ export default function ComingSoon() {
   const [email, setEmail] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
@@ -31,6 +32,7 @@ export default function ComingSoon() {
       toast.success('You are on the list', {
         description: 'We will reach out as soon as Flowkyn early access is ready.',
       });
+      setSubmitted(true);
       setFirstName('');
       setLastName('');
       setEmail('');
@@ -129,75 +131,143 @@ export default function ComingSoon() {
               </div>
             </div>
 
-            {/* Early access form */}
-            <form onSubmit={handleEarlyAccessSubmit} className="w-full space-y-3 pt-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="relative group/input">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
-                  <Input
-                    type="text"
-                    placeholder="First name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    disabled={isSubmitting}
-                    className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
-                  />
-                </div>
-                <div className="relative group/input">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
-                  <Input
-                    type="text"
-                    placeholder="Last name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    disabled={isSubmitting}
-                    className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
-                  />
-                </div>
-              </div>
+            {/* Early access form / success state */}
+            <div className="w-full pt-2">
+              <AnimatePresence mode="wait" initial={false}>
+                {!submitted ? (
+                  <motion.form
+                    key="early-access-form"
+                    onSubmit={handleEarlyAccessSubmit}
+                    className="w-full space-y-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="relative group/input">
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
+                        <Input
+                          type="text"
+                          placeholder="First name"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          disabled={isSubmitting}
+                          className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
+                        />
+                      </div>
+                      <div className="relative group/input">
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
+                        <Input
+                          type="text"
+                          placeholder="Last name"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          disabled={isSubmitting}
+                          className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
+                        />
+                      </div>
+                    </div>
 
-              <div className="relative group/input">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
-                <Input
-                  type="email"
-                  placeholder="Work email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSubmitting}
-                  className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
-                />
-              </div>
+                    <div className="relative group/input">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
+                      <Input
+                        type="email"
+                        placeholder="Work email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={isSubmitting}
+                        className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
+                      />
+                    </div>
 
-              <div className="relative group/input">
-                <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
-                <Input
-                  type="text"
-                  placeholder="Company name (optional)"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  disabled={isSubmitting}
-                  className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
-                />
-              </div>
+                    <div className="relative group/input">
+                      <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 transition-colors group-focus-within/input:text-primary z-10" />
+                      <Input
+                        type="text"
+                        placeholder="Company name (optional)"
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        disabled={isSubmitting}
+                        className="pl-10 h-10 bg-background/50 border-white/10 focus-visible:ring-primary/30 focus-visible:border-primary/50 rounded-xl text-sm"
+                      />
+                    </div>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting || !firstName || !lastName || !email}
-                className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_18px_rgba(var(--primary),0.3)] hover:shadow-[0_0_22px_rgba(var(--primary),0.5)] transition-all font-medium text-sm group/btn overflow-hidden relative mt-1"
-              >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  {isSubmitting ? 'Joining…' : 'Join early access'}
-                  {!isSubmitting && (
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  )}
-                </span>
-                <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              </Button>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !firstName || !lastName || !email}
+                      className="w-full h-11 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_18px_rgba(var(--primary),0.3)] hover:shadow-[0_0_22px_rgba(var(--primary),0.5)] transition-all font-medium text-sm group/btn overflow-hidden relative mt-1"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {isSubmitting ? 'Joining…' : 'Join early access'}
+                        {!isSubmitting && (
+                          <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                        )}
+                      </span>
+                      <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    </Button>
 
-              <p className="text-[11px] text-muted-foreground/70 mt-1">
-                No spam. Just a short note when Flowkyn is ready for your team.
-              </p>
-            </form>
+                    <p className="text-[11px] text-muted-foreground/70 mt-1">
+                      No spam. Just a short note when Flowkyn is ready for your team.
+                    </p>
+                  </motion.form>
+                ) : (
+                  <motion.div
+                    key="early-access-success"
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    className="w-full"
+                  >
+                    <div className="rounded-2xl border border-border/60 bg-background/40 p-5 sm:p-6 text-left overflow-hidden relative">
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 18 }}
+                        className="flex items-start gap-3"
+                      >
+                        <div className="h-10 w-10 rounded-xl bg-success/10 flex items-center justify-center shrink-0 ring-1 ring-success/20">
+                          <CheckCircle2 className="h-5 w-5 text-success" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[14px] font-semibold text-foreground">Request received</p>
+                          <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">
+                            We will reach out as soon as Flowkyn early access is ready.
+                          </p>
+                        </div>
+                      </motion.div>
+
+                      <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="h-10 rounded-xl text-[13px]"
+                          onClick={() => setSubmitted(false)}
+                        >
+                          Submit another email
+                        </Button>
+                        <Button
+                          type="button"
+                          className="h-10 rounded-xl text-[13px]"
+                          onClick={() => window.location.reload()}
+                        >
+                          Back to page
+                        </Button>
+                      </div>
+
+                      <motion.div
+                        aria-hidden
+                        className="absolute -right-16 -top-16 h-40 w-40 rounded-full blur-3xl opacity-40"
+                        style={{ background: 'hsl(var(--success) / 0.25)' }}
+                        animate={{ scale: [1, 1.08, 1], opacity: [0.35, 0.5, 0.35] }}
+                        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Hidden password gate for internal access */}
             {showPassword && (
