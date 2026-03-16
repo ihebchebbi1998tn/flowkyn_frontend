@@ -45,8 +45,8 @@ export default function OrgDetail() {
   const isLoading = orgLoading || membersLoading;
   const members = people?.members || [];
   const invitations = people?.invitations || [];
-  const membersList = members;
-  const owner = membersList.find(m => m.role_name === 'owner');
+  const membersList = [...members, ...invitations];
+  const owner = membersList.find(m => (m as OrgMember).role_name === 'owner');
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,7 +73,7 @@ export default function OrgDetail() {
     });
   };
 
-  const columns: Column<OrgMember | { email: string; status: string; created_at?: string; id?: string }> = [
+  const columns: Column<any>[] = [
     {
       key: 'name', header: t('organizations.name'), sortable: true,
       render: (row) => {
@@ -213,7 +213,7 @@ export default function OrgDetail() {
 
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           <DashStat label={t('organizations.totalMembers')} value={String(membersList.length)} icon={Users} />
-          <DashStat label={t('organizations.owner')} value={owner?.name || ''} icon={Crown} />
+          <DashStat label={t('organizations.owner')} value={(owner as OrgMember)?.name || ''} icon={Crown} />
           <DashStat label={t('orgDetail.currentPlan')} value={org?.plan_name || 'Free'} icon={Mail} />
         </div>
 
