@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { CheckCheck, Globe } from 'lucide-react';
+import { CheckCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -25,8 +25,9 @@ export function LanguageSelector({ className, align = 'end', onChange }: Languag
     onChange?.(langCode);
   };
 
-  const currentLang = (i18n.language || 'en').split('-')[0]; // Handle cases like 'en-US'
-  const Flag = FLAGS[currentLang] || FLAGS.en;
+  const currentLangCode = (i18n.language || 'en').split('-')[0];
+  const currentLang = LANGUAGES.find(l => l.code === currentLangCode) || LANGUAGES[0];
+  const Flag = FLAGS[currentLang.code] || FLAGS.en;
 
   if (!Flag) return null; // Safety check
 
@@ -35,14 +36,13 @@ export function LanguageSelector({ className, align = 'end', onChange }: Languag
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          size="icon" 
-          className={cn("h-9 w-9 hover:bg-muted rounded-xl group transition-all", className)}
+          className={cn("h-9 px-2.5 gap-2.5 hover:bg-muted rounded-xl group transition-all border border-transparent hover:border-border/50", className)}
         >
-          <div className="relative">
-            <Flag size={20} />
-            <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5 shadow-sm ring-1 ring-border">
-              <Globe className="h-2 w-2 text-muted-foreground" />
-            </div>
+          <div className="flex items-center gap-2">
+            <Flag size={18} />
+            <span className="text-[13px] font-semibold text-foreground/80 group-hover:text-foreground transition-colors">
+              {currentLang.label}
+            </span>
           </div>
         </Button>
       </DropdownMenuTrigger>
