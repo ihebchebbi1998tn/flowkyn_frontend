@@ -284,6 +284,34 @@
     "language": "Sprache"
   },
   "auth": {
+    "branding": {
+      "tagline": "Plattform für Team-Engagement",
+      "login": {
+        "title": "Stärken Sie Teams durch bessere Erfahrungen.",
+        "description": "Begeistern Sie Ihr Team durch interaktive Events, Spiele und Echtzeit-Analysen — alles auf einer Plattform."
+      },
+      "register": {
+        "tagline": "Kostenlos starten",
+        "title": "Treten Sie der Plattform bei, die Teams lieben.",
+        "description": "Erstellen Sie Ihr Konto und beginnen Sie in wenigen Minuten mit der Organisation ansprechender Teamaktivitäten."
+      },
+      "forgot": {
+        "tagline": "Kontowiederherstellung",
+        "title": "Passwort sicher zurücksetzen.",
+        "description": "Wir senden Ihnen einen sicheren Link, um Ihr Passwort zurückzusetzen und zu Ihrem Team zurückzukehren."
+      },
+      "reset": {
+        "tagline": "Fast fertig",
+        "title": "Neues Passwort festlegen.",
+        "description": "Wählen Sie ein starkes Passwort, um Ihr Konto sicher zu halten."
+      },
+      "features": {
+        "activities": "50+ kuratierte Team-Aktivitäten",
+        "liveAsync": "Live & asynchron für jede Zeitzone",
+        "analytics": "Engagement-Analysen & Berichte"
+      },
+      "copyright": "© 2026 Flowkyn. Alle Rechte vorbehalten."
+    },
     "login": "Anmelden",
     "register": "Registrieren",
     "email": "E-Mail",

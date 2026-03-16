@@ -1,8 +1,4 @@
-/**
- * @fileoverview Shared branding panel for auth pages — left side of split layout.
- * Animated content transitions based on current auth mode.
- */
-
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Globe, BarChart3, Sparkles } from 'lucide-react';
 import logoImg from '@/assets/logo.png';
@@ -11,37 +7,29 @@ interface AuthBrandingPanelProps {
   mode: 'login' | 'register' | 'forgot' | 'reset';
 }
 
-const content = {
-  login: {
-    badge: 'Team Engagement Platform',
-    title: <>Build stronger teams<br />with better experiences.</>,
-    subtitle: 'Engage your team through interactive events, games, and real-time analytics — all in one platform.',
-  },
-  register: {
-    badge: 'Get Started Free',
-    title: <>Join the platform that<br />teams love.</>,
-    subtitle: 'Create your account and start organizing engaging team activities in minutes.',
-  },
-  forgot: {
-    badge: 'Account Recovery',
-    title: <>Reset your password<br />securely.</>,
-    subtitle: 'We\'ll send you a secure link to reset your password and get back to your team.',
-  },
-  reset: {
-    badge: 'Almost Done',
-    title: <>Set your new<br />password.</>,
-    subtitle: 'Choose a strong password to keep your account safe and secure.',
-  },
+const featureIcons = {
+  activities: Users,
+  liveAsync: Globe,
+  analytics: BarChart3,
 };
 
-const features = [
-  { icon: Users, text: '50+ curated team activities' },
-  { icon: Globe, text: 'Live & async for every timezone' },
-  { icon: BarChart3, text: 'Engagement analytics & reports' },
-];
-
 export function AuthBrandingPanel({ mode }: AuthBrandingPanelProps) {
-  const c = content[mode];
+  const { t } = useTranslation();
+
+  const features = [
+    { icon: Users, text: t('auth.branding.features.activities') },
+    { icon: Globe, text: t('auth.branding.features.liveAsync') },
+    { icon: BarChart3, text: t('auth.branding.features.analytics') },
+  ];
+
+  // Helper to get branding data
+  const getBranding = (m: string) => ({
+    badge: t(`auth.branding.${m}.tagline`, { defaultValue: t('auth.branding.tagline') }),
+    title: t(`auth.branding.${m}.title`),
+    subtitle: t(`auth.branding.${m}.description`),
+  });
+
+  const c = getBranding(mode);
 
   return (
     <div
@@ -125,10 +113,9 @@ export function AuthBrandingPanel({ mode }: AuthBrandingPanelProps) {
           </motion.div>
         </AnimatePresence>
 
-        {/* Footer */}
         <div className="flex items-center justify-between">
           <p className="text-[12px]" style={{ color: 'hsl(var(--auth-panel-foreground) / 0.2)' }}>
-            © 2026 Flowkyn. All rights reserved.
+            {t('auth.branding.copyright')}
           </p>
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map(i => (

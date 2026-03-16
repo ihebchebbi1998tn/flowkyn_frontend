@@ -29,8 +29,6 @@ export function LanguageSelector({ className, align = 'end', onChange }: Languag
   const currentLang = LANGUAGES.find(l => l.code === currentLangCode) || LANGUAGES[0];
   const Flag = FLAGS[currentLang.code] || FLAGS.en;
 
-  if (!Flag) return null; // Safety check
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -38,11 +36,8 @@ export function LanguageSelector({ className, align = 'end', onChange }: Languag
           variant="ghost" 
           className={cn("h-9 px-2.5 gap-2.5 hover:bg-muted rounded-xl group transition-all border border-transparent hover:border-border/50", className)}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shadow-sm ring-1 ring-border/10 rounded-[2px] overflow-hidden">
             <Flag size={18} />
-            <span className="text-[13px] font-semibold text-foreground/80 group-hover:text-foreground transition-colors">
-              {currentLang.label}
-            </span>
           </div>
         </Button>
       </DropdownMenuTrigger>

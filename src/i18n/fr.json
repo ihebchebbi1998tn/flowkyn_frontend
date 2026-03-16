@@ -285,6 +285,34 @@
     "language": "Langue"
   },
   "auth": {
+    "branding": {
+      "tagline": "Plateforme d'engagement d'équipe",
+      "login": {
+        "title": "Renforcez vos équipes avec de meilleures expériences.",
+        "description": "Engagez votre équipe grâce à des événements interactifs, des jeux et des analyses en temps réel — le tout sur une seule plateforme."
+      },
+      "register": {
+        "tagline": "Commencez gratuitement",
+        "title": "Rejoignez la plateforme que les équipes adorent.",
+        "description": "Créez votre compte et commencez à organiser des activités d'équipe engageantes en quelques minutes."
+      },
+      "forgot": {
+        "tagline": "Récupération de compte",
+        "title": "Réinitialisez votre mot de passe en toute sécurité.",
+        "description": "Nous vous enverrons un lien sécurisé pour réinitialiser votre mot de passe et retrouver votre équipe."
+      },
+      "reset": {
+        "tagline": "Presque fini",
+        "title": "Définissez votre nouveau mot de passe.",
+        "description": "Choisissez un mot de passe fort pour garder votre compte en sécurité."
+      },
+      "features": {
+        "activities": "Plus de 50 activités d'équipe sélectionnées",
+        "liveAsync": "En direct & asynchrone pour tous les fuseaux horaires",
+        "analytics": "Analyses & rapports d'engagement"
+      },
+      "copyright": "© 2026 Flowkyn. Tous droits réservés."
+    },
     "login": "Connexion",
     "register": "Inscription",
     "email": "E-mail",

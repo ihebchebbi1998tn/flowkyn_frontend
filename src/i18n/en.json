@@ -285,6 +285,34 @@
     "language": "Language"
   },
   "auth": {
+    "branding": {
+      "tagline": "Team Engagement Platform",
+      "login": {
+        "title": "Build stronger teams with better experiences.",
+        "description": "Engage your team through interactive events, games, and real-time analytics — all in one platform."
+      },
+      "register": {
+        "tagline": "Get Started Free",
+        "title": "Join the platform that teams love.",
+        "description": "Create your account and start organizing engaging team activities in minutes."
+      },
+      "forgot": {
+        "tagline": "Account Recovery",
+        "title": "Reset your password securely.",
+        "description": "We'll send you a secure link to reset your password and get back to your team."
+      },
+      "reset": {
+        "tagline": "Almost Done",
+        "title": "Set your new password.",
+        "description": "Choose a strong password to keep your account safe and secure."
+      },
+      "features": {
+        "activities": "50+ curated team activities",
+        "liveAsync": "Live & async for every timezone",
+        "analytics": "Engagement analytics & reports"
+      },
+      "copyright": "© 2026 Flowkyn. All rights reserved."
+    },
     "login": "Log In",
     "register": "Sign Up",
     "email": "Email",
