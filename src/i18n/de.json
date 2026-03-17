@@ -1057,6 +1057,7 @@
       "teamSize": "4–12 Personen"
     },
     "launch": {
+      "defaultEventTitle": "{{activityName}} — Team-Event",
       "fields": {
         "endsAt": "Endet am",
         "endsAtHelp": "Nach diesem Zeitpunkt sind neue Beiträge und Reaktionen deaktiviert (nur noch lesen)."

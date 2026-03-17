@@ -1054,6 +1054,7 @@
   },
   "activities": {
     "launch": {
+      "defaultEventTitle": "{{activityName}} — activité d'équipe",
       "fields": {
         "endsAt": "Se termine le",
         "endsAtHelp": "Après cette date/heure, les nouveaux messages et réactions seront désactivés (lecture seule)."

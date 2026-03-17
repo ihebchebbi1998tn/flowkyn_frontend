@@ -1163,7 +1163,7 @@
         "nextReview": "Next: Review",
         "launchNow": "Launch now"
       },
-      "defaultEventTitle": "Team activity",
+      "defaultEventTitle": "{{activityName}} — Team Event",
       "untitledEvent": "Untitled event",
       "fields": {
         "eventTitle": "Event title",
