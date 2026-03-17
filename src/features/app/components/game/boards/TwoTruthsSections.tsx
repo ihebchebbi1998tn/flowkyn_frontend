@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RoundIndicator, PhaseTimer, PhaseBadge, type GamePhase } from '../shared';
@@ -58,14 +57,12 @@ interface WaitingSectionProps {
   onStart: () => void;
   isAdmin?: boolean;
   rounds: number;
-  onRoundsChange: (val: number) => void;
 }
 
 export function TwoTruthsWaitingSection({
   onStart,
   isAdmin,
   rounds,
-  onRoundsChange,
 }: WaitingSectionProps) {
   const { t } = useTranslation();
 
@@ -101,25 +98,19 @@ export function TwoTruthsWaitingSection({
               <div className="space-y-5">
                 <div className="flex items-center justify-between px-1">
                   <span className="text-[12px] font-medium text-muted-foreground">
-                    {t('gamePlay.twoTruths.howManyRounds', { defaultValue: 'How many rounds would you like to play?' })}
+                    {t('gamePlay.twoTruths.howManyRounds', { defaultValue: 'This activity is set to play:' })}
                   </span>
                   <Badge variant="brand" className="text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
                     {rounds} {t('common.rounds', { count: rounds })}
                   </Badge>
                 </div>
 
-                <Slider
-                  value={[rounds]}
-                  min={2}
-                  max={30}
-                  step={1}
-                  onValueChange={(val) => onRoundsChange(val[0])}
-                  className="py-1"
-                />
-
                 <p className="text-[11px] text-muted-foreground italic flex items-center justify-center gap-1.5 pt-1">
                   <Sparkles className="h-3 w-3 text-primary/60" />
-                  {t('gamePlay.twoTruths.recommendedRounds', { defaultValue: 'Tip: 4–8 rounds works great for most teams.' })}
+                  {t('gamePlay.twoTruths.recommendedRounds', { defaultValue: 'Tip: 3–5 rounds works great for most teams.' })}
+                </p>
+                <p className="text-[11px] text-muted-foreground text-left">
+                  {t('gamePlay.twoTruths.roundsFromEvent', { defaultValue: 'Rounds were configured when you created this activity.' })}
                 </p>
               </div>
             </div>

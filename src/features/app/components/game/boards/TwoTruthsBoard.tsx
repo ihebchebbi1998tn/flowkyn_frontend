@@ -71,15 +71,14 @@ export function TwoTruthsBoard({
 
   const [localStatements, setLocalStatements] = useState(['', '', '']);
   const [selectedVote, setSelectedVote] = useState<'s0' | 's1' | 's2' | null>(null);
-  const [rounds, setRounds] = useState(4);
   const voted = !!votes[currentUserId];
   const [showCountdown, setShowCountdown] = useState(false);
 
   const startGame = () => { setShowCountdown(true); };
   const handleCountdownDone = useCallback(async () => {
     setShowCountdown(false);
-    await onEmitAction('two_truths:start', { totalRounds: rounds });
-  }, [onEmitAction, rounds]);
+    await onEmitAction('two_truths:start');
+  }, [onEmitAction]);
 
   const submit = useCallback(async () => {
     if (!sessionId || !activeRoundId) return;
@@ -168,8 +167,7 @@ export function TwoTruthsBoard({
         <TwoTruthsWaitingSection 
           onStart={startGame} 
           isAdmin={isAdmin}
-          rounds={rounds}
-          onRoundsChange={setRounds}
+          rounds={totalRounds}
         />
       )}
 
@@ -240,7 +238,7 @@ export function TwoTruthsBoard({
           subtitle={t('gamePlay.results.roundsPlayed', { defaultValue: '{{count}} rounds played', count: totalRounds })}
           results={results}
           onPlayAgain={() => {
-            onEmitAction('two_truths:start', { totalRounds: rounds });
+            onEmitAction('two_truths:start');
           }}
         />
       )}
