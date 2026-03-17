@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { getSafeImageUrl } from '@/features/app/utils/assets';
 
 export interface CoffeeRoulettePair {
   id: string;
@@ -66,15 +67,12 @@ export function CoffeeRouletteWaitingView({
           <h3 className="text-xl font-bold text-foreground mb-2">
             {hasEnoughParticipants
               ? t('gamePlay.coffeeRoulette.readyToConnect')
-              : t('gamePlay.coffeeRoulette.waitingForOthers', 'Waiting for teammates...')}
+              : t('gamePlay.coffeeRoulette.waitingForOthers', { defaultValue: 'Waiting for teammates...' })}
           </h3>
           <p className="text-[13px] text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
             {hasEnoughParticipants
               ? t('gamePlay.coffeeRoulette.description')
-              : t(
-                  'gamePlay.coffeeRoulette.needMoreParticipants',
-                  'We need at least 2 people to start this connection session. Share the invite link to get started as a team!',
-                )}
+              : t('gamePlay.coffeeRoulette.needMoreParticipants', { defaultValue: 'We need at least 2 people to start this connection session. Share the invite link to get started as a team!' })}
           </p>
           <div className="flex items-center justify-center gap-4 mb-8 text-[12px] text-muted-foreground">
             <span className="flex items-center gap-1.5">
@@ -94,7 +92,7 @@ export function CoffeeRouletteWaitingView({
             <Shuffle className="h-5 w-5" />{' '}
             {hasEnoughParticipants
               ? t('gamePlay.coffeeRoulette.shuffleMatch')
-              : t('gamePlay.coffeeRoulette.waitingForTeam', 'Waiting for more teammates...')}
+              : t('gamePlay.coffeeRoulette.waitingForTeam', { defaultValue: 'Waiting for more teammates...' })}
           </Button>
         </div>
       </div>
@@ -109,6 +107,8 @@ interface MatchingViewProps {
 
 export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingViewProps) {
   const { t } = useTranslation();
+
+  const starterText = pairs[0]?.topic || t('gamePlay.coffeeRoulette.defaultTopic');
 
   return (
     <div className="space-y-3">
@@ -140,7 +140,13 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
                 className="flex items-center gap-2 flex-1 min-w-0"
               >
                 <Avatar className="h-10 w-10 ring-2 ring-info/20">
-                  {pair.person1.avatarUrl ? <AvatarImage src={pair.person1.avatarUrl} alt={pair.person1.name} className="object-cover" /> : null}
+                  {pair.person1.avatarUrl ? (
+                    <AvatarImage
+                      src={getSafeImageUrl(pair.person1.avatarUrl) || pair.person1.avatarUrl}
+                      alt={pair.person1.name}
+                      className="object-cover"
+                    />
+                  ) : null}
                   <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">
                     {pair.person1.avatar}
                   </AvatarFallback>
@@ -173,7 +179,13 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
                   {pair.person2.name}
                 </span>
                 <Avatar className="h-10 w-10 ring-2 ring-info/20">
-                  {pair.person2.avatarUrl ? <AvatarImage src={pair.person2.avatarUrl} alt={pair.person2.name} className="object-cover" /> : null}
+                  {pair.person2.avatarUrl ? (
+                    <AvatarImage
+                      src={getSafeImageUrl(pair.person2.avatarUrl) || pair.person2.avatarUrl}
+                      alt={pair.person2.name}
+                      className="object-cover"
+                    />
+                  ) : null}
                   <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">
                     {pair.person2.avatar}
                   </AvatarFallback>
@@ -195,7 +207,7 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
               {t('gamePlay.coffeeRoulette.conversationStarter')}
             </p>
             <p className="text-[14px] text-foreground font-medium leading-relaxed">
-              "{pairs[0]?.topic}"
+              "{starterText}"
             </p>
           </div>
         </div>

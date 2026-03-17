@@ -47,7 +47,16 @@
     "tbd": "À définir",
     "backToEvents": "Retour aux événements",
     "live": "En direct",
-    "async": "Asynchrone"
+    "async": "Asynchrone",
+    "copyFailed": "Échec de la copie. Veuillez copier l’URL manuellement.",
+    "emDash": "—",
+    "host": "Hôte",
+    "language": "Langue",
+    "unknown": "Inconnu",
+    "you": "Vous",
+    "pagination": {
+      "showing": "Affichage de {{from}} à {{to}} sur {{total}}"
+    }
   },
   "errors": {
     "eventEnded": "Cette activité est terminée. Les publications sont désormais fermées.",
@@ -274,12 +283,17 @@
   "layout": {
     "liveExperience": "Expérience en direct"
   },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français",
+    "de": "Allemand"
+  },
   "nav": {
     "dashboard": "Tableau de bord",
     "organizations": "Espace de travail",
     "events": "Événements",
     "games": "Activités",
-      "suppliers": "Fournisseurs",
+    "suppliers": "Fournisseurs",
     "notifications": "Notifications",
     "analytics": "Analytique",
     "users": "Utilisateurs",
@@ -288,7 +302,10 @@
     "email": "Admin e-mail",
     "support": "Support",
     "logout": "Déconnexion",
-    "language": "Langue"
+    "language": "Langue",
+    "manage": "Gérer",
+    "menu": "Menu",
+    "newEvent": "Nouvel événement"
   },
   "auth": {
     "branding": {
@@ -322,7 +339,9 @@
     "login": "Connexion",
     "register": "Inscription",
     "email": "E-mail",
+    "emailPlaceholder": "nom@entreprise.com",
     "password": "Mot de passe",
+    "passwordMask": "••••••••",
     "confirmPassword": "Confirmer le mot de passe",
     "firstName": "Prénom",
     "lastName": "Nom",
@@ -379,6 +398,7 @@
     "resendFailed": "Échec du renvoi du code. Veuillez réessayer.",
     "changeEmail": "Changer l'adresse e-mail",
     "enterNewEmail": "Entrez votre nouvelle adresse e-mail",
+    "newEmailPlaceholder": "nouveau@entreprise.com",
     "updateEmail": "Mettre à jour l'adresse e-mail",
     "emailChanging": "Mise à jour de l'adresse e-mail…",
     "resetLinkSent": "Lien envoyé ! Vérifiez votre e-mail.",
@@ -563,6 +583,8 @@
       "allowChatHelp": "Les participants peuvent envoyer des messages dans le chat de l'événement.",
       "autoStartGamesLabel": "Lancer automatiquement les jeux en direct",
       "autoStartGamesHelp": "Lorsque tout le monde a rejoint, démarrez automatiquement les jeux en direct.",
+      "allowParticipantGameControlLabel": "Autoriser tous les participants à gérer les jeux en direct",
+      "allowParticipantGameControlHelp": "Si activé, n’importe quel participant peut démarrer/avancer/terminer les jeux (pas seulement les admins).",
       "maxRoundsLabel": "Tours maximum par jeu en direct",
       "maxRoundsHelp": "Recommandé : 3 à 5 tours pour la plupart des équipes."
     },
@@ -1276,17 +1298,44 @@
       "readyToConnect": "Prêt à se connecter ?",
       "description": "Nous allons associer tout le monde pour un café virtuel de 30 minutes. Caméras allumées, pas d'ordre du jour — juste se connecter !",
       "minutes": "30 minutes",
+      "needMoreParticipants": "Vous avez besoin de plus de participants pour commencer.",
+      "waitingForTeam": "En attente de votre équipe…",
+      "waitingForOthers": "En attente des autres…",
       "shuffleMatch": "Mélanger et associer",
       "pairsSet": "Vos paires sont prêtes !",
       "conversationStarter": "Sujet de conversation",
       "startChatting": "Commencer à discuter",
       "needATopic": "💡 Besoin d'un sujet ?",
       "nextTopic": "Sujet suivant",
+      "nextPrompt": "Prochaine question",
+      "promptCounter": "Question {{current}} / {{total}}",
+      "defaultTopic": "Qu’est-ce qui vous enthousiasme en ce moment ?",
+      "spinning": "En cours…",
+      "spectatorTitle": "Coffee Roulette en cours",
+      "spectatorMessage": "Les paires sont en cours de création. Vous verrez bientôt votre partenaire.",
       "endChat": "Terminer le chat",
+      "endAndClose": "Terminer et fermer",
       "greatConnection": "Belle connexion ! ☕",
       "chattedFor": "Vous avez discuté pendant {{minutes}} minutes. Ces moments construisent de vrais liens d'équipe.",
       "connectionMade": "Connexion établie",
       "newPairing": "Nouveau jumelage",
+      "decision": {
+        "title": "Continuer ?",
+        "body": "Vous avez utilisé {{count}} questions. Continuer avec de nouvelles questions ou terminer cette session ?",
+        "hint": "Vous pouvez arrêter à tout moment — la progression sera quand même sauvegardée.",
+        "continue": "Continuer",
+        "end": "Terminer la session"
+      },
+      "topicPool": {
+        "p1": "Quelle petite habitude a amélioré votre vie ?",
+        "p2": "Qu’enseigneriez-vous dans un mini-talk de 5 minutes ?",
+        "p3": "De quoi êtes-vous curieux en ce moment ?",
+        "p4": "Quelle réussite récente vous rend fier/fière ?",
+        "p5": "Quel est votre rituel pour vous remettre sur les rails quand vous êtes bloqué(e) ?",
+        "p6": "Quel outil est indispensable pour vous au travail ?",
+        "p7": "Quel livre ou film vous a marqué récemment ?",
+        "p8": "Quel endroit aimeriez-vous visiter ?"
+      },
       "backToEvents": "Retour aux événements",
       "you": "Vous"
     },
@@ -1336,7 +1385,10 @@
       "copied": "Copié !",
       "copy": "Copier",
       "chat": "Chat",
-      "scores": "Scores"
+      "scores": "Scores",
+      "statusWaiting": "En attente de votre équipe",
+      "statusLive": "Session d'équipe en direct",
+      "statusAsync": "Session de check‑in asynchrone"
     },
     "phases": {
       "waiting": "En attente",

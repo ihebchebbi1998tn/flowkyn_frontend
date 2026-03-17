@@ -571,6 +571,8 @@
       "allowChatHelp": "Participants can send messages in the event chat.",
       "autoStartGamesLabel": "Auto-start live games",
       "autoStartGamesHelp": "When everyone has joined, start live games automatically.",
+      "allowParticipantGameControlLabel": "Allow anyone in the event to manage live games",
+      "allowParticipantGameControlHelp": "If enabled, any participant can start/advance/end games (not only admins).",
       "maxRoundsLabel": "Max rounds per live game",
       "maxRoundsHelp": "Recommended: 3–5 rounds for most teams."
     },
@@ -806,6 +808,16 @@
       "spin6": "Finalizing pairs…",
       "spin7": "Locking it in…",
       "spin8": "Done!",
+      "topicPool": {
+        "p1": "What’s a tiny habit that improved your life?",
+        "p2": "What would you teach in a 5‑minute lightning talk?",
+        "p3": "What’s something you’re curious about lately?",
+        "p4": "What’s a recent win you’re proud of?",
+        "p5": "What’s your go‑to reset when you feel stuck?",
+        "p6": "What’s a tool you can’t live without at work?",
+        "p7": "What’s a book or movie that stuck with you?",
+        "p8": "What’s a place you’d love to visit?"
+      },
       "spectatorTitle": "Coffee Roulette in progress",
       "spectatorMessage": "Pairs are being matched. You’ll see your partner shortly.",
       "endChat": "End Chat",

@@ -53,7 +53,7 @@ export function CountdownOverlay({
     setCount(from);
     playCountBeep();
 
-    const intervals: NodeJS.Timeout[] = [];
+    const intervals: Array<ReturnType<typeof setTimeout>> = [];
     for (let i = 1; i <= from; i++) {
       intervals.push(
         setTimeout(() => {

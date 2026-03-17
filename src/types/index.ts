@@ -68,6 +68,7 @@ export interface FlowkynEvent {
   allow_chat?: boolean;
   auto_start_games?: boolean;
   max_rounds?: number;
+  allow_participant_game_control?: boolean;
   created_at: string;
   updated_at: string;
 }

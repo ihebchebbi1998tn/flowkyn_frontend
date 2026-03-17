@@ -38,6 +38,7 @@ export default function EventForm() {
     allow_chat: true,
     auto_start_games: false,
     max_rounds: 5,
+    allow_participant_game_control: true,
   });
 
   const [orgIdError, setOrgIdError] = useState('');
@@ -50,13 +51,10 @@ export default function EventForm() {
   const EVENT_PRESETS = [
     {
       id: 'onboarding',
-      label: t('events.presets.onboarding', 'Team Onboarding'),
+      label: t('events.presets.onboarding'),
       values: {
-        title: t('events.presets.onboardingTitle', 'Team Onboarding Mixer'),
-        description: t(
-          'events.presets.onboardingDescription',
-          '30-minute welcome session with light icebreakers and weekly wins.'
-        ),
+        title: t('events.presets.onboardingTitle'),
+        description: t('events.presets.onboardingDescription'),
         event_mode: 'sync' as const,
         visibility: 'private' as const,
         max_participants: 25,
@@ -64,13 +62,10 @@ export default function EventForm() {
     },
     {
       id: 'weekly_wins',
-      label: t('events.presets.weeklyWins', 'Weekly Wins'),
+      label: t('events.presets.weeklyWins'),
       values: {
-        title: t('events.presets.weeklyWinsTitle', 'Weekly Wins Celebration'),
-        description: t(
-          'events.presets.weeklyWinsDescription',
-          'Async check-in where everyone shares their wins of the week.'
-        ),
+        title: t('events.presets.weeklyWinsTitle'),
+        description: t('events.presets.weeklyWinsDescription'),
         event_mode: 'async' as const,
         visibility: 'private' as const,
         max_participants: 50,
@@ -78,13 +73,10 @@ export default function EventForm() {
     },
     {
       id: 'icebreakers',
-      label: t('events.presets.icebreakers', 'Icebreaker Session'),
+      label: t('events.presets.icebreakers'),
       values: {
-        title: t('events.presets.icebreakersTitle', 'Icebreaker Session'),
-        description: t(
-          'events.presets.icebreakersDescription',
-          'Fast-paced icebreakers to help the team connect.'
-        ),
+        title: t('events.presets.icebreakersTitle'),
+        description: t('events.presets.icebreakersDescription'),
         event_mode: 'sync' as const,
         visibility: 'public' as const,
         max_participants: 40,
@@ -118,6 +110,7 @@ export default function EventForm() {
         allow_chat: existingEvent.allow_chat ?? true,
         auto_start_games: existingEvent.auto_start_games ?? false,
         max_rounds: existingEvent.max_rounds ?? 5,
+        allow_participant_game_control: (existingEvent as any).allow_participant_game_control ?? true,
       });
     }
   }, [existingEvent, isEditing]);
@@ -221,7 +214,7 @@ export default function EventForm() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-lg sm:text-xl font-bold tracking-tight">
-          {isEditing ? t('events.editEvent', 'Edit Event') : t('events.createEvent')}
+          {isEditing ? t('events.editEvent') : t('events.createEvent')}
         </h1>
       </div>
 
@@ -235,7 +228,7 @@ export default function EventForm() {
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
           {!isEditing && (
             <div className="space-y-1.5">
-              <Label className="text-[13px]">{t('events.presets.title', 'Start from a template')}</Label>
+              <Label className="text-[13px]">{t('events.presets.title')}</Label>
               <div className="flex flex-wrap gap-2">
                 {EVENT_PRESETS.map(preset => (
                   <button
@@ -314,13 +307,10 @@ export default function EventForm() {
           <div className="space-y-2 pt-1 border-t border-border/60">
             <div>
               <Label className="text-[13px] font-semibold">
-                {t('events.settings.sectionTitle', 'Games & collaboration settings')}
+                {t('events.settings.sectionTitle')}
               </Label>
               <p className="text-[11px] text-muted-foreground">
-                {t(
-                  'events.settings.sectionDescription',
-                  'Control who can join, chat, and how games start in this event.'
-                )}
+                {t('events.settings.sectionDescription')}
               </p>
             </div>
             <div className="space-y-1.5">
@@ -333,13 +323,10 @@ export default function EventForm() {
                 />
                 <span>
                   <span className="font-medium block">
-                    {t('events.settings.allowGuestsLabel', 'Allow guest participants')}
+                    {t('events.settings.allowGuestsLabel')}
                   </span>
                   <span className="text-[11px] text-muted-foreground">
-                    {t(
-                      'events.settings.allowGuestsHelp',
-                      'Guests can join with just a nickname (no account required).'
-                    )}
+                    {t('events.settings.allowGuestsHelp')}
                   </span>
                 </span>
               </label>
@@ -352,13 +339,10 @@ export default function EventForm() {
                 />
                 <span>
                   <span className="font-medium block">
-                    {t('events.settings.allowChatLabel', 'Enable chat for this event')}
+                    {t('events.settings.allowChatLabel')}
                   </span>
                   <span className="text-[11px] text-muted-foreground">
-                    {t(
-                      'events.settings.allowChatHelp',
-                      'Participants can send messages in the event chat.'
-                    )}
+                    {t('events.settings.allowChatHelp')}
                   </span>
                 </span>
               </label>
@@ -371,19 +355,32 @@ export default function EventForm() {
                 />
                 <span>
                   <span className="font-medium block">
-                    {t('events.settings.autoStartGamesLabel', 'Auto-start live games')}
+                    {t('events.settings.autoStartGamesLabel')}
                   </span>
                   <span className="text-[11px] text-muted-foreground">
-                    {t(
-                      'events.settings.autoStartGamesHelp',
-                      'When everyone has joined, start live games automatically.'
-                    )}
+                    {t('events.settings.autoStartGamesHelp')}
+                  </span>
+                </span>
+              </label>
+              <label className="flex items-start gap-2 text-[13px]">
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={form.allow_participant_game_control}
+                  onChange={e => setForm(f => ({ ...f, allow_participant_game_control: e.target.checked }))}
+                />
+                <span>
+                  <span className="font-medium block">
+                    {t('events.settings.allowParticipantGameControlLabel')}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {t('events.settings.allowParticipantGameControlHelp')}
                   </span>
                 </span>
               </label>
               <div className="flex flex-col gap-1.5">
                 <Label className="text-[13px]">
-                  {t('events.settings.maxRoundsLabel', 'Max rounds per live game')}
+                  {t('events.settings.maxRoundsLabel')}
                 </Label>
                 <Input
                   type="number"

@@ -553,6 +553,20 @@
       "icebreakersTitle": "Eisbrecher-Session",
       "icebreakersDescription": "Schnelle Eisbrecher, um das Team zu verbinden."
     },
+    "settings": {
+      "sectionTitle": "Spiel- & Zusammenarbeitseinstellungen",
+      "sectionDescription": "Steuern Sie, wer beitreten kann, ob Chat aktiviert ist und wie Spiele in diesem Event starten.",
+      "allowGuestsLabel": "Gastteilnehmer erlauben",
+      "allowGuestsHelp": "Gäste können mit einem Nickname beitreten (kein Konto erforderlich).",
+      "allowChatLabel": "Chat für dieses Event aktivieren",
+      "allowChatHelp": "Teilnehmer können im Event-Chat Nachrichten senden.",
+      "autoStartGamesLabel": "Live-Spiele automatisch starten",
+      "autoStartGamesHelp": "Wenn alle beigetreten sind, Live-Spiele automatisch starten.",
+      "allowParticipantGameControlLabel": "Allen Teilnehmern erlauben, Live-Spiele zu steuern",
+      "allowParticipantGameControlHelp": "Wenn aktiviert, kann jeder Teilnehmer Spiele starten/fortsetzen/beenden (nicht nur Admins).",
+      "maxRoundsLabel": "Max. Runden pro Live-Spiel",
+      "maxRoundsHelp": "Empfohlen: 3–5 Runden für die meisten Teams."
+    },
     "gameType": "Spiel",
     "gameTypeUnknown": "Nicht konfiguriert",
     "status": {
@@ -1263,17 +1277,44 @@
       "readyToConnect": "Bereit zum Vernetzen?",
       "description": "Wir paaren alle zufällig für einen 30-minütigen virtuellen Kaffee-Chat. Kameras an, keine Agenda — einfach verbinden!",
       "minutes": "30 Minuten",
+      "needMoreParticipants": "Sie benötigen mehr Teilnehmer, um zu starten.",
+      "waitingForTeam": "Warten auf Ihr Team…",
+      "waitingForOthers": "Warten auf andere…",
       "shuffleMatch": "Mischen & zuordnen",
       "pairsSet": "Ihre Paare stehen fest!",
       "conversationStarter": "Gesprächsthema",
       "startChatting": "Chat starten",
       "needATopic": "💡 Brauchen Sie ein Thema?",
       "nextTopic": "Nächstes Thema",
+      "nextPrompt": "Nächste Frage",
+      "promptCounter": "Frage {{current}} / {{total}}",
+      "defaultTopic": "Worauf freuen Sie sich gerade besonders?",
+      "spinning": "Wird geladen…",
+      "topicPool": {
+        "p1": "Welche kleine Gewohnheit hat Ihr Leben verbessert?",
+        "p2": "Was würden Sie in einem 5‑Minuten‑Lightning‑Talk beibringen?",
+        "p3": "Worüber sind Sie in letzter Zeit neugierig?",
+        "p4": "Welcher aktuelle Erfolg macht Sie stolz?",
+        "p5": "Was hilft Ihnen, wieder in die Spur zu kommen, wenn Sie feststecken?",
+        "p6": "Welches Tool ist für Sie bei der Arbeit unverzichtbar?",
+        "p7": "Welches Buch oder welcher Film ist Ihnen im Kopf geblieben?",
+        "p8": "Welchen Ort würden Sie gern einmal besuchen?"
+      },
+      "spectatorTitle": "Kaffee-Roulette läuft",
+      "spectatorMessage": "Die Paare werden gerade erstellt. Sie sehen Ihren Partner gleich.",
       "endChat": "Chat beenden",
+      "endAndClose": "Beenden & schließen",
       "greatConnection": "Tolle Verbindung! ☕",
       "chattedFor": "Sie haben {{minutes}} Minuten gechattet. Diese Momente bauen echte Teambindungen auf.",
       "connectionMade": "Verbindung hergestellt",
       "newPairing": "Neue Zuordnung",
+      "decision": {
+        "title": "Weiter machen?",
+        "body": "Sie haben {{count}} Fragen genutzt. Mit neuen Fragen weitermachen oder diese Session beenden?",
+        "hint": "Sie können jederzeit beenden — der Fortschritt bleibt trotzdem gespeichert.",
+        "continue": "Weiter",
+        "end": "Session beenden"
+      },
       "backToEvents": "Zurück zu Veranstaltungen",
       "you": "Sie"
     },
@@ -1323,7 +1364,10 @@
       "copied": "Kopiert!",
       "copy": "Kopieren",
       "chat": "Chat",
-      "scores": "Punkte"
+      "scores": "Punkte",
+      "statusWaiting": "Warten auf Ihr Team",
+      "statusLive": "Live-Team-Session",
+      "statusAsync": "Asynchrone Check‑in‑Session"
     },
     "phases": {
       "waiting": "Warten",

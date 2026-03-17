@@ -112,8 +112,8 @@ function main() {
     },
     missing: {
       en: { count: missing.en.length, sample: topMissing(missing.en), all: missing.en },
-      fr: { count: missing.fr.length, sample: topMissing(missing.fr) },
-      de: { count: missing.de.length, sample: topMissing(missing.de) },
+      fr: { count: missing.fr.length, sample: topMissing(missing.fr), all: missing.fr },
+      de: { count: missing.de.length, sample: topMissing(missing.de), all: missing.de },
     },
     whereUsed: {},
     dynamicUsage: dynamicUsage.slice(0, 200),

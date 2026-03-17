@@ -36,6 +36,11 @@ export const eventsApi = {
     organization_id: string; title: string; description?: string;
     event_mode?: string; visibility?: string; max_participants?: number;
     start_time?: string; end_time?: string; invites?: string[];
+    allow_guests?: boolean;
+    allow_chat?: boolean;
+    auto_start_games?: boolean;
+    max_rounds?: number;
+    allow_participant_game_control?: boolean;
   }) =>
     api.post<FlowkynEvent>('/events', data),
 
