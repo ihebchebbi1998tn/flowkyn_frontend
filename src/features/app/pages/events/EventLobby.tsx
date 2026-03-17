@@ -21,7 +21,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
 import { copyToClipboard } from '@/utils/clipboard';
-import { CountdownOverlay } from '@/features/app/components/game/shared';
 import {
   useEventPublicInfo,
   useEventParticipants,
@@ -104,7 +103,7 @@ export default function EventLobby() {
   const [guestEmail, setGuestEmail] = useState('');
   const [hasJoined, setHasJoined] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showCountdown, setShowCountdown] = useState(false);
+  // Removed lobby countdown: navigation should be immediate; countdown belongs to game start.
   const [joinError, setJoinError] = useState<string>('');
   const [isJoining, setIsJoining] = useState(false);
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
@@ -501,7 +500,7 @@ export default function EventLobby() {
     if (!hasJoined) hasUpsertedProfileRef.current = false;
   }, [hasJoined, profile, id, upsertProfile]);
 
-  const handleCountdownComplete = useCallback(() => {
+  const jumpToGame = useCallback(() => {
     const playPath = ROUTES.PLAY(id) + (gameParam ? `?game=${gameParam}` : '');
     navigate(playPath);
   }, [navigate, id, gameParam]);
@@ -581,7 +580,7 @@ export default function EventLobby() {
   return (
     <ErrorBoundary>
       <>
-        <CountdownOverlay active={showCountdown} onComplete={handleCountdownComplete} />
+        {/* Countdown removed: show countdown only when game actually starts */}
         <div className="min-h-[80vh] flex items-center justify-center animate-fade-in">
           <div className="w-full max-w-2xl space-y-6">
             {/* Step chips */}
@@ -879,7 +878,7 @@ export default function EventLobby() {
                           })}
                         </div>
                       )}
-                      <Button className="w-full h-12 gap-2 text-sm" onClick={() => setShowCountdown(true)}>
+                      <Button className="w-full h-12 gap-2 text-sm" onClick={jumpToGame}>
                         <ArrowRight className="h-4 w-4" /> {t('events.returning.jumpIntoGame', t('events.enterGame'))}
                       </Button>
                     </div>
