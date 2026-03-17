@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Users, Clock, Timer, Copy, Share2,
   CheckCircle, Link2, Radio, Pencil,
+  Bug,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ import { LeaderboardSidebar } from './LeaderboardSidebar';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import type { GameParticipant } from './types';
 import { motion } from 'framer-motion';
+import { ReportIssueModal } from '@/features/app/pages/support/ReportIssueModal';
 
 type MobileTab = 'chat' | 'leaderboard';
 
@@ -55,6 +57,7 @@ export function GamePlayShell({
   const [elapsed, setElapsed] = useState(0);
   const [copied, setCopied] = useState(false);
   const [showLink, setShowLink] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const gameId = searchParams.get('game');
   const [mobileSheet, setMobileSheet] = useState<MobileTab | null>(null);
@@ -125,6 +128,7 @@ export function GamePlayShell({
 
   return (
     <div className="space-y-5 w-full max-w-[1400px] mx-auto animate-fade-in">
+      <ReportIssueModal open={isReportOpen} onOpenChange={setIsReportOpen} />
       {/* ─── Header ─── */}
       <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/5" />
@@ -176,6 +180,16 @@ export function GamePlayShell({
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsReportOpen(true)}
+                title={t('support.reportBugCta', { defaultValue: 'Report a bug' })}
+                className="h-9 w-9 shrink-0 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80"
+              >
+                <Bug className="h-4 w-4" />
+              </Button>
               {/* Current user's profile pill */}
               {(currentUserAvatarUrl || currentUserName) && (
                 <button

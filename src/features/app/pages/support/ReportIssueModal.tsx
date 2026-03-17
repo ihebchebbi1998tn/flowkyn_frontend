@@ -116,7 +116,7 @@ export const ReportIssueModal: React.FC<ReportIssueModalProps> = ({ open, onOpen
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-2xl max-h-[75vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t('support.reportIssueTitle')}</DialogTitle>
           <DialogClose />
@@ -186,7 +186,7 @@ export const ReportIssueModal: React.FC<ReportIssueModalProps> = ({ open, onOpen
                   placeholder={t('bugReports.descriptionPlaceholder')}
                   value={formData.description}
                   onChange={handleInputChange}
-                  rows={4}
+                  rows={3}
                   maxLength={5000}
                 />
                 <p className="text-xs text-muted-foreground">
