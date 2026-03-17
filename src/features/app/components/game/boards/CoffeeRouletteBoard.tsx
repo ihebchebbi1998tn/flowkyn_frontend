@@ -109,7 +109,8 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
   };
 
   // Auto-start chat for everyone once pairs are set.
-  // We only emit from a single deterministic "leader" to avoid duplicate emits.
+  // Backend treats coffee:start_chat as idempotent to prevent timer resets,
+  // so it's safe for any paired participant to emit once.
   useEffect(() => {
     if (phase !== 'matching') {
       autoStartedChatRef.current = false;
@@ -118,11 +119,6 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     if (!myPair) return;
     if (snapshot?.startedChatAt) return;
     if (autoStartedChatRef.current) return;
-
-    // Deterministic leader: the participantId that matches person1 for the pair.
-    // (person1 is stable because the server constructs pairs in order.)
-    const isLeader = myPair.person1.participantId === currentUserId;
-    if (!isLeader) return;
 
     autoStartedChatRef.current = true;
     console.log('[CoffeeRouletteBoard] autoStartChat -> coffee:start_chat', { currentUserId, pairId: myPair.id });
