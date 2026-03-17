@@ -87,6 +87,33 @@ export function playGoBeep() {
   triggerHaptic('medium');
 }
 
+// ─── Join Chime (light, friendly) ─────────────────────────────────────────────
+
+export function playJoinChime() {
+  try {
+    const ctx = getCtx();
+    const t = ctx.currentTime;
+    const notes = [
+      { freq: 740, time: 0.00, dur: 0.10, vol: 0.16 },
+      { freq: 988, time: 0.08, dur: 0.12, vol: 0.14 },
+      { freq: 1319, time: 0.16, dur: 0.16, vol: 0.12 },
+    ];
+    for (const n of notes) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(n.freq, t + n.time);
+      gain.gain.setValueAtTime(n.vol, t + n.time);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + n.time + n.dur);
+      osc.start(t + n.time);
+      osc.stop(t + n.time + n.dur);
+    }
+  } catch { /* graceful fallback */ }
+  triggerHaptic('success');
+}
+
 // ─── Reveal Sounds (Enhanced) ────────────────────────────────────────────────
 
 export function playRevealSound(rank: number) {

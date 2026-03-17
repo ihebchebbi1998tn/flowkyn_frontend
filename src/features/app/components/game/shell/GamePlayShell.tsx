@@ -19,6 +19,7 @@ import { MobileBottomSheet } from './MobileBottomSheet';
 import type { GameParticipant } from './types';
 import { motion } from 'framer-motion';
 import { ReportIssueModal } from '@/features/app/pages/support/ReportIssueModal';
+import { playJoinChime } from '../shared';
 
 type MobileTab = 'chat' | 'leaderboard';
 
@@ -87,6 +88,7 @@ export function GamePlayShell({
 
   // Track previously joined participants to show toasts
   const prevJoinedIds = useRef<Set<string>>(new Set());
+  const lastJoinFxAtRef = useRef<number>(0);
 
   useEffect(() => {
     const newlyJoined = participants.filter(p =>
@@ -94,10 +96,29 @@ export function GamePlayShell({
     );
 
     newlyJoined.forEach(p => {
-      toast.success(t('gamePlay.shell.userJoinedToast', { defaultValue: '{{name}} joined the session! 🎉', name: p.name }), {
-        description: t('gamePlay.shell.readyToConnect', { defaultValue: 'Ready to connect!' }),
-        icon: '👋',
-      });
+      // Avoid FX spam when multiple joins arrive at once or during fast re-syncs.
+      const now = Date.now();
+      if (now - lastJoinFxAtRef.current > 900) {
+        playJoinChime();
+        lastJoinFxAtRef.current = now;
+      }
+
+      toast.success(
+        t('gamePlay.shell.userJoinedToast', { defaultValue: '{{name}} joined the session!', name: p.name }),
+        {
+          description: t('gamePlay.shell.readyToConnect', { defaultValue: 'Ready to connect!' }),
+          icon: (
+            <motion.div
+              initial={{ scale: 0.7, rotate: -10, y: 2 }}
+              animate={{ scale: [0.7, 1.1, 1], rotate: [-10, 8, 0], y: [2, -1, 0] }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+              className="select-none"
+            >
+              👋
+            </motion.div>
+          ),
+        }
+      );
       prevJoinedIds.current.add(p.id);
     });
 
