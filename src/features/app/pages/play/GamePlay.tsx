@@ -600,6 +600,17 @@ function GamePlayWithoutBoundary() {
       if (data.type === 'post:created' || data.type === 'post:reacted') {
         refetchPosts();
       }
+      // When someone starts a new game session (e.g. Coffee Roulette), auto-resolve and join it
+      // so all participants see the game without refreshing.
+      if (data.type === 'game:session_created') {
+        const sessionIdFromPayload = data.payload?.sessionId;
+        if (sessionIdFromPayload) {
+          setSessionId(sessionIdFromPayload);
+        } else {
+          // Fallback: resolve latest active session from API
+          gamesApi.getActiveSession(eventId).then((s: any) => setSessionId(s ? s.id : null)).catch(() => {});
+        }
+      }
     };
 
     const unsub = eventsSocket.on('event:notification', handleEventNotification);
@@ -628,6 +639,12 @@ function GamePlayWithoutBoundary() {
     const unsubLeave = gamesSocket.on('game:player_left', triggerRefetch);
     return () => { unsubJoin?.(); unsubLeave?.(); };
   }, [gamesSocket.isConnected, sessionId, refetchParticipants]);
+
+  // If we learn about a session while connected, proactively join its game room.
+  useEffect(() => {
+    if (!gamesSocket.isConnected || !sessionId) return;
+    gamesSocket.emit<any>('game:join', { sessionId }).catch(() => {});
+  }, [gamesSocket.isConnected, sessionId]);
 
   // Reconnect backfill for games: when games socket reconnects, always issue game:state_sync
   const wasGamesConnectedRef = useRef(false);
