@@ -10,23 +10,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md",
+          "bg-primary text-white shadow-sm hover:bg-primary/90 hover:shadow-md",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-destructive text-white shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-muted hover:text-foreground hover:border-border",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+          "bg-secondary text-white shadow-sm hover:bg-secondary/80",
         ghost:
           "hover:bg-muted hover:text-foreground",
         link:
           "text-primary underline-offset-4 hover:underline",
         /** Brand gradient button — use for primary CTAs */
         brand:
-          "brand-gradient border-0 text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110 rounded-xl",
+          "brand-gradient border-0 text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110 rounded-xl",
         /** Success variant */
         success:
-          "bg-success text-success-foreground shadow-sm hover:bg-success/90",
+          "bg-success text-white shadow-sm hover:bg-success/90",
       },
       size: {
         default: "h-9 px-4 py-2 rounded-lg",
