@@ -1069,7 +1069,9 @@
         "inviteAllFailed": "Einladungen konnten nicht gesendet werden. Bitte versuchen Sie es erneut."
       },
       "review": {
-        "endsAt": "Endet am"
+        "endsAt": "Endet am",
+        "participantsLine_one": "{{count}} Teilnehmer",
+        "participantsLine_other": "{{count}} Teilnehmer"
       }
     }
   },

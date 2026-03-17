@@ -1066,7 +1066,9 @@
         "inviteAllFailed": "Impossible d’envoyer les invitations. Veuillez réessayer."
       },
       "review": {
-        "endsAt": "Se termine le"
+        "endsAt": "Se termine le",
+        "participantsLine_one": "{{count}} participant",
+        "participantsLine_other": "{{count}} participants"
       }
     },
     "twoTruths": {
