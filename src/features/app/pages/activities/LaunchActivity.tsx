@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
 import { eventsApi } from '@/features/app/api/events';
 import { gamesApi } from '@/features/app/api/games';
+import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { ACTIVITIES as CATALOG_ACTIVITIES } from '@/features/app/data/activities';
 
 const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; color: string; bgColor: string; type: 'sync' | 'async'; duration: string }> = {
@@ -335,9 +336,11 @@ export default function LaunchActivity() {
                 </Button>
               </div>
               {scheduleType === 'later' && (
-                <Input type="datetime-local" value={scheduledDate}
-                  onChange={e => setScheduledDate(e.target.value)}
-                  className="h-10 text-[13px]" />
+                <DateTimePicker 
+                  value={scheduledDate}
+                  onChange={setScheduledDate}
+                  placeholder="Select a date and time"
+                />
               )}
             </div>
 

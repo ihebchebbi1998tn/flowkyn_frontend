@@ -13,6 +13,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useCreateEvent, useUpdateEvent, useEvent } from '@/hooks/queries';
 import { organizationsApi } from '@/features/app/api/organizations';
 import { JoinAfterCreateModal } from '@/features/app/components/events/JoinAfterCreateModal';
+import { DateTimePicker } from '@/components/ui/date-time-picker';
 
 export default function EventForm() {
   const { t } = useTranslation();
@@ -292,15 +293,21 @@ export default function EventForm() {
               value={form.max_participants} onChange={e => setForm(f => ({ ...f, max_participants: Number(e.target.value) }))} />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div className="space-y-1.5">
+            <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.startTime')}</Label>
-              <Input type="datetime-local" className="h-10 text-[13px]"
-                value={form.start_time} onChange={e => setForm(f => ({ ...f, start_time: e.target.value }))} />
+              <DateTimePicker 
+                value={form.start_time} 
+                onChange={v => setForm(f => ({ ...f, start_time: v }))} 
+                placeholder={t('events.startTime')}
+              />
             </div>
-          <div className="space-y-1.5">
+            <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.endTime')}</Label>
-              <Input type="datetime-local" className="h-10 text-[13px]"
-                value={form.end_time} onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} />
+              <DateTimePicker 
+                value={form.end_time} 
+                onChange={v => setForm(f => ({ ...f, end_time: v }))} 
+                placeholder={t('events.endTime')}
+              />
             </div>
           </div>
 
