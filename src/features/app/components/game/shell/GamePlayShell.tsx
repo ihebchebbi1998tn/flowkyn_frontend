@@ -17,7 +17,6 @@ import { LeaderboardSidebar } from './LeaderboardSidebar';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import type { GameParticipant } from './types';
 import { motion } from 'framer-motion';
-import { LanguageSelector } from '@/components/common';
 
 type MobileTab = 'chat' | 'leaderboard';
 
@@ -129,11 +128,6 @@ export function GamePlayShell({
       {/* ─── Header ─── */}
       <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/5" />
-
-        {/* Language switcher (top-right) */}
-        <div className="absolute top-3 right-3 z-20">
-          <LanguageSelector align="end" />
-        </div>
 
         {/* Animated Background Orbs */}
         <motion.div
