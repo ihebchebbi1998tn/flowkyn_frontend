@@ -385,6 +385,7 @@ export interface TwoTruthsRevealSectionProps {
   selectedVote: string | null;
   showDrumroll: boolean;
   onNextRound: () => void;
+  canAdvance?: boolean;
   isLastRound: boolean;
 }
 
@@ -395,6 +396,7 @@ export function TwoTruthsRevealSection({
   selectedVote,
   showDrumroll,
   onNextRound,
+  canAdvance = true,
   isLastRound,
 }: TwoTruthsRevealSectionProps) {
   const { t } = useTranslation();
@@ -571,17 +573,23 @@ export function TwoTruthsRevealSection({
             </div>
           )}
         </div>
-        <Button onClick={onNextRound} className="h-10 px-6 text-[13px] gap-2 rounded-xl">
-          {isLastRound ? (
-            <>
-              <Trophy className="h-4 w-4" /> {t('gamePlay.twoTruths.viewResults')}
-            </>
-          ) : (
-            <>
-              <ChevronRight className="h-4 w-4" /> {t('gamePlay.twoTruths.nextRound')}
-            </>
-          )}
-        </Button>
+        {canAdvance ? (
+          <Button onClick={onNextRound} className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+            {isLastRound ? (
+              <>
+                <Trophy className="h-4 w-4" /> {t('gamePlay.twoTruths.viewResults')}
+              </>
+            ) : (
+              <>
+                <ChevronRight className="h-4 w-4" /> {t('gamePlay.twoTruths.nextRound')}
+              </>
+            )}
+          </Button>
+        ) : (
+          <span className="text-[11px] text-muted-foreground">
+            {t('gamePlay.twoTruths.waitForHost', { defaultValue: 'Waiting for the host…' })}
+          </span>
+        )}
       </div>
     </div>
   );

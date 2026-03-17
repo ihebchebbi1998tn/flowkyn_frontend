@@ -2,8 +2,7 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plus, MessageSquare, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MessageSquare, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageShell, PageHeader, ChartCard, EmptyState } from '@/features/app/components/dashboard';
@@ -54,13 +53,7 @@ export default function GameList() {
 
   return (
     <PageShell>
-      <PageHeader title={t('games.title')} subtitle={t('games.subtitle')}
-        actions={
-          <Button className="h-8 text-caption gap-1.5 shadow-sm rounded-lg">
-            <Plus className="h-3.5 w-3.5" /> {t('games.createSession')}
-          </Button>
-        }
-      />
+      <PageHeader title={t('games.title')} subtitle={t('games.subtitle')} />
 
       {/* Live active sessions from backend */}
       {liveSessionsList.length > 0 && (

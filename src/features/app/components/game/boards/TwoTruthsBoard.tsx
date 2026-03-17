@@ -209,7 +209,7 @@ export function TwoTruthsBoard({
         />
       )}
 
-      {phase === 'vote' && isPresenter && (
+      {phase === 'vote' && isAdmin && (
         <div className="flex justify-end">
           <button
             className="text-[11px] text-muted-foreground hover:text-foreground underline"
@@ -229,6 +229,7 @@ export function TwoTruthsBoard({
           selectedVote={votes[currentUserId] || selectedVote}
           showDrumroll={false}
           onNextRound={nextRound}
+          canAdvance={isAdmin}
           isLastRound={round >= totalRounds}
         />
       )}
