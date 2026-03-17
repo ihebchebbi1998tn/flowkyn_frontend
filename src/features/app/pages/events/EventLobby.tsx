@@ -432,7 +432,7 @@ export default function EventLobby() {
         : !!(data.userId && data.userId === usr?.id);
 
       const msg: ChatMessage = {
-        id: data.id || `ws-${crypto.randomUUID()}`,
+        id: data.id || `ws-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`,
         userId: data.userId,
         participantId: data.participantId,
         senderName: name,
@@ -444,7 +444,10 @@ export default function EventLobby() {
       };
       
       console.log('[EventLobby] Appending to liveMessages:', msg);
-      setLiveMessages(prev => [...prev, msg]);
+      setLiveMessages(prev => {
+        if (prev.some(m => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
     };
 
     const handleTyping = (data: { userId: string; userName?: string; isTyping: boolean }) => {

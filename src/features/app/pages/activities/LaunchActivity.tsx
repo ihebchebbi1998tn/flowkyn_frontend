@@ -582,7 +582,7 @@ export default function LaunchActivity() {
                     {t('activities.launch.review.participants', { defaultValue: 'Participants' })}
                   </p>
                   <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
-                    {t('activities.launch.review.participantsLine', { defaultValue: '{{invited}} invited · max {{max}}', invited: emails.length, max: maxParticipants })}
+                    {t('activities.launch.review.participantsLine', { count: maxParticipants })}
                   </p>
                 </div>
                 <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">

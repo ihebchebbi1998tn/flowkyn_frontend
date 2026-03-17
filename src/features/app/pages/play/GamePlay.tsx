@@ -47,14 +47,14 @@ function GamePlayWithoutBoundary() {
   const { showError } = useApiError();
 
   const gameTypeId = searchParams.get('game') || '1';
-  const config = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
+  const urlConfig = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
 
   // ─── Current user identity (server-driven) ─────────────────────────────────
   const identity = useEventIdentity(eventId || undefined);
   const { isGuest, userId: currentUserId, participantId, displayName, avatarUrl, isLoading: isIdentityLoading } = identity;
 
   // We start with the URL param config, but will update it if the server tells us a different game is active.
-  const [activeConfig, setActiveConfig] = useState(GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1']);
+  const [activeConfig, setActiveConfig] = useState(urlConfig);
 
   console.log('[GamePlay] mount', { eventId, identity, gameTypeId, activeConfig });
 
@@ -357,6 +357,10 @@ function GamePlayWithoutBoundary() {
   const liveMessagesRef = useRef(liveMessages);
   liveMessagesRef.current = liveMessages;
 
+  const makeWsId = useCallback(() => {
+    return `ws-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
+  }, []);
+
   useEffect(() => {
     if (!eventsSocket.isConnected) {
       console.log('[GamePlay] Chat listener: socket not connected');
@@ -376,7 +380,7 @@ function GamePlayWithoutBoundary() {
         : !!(data.userId && data.userId === usr?.id);
         
       const msg: ChatMessage = {
-        id: data.id || `ws-${crypto.randomUUID()}`,
+        id: data.id || makeWsId(),
         userId: data.userId,
         participantId: data.participantId,
         senderName: name,
@@ -396,17 +400,7 @@ function GamePlayWithoutBoundary() {
 
     const unsub = eventsSocket.on('chat:message', handleChatMessage);
     return unsub;
-  }, [eventsSocket.isConnected, eventId]);
-
-  // Fallback polling: periodically refetch messages via HTTP so chat
-  // stays in sync even if a socket broadcast is missed.
-  useEffect(() => {
-    if (!eventId) return;
-    const interval = setInterval(() => {
-      refetchMessages();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [eventId, refetchMessages]);
+  }, [eventsSocket.isConnected, eventId, eventsSocket, makeWsId]);
 
   // Fetch pinned message for in-game chat once the eventId is known
   useEffect(() => {
@@ -517,7 +511,7 @@ function GamePlayWithoutBoundary() {
 
     resolveSession();
     return () => { cancelled = true; };
-  }, [eventId, config.gameTypeKey]);
+  }, [eventId]);
 
 
 
@@ -770,9 +764,9 @@ function GamePlayWithoutBoundary() {
   return (
     <>
       <GamePlayShell
-        title={t(config.titleKey)}
-        subtitle={t(config.subtitleKey)}
-        gameType={config.type}
+        title={t(activeConfig.titleKey)}
+        subtitle={t(activeConfig.subtitleKey)}
+        gameType={activeConfig.type}
         eventId={eventId || ''}
         participants={participants}
         onEnd={() => navigate(ROUTES.EVENTS)}
@@ -786,7 +780,7 @@ function GamePlayWithoutBoundary() {
         hideBackButton={true}
       >
         <GameBoardRouter
-          config={config}
+          config={activeConfig}
           eventId={eventId || ''}
           participants={participants}
           participantId={participantId || null}
