@@ -109,7 +109,7 @@ export function TwoTruthsWaitingSection({
                 <Slider
                   value={[rounds]}
                   min={2}
-                  max={20}
+                  max={30}
                   step={1}
                   onValueChange={(val) => onRoundsChange(val[0])}
                   className="py-1"
