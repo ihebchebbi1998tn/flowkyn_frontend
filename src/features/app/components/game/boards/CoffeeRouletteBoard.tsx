@@ -71,6 +71,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
   const [isSpinningTopic, setIsSpinningTopic] = useState(false);
   const [displayTopic, setDisplayTopic] = useState<string>('');
   const topicSpinTimerRef = useRef<number | null>(null);
+  const autoStartedChatRef = useRef(false);
   // Capture elapsed chat time so the 'complete' phase shows the correct value
   // instead of resetting to 0 when chatSecondsRemaining resets.
   const capturedElapsedRef = useRef(0);
@@ -106,6 +107,27 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     console.log('[CoffeeRouletteBoard] startChatting -> coffee:start_chat');
     onEmitAction('coffee:start_chat', {});
   };
+
+  // Auto-start chat for everyone once pairs are set.
+  // We only emit from a single deterministic "leader" to avoid duplicate emits.
+  useEffect(() => {
+    if (phase !== 'matching') {
+      autoStartedChatRef.current = false;
+      return;
+    }
+    if (!myPair) return;
+    if (snapshot?.startedChatAt) return;
+    if (autoStartedChatRef.current) return;
+
+    // Deterministic leader: the participantId that matches person1 for the pair.
+    // (person1 is stable because the server constructs pairs in order.)
+    const isLeader = myPair.person1.participantId === currentUserId;
+    if (!isLeader) return;
+
+    autoStartedChatRef.current = true;
+    console.log('[CoffeeRouletteBoard] autoStartChat -> coffee:start_chat', { currentUserId, pairId: myPair.id });
+    onEmitAction('coffee:start_chat', {});
+  }, [phase, myPair, snapshot?.startedChatAt, currentUserId, onEmitAction]);
 
   const endSession = () => {
     console.log('[CoffeeRouletteBoard] endSession -> coffee:end');
