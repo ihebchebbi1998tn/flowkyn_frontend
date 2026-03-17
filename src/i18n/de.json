@@ -1071,6 +1071,7 @@
       },
       "review": {
         "endsAt": "Endet am",
+        "participantsLine": "{{count}} Teilnehmer",
         "participantsLine_one": "{{count}} Teilnehmer",
         "participantsLine_other": "{{count}} Teilnehmer"
       }

@@ -78,14 +78,14 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
 
   const spinTopicPool = useMemo(
     () => ([
-      t('gamePlay.coffeeRoulette.topicPool.p1'),
-      t('gamePlay.coffeeRoulette.topicPool.p2'),
-      t('gamePlay.coffeeRoulette.topicPool.p3'),
-      t('gamePlay.coffeeRoulette.topicPool.p4'),
-      t('gamePlay.coffeeRoulette.topicPool.p5'),
-      t('gamePlay.coffeeRoulette.topicPool.p6'),
-      t('gamePlay.coffeeRoulette.topicPool.p7'),
-      t('gamePlay.coffeeRoulette.topicPool.p8'),
+      t('gamePlay.coffeeRoulette.topicPool.p1', { defaultValue: "What's something you're excited about lately?" }),
+      t('gamePlay.coffeeRoulette.topicPool.p2', { defaultValue: 'What’s a small win you had this week?' }),
+      t('gamePlay.coffeeRoulette.topicPool.p3', { defaultValue: 'What’s a hobby you wish you had more time for?' }),
+      t('gamePlay.coffeeRoulette.topicPool.p4', { defaultValue: 'What’s the best advice you’ve received?' }),
+      t('gamePlay.coffeeRoulette.topicPool.p5', { defaultValue: 'What’s something you learned recently?' }),
+      t('gamePlay.coffeeRoulette.topicPool.p6', { defaultValue: 'If you could travel anywhere, where would you go?' }),
+      t('gamePlay.coffeeRoulette.topicPool.p7', { defaultValue: 'What’s a book/movie you recommend?' }),
+      t('gamePlay.coffeeRoulette.topicPool.p8', { defaultValue: 'What’s one thing you’re looking forward to?' }),
     ]),
     [t]
   );
@@ -198,12 +198,15 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {t('gamePlay.coffeeRoulette.decision.title')}
+              {t('gamePlay.coffeeRoulette.decision.title', { defaultValue: 'Keep going?' })}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <p className="text-[13px] text-muted-foreground">
-              {t('gamePlay.coffeeRoulette.decision.body', { count: promptsUsed || 6 })}
+              {t('gamePlay.coffeeRoulette.decision.body', {
+                defaultValue: "You've gone through {{count}} prompts. Want to keep going or end this chat?",
+                count: promptsUsed || 6,
+              })}
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-end pt-2">
               <Button
@@ -214,7 +217,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 }}
                 className="h-10"
               >
-                {t('gamePlay.coffeeRoulette.decision.continue')}
+                {t('gamePlay.coffeeRoulette.decision.continue', { defaultValue: 'Keep going' })}
               </Button>
               <Button
                 variant="destructive"
@@ -224,11 +227,11 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 }}
                 className="h-10"
               >
-                {t('gamePlay.coffeeRoulette.decision.end')}
+                {t('gamePlay.coffeeRoulette.decision.end', { defaultValue: 'End chat' })}
               </Button>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              {t('gamePlay.coffeeRoulette.decision.hint')}
+              {t('gamePlay.coffeeRoulette.decision.hint', { defaultValue: 'You can always reshuffle to meet someone new.' })}
             </p>
           </div>
         </DialogContent>
@@ -243,10 +246,10 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               </div>
               <div>
                 <h3 className="text-[14px] font-semibold text-foreground">
-                  {t('gamePlay.coffeeRoulette.title')}
+                  {t('gamePlay.coffeeRoulette.title', { defaultValue: 'Coffee Roulette' })}
                 </h3>
                 <p className="text-[11px] text-muted-foreground">
-                  {t('gamePlay.coffeeRoulette.subtitle')}
+                  {t('gamePlay.coffeeRoulette.subtitle', { defaultValue: 'Quick 1:1 connections for your team' })}
                 </p>
               </div>
             </div>
@@ -277,20 +280,20 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               </motion.div>
               <h3 className="text-xl font-bold text-foreground mb-2">
                  {participants.length < 2
-                   ? t('gamePlay.coffeeRoulette.waitingForOthers')
-                   : t('gamePlay.coffeeRoulette.readyToConnect')}
+                   ? t('gamePlay.coffeeRoulette.waitingForOthers', { defaultValue: 'Waiting for teammates…' })
+                   : t('gamePlay.coffeeRoulette.readyToConnect', { defaultValue: 'Ready to connect' })}
                </h3>
               <p className="text-[13px] text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
                 {participants.length < 2
-                  ? t('gamePlay.coffeeRoulette.needMoreParticipants')
-                  : t('gamePlay.coffeeRoulette.description')}
+                  ? t('gamePlay.coffeeRoulette.needMoreParticipants', { defaultValue: 'We need at least 2 people to start. Share the invite link to get started.' })
+                  : t('gamePlay.coffeeRoulette.description', { defaultValue: 'Get paired into 1:1 chats with a conversation starter.' })}
               </p>
               <div className="flex items-center justify-center gap-4 mb-8 text-[12px] text-muted-foreground">
-                <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {t('gamePlay.coffeeRoulette.minutes')}</span>
+                <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {t('gamePlay.coffeeRoulette.minutes', { defaultValue: '30 minutes' })}</span>
                 <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> {participants.length} {t('analyticsPage.participants')}</span>
               </div>
               <Button variant="brand" onClick={startMatching} disabled={participants.length < 2} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
-                <Shuffle className="h-5 w-5" /> {participants.length < 2 ? t('gamePlay.coffeeRoulette.waitingForTeam') : t('gamePlay.coffeeRoulette.shuffleMatch')}
+                <Shuffle className="h-5 w-5" /> {participants.length < 2 ? t('gamePlay.coffeeRoulette.waitingForTeam', { defaultValue: 'Waiting for more teammates…' }) : t('gamePlay.coffeeRoulette.shuffleMatch', { defaultValue: 'Shuffle match' })}
               </Button>
             </div>
           </div>
@@ -304,7 +307,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
             <div className="px-5 py-4 border-b border-border bg-gradient-to-r from-info/5 to-transparent">
               <div className="flex items-center gap-3">
                 <Sparkles className="h-4 w-4 text-info" />
-                <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.coffeeRoulette.pairsSet')}</h3>
+                <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.coffeeRoulette.pairsSet', { defaultValue: 'Pairs are set' })}</h3>
               </div>
             </div>
             <div className="p-4 space-y-3">
@@ -398,7 +401,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                       </motion.div>
 
                       {(pair.person1.participantId === currentUserId || pair.person2.participantId === currentUserId) && (
-                        <Badge className="text-[9px] bg-info/15 text-info border-info/25 shrink-0">{t('gamePlay.coffeeRoulette.you')}</Badge>
+                        <Badge className="text-[9px] bg-info/15 text-info border-info/25 shrink-0">{t('gamePlay.coffeeRoulette.you', { defaultValue: 'You' })}</Badge>
                       )}
                     </div>
                   </div>
@@ -414,15 +417,15 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 <MessageCircle className="h-4 w-4 text-info" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-info uppercase tracking-wider mb-1">{t('gamePlay.coffeeRoulette.conversationStarter')}</p>
-                <p className="text-[14px] text-foreground font-medium leading-relaxed">"{myPair?.topic || t('gamePlay.coffeeRoulette.defaultTopic')}"</p>
+                <p className="text-[11px] font-semibold text-info uppercase tracking-wider mb-1">{t('gamePlay.coffeeRoulette.conversationStarter', { defaultValue: 'Conversation starter' })}</p>
+                <p className="text-[14px] text-foreground font-medium leading-relaxed">"{myPair?.topic || t('gamePlay.coffeeRoulette.defaultTopic', { defaultValue: "What's something you're excited about lately?" })}"</p>
               </div>
             </div>
           </div>
 
           <div className="flex justify-center pt-2">
           <Button variant="brand" onClick={startChatting} disabled={!myPair} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
-              <MessageCircle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.startChatting')}
+              <MessageCircle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.startChatting', { defaultValue: 'Start chatting' })}
             </Button>
           </div>
         </div>

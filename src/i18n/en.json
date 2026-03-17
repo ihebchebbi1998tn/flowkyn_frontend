@@ -1219,6 +1219,7 @@
         "activity": "Activity",
         "eventTitle": "Event title",
         "participants": "Participants",
+        "participantsLine": "{{count}} participants",
         "participantsLine_one": "{{count}} participant",
         "participantsLine_other": "{{count}} participants",
         "invited": "Invited",

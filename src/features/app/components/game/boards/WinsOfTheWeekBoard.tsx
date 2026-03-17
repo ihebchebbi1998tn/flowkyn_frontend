@@ -107,14 +107,14 @@ export function WinsOfTheWeekBoard({
               <Star className="h-5 w-5 text-warning" />
             </div>
             <div>
-              <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.winsOfWeek.thisWeeksPrompt')}</h3>
+              <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.winsOfWeek.thisWeeksPrompt', { defaultValue: "This week's prompt" })}</h3>
               <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">{displayPrompt}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" /> {t('gamePlay.winsOfWeek.contributions', { count: posts.length })}</span>
+            <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" /> {t('gamePlay.winsOfWeek.contributions', { defaultValue: '{{count}} contributions', count: posts.length })}</span>
             <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" /> {postingClosed ? t('gamePlay.winsOfWeek.closed', { defaultValue: 'Closed' }) : t('gamePlay.winsOfWeek.ongoing')}
+              <Clock className="h-3 w-3" /> {postingClosed ? t('gamePlay.winsOfWeek.closed', { defaultValue: 'Closed' }) : t('gamePlay.winsOfWeek.ongoing', { defaultValue: 'Ongoing' })}
             </span>
             {endsAt && (
               <span className="flex items-center gap-1">
@@ -149,14 +149,14 @@ export function WinsOfTheWeekBoard({
             <Textarea
               value={newPost}
               onChange={e => setNewPost(e.target.value)}
-              placeholder={canPost ? t('gamePlay.winsOfWeek.shareYourWin') : t('gamePlay.winsOfWeek.readOnlyPlaceholder', { defaultValue: 'Posting is closed for this activity.' })}
+              placeholder={canPost ? t('gamePlay.winsOfWeek.shareYourWin', { defaultValue: 'Share your win…' }) : t('gamePlay.winsOfWeek.readOnlyPlaceholder', { defaultValue: 'Posting is closed for this activity.' })}
               rows={2}
               className="text-[13px] resize-none border-0 bg-muted/30 focus-visible:ring-1"
               disabled={!canPost}
             />
             <div className="flex justify-end">
               <Button onClick={handlePost} disabled={!newPost.trim() || !canPost} className="h-9 px-5 text-[12px] gap-2">
-                <Send className="h-3.5 w-3.5" /> {t('gamePlay.winsOfWeek.share')}
+                <Send className="h-3.5 w-3.5" /> {t('gamePlay.winsOfWeek.share', { defaultValue: 'Share' })}
               </Button>
             </div>
           </div>
@@ -245,7 +245,7 @@ export function WinsOfTheWeekBoard({
                       onClick={() => setShowReplyFor(showReplyFor === post.id ? null : post.id)}
                       className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <MessageCircle className="h-3 w-3" /> {t('gamePlay.winsOfWeek.reply')}
+                      <MessageCircle className="h-3 w-3" /> {t('gamePlay.winsOfWeek.reply', { defaultValue: 'Reply' })}
                     </button>
                   )}
                 </div>
@@ -262,7 +262,7 @@ export function WinsOfTheWeekBoard({
                       value={replyInputs[post.id] || ''}
                       onChange={e => setReplyInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
                       onKeyDown={e => { if (e.key === 'Enter') handleReply(post.id, post.authorName); }}
-                      placeholder={t('gamePlay.winsOfWeek.writeReply')}
+                      placeholder={t('gamePlay.winsOfWeek.writeReply', { defaultValue: 'Write a reply…' })}
                       className="flex-1 h-8 px-3 text-[12px] rounded-lg bg-muted/50 border-0 outline-none focus:ring-1 focus:ring-ring"
                     />
                     <Button

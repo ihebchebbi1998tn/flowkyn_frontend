@@ -237,7 +237,7 @@ export function TwoTruthsBoard({
       {/* RESULTS */}
       {phase === 'results' && (
         <GameResults
-          subtitle={t('gamePlay.results.roundsPlayed', { count: totalRounds })}
+          subtitle={t('gamePlay.results.roundsPlayed', { defaultValue: '{{count}} rounds played', count: totalRounds })}
           results={results}
           onPlayAgain={() => {
             onEmitAction('two_truths:start', { totalRounds: rounds });

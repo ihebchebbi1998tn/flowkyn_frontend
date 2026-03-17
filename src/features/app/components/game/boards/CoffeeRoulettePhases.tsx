@@ -66,12 +66,12 @@ export function CoffeeRouletteWaitingView({
           </motion.div>
           <h3 className="text-xl font-bold text-foreground mb-2">
             {hasEnoughParticipants
-              ? t('gamePlay.coffeeRoulette.readyToConnect')
+              ? t('gamePlay.coffeeRoulette.readyToConnect', { defaultValue: 'Ready to connect' })
               : t('gamePlay.coffeeRoulette.waitingForOthers', { defaultValue: 'Waiting for teammates...' })}
           </h3>
           <p className="text-[13px] text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
             {hasEnoughParticipants
-              ? t('gamePlay.coffeeRoulette.description')
+              ? t('gamePlay.coffeeRoulette.description', { defaultValue: 'Get paired up for 1:1 chats with a conversation starter.' })
               : t('gamePlay.coffeeRoulette.needMoreParticipants', { defaultValue: 'We need at least 2 people to start this connection session. Share the invite link to get started as a team!' })}
           </p>
           <div className="flex items-center justify-center gap-4 mb-8 text-[12px] text-muted-foreground">
@@ -91,7 +91,7 @@ export function CoffeeRouletteWaitingView({
           >
             <Shuffle className="h-5 w-5" />{' '}
             {hasEnoughParticipants
-              ? t('gamePlay.coffeeRoulette.shuffleMatch')
+              ? t('gamePlay.coffeeRoulette.shuffleMatch', { defaultValue: 'Shuffle match' })
               : t('gamePlay.coffeeRoulette.waitingForTeam', { defaultValue: 'Waiting for more teammates...' })}
           </Button>
         </div>
@@ -108,7 +108,7 @@ interface MatchingViewProps {
 export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingViewProps) {
   const { t } = useTranslation();
 
-  const starterText = pairs[0]?.topic || t('gamePlay.coffeeRoulette.defaultTopic');
+  const starterText = pairs[0]?.topic || t('gamePlay.coffeeRoulette.defaultTopic', { defaultValue: "What's something you're excited about lately?" });
 
   return (
     <div className="space-y-3">
@@ -117,7 +117,7 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
           <div className="flex items-center gap-3">
             <Sparkles className="h-4 w-4 text-info" />
             <h3 className="text-[14px] font-semibold text-foreground">
-              {t('gamePlay.coffeeRoulette.pairsSet')}
+              {t('gamePlay.coffeeRoulette.pairsSet', { defaultValue: 'Pairs are set' })}
             </h3>
           </div>
         </div>
@@ -204,7 +204,7 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
           </div>
           <div>
             <p className="text-[11px] font-semibold text-info uppercase tracking-wider mb-1">
-              {t('gamePlay.coffeeRoulette.conversationStarter')}
+              {t('gamePlay.coffeeRoulette.conversationStarter', { defaultValue: 'Conversation starter' })}
             </p>
             <p className="text-[14px] text-foreground font-medium leading-relaxed">
               "{starterText}"
@@ -220,7 +220,7 @@ export function CoffeeRouletteMatchingView({ pairs, onStartChatting }: MatchingV
           size="xl"
           className="px-10 gap-2.5 shadow-lg shadow-primary/20"
         >
-          <MessageCircle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.startChatting')}
+          <MessageCircle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.startChatting', { defaultValue: 'Start chatting' })}
         </Button>
       </div>
     </div>
@@ -292,7 +292,7 @@ export function CoffeeRouletteChattingView({
 
           <div className="rounded-xl border border-border bg-muted/30 p-4 max-w-md mx-auto mb-4">
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-              {t('gamePlay.coffeeRoulette.needATopic')}
+              {t('gamePlay.coffeeRoulette.needATopic', { defaultValue: 'Need a new topic?' })}
             </p>
             <p className="text-[13px] text-foreground leading-relaxed">
               "{conversationStarters[currentStarterIndex]}"
@@ -303,7 +303,7 @@ export function CoffeeRouletteChattingView({
               className="mt-2 text-[11px] text-info hover:text-info"
               onClick={onNextTopic}
             >
-              <Shuffle className="h-3 w-3 mr-1" /> {t('gamePlay.coffeeRoulette.nextTopic')}
+              <Shuffle className="h-3 w-3 mr-1" /> {t('gamePlay.coffeeRoulette.nextTopic', { defaultValue: 'Next topic' })}
             </Button>
           </div>
 
@@ -312,7 +312,7 @@ export function CoffeeRouletteChattingView({
             variant="outline"
             className="h-10 px-6 text-[13px] gap-2 rounded-xl"
           >
-            <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat')}
+            <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat', { defaultValue: 'End chat' })}
           </Button>
         </div>
       </div>
@@ -342,10 +342,10 @@ export function CoffeeRouletteCompleteView({
             <Heart className="h-9 w-9 text-success" />
           </div>
           <h3 className="text-xl font-bold text-foreground mb-2">
-            {t('gamePlay.coffeeRoulette.greatConnection')}
+            {t('gamePlay.coffeeRoulette.greatConnection', { defaultValue: 'Great connection!' })}
           </h3>
           <p className="text-[13px] text-muted-foreground mb-4 max-w-md mx-auto">
-            {t('gamePlay.coffeeRoulette.chattedFor', { minutes: chatMinutes })}
+            {t('gamePlay.coffeeRoulette.chattedFor', { defaultValue: 'You chatted for {{minutes}} min', minutes: chatMinutes })}
           </p>
           <div className="flex items-center justify-center gap-3 mb-6">
             <Badge
@@ -353,7 +353,7 @@ export function CoffeeRouletteCompleteView({
               className="text-[11px] gap-1 bg-success/5 border-success/20 text-success"
             >
               <CheckCircle className="h-3 w-3" />{' '}
-              {t('gamePlay.coffeeRoulette.connectionMade')}
+              {t('gamePlay.coffeeRoulette.connectionMade', { defaultValue: 'Connection made' })}
             </Badge>
           </div>
           <div className="flex items-center justify-center gap-3">
@@ -363,7 +363,7 @@ export function CoffeeRouletteCompleteView({
               className="h-11 text-[13px] gap-2 rounded-xl"
               onClick={onNewPairing}
             >
-              <Shuffle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.newPairing')}
+              <Shuffle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.newPairing', { defaultValue: 'New pairing' })}
             </Button>
             <Button
               variant="brand"
@@ -371,7 +371,7 @@ export function CoffeeRouletteCompleteView({
               className="h-11 text-[13px] gap-2"
               onClick={onBackToEvents}
             >
-              <ArrowRight className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.backToEvents')}
+              <ArrowRight className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.backToEvents', { defaultValue: 'Back to events' })}
             </Button>
           </div>
         </div>

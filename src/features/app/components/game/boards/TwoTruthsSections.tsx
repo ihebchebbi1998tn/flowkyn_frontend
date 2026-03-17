@@ -76,7 +76,7 @@ export function TwoTruthsWaitingSection({
             <Target className="h-9 w-9 text-primary" />
           </div>
           <h3 className="text-xl font-bold text-foreground mb-2">
-            {t('gamePlay.twoTruths.title')}
+            {t('gamePlay.twoTruths.title', { defaultValue: 'Two Truths & a Lie' })}
           </h3>
           <p className="text-[13px] text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
             {t(
@@ -92,14 +92,14 @@ export function TwoTruthsWaitingSection({
                   <Settings className="h-3.5 w-3.5 text-primary" />
                 </div>
                 <h4 className="text-[13px] font-bold text-foreground tracking-tight uppercase">
-                  {t('gamePlay.twoTruths.roundSettings')}
+                  {t('gamePlay.twoTruths.roundSettings', { defaultValue: 'Round settings' })}
                 </h4>
               </div>
 
               <div className="space-y-5">
                 <div className="flex items-center justify-between px-1">
                   <span className="text-[12px] font-medium text-muted-foreground">
-                    {t('gamePlay.twoTruths.howManyRounds')}
+                    {t('gamePlay.twoTruths.howManyRounds', { defaultValue: 'How many rounds would you like to play?' })}
                   </span>
                   <Badge variant="brand" className="text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
                     {rounds} {t('common.rounds', { count: rounds })}
@@ -117,7 +117,7 @@ export function TwoTruthsWaitingSection({
 
                 <p className="text-[11px] text-muted-foreground italic flex items-center justify-center gap-1.5 pt-1">
                   <Sparkles className="h-3 w-3 text-primary/60" />
-                  {t('gamePlay.twoTruths.recommendedRounds')}
+                  {t('gamePlay.twoTruths.recommendedRounds', { defaultValue: 'Tip: 4–8 rounds works great for most teams.' })}
                 </p>
               </div>
             </div>
@@ -161,10 +161,10 @@ export function TwoTruthsSubmitSection({
           </div>
           <div>
             <h3 className="text-[14px] font-semibold text-foreground">
-              {t('gamePlay.twoTruths.yourTurn')}
+              {t('gamePlay.twoTruths.yourTurn', { defaultValue: "It's your turn" })}
             </h3>
             <p className="text-[11px] text-muted-foreground">
-              {t('gamePlay.twoTruths.makeItBelievable')}
+              {t('gamePlay.twoTruths.makeItBelievable', { defaultValue: 'Write two truths and one lie. Make the lie believable.' })}
             </p>
           </div>
         </div>
@@ -182,7 +182,7 @@ export function TwoTruthsSubmitSection({
                 {String.fromCharCode(65 + i)}
               </span>
               <label className="text-[11px] font-medium text-muted-foreground">
-                {t('gamePlay.twoTruths.statementLabel', { num: i + 1 })}
+                {t('gamePlay.twoTruths.statementLabel', { defaultValue: 'Statement {{num}}', num: i + 1 })}
               </label>
             </div>
             <Textarea
@@ -190,8 +190,8 @@ export function TwoTruthsSubmitSection({
               onChange={(e) => onChange(i, e.target.value)}
               placeholder={
                 i === 2
-                  ? t('gamePlay.twoTruths.liePlaceholder')
-                  : t('gamePlay.twoTruths.truthPlaceholder')
+                  ? t('gamePlay.twoTruths.liePlaceholder', { defaultValue: 'This could be your lie…' })
+                  : t('gamePlay.twoTruths.truthPlaceholder', { defaultValue: 'Write a truth (or a lie)…' })
               }
               rows={1}
               className="text-[13px] resize-none min-h-[44px] rounded-xl border-border/60 focus:border-primary/40 transition-all"
@@ -204,7 +204,7 @@ export function TwoTruthsSubmitSection({
             disabled={isSubmitDisabled}
             className="h-10 px-6 text-[13px] gap-2 rounded-xl"
           >
-            <Send className="h-4 w-4" /> {t('gamePlay.twoTruths.submit')}
+            <Send className="h-4 w-4" /> {t('gamePlay.twoTruths.submit', { defaultValue: 'Submit' })}
           </Button>
         </div>
       </div>
@@ -225,10 +225,10 @@ export function TwoTruthsSubmittedSection({ message }: SubmittedSectionProps) {
         <CheckCircle className="h-8 w-8 text-success" />
       </div>
       <h3 className="text-[16px] font-bold text-foreground mb-1">
-        {t('gamePlay.twoTruths.submitted')}
+        {t('gamePlay.twoTruths.submitted', { defaultValue: 'Submitted!' })}
       </h3>
       <p className="text-[12px] text-muted-foreground">
-        {message || t('gamePlay.twoTruths.waitingForVotes')}
+        {message || t('gamePlay.twoTruths.waitingForVotes', { defaultValue: 'Please wait — voting starts soon…' })}
       </p>
       <div className="flex items-center justify-center gap-1 mt-4">
         {[0, 0.2, 0.4].map((d, i) => (
@@ -280,10 +280,10 @@ export function TwoTruthsVoteSection({
           </Avatar>
           <div>
             <h3 className="text-[14px] font-semibold text-foreground">
-              {t('gamePlay.twoTruths.statementsOf', { name: currentUserName })}
+              {t('gamePlay.twoTruths.statementsOf', { defaultValue: "{{name}}'s statements", name: currentUserName })}
             </h3>
             <p className="text-[11px] text-muted-foreground">
-              {t('gamePlay.twoTruths.spotTheLie')}
+              {t('gamePlay.twoTruths.spotTheLie', { defaultValue: 'Spot the lie — choose carefully!' })}
             </p>
           </div>
         </div>
@@ -350,7 +350,7 @@ export function TwoTruthsVoteSection({
               disabled={disableSubmit}
               className="h-10 px-6 text-[13px] gap-2 rounded-xl"
             >
-              <ThumbsUp className="h-4 w-4" /> {t('gamePlay.twoTruths.lockVote')}
+              <ThumbsUp className="h-4 w-4" /> {t('gamePlay.twoTruths.lockVote', { defaultValue: 'Lock vote' })}
             </Button>
           </div>
         )}
@@ -368,7 +368,7 @@ export function TwoTruthsVoteSection({
             <div className="flex items-center justify-center gap-2">
               <CheckCircle className="h-4 w-4 text-success" />
               <p className="text-[12px] text-success font-semibold">
-                {t('gamePlay.twoTruths.voteLocked')}
+                {t('gamePlay.twoTruths.voteLocked', { defaultValue: 'Vote locked' })}
               </p>
             </div>
           </div>
@@ -441,10 +441,10 @@ export function TwoTruthsRevealSection({
           </div>
           <div>
             <h3 className="text-[14px] font-semibold text-foreground">
-              {t('gamePlay.twoTruths.theReveal')}
+              {t('gamePlay.twoTruths.theReveal', { defaultValue: 'The reveal' })}
             </h3>
             <p className="text-[11px] text-muted-foreground">
-              {t('gamePlay.twoTruths.seeVotes')}
+              {t('gamePlay.twoTruths.seeVotes', { defaultValue: 'See how everyone voted' })}
             </p>
           </div>
         </div>
@@ -495,11 +495,11 @@ export function TwoTruthsRevealSection({
                       >
                         {isLie ? (
                           <>
-                            <AlertCircle className="h-2.5 w-2.5" /> {t('gamePlay.twoTruths.lie')}
+                            <AlertCircle className="h-2.5 w-2.5" /> {t('gamePlay.twoTruths.lie', { defaultValue: 'LIE' })}
                           </>
                         ) : (
                           <>
-                            <CheckCircle className="h-2.5 w-2.5" /> {t('gamePlay.twoTruths.truth')}
+                            <CheckCircle className="h-2.5 w-2.5" /> {t('gamePlay.twoTruths.truth', { defaultValue: 'TRUTH' })}
                           </>
                         )}
                       </Badge>
@@ -508,7 +508,7 @@ export function TwoTruthsRevealSection({
                           variant="outline"
                           className="text-[9px] border-primary/30 text-primary bg-primary/5 gap-1"
                         >
-                          <Target className="h-2.5 w-2.5" /> {t('gamePlay.twoTruths.yourPick')}
+                          <Target className="h-2.5 w-2.5" /> {t('gamePlay.twoTruths.yourPick', { defaultValue: 'Your pick' })}
                         </Badge>
                       )}
                     </div>
@@ -529,6 +529,7 @@ export function TwoTruthsRevealSection({
                     </div>
                     <span className="text-[11px] text-muted-foreground font-medium w-16 text-right">
                       {t('gamePlay.twoTruths.votes', {
+                        defaultValue: '{{count}} votes ({{pct}}%)',
                         count: tally.count,
                         pct: tally.percentage,
                       })}
@@ -550,10 +551,10 @@ export function TwoTruthsRevealSection({
               </div>
               <div>
                 <p className="text-[13px] font-bold text-success">
-                  {t('gamePlay.twoTruths.correct')}
+                  {t('gamePlay.twoTruths.correct', { defaultValue: 'Correct!' })}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  {t('gamePlay.twoTruths.greatWork')}
+                  {t('gamePlay.twoTruths.greatWork', { defaultValue: 'Nice work' })}
                 </p>
               </div>
             </div>
@@ -564,10 +565,10 @@ export function TwoTruthsRevealSection({
               </div>
               <div>
                 <p className="text-[13px] font-bold text-destructive">
-                  {t('gamePlay.twoTruths.wrongGuess')}
+                  {t('gamePlay.twoTruths.wrongGuess', { defaultValue: 'Not quite' })}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  {t('gamePlay.twoTruths.betterLuck')}
+                  {t('gamePlay.twoTruths.betterLuck', { defaultValue: 'Better luck next time' })}
                 </p>
               </div>
             </div>
@@ -577,11 +578,11 @@ export function TwoTruthsRevealSection({
           <Button onClick={onNextRound} className="h-10 px-6 text-[13px] gap-2 rounded-xl">
             {isLastRound ? (
               <>
-                <Trophy className="h-4 w-4" /> {t('gamePlay.twoTruths.viewResults')}
+                <Trophy className="h-4 w-4" /> {t('gamePlay.twoTruths.viewResults', { defaultValue: 'View results' })}
               </>
             ) : (
               <>
-                <ChevronRight className="h-4 w-4" /> {t('gamePlay.twoTruths.nextRound')}
+                <ChevronRight className="h-4 w-4" /> {t('gamePlay.twoTruths.nextRound', { defaultValue: 'Next round' })}
               </>
             )}
           </Button>
