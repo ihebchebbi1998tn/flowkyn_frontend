@@ -90,7 +90,9 @@ export function SecuritySection() {
       <form onSubmit={handleChangePassword} className="space-y-4 max-w-sm mb-5">
         {error && <AlertBanner type="error" message={error} onClose={() => setError('')} />}
         <FieldGroup label={t('settings.currentPassword')}>
-          <PasswordInput className="h-10 text-[13px]" placeholder="••••••••"
+          <PasswordInput
+            className="h-10 text-[13px]"
+            placeholder={t('auth.passwordMask', { defaultValue: '••••••••' })}
             value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
         </FieldGroup>
         <FieldGroup label={t('settings.newPasswordLabel')}>

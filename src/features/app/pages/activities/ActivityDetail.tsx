@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { ACTIVITIES, categoryGradient } from '@/features/app/data/activities';
 import { ROUTES } from '@/constants/routes';
+import { LanguageSelector } from '@/components/common';
 
 export default function ActivityDetail() {
   const { t } = useTranslation();
@@ -76,6 +77,9 @@ export default function ActivityDetail() {
               : t('games.detail.typeAsync')}{' '}
             · ⏱️ {activity.duration}
           </p>
+        </div>
+        <div className="shrink-0">
+          <LanguageSelector align="end" />
         </div>
       </div>
 

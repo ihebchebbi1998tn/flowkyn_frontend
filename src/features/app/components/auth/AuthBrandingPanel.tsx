@@ -57,7 +57,7 @@ export function AuthBrandingPanel({ mode }: AuthBrandingPanelProps) {
       <div className="relative z-10 flex flex-col justify-between h-full">
         {/* Logo */}
         <div className="flex items-center">
-          <img src={logoImg} alt="Flowkyn" className="h-14 w-14 object-contain brightness-0 invert" />
+          <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-14 w-14 object-contain brightness-0 invert" />
         </div>
 
         {/* Animated content */}

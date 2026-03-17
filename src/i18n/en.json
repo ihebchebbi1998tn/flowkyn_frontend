@@ -41,12 +41,18 @@
     "perPage": "per page",
     "success": "Success",
     "error": "Error",
+    "rounds": "rounds",
     "warning": "Warning",
     "info": "Info",
     "tbd": "TBD",
     "backToEvents": "Back to events",
     "live": "Live",
     "async": "Async"
+  },
+  "errors": {
+    "eventEnded": "This activity has ended. Posting is now closed.",
+    "postFailed": "Failed to post. Please try again.",
+    "reactionFailed": "Failed to react. Please try again."
   },
   "landing": {
     "nav": {
@@ -409,6 +415,9 @@
   "events": {
     "title": "Events",
     "subtitle": "Manage your team-building events and activities",
+    "errors": {
+      "joinRoomFailed": "Failed to join event room"
+    },
     "createEvent": "Create Event",
     "editEvent": "Edit Event",
     "eventTitle": "Title",
@@ -585,6 +594,10 @@
     }
   },
   "gamePlay": {
+    "errors": {
+      "socket": "Game connection error",
+      "joinRoomFailed": "Failed to join game room"
+    },
     "twoTruths": {
       "title": "Two Truths & a Lie",
       "description": "Each player submits two truths and one lie. The team votes on which is the lie. Points for fooling others!",
@@ -614,7 +627,10 @@
       "betterLuck": "Better luck next round!",
       "viewResults": "View Results",
       "nextRound": "Next Round",
-      "skipAnimation": "Skip animation"
+      "skipAnimation": "Skip animation",
+      "roundSettings": "Round Settings",
+      "howManyRounds": "How many rounds would you like to play?",
+      "recommendedRounds": "Recommended: 3–5 rounds"
     },
     "coffeeRoulette": {
       "title": "Coffee Roulette",
@@ -640,8 +656,14 @@
       "thisWeeksPrompt": "This week's prompt",
       "contributions": "{{count}} contributions",
       "ongoing": "Ongoing — share anytime",
+      "closed": "Closed",
+      "endsAt": "Ends: {{time}}",
+      "endedAt": "Ended: {{time}}",
       "shareYourWin": "Share your win...",
+      "readOnlyPlaceholder": "Posting is closed for this activity.",
       "share": "Share",
+      "postingClosedTitle": "Posting is closed",
+      "postingClosedBody": "This activity has ended. You can still read, but reactions are disabled.",
       "reply": "Reply",
       "writeReply": "Write a reply...",
       "replyCount": "{{count}} reply",
@@ -933,6 +955,23 @@
       "description": "An async strategic simulation where your team navigates a realistic crisis scenario from different roles and perspectives.",
       "duration": "45–60 min (async)",
       "teamSize": "4–12 people"
+    },
+    "launch": {
+      "fields": {
+        "endsAt": "Ends at",
+        "endsAtHelp": "After this time, new wins and reactions will be disabled (read-only)."
+      },
+      "schedule": {
+        "pickEndDateTime": "Select an end date and time"
+      },
+      "errors": {
+        "endsAtAfterStart": "End date/time must be after the start date/time.",
+        "inviteSomeFailed": "Some invitations failed ({{emails}}). The event was created successfully.",
+        "inviteAllFailed": "Failed to send invitations. Please try again."
+      },
+      "review": {
+        "endsAt": "Ends at"
+      }
     }
   },
   "chat": {
@@ -943,7 +982,12 @@
     "isTyping": "{{name}} is typing...",
     "peopleTyping": "{{count}} people typing...",
     "newMessages": "New messages",
-    "placeholder": "Type a message..."
+    "placeholder": "Type a message...",
+    "errors": {
+      "generic": "Chat error",
+      "sendFailed": "Failed to send message",
+      "pinFailed": "Failed to update pinned message"
+    }
   },
   "invitation": {
     "verifying": "Verifying invitation...",
@@ -984,6 +1028,10 @@
     "eventParticipantJoined": {
       "title": "New participant joined",
       "message": "{{guestName, default:Someone}} joined \"{{eventTitle}}\"."
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch notifications",
+      "markReadFailed": "Failed to mark notification as read"
     }
   },
   "analytics": {

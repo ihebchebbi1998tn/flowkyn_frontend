@@ -21,8 +21,11 @@ export const gamesApi = {
     api.get<GameType[]>('/game-types'),
 
   /** Start a new game session within an event */
-  startSession: (eventId: string, gameTypeId: string) =>
-    api.post<GameSession>(`/events/${eventId}/game-sessions`, { game_type_id: gameTypeId }, eventId),
+  startSession: (eventId: string, gameTypeId: string, totalRounds?: number) =>
+    api.post<GameSession>(`/events/${eventId}/game-sessions`, { 
+      game_type_id: gameTypeId,
+      total_rounds: totalRounds 
+    }, eventId),
 
   /**
    * Strategic Escape Challenge — create a configured session for an event.

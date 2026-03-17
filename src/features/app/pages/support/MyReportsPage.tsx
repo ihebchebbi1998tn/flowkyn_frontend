@@ -51,14 +51,18 @@ export const MyReportsPage: React.FC = () => {
       setReports(result.data);
       setTotalPages(result.pagination.totalPages);
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to load reports');
+      setError(
+        err.response?.data?.message
+        || err.message
+        || t('bugReports.errors.loadFailed', { defaultValue: 'Failed to load reports' })
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (reportId: string) => {
-    if (!confirm('Are you sure you want to delete this report?')) return;
+    if (!confirm(t('bugReports.confirmDelete', { defaultValue: 'Are you sure you want to delete this report?' }))) return;
 
     setDeleting(reportId);
     try {
@@ -66,9 +70,32 @@ export const MyReportsPage: React.FC = () => {
       setReports(reports.filter(r => r.id !== reportId));
       await loadReports();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete report');
+      setError(
+        err.response?.data?.message
+        || t('bugReports.errors.deleteFailed', { defaultValue: 'Failed to delete report' })
+      );
     } finally {
       setDeleting(null);
+    }
+  };
+
+  const statusLabel = (status: string) => {
+    switch (status) {
+      case 'open': return t('bugReports.statusOpen', { defaultValue: 'Open' });
+      case 'in_progress': return t('bugReports.statusInProgress', { defaultValue: 'In Progress' });
+      case 'resolved': return t('bugReports.statusResolved', { defaultValue: 'Resolved' });
+      case 'closed': return t('bugReports.statusClosed', { defaultValue: 'Closed' });
+      default: return status.replace(/_/g, ' ');
+    }
+  };
+
+  const priorityLabel = (priority: string) => {
+    switch (priority) {
+      case 'critical': return t('bugReports.priorityCritical', { defaultValue: 'Critical' });
+      case 'high': return t('bugReports.priorityHigh', { defaultValue: 'High' });
+      case 'medium': return t('bugReports.priorityMedium', { defaultValue: 'Medium' });
+      case 'low': return t('bugReports.priorityLow', { defaultValue: 'Low' });
+      default: return priority;
     }
   };
 
@@ -238,10 +265,10 @@ export const MyReportsPage: React.FC = () => {
 
                   <div className="flex flex-wrap items-center gap-2">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(report.status)}`}>
-                      {report.status.replace(/_/g, ' ')}
+                      {statusLabel(report.status)}
                     </span>
                     <span className={`text-xs font-medium ${getPriorityColor(report.priority)}`}>
-                      {report.priority.toUpperCase()}
+                      {priorityLabel(report.priority)}
                     </span>
                     {report.attachment_count > 0 && (
                       <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">

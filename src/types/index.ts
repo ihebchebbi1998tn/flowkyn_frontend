@@ -90,11 +90,13 @@ export interface GameSession {
   game_type_id: string;
   status: 'active' | 'paused' | 'finished';
   current_round: number;
+  total_rounds?: number;
   game_duration_minutes: number;
   expires_at?: string;
   metadata?: Record<string, unknown>;
   started_at: string;
   ended_at?: string;
+  active_round_id?: string | null;
   // Joined fields
   game_type_name?: string;
   game_type_key?: string;

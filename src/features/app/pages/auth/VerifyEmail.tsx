@@ -61,7 +61,7 @@ export default function VerifyEmail() {
       </div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm text-center space-y-6">
         {status !== 'verifying' && (
-          <img src={logoImg} alt="Flowkyn" className="h-14 w-14 mx-auto object-contain" />
+          <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-14 w-14 mx-auto object-contain" />
         )}
 
         {status === 'verifying' && (

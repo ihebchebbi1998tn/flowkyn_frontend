@@ -72,7 +72,7 @@ export default function Register() {
   return (
     <div className="space-y-5">
       <div className="lg:hidden mb-4">
-        <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
+        <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-12 w-12 object-contain" />
       </div>
 
       <div className="space-y-1">
@@ -108,7 +108,7 @@ export default function Register() {
           <Input
             type="email" className="h-11 text-body-sm rounded-xl"
             value={form.email} onChange={e => update('email', e.target.value)}
-            placeholder="you@company.com"
+            placeholder={t('auth.emailPlaceholder', { defaultValue: 'you@company.com' })}
           />
         </div>
 

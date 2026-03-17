@@ -19,30 +19,32 @@ import { bugReportsApi, type BugReportStatus, type BugReportType, type BugReport
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useApiError } from '@/hooks/useApiError';
+import { useTranslation } from 'react-i18next';
 
-const statusConfig: Record<BugReportStatus, { label: string; color: string }> = {
-  open: { label: 'Open', color: 'bg-blue-100 text-blue-800' },
-  in_progress: { label: 'In Progress', color: 'bg-purple-100 text-purple-800' },
-  resolved: { label: 'Resolved', color: 'bg-green-100 text-green-800' },
-  closed: { label: 'Closed', color: 'bg-gray-100 text-gray-800' },
+const statusConfig: Record<BugReportStatus, { i18nKey: string; defaultLabel: string; color: string }> = {
+  open: { i18nKey: 'tickets.status.open', defaultLabel: 'Open', color: 'bg-blue-100 text-blue-800' },
+  in_progress: { i18nKey: 'tickets.status.inProgress', defaultLabel: 'In Progress', color: 'bg-purple-100 text-purple-800' },
+  resolved: { i18nKey: 'tickets.status.resolved', defaultLabel: 'Resolved', color: 'bg-green-100 text-green-800' },
+  closed: { i18nKey: 'tickets.status.closed', defaultLabel: 'Closed', color: 'bg-gray-100 text-gray-800' },
 };
 
-const priorityConfig: Record<BugReportPriority, { label: string; color: string }> = {
-  low: { label: 'Low', color: 'bg-green-100 text-green-800' },
-  medium: { label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
-  high: { label: 'High', color: 'bg-orange-100 text-orange-800' },
-  critical: { label: 'Critical', color: 'bg-red-100 text-red-800' },
+const priorityConfig: Record<BugReportPriority, { i18nKey: string; defaultLabel: string; color: string }> = {
+  low: { i18nKey: 'tickets.priority.low', defaultLabel: 'Low', color: 'bg-green-100 text-green-800' },
+  medium: { i18nKey: 'tickets.priority.medium', defaultLabel: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+  high: { i18nKey: 'tickets.priority.high', defaultLabel: 'High', color: 'bg-orange-100 text-orange-800' },
+  critical: { i18nKey: 'tickets.priority.critical', defaultLabel: 'Critical', color: 'bg-red-100 text-red-800' },
 };
 
-const typeConfig: Record<BugReportType, { label: string; icon: string }> = {
-  bug_report: { label: 'Bug', icon: '🐛' },
-  feature_request: { label: 'Feature', icon: '✨' },
-  issue: { label: 'Issue', icon: '⚠️' },
-  general_feedback: { label: 'Feedback', icon: '💬' },
+const typeConfig: Record<BugReportType, { i18nKey: string; defaultLabel: string; icon: string }> = {
+  bug_report: { i18nKey: 'tickets.type.bug', defaultLabel: 'Bug', icon: '🐛' },
+  feature_request: { i18nKey: 'tickets.type.feature', defaultLabel: 'Feature', icon: '✨' },
+  issue: { i18nKey: 'tickets.type.issue', defaultLabel: 'Issue', icon: '⚠️' },
+  general_feedback: { i18nKey: 'tickets.type.feedback', defaultLabel: 'Feedback', icon: '💬' },
 };
 
 export default function MyTicketsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<BugReportStatus | 'all'>('all');
   const [tickets, setTickets] = useState<BugReport[]>([]);
@@ -61,7 +63,7 @@ export default function MyTicketsPage() {
       setTickets(result.data);
       setTotal(result.pagination.total);
     } catch (err: any) {
-      showError(err, 'Failed to load tickets');
+      showError(err, t('tickets.errors.loadFailed', { defaultValue: 'Failed to load tickets' }));
     } finally {
       setLoading(false);
     }
@@ -70,15 +72,15 @@ export default function MyTicketsPage() {
   useEffect(() => { fetchTickets(); }, [fetchTickets]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this ticket? This action cannot be undone.')) return;
+    if (!confirm(t('tickets.confirmDelete', { defaultValue: 'Are you sure you want to delete this ticket? This action cannot be undone.' }))) return;
 
     try {
       await bugReportsApi.delete(id);
-      toast.success('Ticket deleted');
+      toast.success(t('tickets.toast.deleted', { defaultValue: 'Ticket deleted' }));
       setPage(1);
       fetchTickets();
     } catch (err: any) {
-      showError(err, 'Failed to delete ticket');
+      showError(err, t('tickets.errors.deleteFailed', { defaultValue: 'Failed to delete ticket' }));
     }
   };
 
@@ -89,7 +91,10 @@ export default function MyTicketsPage() {
   if (loading && tickets.length === 0) {
     return (
       <div className="space-y-6">
-        <PageHeader title="My Tickets" subtitle="Track your bug reports and feature requests" />
+        <PageHeader
+          title={t('tickets.myTicketsTitle', { defaultValue: 'My Tickets' })}
+          subtitle={t('tickets.myTicketsSubtitle', { defaultValue: 'Track your bug reports and feature requests' })}
+        />
         <TableSkeleton />
       </div>
     );
@@ -98,10 +103,13 @@ export default function MyTicketsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <PageHeader title="My Tickets" subtitle="Track your bug reports and feature requests" />
+        <PageHeader
+          title={t('tickets.myTicketsTitle', { defaultValue: 'My Tickets' })}
+          subtitle={t('tickets.myTicketsSubtitle', { defaultValue: 'Track your bug reports and feature requests' })}
+        />
         <Button onClick={() => navigate('/app/tickets/submit')} className="gap-2">
           <Plus className="w-4 h-4" />
-          New Ticket
+          {t('tickets.newTicket', { defaultValue: 'New Ticket' })}
         </Button>
       </div>
 
@@ -110,7 +118,7 @@ export default function MyTicketsPage() {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search tickets by title, description..."
+            placeholder={t('tickets.searchPlaceholder', { defaultValue: 'Search tickets by title, description...' })}
             value={search}
             onChange={e => {
               setSearch(e.target.value);
@@ -124,19 +132,22 @@ export default function MyTicketsPage() {
           <Button asChild variant="outline" className="gap-2">
             <DropdownMenuTrigger>
               <Filter className="w-4 h-4" />
-              Status: {statusFilter === 'all' ? 'All' : statusConfig[statusFilter as BugReportStatus].label}
+              {t('tickets.statusLabel', { defaultValue: 'Status' })}:{' '}
+              {statusFilter === 'all'
+                ? t('common.all', { defaultValue: 'All' })
+                : t(statusConfig[statusFilter as BugReportStatus].i18nKey, { defaultValue: statusConfig[statusFilter as BugReportStatus].defaultLabel })}
             </DropdownMenuTrigger>
           </Button>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => { setStatusFilter('all'); setPage(1); }}>
-              All Statuses
+              {t('tickets.allStatuses', { defaultValue: 'All Statuses' })}
             </DropdownMenuItem>
             {Object.entries(statusConfig).map(([status, config]) => (
               <DropdownMenuItem
                 key={status}
                 onClick={() => { setStatusFilter(status as BugReportStatus); setPage(1); }}
               >
-                <Badge className={config.color}>{config.label}</Badge>
+                <Badge className={config.color}>{t(config.i18nKey, { defaultValue: config.defaultLabel })}</Badge>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -146,10 +157,10 @@ export default function MyTicketsPage() {
       {/* Tickets Table */}
       {tickets.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No tickets found</p>
+          <p className="text-muted-foreground mb-4">{t('tickets.empty', { defaultValue: 'No tickets found' })}</p>
           <Button onClick={() => navigate('/app/tickets/submit')} className="gap-2">
             <Plus className="w-4 h-4" />
-            Create Your First Ticket
+            {t('tickets.createFirst', { defaultValue: 'Create Your First Ticket' })}
           </Button>
         </div>
       ) : (
@@ -166,19 +177,19 @@ export default function MyTicketsPage() {
                 </div>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                   <Badge className={statusConfig[ticket.status].color}>
-                    {statusConfig[ticket.status].label}
+                    {t(statusConfig[ticket.status].i18nKey, { defaultValue: statusConfig[ticket.status].defaultLabel })}
                   </Badge>
                   <Badge className={priorityConfig[ticket.priority].color}>
-                    {priorityConfig[ticket.priority].label}
+                    {t(priorityConfig[ticket.priority].i18nKey, { defaultValue: priorityConfig[ticket.priority].defaultLabel })}
                   </Badge>
                   {ticket.assigned_to_name && (
                     <Badge variant="outline" className="text-xs">
-                      Assigned to {ticket.assigned_to_name}
+                      {t('tickets.assignedTo', { defaultValue: 'Assigned to {{name}}', name: ticket.assigned_to_name })}
                     </Badge>
                   )}
                   {ticket.attachment_count && ticket.attachment_count > 0 && (
                     <Badge variant="secondary" className="text-xs">
-                      {ticket.attachment_count} file(s)
+                      {t('tickets.attachmentsCount', { defaultValue: '{{count}} file(s)', count: ticket.attachment_count })}
                     </Badge>
                   )}
                   <span className="text-xs text-muted-foreground ml-auto sm:ml-2">
@@ -199,7 +210,7 @@ export default function MyTicketsPage() {
                     className="gap-2"
                   >
                     <Eye className="w-4 h-4" />
-                    View Details
+                    {t('tickets.viewDetails', { defaultValue: 'View Details' })}
                   </DropdownMenuItem>
                   {canDelete(ticket) && (
                     <DropdownMenuItem
@@ -207,7 +218,7 @@ export default function MyTicketsPage() {
                       className="gap-2 text-destructive"
                     >
                       <Trash2 className="w-4 h-4" />
-                      Delete
+                      {t('common.delete', { defaultValue: 'Delete' })}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -221,7 +232,12 @@ export default function MyTicketsPage() {
       {total > 20 && (
         <div className="flex items-center justify-between pt-4">
           <p className="text-sm text-muted-foreground">
-            Showing {(page - 1) * 20 + 1} – {Math.min(page * 20, total)} of {total}
+            {t('common.pagination.showing', {
+              defaultValue: 'Showing {{from}} – {{to}} of {{total}}',
+              from: (page - 1) * 20 + 1,
+              to: Math.min(page * 20, total),
+              total,
+            })}
           </p>
           <div className="flex gap-2">
             <Button
@@ -229,14 +245,14 @@ export default function MyTicketsPage() {
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
             >
-              Previous
+              {t('common.previous', { defaultValue: 'Previous' })}
             </Button>
             <Button
               variant="outline"
               onClick={() => setPage(p => p + 1)}
               disabled={page * 20 >= total}
             >
-              Next
+              {t('common.next', { defaultValue: 'Next' })}
             </Button>
           </div>
         </div>

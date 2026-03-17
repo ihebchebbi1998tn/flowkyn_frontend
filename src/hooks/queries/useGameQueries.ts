@@ -19,8 +19,8 @@ export function useStartGameSession() {
   const { showError } = useApiError();
 
   return useMutation({
-    mutationFn: ({ eventId, gameTypeId }: { eventId: string; gameTypeId: string }) =>
-      gamesApi.startSession(eventId, gameTypeId),
+    mutationFn: ({ eventId, gameTypeId, totalRounds }: { eventId: string; gameTypeId: string; totalRounds?: number }) =>
+      gamesApi.startSession(eventId, gameTypeId, totalRounds),
     onError: (err) => showError(err),
   });
 }

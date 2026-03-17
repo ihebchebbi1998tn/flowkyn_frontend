@@ -54,9 +54,17 @@ export function TwoTruthsHeader({
 
 interface WaitingSectionProps {
   onStart: () => void;
+  isAdmin?: boolean;
+  rounds: number;
+  onRoundsChange: (val: number) => void;
 }
 
-export function TwoTruthsWaitingSection({ onStart }: WaitingSectionProps) {
+export function TwoTruthsWaitingSection({
+  onStart,
+  isAdmin,
+  rounds,
+  onRoundsChange,
+}: WaitingSectionProps) {
   const { t } = useTranslation();
 
   return (
@@ -76,11 +84,50 @@ export function TwoTruthsWaitingSection({ onStart }: WaitingSectionProps) {
               'Take turns sharing two true facts and one that is made up. The team’s job is to spot which one doesn’t quite fit.',
             )}
           </p>
+
+          {isAdmin && (
+            <div className="mb-10 max-w-sm mx-auto p-5 rounded-2xl border border-primary/10 bg-primary/[0.02] backdrop-blur-sm animate-in fade-in slide-in-from-bottom-2 duration-700">
+              <div className="flex items-center gap-2.5 mb-5 justify-center">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
+                  <Settings className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <h4 className="text-[13px] font-bold text-foreground tracking-tight uppercase">
+                  {t('gamePlay.twoTruths.roundSettings')}
+                </h4>
+              </div>
+
+              <div className="space-y-5">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[12px] font-medium text-muted-foreground">
+                    {t('gamePlay.twoTruths.howManyRounds')}
+                  </span>
+                  <Badge variant="brand" className="text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
+                    {rounds} {t('common.rounds', { count: rounds })}
+                  </Badge>
+                </div>
+
+                <Slider
+                  value={[rounds]}
+                  min={2}
+                  max={20}
+                  step={1}
+                  onValueChange={(val) => onRoundsChange(val[0])}
+                  className="py-1"
+                />
+
+                <p className="text-[11px] text-muted-foreground italic flex items-center justify-center gap-1.5 pt-1">
+                  <Sparkles className="h-3 w-3 text-primary/60" />
+                  {t('gamePlay.twoTruths.recommendedRounds')}
+                </p>
+              </div>
+            </div>
+          )}
+
           <Button
             variant="brand"
             onClick={onStart}
             size="xl"
-            className="px-10 gap-2.5 shadow-lg shadow-primary/20"
+            className="px-10 gap-2.5 shadow-lg shadow-primary/20 transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             <Zap className="h-5 w-5" /> {t('gamePlay.twoTruths.startRound', { round: 1 })}
           </Button>

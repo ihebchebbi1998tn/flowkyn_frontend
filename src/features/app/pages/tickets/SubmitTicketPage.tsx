@@ -20,28 +20,16 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useApiError } from '@/hooks/useApiError';
+import { useTranslation } from 'react-i18next';
 
 interface Attachment {
   file: File;
   preview: string;
 }
 
-const typeOptions = [
-  { value: 'bug_report', label: '🐛 Bug Report', description: 'Something isn\'t working correctly' },
-  { value: 'feature_request', label: '✨ Feature Request', description: 'Suggest a new feature' },
-  { value: 'issue', label: '⚠️ Issue', description: 'General problem or concern' },
-  { value: 'general_feedback', label: '💬 General Feedback', description: 'General comment or suggestion' },
-];
-
-const priorityOptions = [
-  { value: 'low', label: 'Low', color: 'bg-green-100 text-green-800' },
-  { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-800' },
-  { value: 'critical', label: 'Critical', color: 'bg-red-100 text-red-800' },
-];
-
 export default function SubmitTicketPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [type, setType] = useState<BugReportType>('bug_report');
@@ -51,6 +39,20 @@ export default function SubmitTicketPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { showError } = useApiError();
+
+  const typeOptions = [
+    { value: 'bug_report', label: `🐛 ${t('tickets.typeOptions.bugReport', { defaultValue: 'Bug Report' })}`, description: t('tickets.typeOptions.bugReportDesc', { defaultValue: "Something isn't working correctly" }) },
+    { value: 'feature_request', label: `✨ ${t('tickets.typeOptions.featureRequest', { defaultValue: 'Feature Request' })}`, description: t('tickets.typeOptions.featureRequestDesc', { defaultValue: 'Suggest a new feature' }) },
+    { value: 'issue', label: `⚠️ ${t('tickets.typeOptions.issue', { defaultValue: 'Issue' })}`, description: t('tickets.typeOptions.issueDesc', { defaultValue: 'General problem or concern' }) },
+    { value: 'general_feedback', label: `💬 ${t('tickets.typeOptions.generalFeedback', { defaultValue: 'General Feedback' })}`, description: t('tickets.typeOptions.generalFeedbackDesc', { defaultValue: 'General comment or suggestion' }) },
+  ];
+
+  const priorityOptions = [
+    { value: 'low', label: t('tickets.priority.low', { defaultValue: 'Low' }), color: 'bg-green-100 text-green-800' },
+    { value: 'medium', label: t('tickets.priority.medium', { defaultValue: 'Medium' }), color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'high', label: t('tickets.priority.high', { defaultValue: 'High' }), color: 'bg-orange-100 text-orange-800' },
+    { value: 'critical', label: t('tickets.priority.critical', { defaultValue: 'Critical' }), color: 'bg-red-100 text-red-800' },
+  ];
 
   const handleFileSelect = async (files: FileList | null) => {
     if (!files) return;
@@ -67,12 +69,12 @@ export default function SubmitTicketPage() {
       const file = files[i];
 
       if (file.size > maxFileSize) {
-        toast.error(`File "${file.name}" is too large (max 10MB)`);
+        toast.error(t('tickets.attachments.tooLarge', { defaultValue: 'File "{{name}}" is too large (max 10MB)', name: file.name }));
         continue;
       }
 
       if (!allowedTypes.includes(file.type)) {
-        toast.error(`File type "${file.type}" not supported for "${file.name}"`);
+        toast.error(t('tickets.attachments.typeNotSupported', { defaultValue: 'File type "{{type}}" not supported for "{{name}}"', type: file.type, name: file.name }));
         continue;
       }
 
@@ -100,12 +102,12 @@ export default function SubmitTicketPage() {
     setError('');
 
     if (!title.trim()) {
-      setError('Title is required');
+      setError(t('tickets.validation.titleRequired', { defaultValue: 'Title is required' }));
       return;
     }
 
     if (!description.trim()) {
-      setError('Description is required');
+      setError(t('tickets.validation.descriptionRequired', { defaultValue: 'Description is required' }));
       return;
     }
 
@@ -129,17 +131,17 @@ export default function SubmitTicketPage() {
             await bugReportsApi.uploadAttachment(reportId, attachment.file);
           } catch (err) {
             console.error('Failed to upload attachment:', err);
-            toast.warning(`Failed to upload "${attachment.file.name}"`);
+            toast.warning(t('tickets.attachments.uploadFailed', { defaultValue: 'Failed to upload "{{name}}"', name: attachment.file.name }));
           }
         }
       }
 
-      toast.success('Ticket submitted successfully!');
+      toast.success(t('tickets.toast.submitted', { defaultValue: 'Ticket submitted successfully!' }));
       navigate(`/app/tickets/${reportId}`);
     } catch (err: any) {
       console.error('Failed to submit ticket:', err);
-      setError(err?.message || 'Failed to submit ticket');
-      showError(err, 'Failed to submit ticket');
+      setError(err?.message || t('tickets.errors.submitFailed', { defaultValue: 'Failed to submit ticket' }));
+      showError(err, t('tickets.errors.submitFailed', { defaultValue: 'Failed to submit ticket' }));
     } finally {
       setLoading(false);
     }
@@ -148,8 +150,8 @@ export default function SubmitTicketPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <PageHeader
-        title="Report Issue / Request Feature"
-        subtitle="Help us improve by letting us know about bugs, feature requests, or general feedback"
+        title={t('tickets.submit.title', { defaultValue: 'Report Issue / Request Feature' })}
+        subtitle={t('tickets.submit.subtitle', { defaultValue: 'Help us improve by letting us know about bugs, feature requests, or general feedback' })}
       />
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -162,7 +164,7 @@ export default function SubmitTicketPage() {
 
         {/* Type Selection */}
         <div>
-          <label className="block text-sm font-medium mb-3">Type of Report *</label>
+          <label className="block text-sm font-medium mb-3">{t('tickets.submit.typeLabel', { defaultValue: 'Type of Report *' })}</label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {typeOptions.map(option => (
               <button
@@ -185,7 +187,7 @@ export default function SubmitTicketPage() {
 
         {/* Priority Selection */}
         <div>
-          <label className="block text-sm font-medium mb-3">Priority</label>
+          <label className="block text-sm font-medium mb-3">{t('tickets.submit.priorityLabel', { defaultValue: 'Priority' })}</label>
           <div className="flex flex-wrap gap-2">
             {priorityOptions.map(option => (
               <button
@@ -207,9 +209,9 @@ export default function SubmitTicketPage() {
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium mb-2">Title *</label>
+          <label className="block text-sm font-medium mb-2">{t('tickets.submit.titleLabel', { defaultValue: 'Title *' })}</label>
           <Input
-            placeholder="e.g., Cannot upload images larger than 5MB"
+            placeholder={t('tickets.submit.titlePlaceholder', { defaultValue: 'e.g., Cannot upload images larger than 5MB' })}
             value={title}
             onChange={e => setTitle(e.target.value)}
             maxLength={300}
@@ -222,13 +224,13 @@ export default function SubmitTicketPage() {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium mb-2">Description *</label>
+          <label className="block text-sm font-medium mb-2">{t('tickets.submit.descriptionLabel', { defaultValue: 'Description *' })}</label>
           <Textarea
-            placeholder="Provide as much detail as possible:
+            placeholder={t('tickets.submit.descriptionPlaceholder', { defaultValue: `Provide as much detail as possible:
 - What did you try to do?
 - What happened?
 - What did you expect to happen?
-- Steps to reproduce (if applicable)"
+- Steps to reproduce (if applicable)` })}
             value={description}
             onChange={e => setDescription(e.target.value)}
             maxLength={10000}
@@ -242,7 +244,7 @@ export default function SubmitTicketPage() {
 
         {/* File Attachments */}
         <div>
-          <label className="block text-sm font-medium mb-3">Attachments (Screenshots, Logs, etc.)</label>
+          <label className="block text-sm font-medium mb-3">{t('tickets.submit.attachmentsLabel', { defaultValue: 'Attachments (Screenshots, Logs, etc.)' })}</label>
 
           {/* Drop zone */}
           <div
@@ -259,9 +261,9 @@ export default function SubmitTicketPage() {
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-            <p className="font-medium text-sm">Drop files here or click to select</p>
+            <p className="font-medium text-sm">{t('tickets.submit.dropzone.title', { defaultValue: 'Drop files here or click to select' })}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Max 10MB per file. Supported: Images, PDF, Word, Excel, Text
+              {t('tickets.submit.dropzone.subtitle', { defaultValue: 'Max 10MB per file. Supported: Images, PDF, Word, Excel, Text' })}
             </p>
             <input
               ref={fileInputRef}
@@ -281,7 +283,7 @@ export default function SubmitTicketPage() {
                   {attachment.preview && (
                     <img
                       src={attachment.preview}
-                      alt="attachment preview"
+                      alt={t('tickets.attachments.previewAlt', { defaultValue: 'attachment preview' })}
                       className="w-12 h-12 rounded object-cover"
                     />
                   )}
@@ -315,7 +317,7 @@ export default function SubmitTicketPage() {
             onClick={() => navigate(-1)}
             disabled={loading}
           >
-            Cancel
+            {t('common.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button
             type="submit"
@@ -323,7 +325,7 @@ export default function SubmitTicketPage() {
             className="gap-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? 'Submitting...' : 'Submit Ticket'}
+            {loading ? t('tickets.submit.submitting', { defaultValue: 'Submitting...' }) : t('tickets.submit.submitCta', { defaultValue: 'Submit Ticket' })}
           </Button>
         </div>
       </form>

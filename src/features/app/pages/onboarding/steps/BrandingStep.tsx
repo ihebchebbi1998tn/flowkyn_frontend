@@ -12,12 +12,6 @@ import { FLAGS } from '@/components/common/LanguageFlags';
 import { cn } from '@/lib/utils';
 import type { OnboardingData } from '../types';
 
-const LANGUAGES = [
-  { key: 'en', label: 'English', flag: '🇬🇧' },
-  { key: 'fr', label: 'Français', flag: '🇫🇷' },
-  { key: 'de', label: 'Deutsch', flag: '🇩🇪' },
-];
-
 interface BrandingStepProps {
   data: OnboardingData;
   onChange: (partial: Partial<OnboardingData>) => void;
@@ -26,6 +20,12 @@ interface BrandingStepProps {
 
 export function BrandingStep({ data, onChange, onLogoUpload }: BrandingStepProps) {
   const { t } = useTranslation();
+
+  const LANGUAGES = [
+    { key: 'en', label: t('languages.en', { defaultValue: 'English' }), flag: '🇬🇧' },
+    { key: 'fr', label: t('languages.fr', { defaultValue: 'Français' }), flag: '🇫🇷' },
+    { key: 'de', label: t('languages.de', { defaultValue: 'Deutsch' }), flag: '🇩🇪' },
+  ];
 
   return (
     <div className="space-y-8">
@@ -107,7 +107,11 @@ export function BrandingStep({ data, onChange, onLogoUpload }: BrandingStepProps
           {data.logoPreview ? (
             <div className="flex items-center gap-5">
               <div className="relative">
-                <img src={data.logoPreview} alt="Logo" className="h-20 w-20 rounded-2xl object-cover border border-border/50 shadow-sm" />
+                <img
+                  src={data.logoPreview}
+                  alt={t('onboarding.logoAlt', { defaultValue: 'Logo' })}
+                  className="h-20 w-20 rounded-2xl object-cover border border-border/50 shadow-sm"
+                />
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); onChange({ logoFile: null, logoPreview: null }); }}
@@ -117,8 +121,12 @@ export function BrandingStep({ data, onChange, onLogoUpload }: BrandingStepProps
                 </button>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-foreground">Logo uploaded</p>
-                <p className="text-xs text-muted-foreground">Click to change or press × to remove</p>
+                <p className="text-sm font-medium text-foreground">
+                  {t('onboarding.logoUploaded', { defaultValue: 'Logo uploaded' })}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t('onboarding.logoUploadedHint', { defaultValue: 'Click to change or press × to remove' })}
+                </p>
               </div>
             </div>
           ) : (
@@ -127,8 +135,12 @@ export function BrandingStep({ data, onChange, onLogoUpload }: BrandingStepProps
                 <Camera className="h-6 w-6 text-muted-foreground/60 group-hover:text-muted-foreground transition-colors" />
               </div>
               <div className="text-center space-y-1">
-                <p className="text-sm font-medium text-foreground/80">Click to upload your logo</p>
-                <p className="text-[11px] text-muted-foreground">PNG, JPG or WebP • Max 2MB</p>
+                <p className="text-sm font-medium text-foreground/80">
+                  {t('onboarding.logoUploadCta', { defaultValue: 'Click to upload your logo' })}
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  {t('onboarding.logoUploadHint', { defaultValue: 'PNG, JPG or WebP • Max 2MB' })}
+                </p>
               </div>
             </>
           )}

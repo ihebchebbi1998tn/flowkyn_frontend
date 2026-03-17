@@ -99,7 +99,7 @@ export default function AcceptInvitation() {
     try {
       if (inviteType === 'event') {
         const eventId = searchParams.get('eventId');
-        if (!eventId) throw new Error('Missing event ID');
+        if (!eventId) throw new Error(t('invitation.missingEventId', { defaultValue: 'Missing event ID' }));
         await eventsApi.acceptInvitation(eventId, token);
         setStatus('accepted');
         setTimeout(() => navigate(ROUTES.EVENT_LOBBY(eventId)), 2000);
@@ -131,7 +131,7 @@ export default function AcceptInvitation() {
         className="w-full max-w-md"
       >
         <div className="flex justify-center mb-8">
-          <img src={logoImg} alt="Flowkyn" className="h-16 w-16 object-contain" />
+          <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-16 w-16 object-contain" />
         </div>
 
         <Card className="border-border/50 shadow-xl shadow-primary/5 rounded-2xl overflow-hidden">

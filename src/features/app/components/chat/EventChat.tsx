@@ -202,11 +202,11 @@ export const EventChat = memo(function EventChat({
                   <div className={cn("max-w-[72%] min-w-0 space-y-0.5", isOwn && "items-end flex flex-col")}>
                     {msg.showAvatar && (
                       <p className={cn("text-[10px] font-semibold px-1", isOwn ? "text-right text-primary" : "text-muted-foreground")}>
-                        <span>{isOwn ? 'You' : msg.senderName}</span>
+                        <span>{isOwn ? t('common.you', { defaultValue: 'You' }) : msg.senderName}</span>
                         {isHost && (
                           <span className="ml-1 inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-full">
                             ★
-                            <span>Host</span>
+                            <span>{t('common.host', { defaultValue: 'Host' })}</span>
                           </span>
                         )}
                         {isPinned && (
@@ -235,7 +235,7 @@ export const EventChat = memo(function EventChat({
                             onClick={() => onTogglePinMessage(msg.id)}
                             className="ml-2 text-[9px] text-muted-foreground hover:text-primary"
                           >
-                            {`Pin`}
+                            {t('chat.pin', { defaultValue: 'Pin' })}
                           </button>
                         )}
                         {onTogglePinMessage && isPinned && isHost && (
@@ -244,7 +244,7 @@ export const EventChat = memo(function EventChat({
                             onClick={() => onTogglePinMessage(msg.id)}
                             className="ml-2 text-[9px] text-primary hover:text-primary/80"
                           >
-                            {`Unpin`}
+                            {t('chat.unpin', { defaultValue: 'Unpin' })}
                           </button>
                         )}
                       </div>
@@ -308,13 +308,13 @@ export const EventChat = memo(function EventChat({
       <div className="border-t border-border p-3 shrink-0 bg-card">
         <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-center gap-2">
           {currentUserAvatarUrl ? (
-            <img src={currentUserAvatarUrl} alt="You" className="h-7 w-7 rounded-full object-cover shrink-0" />
+            <img src={currentUserAvatarUrl} alt={t('common.you', { defaultValue: 'You' })} className="h-7 w-7 rounded-full object-cover shrink-0" />
           ) : null}
           <Input
             ref={inputRef}
             value={input}
             onChange={(e) => handleInputChange(e.target.value)}
-            placeholder={isOnline ? t('chat.placeholder') : t('chat.offlinePlaceholder', 'You are offline – messages cannot be sent')}
+            placeholder={isOnline ? t('chat.placeholder') : t('chat.offlinePlaceholder', { defaultValue: 'You are offline – messages cannot be sent' })}
             maxLength={2000}
             className="h-10 text-[13px] rounded-xl border-border/50 bg-muted/30 focus:bg-background transition-colors flex-1"
             disabled={!isOnline}

@@ -44,7 +44,7 @@ const ACTIVITY_GAME_KEYS: Record<string, string> = {
 type Step = 'configure' | 'invite' | 'review';
 
 export default function LaunchActivity() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const activity = ACTIVITIES[id || '1'];
@@ -54,13 +54,22 @@ export default function LaunchActivity() {
     : (activity?.name || '');
 
   const [step, setStep] = useState<Step>('configure');
-  const [eventTitle, setEventTitle] = useState(activity ? `${activityName} — Team Event` : '');
+  const [eventTitle, setEventTitle] = useState(
+    activity
+      ? t('activities.launch.defaultEventTitle', {
+        defaultValue: '{{activityName}} — Team Event',
+        activityName,
+      })
+      : ''
+  );
   const [description, setDescription] = useState('');
   const [maxParticipants, setMaxParticipants] = useState('20');
   const [duration, setDuration] = useState(activity?.duration || '15');
   const [visibility, setVisibility] = useState('workspace');
   const [scheduleType, setScheduleType] = useState<'now' | 'later'>('now');
   const [scheduledDate, setScheduledDate] = useState('');
+  const [endsAt, setEndsAt] = useState('');
+  const [totalRounds, setTotalRounds] = useState('4');
   const [emailInput, setEmailInput] = useState('');
   const [emails, setEmails] = useState<string[]>([]);
   const [allowNickname, setAllowNickname] = useState(true);
@@ -121,21 +130,47 @@ export default function LaunchActivity() {
       // Get organization ID from auth context
       const orgId = user?.organization_id;
       if (!orgId) {
-        throw new Error('Organization ID not found. Please complete onboarding first.');
+        throw new Error(
+          t('activities.launch.errors.missingOrgId', {
+            defaultValue: 'Organization ID not found. Please complete onboarding first.',
+          })
+        );
       }
 
       // Determine visibility value for backend
       const backendVisibility = visibility === 'workspace' ? 'public' : 'private';
 
+      const startTimeIso =
+        scheduleType === 'now'
+          ? new Date().toISOString()
+          : scheduledDate
+            ? new Date(scheduledDate).toISOString()
+            : undefined;
+
+      const endTimeIso = endsAt ? new Date(endsAt).toISOString() : undefined;
+
+      if (endTimeIso && startTimeIso) {
+        const startMs = new Date(startTimeIso).getTime();
+        const endMs = new Date(endTimeIso).getTime();
+        if (Number.isFinite(startMs) && Number.isFinite(endMs) && endMs <= startMs) {
+          throw new Error(
+            t('activities.launch.errors.endsAtAfterStart', {
+              defaultValue: 'End date/time must be after the start date/time.',
+            })
+          );
+        }
+      }
+
       // Create event
       const eventData = {
         organization_id: orgId,
-        title: eventTitle || 'Untitled Event',
+        title: eventTitle || t('activities.launch.untitledEvent', { defaultValue: 'Untitled Event' }),
         description,
         event_mode: activity.type, // 'sync' or 'async'
         visibility: backendVisibility,
         max_participants: parseInt(maxParticipants, 10),
-        start_time: scheduleType === 'now' ? new Date().toISOString() : scheduledDate ? new Date(scheduledDate).toISOString() : undefined,
+        start_time: startTimeIso,
+        end_time: endTimeIso,
         allow_guests: allowNickname,
       };
 
@@ -158,7 +193,7 @@ export default function LaunchActivity() {
             const types = await gamesApi.listTypes();
             const matchingType = types.find(t => t.key === gameKey);
             if (matchingType) {
-              await gamesApi.startSession(createdEvent.id, matchingType.id);
+              await gamesApi.startSession(createdEvent.id, matchingType.id, parseInt(totalRounds, 10));
             }
           }
         } catch (gameErr) {
@@ -173,7 +208,7 @@ export default function LaunchActivity() {
         
         // Use Promise.allSettled for better error aggregation
         const invitePromises = emails.map((email, i) =>
-          eventsApi.invite(createdEvent.id, email, 'en')
+          eventsApi.invite(createdEvent.id, email, i18n.language?.substring(0, 2) || 'en')
             .then(() => {
               setInvitationProgress({ sent: i + 1, total: emails.length });
               return { success: true, email };
@@ -191,9 +226,18 @@ export default function LaunchActivity() {
 
         // Show warning for partial failures, but only prevent navigation on ALL failures
         if (failedEmails.length > 0 && failedEmails.length < emails.length) {
-          setError(`⚠️ Some invitations failed (${failedEmails.join(', ')}). Event was created successfully.`);
+          setError(
+            t('activities.launch.errors.inviteSomeFailed', {
+              defaultValue: 'Some invitations failed ({{emails}}). The event was created successfully.',
+              emails: failedEmails.join(', '),
+            })
+          );
         } else if (failedEmails.length === emails.length) {
-          throw new Error(`Failed to send any invitations. Please try again.`);
+          throw new Error(
+            t('activities.launch.errors.inviteAllFailed', {
+              defaultValue: 'Failed to send invitations. Please try again.',
+            })
+          );
         }
       }
 
@@ -201,16 +245,19 @@ export default function LaunchActivity() {
       navigate(ROUTES.EVENT_LOBBY(createdEvent.id) + (id ? `?game=${id}` : ''));
     } catch (err: any) {
       console.error('Launch failed:', err);
-      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to launch activity. Please try again.';
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        t('activities.launch.errors.generic', { defaultValue: 'Failed to launch activity. Please try again.' });
       setError(errorMessage);
       setLaunching(false);
     }
   };
 
   const steps: { key: Step; label: string; icon: typeof Settings2 }[] = [
-    { key: 'configure', label: 'Configure', icon: Settings2 },
-    { key: 'invite', label: 'Invite Team', icon: Mail },
-    { key: 'review', label: 'Review & Launch', icon: Send },
+    { key: 'configure', label: t('activities.launch.steps.configure', { defaultValue: 'Configure' }), icon: Settings2 },
+    { key: 'invite', label: t('activities.launch.steps.invite', { defaultValue: 'Invite Team' }), icon: Mail },
+    { key: 'review', label: t('activities.launch.steps.review', { defaultValue: 'Review & Launch' }), icon: Send },
   ];
 
   const currentStepIndex = steps.findIndex(s => s.key === step);
@@ -227,8 +274,12 @@ export default function LaunchActivity() {
             <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", activity.color)} />
           </div>
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground truncate">Launch {activityName}</h1>
-            <p className="text-[11px] sm:text-[12px] text-muted-foreground">Set up and invite your team</p>
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground truncate">
+              {t('activities.launch.title', { defaultValue: 'Launch {{activityName}}', activityName })}
+            </h1>
+            <p className="text-[11px] sm:text-[12px] text-muted-foreground">
+              {t('activities.launch.subtitle', { defaultValue: 'Set up and invite your team' })}
+            </p>
           </div>
         </div>
       </div>
@@ -282,41 +333,76 @@ export default function LaunchActivity() {
         {step === 'configure' && (
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
             <div className="space-y-1.5">
-              <Label className="text-[13px] font-medium">Event Title</Label>
+              <Label className="text-[13px] font-medium">
+                {t('activities.launch.fields.eventTitle', { defaultValue: 'Event Title' })}
+              </Label>
               <Input value={eventTitle} onChange={e => setEventTitle(e.target.value)}
-                className="h-10 text-[13px]" placeholder="Give your event a name" />
+                className="h-10 text-[13px]" placeholder={t('activities.launch.placeholders.eventTitle', { defaultValue: 'Give your event a name' })} />
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-[13px] font-medium">Description (optional)</Label>
+              <Label className="text-[13px] font-medium">
+                {t('activities.launch.fields.descriptionOptional', { defaultValue: 'Description (optional)' })}
+              </Label>
               <Textarea value={description} onChange={e => setDescription(e.target.value)}
-                rows={2} className="text-[13px]" placeholder="What's this event about?" />
+                rows={2} className="text-[13px]" placeholder={t('activities.launch.placeholders.description', { defaultValue: "What's this event about?" })} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-1.5">
-                <Label className="text-[13px] font-medium">Max Participants</Label>
+                <Label className="text-[13px] font-medium">
+                  {t('activities.launch.fields.maxParticipants', { defaultValue: 'Max Participants' })}
+                </Label>
                 <Input type="number" min={2} max={100} value={maxParticipants}
                   onChange={e => setMaxParticipants(e.target.value)}
                   className="h-10 text-[13px]" />
               </div>
               {activity.type === 'sync' && (
                 <div className="space-y-1.5">
-                  <Label className="text-[13px] font-medium">Duration (minutes)</Label>
+                  <Label className="text-[13px] font-medium">
+                    {t('activities.launch.fields.durationMinutes', { defaultValue: 'Duration (minutes)' })}
+                  </Label>
                   <Input type="number" min={5} max={120} value={duration}
                     onChange={e => setDuration(e.target.value)}
                     className="h-10 text-[13px]" />
                 </div>
               )}
             </div>
+            
+            {id === '1' && (
+              <div className="space-y-1.5">
+                <Label className="text-[13px] font-medium">{t('gamePlay.twoTruths.howManyRounds')}</Label>
+                <Select value={totalRounds} onValueChange={setTotalRounds}>
+                  <SelectTrigger className="h-10 text-[13px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[2, 3, 4, 5, 6].map(r => (
+                      <SelectItem key={r} value={r.toString()}>{r} {t('common.rounds')}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[10px] text-muted-foreground">{t('gamePlay.twoTruths.recommendedRounds')}</p>
+              </div>
+            )}
 
             <div className="space-y-1.5">
-              <Label className="text-[13px] font-medium">Visibility</Label>
+              <Label className="text-[13px] font-medium">
+                {t('activities.launch.fields.visibility', { defaultValue: 'Visibility' })}
+              </Label>
               <Select value={visibility} onValueChange={setVisibility}>
                 <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="workspace"><div className="flex items-center gap-2"><Globe className="h-3.5 w-3.5" /> Workspace — All members</div></SelectItem>
-                  <SelectItem value="invite"><div className="flex items-center gap-2"><Lock className="h-3.5 w-3.5" /> Invite Only</div></SelectItem>
+                  <SelectItem value="workspace">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-3.5 w-3.5" /> {t('activities.launch.visibility.workspace', { defaultValue: 'Workspace — All members' })}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="invite">
+                    <div className="flex items-center gap-2">
+                      <Lock className="h-3.5 w-3.5" /> {t('activities.launch.visibility.inviteOnly', { defaultValue: 'Invite Only' })}
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -324,29 +410,48 @@ export default function LaunchActivity() {
             <Separator />
 
             <div className="space-y-3">
-              <Label className="text-[13px] font-medium">When to start?</Label>
+              <Label className="text-[13px] font-medium">
+                {t('activities.launch.fields.whenToStart', { defaultValue: 'When to start?' })}
+              </Label>
               <div className="flex gap-2">
                 <Button type="button" variant={scheduleType === 'now' ? 'default' : 'outline'}
                   onClick={() => setScheduleType('now')} className="h-9 text-[12px] flex-1">
-                  Start Now
+                  {t('activities.launch.schedule.startNow', { defaultValue: 'Start Now' })}
                 </Button>
                 <Button type="button" variant={scheduleType === 'later' ? 'default' : 'outline'}
                   onClick={() => setScheduleType('later')} className="h-9 text-[12px] flex-1">
-                  Schedule Later
+                  {t('activities.launch.schedule.scheduleLater', { defaultValue: 'Schedule Later' })}
                 </Button>
               </div>
               {scheduleType === 'later' && (
                 <DateTimePicker 
                   value={scheduledDate}
                   onChange={setScheduledDate}
-                  placeholder="Select a date and time"
+                  placeholder={t('activities.launch.schedule.pickDateTime', { defaultValue: 'Select a date and time' })}
                 />
               )}
             </div>
 
+            {/* Wins of the Week: end date/time */}
+            {id === '3' && (
+              <div className="space-y-1.5">
+                <Label className="text-[13px] font-medium">
+                  {t('activities.launch.fields.endsAt', { defaultValue: 'Ends at' })}
+                </Label>
+                <DateTimePicker
+                  value={endsAt}
+                  onChange={setEndsAt}
+                  placeholder={t('activities.launch.schedule.pickEndDateTime', { defaultValue: 'Select an end date and time' })}
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  {t('activities.launch.fields.endsAtHelp', { defaultValue: 'After this time, new wins and reactions will be disabled (read-only).' })}
+                </p>
+              </div>
+            )}
+
             <div className="flex justify-end pt-2">
               <Button onClick={() => setStep('invite')} className="h-10 px-6 text-[13px] gap-2">
-                Next: Invite <ArrowRight className="h-4 w-4" />
+                {t('activities.launch.actions.nextInvite', { defaultValue: 'Next: Invite' })} <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -356,26 +461,36 @@ export default function LaunchActivity() {
         {step === 'invite' && (
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
             <div>
-              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-1">Invite your team</h3>
-              <p className="text-[11px] sm:text-[12px] text-muted-foreground">Add email addresses. They'll receive a link to join.</p>
+              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-1">
+                {t('activities.launch.invite.title', { defaultValue: 'Invite your team' })}
+              </h3>
+              <p className="text-[11px] sm:text-[12px] text-muted-foreground">
+                {t('activities.launch.invite.subtitle', { defaultValue: "Add email addresses. They'll receive a link to join." })}
+              </p>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-[13px] font-medium">Email Addresses</Label>
+              <Label className="text-[13px] font-medium">
+                {t('activities.launch.invite.emailAddresses', { defaultValue: 'Email Addresses' })}
+              </Label>
               <div className="flex gap-2">
                 <Input value={emailInput} onChange={e => setEmailInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addEmail())}
-                  className="h-10 text-[13px] flex-1 min-w-0" placeholder="colleague@company.com" />
+                  className="h-10 text-[13px] flex-1 min-w-0" placeholder={t('activities.launch.invite.emailPlaceholder', { defaultValue: 'colleague@company.com' })} />
                 <Button onClick={addEmail} className="h-10 text-[13px] px-4 shrink-0">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-muted-foreground">Press Enter or click + to add.</p>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                {t('activities.launch.invite.addHint', { defaultValue: 'Press Enter or click + to add.' })}
+              </p>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-[13px] font-medium">Or paste a list</Label>
-              <Textarea placeholder="email1@company.com, email2@company.com, ..."
+              <Label className="text-[13px] font-medium">
+                {t('activities.launch.invite.pasteList', { defaultValue: 'Or paste a list' })}
+              </Label>
+              <Textarea placeholder={t('activities.launch.invite.pastePlaceholder', { defaultValue: 'email1@company.com, email2@company.com, ...' })}
                 rows={2} className="text-[13px]"
                 onBlur={e => { if (e.target.value) { addBulk(e.target.value); e.target.value = ''; }}} />
             </div>
@@ -383,9 +498,11 @@ export default function LaunchActivity() {
             {emails.length > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-[12px] font-medium text-foreground">{emails.length} invited</p>
+                  <p className="text-[12px] font-medium text-foreground">
+                    {t('activities.launch.invite.invitedCount', { defaultValue: '{{count}} invited', count: emails.length })}
+                  </p>
                   <Button variant="ghost" size="sm" className="h-7 text-[11px] text-destructive" onClick={() => setEmails([])}>
-                    Clear all
+                    {t('activities.launch.invite.clearAll', { defaultValue: 'Clear all' })}
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
@@ -406,18 +523,22 @@ export default function LaunchActivity() {
 
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 gap-3">
               <div className="min-w-0">
-                <p className="text-[12px] sm:text-[13px] font-medium text-foreground">Allow nickname join</p>
-                <p className="text-[10px] sm:text-[11px] text-muted-foreground">No signup required</p>
+                <p className="text-[12px] sm:text-[13px] font-medium text-foreground">
+                  {t('activities.launch.invite.allowNickname', { defaultValue: 'Allow nickname join' })}
+                </p>
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                  {t('activities.launch.invite.noSignup', { defaultValue: 'No signup required' })}
+                </p>
               </div>
               <Switch checked={allowNickname} onCheckedChange={setAllowNickname} />
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep('configure')} className="h-10 text-[13px] gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
+                <ArrowLeft className="h-4 w-4" /> {t('common.back', { defaultValue: 'Back' })}
               </Button>
               <Button onClick={() => setStep('review')} disabled={emails.length === 0} className="h-10 px-6 text-[13px] gap-2">
-                Next: Review <ArrowRight className="h-4 w-4" />
+                {t('activities.launch.actions.nextReview', { defaultValue: 'Next: Review' })} <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -427,14 +548,20 @@ export default function LaunchActivity() {
         {step === 'review' && (
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
             <div>
-              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-1">Review & Launch</h3>
-              <p className="text-[11px] sm:text-[12px] text-muted-foreground">Confirm everything looks good.</p>
+              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-1">
+                {t('activities.launch.review.title', { defaultValue: 'Review & Launch' })}
+              </h3>
+              <p className="text-[11px] sm:text-[12px] text-muted-foreground">
+                {t('activities.launch.review.subtitle', { defaultValue: 'Confirm everything looks good.' })}
+              </p>
             </div>
 
             <div className="space-y-2 sm:space-y-3">
               <div className="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2">
                 <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Activity</p>
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                    {t('activities.launch.review.activity', { defaultValue: 'Activity' })}
+                  </p>
                   <div className="flex items-center gap-2">
                     <div className={cn("flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg", activity.bgColor)}>
                       <Icon className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", activity.color)} />
@@ -443,30 +570,56 @@ export default function LaunchActivity() {
                   </div>
                 </div>
                 <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Event Title</p>
-                  <p className="text-[12px] sm:text-[13px] font-semibold text-foreground truncate">{eventTitle || 'Untitled'}</p>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Participants</p>
-                  <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">{emails.length} invited · max {maxParticipants}</p>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">Schedule</p>
-                  <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
-                    {scheduleType === 'now' ? 'Starting immediately' : scheduledDate || 'Not set'}
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                    {t('activities.launch.review.eventTitle', { defaultValue: 'Event Title' })}
+                  </p>
+                  <p className="text-[12px] sm:text-[13px] font-semibold text-foreground truncate">
+                    {eventTitle || t('activities.launch.untitledEvent', { defaultValue: 'Untitled Event' })}
                   </p>
                 </div>
+                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                    {t('activities.launch.review.participants', { defaultValue: 'Participants' })}
+                  </p>
+                  <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
+                    {t('activities.launch.review.participantsLine', { defaultValue: '{{invited}} invited · max {{max}}', invited: emails.length, max: maxParticipants })}
+                  </p>
+                </div>
+                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                    {t('activities.launch.review.schedule', { defaultValue: 'Schedule' })}
+                  </p>
+                  <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
+                    {scheduleType === 'now'
+                      ? t('activities.launch.review.startingImmediately', { defaultValue: 'Starting immediately' })
+                      : (scheduledDate || t('activities.launch.review.notSet', { defaultValue: 'Not set' }))}
+                  </p>
+                </div>
+                {id === '3' && (
+                  <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
+                    <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                      {t('activities.launch.review.endsAt', { defaultValue: 'Ends at' })}
+                    </p>
+                    <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
+                      {endsAt || t('activities.launch.review.notSet', { defaultValue: 'Not set' })}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {emails.length > 0 && (
                 <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">Invited ({emails.length})</p>
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                    {t('activities.launch.review.invited', { defaultValue: 'Invited ({{count}})', count: emails.length })}
+                  </p>
                   <div className="flex flex-wrap gap-1.5">
                     {emails.slice(0, 8).map(email => (
                       <Badge key={email} variant="outline" className="text-[9px] sm:text-[10px]">{email}</Badge>
                     ))}
                     {emails.length > 8 && (
-                      <Badge variant="outline" className="text-[9px] sm:text-[10px]">+{emails.length - 8} more</Badge>
+                      <Badge variant="outline" className="text-[9px] sm:text-[10px]">
+                        {t('activities.launch.review.moreCount', { defaultValue: '+{{count}} more', count: emails.length - 8 })}
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -481,17 +634,21 @@ export default function LaunchActivity() {
               </div>
               <div className="min-w-0">
                 <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
-                  {emails.length > 0 ? `${emails.length} team members will receive an invite email` : 'No invites — share the link manually'}
+                  {emails.length > 0
+                    ? t('activities.launch.review.inviteEmailCount', { defaultValue: '{{count}} team members will receive an invite email', count: emails.length })
+                    : t('activities.launch.review.noInvites', { defaultValue: 'No invites — share the link manually' })}
                 </p>
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground">
-                  {allowNickname ? 'They can join with a nickname (no signup required)' : 'They need to sign up to join'}
+                  {allowNickname
+                    ? t('activities.launch.review.nicknameJoin', { defaultValue: 'They can join with a nickname (no signup required)' })
+                    : t('activities.launch.review.signupRequired', { defaultValue: 'They need to sign up to join' })}
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep('invite')} className="h-10 text-[13px] gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
+                <ArrowLeft className="h-4 w-4" /> {t('common.back', { defaultValue: 'Back' })}
               </Button>
               <Button 
                 onClick={handleLaunch} 
@@ -502,11 +659,11 @@ export default function LaunchActivity() {
                   <>
                     <span className="animate-spin">⏳</span>
                     {invitationProgress.total > 0 
-                      ? `Inviting... ${invitationProgress.sent}/${invitationProgress.total}`
-                      : 'Creating event...'}
+                      ? t('activities.launch.progress.inviting', { defaultValue: 'Inviting... {{sent}}/{{total}}', sent: invitationProgress.sent, total: invitationProgress.total })
+                      : t('activities.launch.progress.creating', { defaultValue: 'Creating event...' })}
                   </>
                 ) : (
-                  <><Send className="h-4 w-4" /> Launch Now</>
+                  <><Send className="h-4 w-4" /> {t('activities.launch.actions.launchNow', { defaultValue: 'Launch Now' })}</>
                 )}
               </Button>
             </div>

@@ -36,7 +36,7 @@ export const BugReportForm: React.FC = () => {
     // Limit to 5 files, max 5MB each
     const valid = files.filter(f => f.size <= 5 * 1024 * 1024);
     if (valid.length < files.length) {
-      setError('Some files exceed 5MB limit');
+      setError(t('bugReports.validation.someFilesTooLarge', { defaultValue: 'Some files exceed 5MB limit' }));
     }
     setAttachments(valid);
   };
@@ -49,10 +49,10 @@ export const BugReportForm: React.FC = () => {
     try {
       // Validate
       if (!formData.title.trim()) {
-        throw new Error('Title is required');
+        throw new Error(t('bugReports.validation.titleRequired', { defaultValue: 'Title is required' }));
       }
       if (!formData.description.trim()) {
-        throw new Error('Description is required');
+        throw new Error(t('bugReports.validation.descriptionRequired', { defaultValue: 'Description is required' }));
       }
 
       // Create the report
@@ -81,7 +81,11 @@ export const BugReportForm: React.FC = () => {
       // Reset success message after 5 seconds
       setTimeout(() => setSuccess(false), 5000);
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to submit report');
+      setError(
+        err.response?.data?.message
+        || err.message
+        || t('bugReports.errors.submitFailed', { defaultValue: 'Failed to submit report' })
+      );
     } finally {
       setSubmitting(false);
     }

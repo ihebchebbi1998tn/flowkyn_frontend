@@ -33,6 +33,9 @@ export interface WinsOfTheWeekBoardProps {
     reactions: { type: string; count: number; reacted: boolean }[];
   }[];
   canPost: boolean;
+  canReact?: boolean;
+  endsAt?: string;
+  postingClosed?: boolean;
   onPost: (content: string) => Promise<void> | void;
   onToggleReaction: (postId: string, reactionType: string) => Promise<void> | void;
 }
@@ -45,11 +48,14 @@ export function WinsOfTheWeekBoard({
   currentUserAvatarUrl,
   posts,
   canPost,
+  canReact = true,
+  endsAt,
+  postingClosed = false,
   onPost,
   onToggleReaction,
 }: WinsOfTheWeekBoardProps) {
   const { t } = useTranslation();
-  const displayPrompt = prompt || t('gamePlay.winsOfWeek.defaultPrompt', 'Share your win from this week — work or personal, big or small!');
+  const displayPrompt = prompt || t('gamePlay.winsOfWeek.defaultPrompt', { defaultValue: 'Share your win from this week — work or personal, big or small!' });
   const [newPost, setNewPost] = useState('');
   const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
   const [showReplyFor, setShowReplyFor] = useState<string | null>(null);
@@ -64,6 +70,7 @@ export function WinsOfTheWeekBoard({
 
   const toggleReaction = (postId: string, reactionType: string) => {
     console.log('[WinsOfTheWeekBoard] toggleReaction', { postId, reactionType });
+    if (!canReact) return;
     onToggleReaction(postId, reactionType);
   };
 
@@ -106,13 +113,33 @@ export function WinsOfTheWeekBoard({
           </div>
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" /> {t('gamePlay.winsOfWeek.contributions', { count: posts.length })}</span>
-            <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {t('gamePlay.winsOfWeek.ongoing')}</span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" /> {postingClosed ? t('gamePlay.winsOfWeek.closed', { defaultValue: 'Closed' }) : t('gamePlay.winsOfWeek.ongoing')}
+            </span>
+            {endsAt && (
+              <span className="flex items-center gap-1">
+                <span className="text-muted-foreground/60">·</span>
+                {postingClosed
+                  ? t('gamePlay.winsOfWeek.endedAt', { defaultValue: 'Ended: {{time}}', time: new Date(endsAt).toLocaleString() })
+                  : t('gamePlay.winsOfWeek.endsAt', { defaultValue: 'Ends: {{time}}', time: new Date(endsAt).toLocaleString() })}
+              </span>
+            )}
           </div>
         </div>
       </div>
 
       {/* New post input */}
       <div className="rounded-xl border border-border bg-card p-4">
+        {postingClosed && (
+          <div className="mb-3 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {t('gamePlay.winsOfWeek.postingClosedTitle', { defaultValue: 'Posting is closed' })}
+            </span>
+            <span className="ml-1">
+              {t('gamePlay.winsOfWeek.postingClosedBody', { defaultValue: 'This activity has ended. You can still read and react is disabled.' })}
+            </span>
+          </div>
+        )}
         <div className="flex items-start gap-3">
           <Avatar className="h-8 w-8 shrink-0 mt-0.5">
             {currentUserAvatarUrl ? <img src={currentUserAvatarUrl} alt={currentUserName} className="h-full w-full object-cover" /> : null}
@@ -122,9 +149,10 @@ export function WinsOfTheWeekBoard({
             <Textarea
               value={newPost}
               onChange={e => setNewPost(e.target.value)}
-              placeholder={t('gamePlay.winsOfWeek.shareYourWin')}
+              placeholder={canPost ? t('gamePlay.winsOfWeek.shareYourWin') : t('gamePlay.winsOfWeek.readOnlyPlaceholder', { defaultValue: 'Posting is closed for this activity.' })}
               rows={2}
               className="text-[13px] resize-none border-0 bg-muted/30 focus-visible:ring-1"
+              disabled={!canPost}
             />
             <div className="flex justify-end">
               <Button onClick={handlePost} disabled={!newPost.trim() || !canPost} className="h-9 px-5 text-[12px] gap-2">
@@ -140,8 +168,12 @@ export function WinsOfTheWeekBoard({
         {posts.length === 0 && (
           <div className="rounded-xl border border-dashed border-border p-8 text-center bg-muted/20">
             <Heart className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-[14px] font-medium text-foreground">No wins shared yet</p>
-            <p className="text-[12px] text-muted-foreground mt-1">Be the first to share your win of the week!</p>
+            <p className="text-[14px] font-medium text-foreground">
+              {t('gamePlay.winsOfWeek.emptyTitle', { defaultValue: 'No wins shared yet' })}
+            </p>
+            <p className="text-[12px] text-muted-foreground mt-1">
+              {t('gamePlay.winsOfWeek.emptySubtitle', { defaultValue: 'Be the first to share your win of the week!' })}
+            </p>
           </div>
         )}
         <AnimatePresence>

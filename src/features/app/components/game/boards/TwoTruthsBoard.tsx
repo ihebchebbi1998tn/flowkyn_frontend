@@ -36,6 +36,7 @@ export interface TwoTruthsBoardProps {
   initialSnapshot?: any;
   onEmitAction: (actionType: string, payload?: any) => Promise<void>;
   gameData?: any;
+  isAdmin?: boolean;
 }
 
 export function TwoTruthsBoard({
@@ -49,6 +50,7 @@ export function TwoTruthsBoard({
   initialSnapshot,
   onEmitAction,
   gameData,
+  isAdmin = false,
 }: TwoTruthsBoardProps) {
   const { t } = useTranslation();
   const snapshot: TwoTruthsSnapshot | null = (gameData?.kind === GAME_TYPES.TWO_TRUTHS
@@ -69,14 +71,15 @@ export function TwoTruthsBoard({
 
   const [localStatements, setLocalStatements] = useState(['', '', '']);
   const [selectedVote, setSelectedVote] = useState<'s0' | 's1' | 's2' | null>(null);
+  const [rounds, setRounds] = useState(4);
   const voted = !!votes[currentUserId];
   const [showCountdown, setShowCountdown] = useState(false);
 
   const startGame = () => { setShowCountdown(true); };
   const handleCountdownDone = useCallback(async () => {
     setShowCountdown(false);
-    await onEmitAction('two_truths:start', { totalRounds: 4 });
-  }, [onEmitAction]);
+    await onEmitAction('two_truths:start', { totalRounds: rounds });
+  }, [onEmitAction, rounds]);
 
   const submit = useCallback(async () => {
     if (!sessionId || !activeRoundId) return;
@@ -126,9 +129,9 @@ export function TwoTruthsBoard({
     participants.find((p: any) => p.id === presenterId)?.name || currentUserName;
 
   const targetStatements = (statements || [
-    { id: 's0' as const, text: 'Statement 1' },
-    { id: 's1' as const, text: 'Statement 2' },
-    { id: 's2' as const, text: 'Statement 3' },
+    { id: 's0' as const, text: t('gamePlay.twoTruths.defaultStatement1', { defaultValue: 'Statement 1' }) },
+    { id: 's1' as const, text: t('gamePlay.twoTruths.defaultStatement2', { defaultValue: 'Statement 2' }) },
+    { id: 's2' as const, text: t('gamePlay.twoTruths.defaultStatement3', { defaultValue: 'Statement 3' }) },
   ]).map((s) => ({ id: s.id, text: s.text }));
 
   const tallyCounts: Record<'s0' | 's1' | 's2', number> = { s0: 0, s1: 0, s2: 0 };
@@ -162,7 +165,12 @@ export function TwoTruthsBoard({
 
       {/* WAITING */}
       {phase === 'waiting' && (
-        <TwoTruthsWaitingSection onStart={startGame} />
+        <TwoTruthsWaitingSection 
+          onStart={startGame} 
+          isAdmin={isAdmin}
+          rounds={rounds}
+          onRoundsChange={setRounds}
+        />
       )}
 
       {/* SUBMIT */}
@@ -181,7 +189,9 @@ export function TwoTruthsBoard({
 
       {/* Submitted waiting */}
       {phase === 'submit' && !isPresenter && (
-        <TwoTruthsSubmittedSection message={t('gamePlay.twoTruths.waitingForPresenter', 'Waiting for the presenter to submit statements...')} />
+        <TwoTruthsSubmittedSection
+          message={t('gamePlay.twoTruths.waitingForPresenter', { defaultValue: 'Waiting for the presenter to submit statements...' })}
+        />
       )}
 
       {/* VOTE */}
@@ -205,7 +215,7 @@ export function TwoTruthsBoard({
             className="text-[11px] text-muted-foreground hover:text-foreground underline"
             onClick={reveal}
           >
-            Reveal (host)
+            {t('gamePlay.twoTruths.revealHost', { defaultValue: 'Reveal (host)' })}
           </button>
         </div>
       )}
@@ -229,7 +239,7 @@ export function TwoTruthsBoard({
           subtitle={t('gamePlay.results.roundsPlayed', { count: totalRounds })}
           results={results}
           onPlayAgain={() => {
-            onEmitAction('two_truths:start', { totalRounds: 4 });
+            onEmitAction('two_truths:start', { totalRounds: rounds });
           }}
         />
       )}

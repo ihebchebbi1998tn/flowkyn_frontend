@@ -64,7 +64,7 @@ export function GuestJoinForm({
 
           {selectedAvatar && (
             <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/20">
-              <img src={selectedAvatar} alt="Selected avatar" className="h-10 w-10 rounded-xl" />
+              <img src={selectedAvatar} alt={t('events.selectedAvatarAlt', { defaultValue: 'Selected avatar' })} className="h-10 w-10 rounded-xl" />
               <div>
                 <p className="text-xs font-medium text-foreground">{guestName || t('events.guest')}</p>
                 <p className="text-[10px] text-muted-foreground">{t('events.yourAvatarForEvent')}</p>

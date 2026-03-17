@@ -15,6 +15,14 @@ type StrategicPhase = 'setup' | 'roles_assignment' | 'discussion' | 'debrief';
 export interface StrategicEscapeSnapshot {
   kind: 'strategic-escape';
   phase: StrategicPhase;
+  // New standardized fields (backend)
+  industryKey?: string | null;
+  crisisKey?: string | null;
+  difficultyKey?: 'easy' | 'medium' | 'hard' | string | null;
+  industryLabel?: string | null;
+  crisisLabel?: string | null;
+  difficultyLabel?: string | null;
+  // Legacy fallbacks (older snapshots)
   industry?: string | null;
   crisisType?: string | null;
   difficulty?: 'easy' | 'medium' | 'hard' | string | null;
@@ -225,7 +233,7 @@ export function StrategicEscapeBoard({
       toast.success(
         t('games.toasts.launching', {
           defaultValue: 'We’re launching {{gameName}} for this event. Hang tight — your screen will update in a moment.',
-          gameName: t('activities.strategicEscape.name', 'Strategic Escape Challenge'),
+          gameName: t('activities.strategicEscape.name', { defaultValue: 'Strategic Escape Challenge' }),
         })
       );
     } catch (err: any) {
@@ -235,7 +243,7 @@ export function StrategicEscapeBoard({
         err?.message ||
         t(
           'strategic.errors.createFailed',
-          'Failed to create strategic session. Please check your permissions and try again.'
+          { defaultValue: 'Failed to create strategic session. Please check your permissions and try again.' }
         );
       setCreateError(message);
     } finally {
@@ -261,7 +269,7 @@ export function StrategicEscapeBoard({
         err?.message ||
         t(
           'strategic.errors.assignFailed',
-          'Failed to assign roles. Make sure participants have joined and you are the host or admin.'
+          { defaultValue: 'Failed to assign roles. Make sure participants have joined and you are the host or admin.' }
         );
       setAssignError(message);
     } finally {
@@ -320,7 +328,7 @@ export function StrategicEscapeBoard({
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('strategic.label', 'Strategic Escape Challenge')}
+              {t('strategic.label', { defaultValue: 'Strategic Escape Challenge' })}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -329,7 +337,7 @@ export function StrategicEscapeBoard({
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
                 {t('strategic.meta.hostLabel', {
                   defaultValue: 'Facilitator: {{name}}',
-                  name: hostParticipant.name || t('strategic.rolesMeta.unknownPlayer', 'Participant'),
+                  name: hostParticipant.name || t('strategic.rolesMeta.unknownPlayer', { defaultValue: 'Participant' }),
                 })}
               </span>
             )}
@@ -379,7 +387,7 @@ export function StrategicEscapeBoard({
               onClick={() => setIsConfigModalOpen(true)}
             >
               <Settings2 className="h-3.5 w-3.5" />
-              {t('strategic.modal.openLabel', 'Configure scenario')}
+              {t('strategic.modal.openLabel', { defaultValue: 'Configure scenario' })}
             </Button>
           )}
           <Button
@@ -388,7 +396,7 @@ export function StrategicEscapeBoard({
             className="h-8 text-[11px]"
             onClick={() => setIsHowItWorksOpen(v => !v)}
           >
-            {t('strategic.howItWorks.label', 'How this works')}
+            {t('strategic.howItWorks.label', { defaultValue: 'How this works' })}
           </Button>
         </div>
       </div>
@@ -397,9 +405,9 @@ export function StrategicEscapeBoard({
       {isHowItWorksOpen && (
         <div className="rounded-2xl border border-border bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground">
           <ul className="list-disc pl-4 space-y-1">
-            <li>{t('strategic.howItWorks.point1', 'Everyone gets a secret role.')}</li>
-            <li>{t('strategic.howItWorks.point2', 'You’ll get an email + in‑app card with instructions.')}</li>
-            <li>{t('strategic.howItWorks.point3', 'We’ll debrief what we learned at the end.')}</li>
+            <li>{t('strategic.howItWorks.point1', { defaultValue: 'Everyone gets a secret role.' })}</li>
+            <li>{t('strategic.howItWorks.point2', { defaultValue: 'You’ll get an email + in‑app card with instructions.' })}</li>
+            <li>{t('strategic.howItWorks.point3', { defaultValue: 'We’ll debrief what we learned at the end.' })}</li>
           </ul>
         </div>
       )}
@@ -408,12 +416,12 @@ export function StrategicEscapeBoard({
       <div className="rounded-2xl border border-border bg-card px-4 py-3">
         <p className="text-[12px] font-medium text-foreground">
           {phase === 'setup'
-            ? t('strategic.phaseIntro.setup', 'Right now, the facilitator is configuring the scenario.')
+            ? t('strategic.phaseIntro.setup', { defaultValue: 'Right now, the facilitator is configuring the scenario.' })
             : phase === 'roles_assignment'
-              ? t('strategic.phaseIntro.rolesAssignment', 'Right now, secret roles are being assigned — check your inbox.')
+              ? t('strategic.phaseIntro.rolesAssignment', { defaultValue: 'Right now, secret roles are being assigned — check your inbox.' })
               : phase === 'discussion'
-                ? t('strategic.phaseIntro.discussion', 'Right now, share perspectives and decisions over time.')
-                : t('strategic.phaseIntro.debrief', 'Right now, turn insights into concrete changes.')}
+                ? t('strategic.phaseIntro.discussion', { defaultValue: 'Right now, share perspectives and decisions over time.' })
+                : t('strategic.phaseIntro.debrief', { defaultValue: 'Right now, turn insights into concrete changes.' })}
         </p>
       </div>
 
@@ -423,22 +431,21 @@ export function StrategicEscapeBoard({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
               <Settings2 className="h-4 w-4 text-primary" />
-              {t('strategic.modal.title', 'Configure strategic scenario')}
+              {t('strategic.modal.title', { defaultValue: 'Configure strategic scenario' })}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-5 pt-1">
             <p className="text-xs text-muted-foreground">
-              {t(
-                'strategic.modal.subtitle',
-                'Choose the industry, crisis, and difficulty for this async simulation.'
-              )}
+              {t('strategic.modal.subtitle', {
+                defaultValue: 'Choose the industry, crisis, and difficulty for this async simulation.',
+              })}
             </p>
 
             <div className="space-y-4">
               <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  {t('strategic.configure.industryLabel', "What's your industry?")}
+                  {t('strategic.configure.industryLabel', { defaultValue: "What's your industry?" })}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {INDUSTRY_OPTIONS.map(option => {
@@ -474,7 +481,7 @@ export function StrategicEscapeBoard({
 
               <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  {t('strategic.configure.crisisLabel', 'Choose your crisis type')}
+                  {t('strategic.configure.crisisLabel', { defaultValue: 'Choose your crisis type' })}
                 </p>
                 <div className="grid gap-2.5">
                   {CRISIS_OPTIONS.map(option => {
@@ -512,7 +519,7 @@ export function StrategicEscapeBoard({
 
               <div className="space-y-2">
                 <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  {t('strategic.configure.difficultyLabel', 'Difficulty level')}
+                  {t('strategic.configure.difficultyLabel', { defaultValue: 'Difficulty level' })}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {DIFFICULTY_OPTIONS.map(option => {
@@ -558,8 +565,8 @@ export function StrategicEscapeBoard({
                 }}
               >
                 {isCreating
-                  ? t('strategic.actions.creating', 'Creating session…')
-                  : t('strategic.actions.createSession', 'Create strategic session')}
+                  ? t('strategic.actions.creating', { defaultValue: 'Creating session…' })
+                  : t('strategic.actions.createSession', { defaultValue: 'Create strategic session' })}
               </Button>
               {createError && (
                 <p className="text-[10px] text-destructive">
@@ -585,38 +592,34 @@ export function StrategicEscapeBoard({
               <div className="flex items-center justify-between gap-2">
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-foreground">
-                    {t('strategic.preview.title', 'What your team will experience')}
+                    {t('strategic.preview.title', { defaultValue: 'What your team will experience' })}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {t(
-                      'strategic.preview.body',
-                      'Each participant receives a private email with their secret role and instructions. When they join, they see a 3D role card they can reveal and discuss before diving into the crisis.'
-                    )}
+                    {t('strategic.preview.body', {
+                      defaultValue: 'Each participant receives a private email with their secret role and instructions. When they join, they see a 3D role card they can reveal and discuss before diving into the crisis.',
+                    })}
                   </p>
                 </div>
               </div>
               <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 px-3 py-2.5 text-[11px] text-primary">
-                {t(
-                  'strategic.preview.hint',
-                  'This activity is async: people can join from any time zone, share perspectives, and come back later with decisions.'
-                )}
+                {t('strategic.preview.hint', {
+                  defaultValue: 'This activity is async: people can join from any time zone, share perspectives, and come back later with decisions.',
+                })}
               </div>
 
               {isHost ? (
                 <div className="space-y-2 pt-1">
                   <p className="text-[11px] text-muted-foreground">
-                    {t(
-                      'strategic.preview.configureHint',
-                      'Use the Configure button to choose industry, crisis, and difficulty before you launch.'
-                    )}
+                    {t('strategic.preview.configureHint', {
+                      defaultValue: 'Use the Configure button to choose industry, crisis, and difficulty before you launch.',
+                    })}
                   </p>
                 </div>
               ) : (
                 <p className="text-[11px] text-muted-foreground">
-                  {t(
-                    'strategic.preview.hostOnly',
-                    'Your facilitator is customizing the scenario. You will see your secret role once the challenge is launched.'
-                  )}
+                  {t('strategic.preview.hostOnly', {
+                    defaultValue: 'Your facilitator is customizing the scenario. You will see your secret role once the challenge is launched.',
+                  })}
                 </p>
               )}
             </div>
@@ -626,31 +629,31 @@ export function StrategicEscapeBoard({
             <div className="space-y-4">
               <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('strategic.preview.summaryTitle', 'Current configuration')}
+                  {t('strategic.preview.summaryTitle', { defaultValue: 'Current configuration' })}
                 </p>
                 <div className="space-y-2 text-[11px] text-muted-foreground">
                   <div className="flex items-center justify-between">
-                    <span>{t('strategic.preview.summaryIndustry', 'Industry')}</span>
+                    <span>{t('strategic.preview.summaryIndustry', { defaultValue: 'Industry' })}</span>
                     <span className="font-medium">
                       {localIndustry
                         ? t(`strategic.industries.${localIndustry}.label`)
-                        : t('strategic.preview.summaryUnset', 'Not set')}
+                        : t('strategic.preview.summaryUnset', { defaultValue: 'Not set' })}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>{t('strategic.preview.summaryCrisis', 'Crisis type')}</span>
+                    <span>{t('strategic.preview.summaryCrisis', { defaultValue: 'Crisis type' })}</span>
                     <span className="font-medium">
                       {localCrisis
                         ? t(`strategic.crises.${localCrisis}.label`)
-                        : t('strategic.preview.summaryUnset', 'Not set')}
+                        : t('strategic.preview.summaryUnset', { defaultValue: 'Not set' })}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>{t('strategic.preview.summaryDifficulty', 'Difficulty')}</span>
+                    <span>{t('strategic.preview.summaryDifficulty', { defaultValue: 'Difficulty' })}</span>
                     <span className="font-medium">
                       {localDifficulty
                         ? t(`${difficultyLabelKey}.label`)
-                        : t('strategic.preview.summaryUnset', 'Not set')}
+                        : t('strategic.preview.summaryUnset', { defaultValue: 'Not set' })}
                     </span>
                   </div>
                 </div>
@@ -661,7 +664,7 @@ export function StrategicEscapeBoard({
                   onClick={() => setIsConfigModalOpen(true)}
                 >
                   <Settings2 className="h-4 w-4 mr-1.5" />
-                  {t('strategic.modal.openLabel', 'Configure scenario')}
+                  {t('strategic.modal.openLabel', { defaultValue: 'Configure scenario' })}
                 </Button>
               </div>
             </div>
@@ -677,7 +680,7 @@ export function StrategicEscapeBoard({
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm font-semibold text-foreground">
-                    {t('strategic.rolesSection.title', 'Your secret role')}
+                    {t('strategic.rolesSection.title', { defaultValue: 'Your secret role' })}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {t(
@@ -721,26 +724,26 @@ export function StrategicEscapeBoard({
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[11px] text-primary-foreground/80">
-                            {t('strategic.rolesMeta.playerLabel', 'You')}
+                            {t('strategic.rolesMeta.playerLabel', { defaultValue: 'You' })}
                           </span>
                           <span className="text-[12px] font-semibold text-primary-foreground">
-                            {currentUserName || t('strategic.rolesMeta.unknownPlayer', 'Participant')}
+                            {currentUserName || t('strategic.rolesMeta.unknownPlayer', { defaultValue: 'Participant' })}
                           </span>
                         </div>
                       </div>
                       <span className="rounded-full bg-background/10 px-2 py-1 text-[10px] font-semibold text-primary-foreground">
-                        {t('strategic.rolesMeta.secret', 'Secret role')}
+                        {t('strategic.rolesMeta.secret', { defaultValue: 'Secret role' })}
                       </span>
                     </div>
 
                     <div className="space-y-1">
                       <p className="text-[11px] font-medium text-primary-foreground/70">
                         {myRoleKey
-                          ? t('strategic.rolesMeta.roleNameLabel', 'Role')
-                          : t('strategic.rolesMeta.loading', 'Waiting for your role…')}
+                          ? t('strategic.rolesMeta.roleNameLabel', { defaultValue: 'Role' })
+                          : t('strategic.rolesMeta.loading', { defaultValue: 'Waiting for your role…' })}
                       </p>
                       <p className="text-[15px] font-semibold tracking-tight text-primary-foreground">
-                        {myRoleName || t('strategic.rolesMeta.pending', 'Pending assignment')}
+                        {myRoleName || t('strategic.rolesMeta.pending', { defaultValue: 'Pending assignment' })}
                       </p>
                       <p className="text-[11px] text-primary-foreground/85 line-clamp-2">
                         {myRoleBrief ||
@@ -765,7 +768,7 @@ export function StrategicEscapeBoard({
 
               {roleLoading && (
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  {t('strategic.rolesMeta.refreshing', 'Refreshing your role…')}
+                  {t('strategic.rolesMeta.refreshing', { defaultValue: 'Refreshing your role…' })}
                 </p>
               )}
             </div>
@@ -776,7 +779,7 @@ export function StrategicEscapeBoard({
               <div className="flex items-center gap-2">
                 <Shuffle className="h-4 w-4 text-info" />
                 <p className="text-sm font-semibold text-foreground">
-                  {t('strategic.rolesMeta.swapTitle', 'Quick swap & alignment')}
+                  {t('strategic.rolesMeta.swapTitle', { defaultValue: 'Quick swap & alignment' })}
                 </p>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -818,8 +821,8 @@ export function StrategicEscapeBoard({
                     onClick={handleAssignRoles}
                   >
                     {isAssigningRoles
-                      ? t('strategic.actions.assigningRoles', 'Assigning roles and sending emails…')
-                      : t('strategic.actions.assignRoles', 'Assign roles & send emails')}
+                      ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles and sending emails…' })
+                      : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles & send emails' })}
                   </Button>
                   {assignError && (
                     <p className="text-[10px] text-destructive">
@@ -831,7 +834,7 @@ export function StrategicEscapeBoard({
                     disabled={!sessionId || !rolesAssigned}
                     onClick={handleStartDiscussion}
                   >
-                    {t('strategic.actions.startDiscussion', 'Start async discussion')}
+                    {t('strategic.actions.startDiscussion', { defaultValue: 'Start async discussion' })}
                   </Button>
                   <p className="text-[10px] text-muted-foreground">
                     {t(
@@ -853,7 +856,7 @@ export function StrategicEscapeBoard({
             <div className="flex items-center justify-between gap-2">
               <div>
                 <p className="text-sm font-semibold text-foreground">
-                  {t('strategic.discussion.title', 'Async crisis discussion')}
+                  {t('strategic.discussion.title', { defaultValue: 'Async crisis discussion' })}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {t(
@@ -882,7 +885,7 @@ export function StrategicEscapeBoard({
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-xl bg-muted/40 border border-border px-3 py-2.5 text-[11px] text-muted-foreground space-y-1">
                 <p className="font-semibold text-foreground text-[12px]">
-                  {t('strategic.discussion.guidingQuestions', 'Guiding questions')}
+                  {t('strategic.discussion.guidingQuestions', { defaultValue: 'Guiding questions' })}
                 </p>
                 <ul className="list-disc pl-4 space-y-0.5">
                   <li>
@@ -908,7 +911,7 @@ export function StrategicEscapeBoard({
 
               <div className="rounded-xl bg-muted/40 border border-border px-3 py-2.5 text-[11px] text-muted-foreground space-y-1">
                 <p className="font-semibold text-foreground text-[12px]">
-                  {t('strategic.discussion.teamInstructions', 'For your team')}
+                  {t('strategic.discussion.teamInstructions', { defaultValue: 'For your team' })}
                 </p>
                 <ul className="list-disc pl-4 space-y-0.5">
                   <li>
@@ -940,7 +943,7 @@ export function StrategicEscapeBoard({
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <p className="text-sm font-semibold text-foreground">
-                    {t('strategic.discussion.hostToolsTitle', 'Host controls')}
+                    {t('strategic.discussion.hostToolsTitle', { defaultValue: 'Host controls' })}
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -954,7 +957,7 @@ export function StrategicEscapeBoard({
                   className="w-full h-9 text-[12px]"
                   onClick={handleEndDiscussion}
                 >
-                  {t('strategic.actions.endDiscussion', 'End discussion & move to debrief')}
+                  {t('strategic.actions.endDiscussion', { defaultValue: 'End discussion & move to debrief' })}
                 </Button>
               </div>
             )}
@@ -969,7 +972,7 @@ export function StrategicEscapeBoard({
             <div className="flex items-center gap-2">
               <Flag className="h-4 w-4 text-success" />
               <p className="text-sm font-semibold text-foreground">
-                {t('strategic.debrief.title', 'Debrief: what did we learn?')}
+                {t('strategic.debrief.title', { defaultValue: 'Debrief: what did we learn?' })}
               </p>
             </div>
             <p className="text-xs text-muted-foreground">
@@ -982,7 +985,7 @@ export function StrategicEscapeBoard({
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-xl bg-muted/40 border border-border px-3 py-2.5 text-[11px] text-muted-foreground space-y-1">
                 <p className="font-semibold text-foreground text-[12px]">
-                  {t('strategic.debrief.questionsTitle', 'Suggested debrief questions')}
+                  {t('strategic.debrief.questionsTitle', { defaultValue: 'Suggested debrief questions' })}
                 </p>
                 <ul className="list-disc pl-4 space-y-0.5">
                   <li>
@@ -1008,7 +1011,7 @@ export function StrategicEscapeBoard({
 
               <div className="rounded-xl bg-muted/40 border border-border px-3 py-2.5 text-[11px] text-muted-foreground space-y-1">
                 <p className="font-semibold text-foreground text-[12px]">
-                  {t('strategic.debrief.actionsTitle', 'Turn insights into actions')}
+                  {t('strategic.debrief.actionsTitle', { defaultValue: 'Turn insights into actions' })}
                 </p>
                 <ul className="list-disc pl-4 space-y-0.5">
                   <li>
@@ -1037,7 +1040,7 @@ export function StrategicEscapeBoard({
           <div className="space-y-4">
             <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-2">
               <p className="text-sm font-semibold text-foreground">
-                {t('strategic.debrief.summaryTitle', 'Summary for leadership')}
+                {t('strategic.debrief.summaryTitle', { defaultValue: 'Summary for leadership' })}
               </p>
               <p className="text-xs text-muted-foreground">
                 {t(

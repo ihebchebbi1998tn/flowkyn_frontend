@@ -79,7 +79,7 @@ export default function OrgDetail() {
       render: (row) => {
         const member = row as OrgMember;
         const isMember = !!member.name;
-        const displayName = isMember ? member.name : t('organizations.invitedPending', 'Invited member');
+        const displayName = isMember ? member.name : t('organizations.invitedMember', { defaultValue: 'Invited member' });
         const email = (row as any).email;
 
         return (
@@ -108,17 +108,25 @@ export default function OrgDetail() {
         if (!isMember) {
           return (
             <Badge variant="outline" className="text-label-xs border bg-amber-50 text-amber-700 border-amber-200">
-              {t('organizations.invitedPending', 'Invited (pending)')}
+              {t('organizations.invitedPending', { defaultValue: 'Invited (pending)' })}
             </Badge>
           );
         }
 
         const s = roleStyle[member.role_name] || roleStyle.member;
+        const roleLabel =
+          member.role_name === 'owner'
+            ? t('roles.owner', { defaultValue: 'Owner' })
+            : member.role_name === 'admin'
+              ? t('roles.admin', { defaultValue: 'Admin' })
+              : member.role_name === 'moderator'
+                ? t('roles.moderator', { defaultValue: 'Moderator' })
+                : t('roles.member', { defaultValue: 'Member' });
         return (
           <Badge variant="outline" className={cn('text-label-xs border', s.bg, s.text, s.border)}>
             {member.role_name === 'owner' && <Crown className="h-2.5 w-2.5 mr-1" />}
             {member.role_name === 'admin' && <Shield className="h-2.5 w-2.5 mr-1" />}
-            {member.role_name}
+            {roleLabel}
           </Badge>
         );
       },
@@ -214,7 +222,7 @@ export default function OrgDetail() {
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           <DashStat label={t('organizations.totalMembers')} value={String(membersList.length)} icon={Users} />
           <DashStat label={t('organizations.owner')} value={(owner as OrgMember)?.name || ''} icon={Crown} />
-          <DashStat label={t('orgDetail.currentPlan')} value={org?.plan_name || 'Free'} icon={Mail} />
+          <DashStat label={t('orgDetail.currentPlan')} value={org?.plan_name || t('plans.free', { defaultValue: 'Free' })} icon={Mail} />
         </div>
 
         <ChartCard title={t('organizations.members')}
@@ -234,16 +242,22 @@ export default function OrgDetail() {
         }>
         <div className="space-y-1.5">
           <Label className="text-body-sm">{t('organizations.inviteEmail')}</Label>
-          <Input type="email" className="h-10 text-body-sm" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} placeholder="colleague@company.com" />
+          <Input
+            type="email"
+            className="h-10 text-body-sm"
+            value={inviteEmail}
+            onChange={e => setInviteEmail(e.target.value)}
+            placeholder={t('organizations.inviteEmailPlaceholder', { defaultValue: 'colleague@company.com' })}
+          />
         </div>
         <div className="space-y-1.5">
           <Label className="text-body-sm">{t('organizations.inviteRole')}</Label>
           <Select value={inviteRole} onValueChange={setInviteRole}>
             <SelectTrigger className="h-10 text-body-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="member">Member</SelectItem>
-              <SelectItem value="moderator">Moderator</SelectItem>
+              <SelectItem value="admin">{t('roles.admin', { defaultValue: 'Admin' })}</SelectItem>
+              <SelectItem value="member">{t('roles.member', { defaultValue: 'Member' })}</SelectItem>
+              <SelectItem value="moderator">{t('roles.moderator', { defaultValue: 'Moderator' })}</SelectItem>
             </SelectContent>
           </Select>
         </div>

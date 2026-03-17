@@ -41,12 +41,18 @@
     "perPage": "pro Seite",
     "success": "Erfolg",
     "error": "Fehler",
+    "rounds": "Runden",
     "warning": "Warnung",
     "info": "Info",
     "tbd": "TBD",
     "backToEvents": "Zurück zu Veranstaltungen",
     "live": "Live",
     "async": "Asynchron"
+  },
+  "errors": {
+    "eventEnded": "Diese Aktivität ist beendet. Beiträge sind jetzt geschlossen.",
+    "postFailed": "Beitrag konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "reactionFailed": "Reaktion fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "landing": {
     "nav": {
@@ -441,6 +447,9 @@
   "events": {
     "title": "Veranstaltungen",
     "subtitle": "Verwalten Sie Ihre Team-Building-Events und Aktivitäten",
+    "errors": {
+      "joinRoomFailed": "Event-Raum konnte nicht beigetreten werden"
+    },
     "createEvent": "Veranstaltung erstellen",
     "editEvent": "Veranstaltung bearbeiten",
     "eventTitle": "Titel",
@@ -711,6 +720,10 @@
     "eventParticipantJoined": {
       "title": "Neuer Teilnehmer beigetreten",
       "message": "{{guestName, default:Jemand}} ist \"{{eventTitle}}\" beigetreten."
+    },
+    "errors": {
+      "fetchFailed": "Benachrichtigungen konnten nicht geladen werden",
+      "markReadFailed": "Benachrichtigung konnte nicht als gelesen markiert werden"
     }
   },
   "analytics": {
@@ -1027,6 +1040,23 @@
       "description": "Eine asynchrone strategische Simulation, in der Ihr Team ein realistisches Krisenszenario aus unterschiedlichen Rollen und Perspektiven durchspielt.",
       "duration": "45–60 Min. (async)",
       "teamSize": "4–12 Personen"
+    },
+    "launch": {
+      "fields": {
+        "endsAt": "Endet am",
+        "endsAtHelp": "Nach diesem Zeitpunkt sind neue Beiträge und Reaktionen deaktiviert (nur noch lesen)."
+      },
+      "schedule": {
+        "pickEndDateTime": "Enddatum und -uhrzeit auswählen"
+      },
+      "errors": {
+        "endsAtAfterStart": "Enddatum/-uhrzeit muss nach dem Startdatum/-uhrzeit liegen.",
+        "inviteSomeFailed": "Einige Einladungen sind fehlgeschlagen ({{emails}}). Das Event wurde erfolgreich erstellt.",
+        "inviteAllFailed": "Einladungen konnten nicht gesendet werden. Bitte versuchen Sie es erneut."
+      },
+      "review": {
+        "endsAt": "Endet am"
+      }
     }
   },
   "chat": {
@@ -1208,7 +1238,10 @@
       "betterLuck": "Mehr Glück in der nächsten Runde!",
       "viewResults": "Ergebnisse ansehen",
       "nextRound": "Nächste Runde",
-      "skipAnimation": "Animation überspringen"
+      "skipAnimation": "Animation überspringen",
+      "roundSettings": "Rundeneinstellungen",
+      "howManyRounds": "Wie viele Runden möchten Sie spielen?",
+      "recommendedRounds": "Empfohlen: 3–5 Runden"
     },
     "coffeeRoulette": {
       "title": "Kaffee-Roulette",
@@ -1234,8 +1267,14 @@
       "thisWeeksPrompt": "Das Thema dieser Woche",
       "contributions": "{{count}} Beiträge",
       "ongoing": "Laufend — jederzeit teilen",
+      "closed": "Geschlossen",
+      "endsAt": "Endet: {{time}}",
+      "endedAt": "Beendet: {{time}}",
       "shareYourWin": "Teilen Sie Ihren Erfolg...",
+      "readOnlyPlaceholder": "Beiträge sind für diese Aktivität geschlossen.",
       "share": "Teilen",
+      "postingClosedTitle": "Beiträge sind geschlossen",
+      "postingClosedBody": "Diese Aktivität ist beendet. Sie können weiterhin lesen, aber Reaktionen sind deaktiviert.",
       "reply": "Antworten",
       "writeReply": "Antwort schreiben...",
       "replyCount": "{{count}} Antwort",

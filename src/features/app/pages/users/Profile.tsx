@@ -73,9 +73,9 @@ export default function Profile() {
               <Select value={language} onValueChange={setLanguage}>
                 <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="fr">Français</SelectItem>
-                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="en">{t('languages.en', { defaultValue: 'English' })}</SelectItem>
+                  <SelectItem value="fr">{t('languages.fr', { defaultValue: 'Français' })}</SelectItem>
+                  <SelectItem value="de">{t('languages.de', { defaultValue: 'Deutsch' })}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -84,10 +84,10 @@ export default function Profile() {
               <Select defaultValue="Europe/Berlin">
                 <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Europe/Berlin">Europe/Berlin</SelectItem>
-                  <SelectItem value="Europe/Paris">Europe/Paris</SelectItem>
-                  <SelectItem value="America/New_York">America/New York</SelectItem>
-                  <SelectItem value="Asia/Tokyo">Asia/Tokyo</SelectItem>
+                  <SelectItem value="Europe/Berlin">{t('timezones.europeBerlin', { defaultValue: 'Europe/Berlin' })}</SelectItem>
+                  <SelectItem value="Europe/Paris">{t('timezones.europeParis', { defaultValue: 'Europe/Paris' })}</SelectItem>
+                  <SelectItem value="America/New_York">{t('timezones.americaNewYork', { defaultValue: 'America/New York' })}</SelectItem>
+                  <SelectItem value="Asia/Tokyo">{t('timezones.asiaTokyo', { defaultValue: 'Asia/Tokyo' })}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

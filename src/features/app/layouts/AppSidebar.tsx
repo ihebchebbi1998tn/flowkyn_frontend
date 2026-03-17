@@ -86,7 +86,7 @@ export function AppSidebar() {
       <SidebarHeader className="px-3 py-4">
         <div className="flex items-center justify-between">
           <Link to={ROUTES.DASHBOARD} onClick={handleNavClick} className="flex items-center justify-center w-full py-2">
-            <img src={logoImg} alt="Flowkyn" className={cn("object-contain transition-all duration-200", collapsed ? "h-10 w-10" : "h-16 w-16")} />
+            <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className={cn("object-contain transition-all duration-200", collapsed ? "h-10 w-10" : "h-16 w-16")} />
           </Link>
           {isMobile && (
             <button
@@ -103,7 +103,7 @@ export function AppSidebar() {
         <SidebarGroup>
           {!collapsed && (
             <SidebarGroupLabel className="text-label-xs uppercase tracking-widest text-muted-foreground/50 px-3 mb-1">
-              {t('nav.menu', 'Menu')}
+              {t('nav.menu', { defaultValue: 'Menu' })}
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
@@ -118,7 +118,7 @@ export function AppSidebar() {
         <SidebarGroup>
           {!collapsed && (
             <SidebarGroupLabel className="text-label-xs uppercase tracking-widest text-muted-foreground/50 px-3 mb-1">
-              {t('nav.manage', 'Manage')}
+              {t('nav.manage', { defaultValue: 'Manage' })}
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>

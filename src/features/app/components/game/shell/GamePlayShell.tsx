@@ -17,6 +17,7 @@ import { LeaderboardSidebar } from './LeaderboardSidebar';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import type { GameParticipant } from './types';
 import { motion } from 'framer-motion';
+import { LanguageSelector } from '@/components/common';
 
 type MobileTab = 'chat' | 'leaderboard';
 
@@ -70,9 +71,9 @@ export function GamePlayShell({
   const sessionStatusLabel =
     gameType === 'sync'
       ? (isLobby
-        ? t('gamePlay.shell.statusWaiting', 'Waiting for your team')
-        : t('gamePlay.shell.statusLive', 'Live team session'))
-      : t('gamePlay.shell.statusAsync', 'Async check‑in session');
+        ? t('gamePlay.shell.statusWaiting', { defaultValue: 'Waiting for your team' })
+        : t('gamePlay.shell.statusLive', { defaultValue: 'Live team session' }))
+      : t('gamePlay.shell.statusAsync', { defaultValue: 'Async check‑in session' });
 
   useEffect(() => {
     const timer = setInterval(() => setElapsed(e => e + 1), 1000);
@@ -91,8 +92,8 @@ export function GamePlayShell({
     );
 
     newlyJoined.forEach(p => {
-      toast.success(`${p.name} joined the session! 🎉`, {
-        description: t('gamePlay.shell.readyToConnect', 'Ready to connect!'),
+      toast.success(t('gamePlay.shell.userJoinedToast', { defaultValue: '{{name}} joined the session! 🎉', name: p.name }), {
+        description: t('gamePlay.shell.readyToConnect', { defaultValue: 'Ready to connect!' }),
         icon: '👋',
       });
       prevJoinedIds.current.add(p.id);
@@ -117,7 +118,7 @@ export function GamePlayShell({
       setCopied(true);
       copyLinkTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } else {
-      toast.error(t('common.copyFailed', 'Failed to copy link. Please manually copy the URL.'));
+      toast.error(t('common.copyFailed', { defaultValue: 'Failed to copy link. Please manually copy the URL.' }));
     }
   };
 
@@ -128,6 +129,11 @@ export function GamePlayShell({
       {/* ─── Header ─── */}
       <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/5" />
+
+        {/* Language switcher (top-right) */}
+        <div className="absolute top-3 right-3 z-20">
+          <LanguageSelector align="end" />
+        </div>
 
         {/* Animated Background Orbs */}
         <motion.div
@@ -153,7 +159,11 @@ export function GamePlayShell({
               {/* Company Logo Display */}
               {organizationLogo && (
                 <div className="flex items-center justify-center h-9 bg-background/30 backdrop-blur-sm rounded-lg px-2 border border-border/30 shrink-0">
-                  <img src={organizationLogo} alt={organizationName || 'Company'} className="h-6 w-auto max-w-[100px] object-contain" />
+                  <img
+                    src={organizationLogo}
+                    alt={organizationName || t('organizations.company', { defaultValue: 'Company' })}
+                    className="h-6 w-auto max-w-[100px] object-contain"
+                  />
                 </div>
               )}
 
@@ -176,17 +186,23 @@ export function GamePlayShell({
               {(currentUserAvatarUrl || currentUserName) && (
                 <button
                   onClick={onEditProfile}
-                  title="Edit your profile"
+                  title={t('profile.editTitle', { defaultValue: 'Edit your profile' })}
                   className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 hover:bg-muted/60 transition-colors group"
                 >
                   {currentUserAvatarUrl ? (
-                    <img src={currentUserAvatarUrl} alt="You" className="h-6 w-6 rounded-full object-cover" />
+                    <img
+                      src={currentUserAvatarUrl}
+                      alt={t('common.you', { defaultValue: 'You' })}
+                      className="h-6 w-6 rounded-full object-cover"
+                    />
                   ) : (
                     <div className="h-6 w-6 rounded-full bg-primary/15 flex items-center justify-center text-[9px] font-bold text-primary">
-                      {(currentUserName || 'You').slice(0, 2).toUpperCase()}
+                      {(currentUserName || t('common.you', { defaultValue: 'You' })).slice(0, 2).toUpperCase()}
                     </div>
                   )}
-                  <span className="text-[11px] font-medium text-foreground max-w-[80px] truncate hidden sm:inline">{currentUserName || 'You'}</span>
+                  <span className="text-[11px] font-medium text-foreground max-w-[80px] truncate hidden sm:inline">
+                    {currentUserName || t('common.you', { defaultValue: 'You' })}
+                  </span>
                   <Pencil className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </button>
               )}

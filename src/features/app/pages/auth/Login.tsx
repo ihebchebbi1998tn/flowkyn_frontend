@@ -64,7 +64,7 @@ export default function Login() {
   return (
     <div className="space-y-5">
       <div className="lg:hidden mb-4">
-        <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
+        <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-12 w-12 object-contain" />
       </div>
 
       <div className="space-y-1">
@@ -79,7 +79,10 @@ export default function Login() {
         <div className="space-y-1.5">
           <Label htmlFor="email" className="text-body-sm font-medium">{t('auth.email')}</Label>
           <Input
-            id="email" type="email" placeholder="you@company.com" value={email}
+            id="email"
+            type="email"
+            placeholder={t('auth.emailPlaceholder', { defaultValue: 'you@company.com' })}
+            value={email}
             onChange={e => setEmail(e.target.value)}
             className="h-11 text-body-sm rounded-xl bg-background border-input focus-visible:ring-primary/30"
             autoFocus
@@ -98,7 +101,9 @@ export default function Login() {
             </button>
           </div>
           <PasswordInput
-            id="password" placeholder="••••••••" value={password}
+            id="password"
+            placeholder={t('auth.passwordMask', { defaultValue: '••••••••' })}
+            value={password}
             onChange={e => setPassword(e.target.value)}
             className="h-11 text-body-sm rounded-xl"
           />

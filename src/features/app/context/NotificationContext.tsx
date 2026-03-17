@@ -3,6 +3,7 @@
  * Subscribes to the /notifications WebSocket namespace for live push notifications.
  */
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Notification } from '@/types';
 import { notificationsApi } from '@/features/app/api/notifications';
 import { useAuth } from '@/features/app/context/AuthContext';
@@ -29,6 +30,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { showError } = useApiError();
+  const { t } = useTranslation();
   const isLoadingRef = useRef(false);
 
   // useAuth() must be called unconditionally (Rules of Hooks).
@@ -55,7 +57,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const result = await notificationsApi.list(1, 50);
       setNotifications(result.data);
     } catch (err) {
-      showError(err, 'Failed to fetch notifications');
+      showError(err, t('notifications.errors.fetchFailed', { defaultValue: 'Failed to fetch notifications' }));
     } finally {
       setIsLoading(false);
       isLoadingRef.current = false;
@@ -109,9 +111,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     } catch (err) {
       // Revert on failure
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read_at: null } : n));
-      showError(err, 'Failed to mark notification as read');
+      showError(err, t('notifications.errors.markReadFailed', { defaultValue: 'Failed to mark notification as read' }));
     }
-  }, [showError]);
+  }, [showError, t]);
 
   const markAllRead = useCallback(async () => {
     const now = new Date().toISOString();

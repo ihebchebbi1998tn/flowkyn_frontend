@@ -27,6 +27,7 @@ interface GameBoardRouterProps {
   setInitialSnapshot: (snap: any) => void;
   gameData: any;
   setGameData: (data: any) => void;
+  isGameAdmin: boolean;
   winsPosts: Array<{
     id: string;
     authorName: string;
@@ -37,6 +38,8 @@ interface GameBoardRouterProps {
     reactions: { type: string; count: number; reacted: boolean }[];
   }>;
   canPostWins: boolean;
+  winsEndTimeIso?: string | null;
+  winsPostingClosed?: boolean;
   postParticipantId: string | null;
   refetchPosts: () => Promise<any>;
   gamesSocket: ReturnType<typeof import('@/hooks/useSocket')['useGamesSocket']>;
@@ -58,8 +61,11 @@ export function GameBoardRouter({
   setInitialSnapshot,
   gameData,
   setGameData,
+  isGameAdmin,
   winsPosts,
   canPostWins,
+  winsEndTimeIso,
+  winsPostingClosed,
   postParticipantId,
   refetchPosts,
   gamesSocket,
@@ -73,7 +79,10 @@ export function GameBoardRouter({
     currentUserName: currentUserName || undefined,
     currentUserAvatar: (currentUserName || '??').slice(0, 2).toUpperCase(),
     currentUserAvatarUrl,
-    round: (activeRoundId as any) || 1,
+    // Some boards may display a round number; do not pass roundId UUIDs here.
+    round: typeof gameData?.round === 'number'
+      ? gameData.round
+      : (typeof initialSnapshot?.round === 'number' ? initialSnapshot.round : 1),
     onRoundComplete: (r: number) => console.log('[GamePlay] Round complete:', r),
   };
 
@@ -97,7 +106,16 @@ export function GameBoardRouter({
             console.error('[GamePlay] Unknown game type key:', config.gameTypeKey);
             return;
           }
-          const newSession = (await gamesApi.startSession(eventId, typeRow.id)) as any;
+          const desiredRounds =
+            actionType === 'two_truths:start'
+              ? Number(payload?.totalRounds)
+              : undefined;
+          const totalRoundsToSend =
+            Number.isFinite(desiredRounds) && Number.isInteger(desiredRounds) && desiredRounds >= 1
+              ? desiredRounds
+              : undefined;
+
+          const newSession = (await gamesApi.startSession(eventId, typeRow.id, totalRoundsToSend)) as any;
           console.log('[GamePlay] Auto-created game session', {
             eventId,
             gameKey: config.gameTypeKey,
@@ -190,7 +208,7 @@ export function GameBoardRouter({
           sessionId: sid,
           error: err?.message || err,
         });
-        showError(err, 'Game action failed');
+        showError(err, t('games.errors.actionFailed', { defaultValue: 'Game action failed' }));
       }
     },
     [
@@ -217,6 +235,7 @@ export function GameBoardRouter({
           initialSnapshot={initialSnapshot}
           gameData={gameData}
           onEmitAction={onEmitAction}
+          isAdmin={isGameAdmin}
         />
       );
     case GAME_TYPES.COFFEE_ROULETTE:
@@ -239,15 +258,36 @@ export function GameBoardRouter({
           currentUserAvatarUrl={currentUserAvatarUrl}
           posts={winsPosts}
           canPost={canPostWins}
+          canReact={!winsPostingClosed}
+          endsAt={winsEndTimeIso || undefined}
+          postingClosed={!!winsPostingClosed}
           onPost={async (content: string) => {
-            if (!eventId || !postParticipantId) return;
-            await eventsApi.createPost(eventId, postParticipantId, content);
-            await refetchPosts();
+            if (!eventId || !postParticipantId || !canPostWins) return;
+            try {
+              await eventsApi.createPost(eventId, postParticipantId, content);
+              await refetchPosts();
+            } catch (err: any) {
+              const code = err?.response?.data?.code || err?.code;
+              if (code === 'EVENT_ENDED') {
+                toast.error(t('errors.eventEnded', { defaultValue: 'This activity has ended. Posting is now closed.' }));
+              } else {
+                showError(err, t('errors.postFailed', { defaultValue: 'Failed to post. Please try again.' }));
+              }
+            }
           }}
           onToggleReaction={async (postId: string, reactionType: string) => {
-            if (!postParticipantId) return;
-            await postsApi.react(postId, postParticipantId, reactionType, eventId || undefined);
-            await refetchPosts();
+            if (!postParticipantId || winsPostingClosed) return;
+            try {
+              await postsApi.react(postId, postParticipantId, reactionType, eventId || undefined);
+              await refetchPosts();
+            } catch (err: any) {
+              const code = err?.response?.data?.code || err?.code;
+              if (code === 'EVENT_ENDED') {
+                toast.error(t('errors.eventEnded', { defaultValue: 'This activity has ended. Posting is now closed.' }));
+              } else {
+                showError(err, t('errors.reactionFailed', { defaultValue: 'Failed to react. Please try again.' }));
+              }
+            }
           }}
         />
       );

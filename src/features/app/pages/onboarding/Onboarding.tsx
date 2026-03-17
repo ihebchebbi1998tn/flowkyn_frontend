@@ -126,7 +126,7 @@ export default function Onboarding() {
         goals: data.goals.length > 0 ? data.goals : undefined,
       });
 
-      if (!org?.id) throw new Error('Failed to create organization');
+      if (!org?.id) throw new Error(t('onboarding.errors.createOrgFailed', { defaultValue: 'Failed to create organization' }));
 
       // Cache org ID for EventForm auto-population
       localStorage.setItem('flowkyn_org_id', org.id);
@@ -194,7 +194,10 @@ export default function Onboarding() {
       navigationTimeoutRef.current = setTimeout(() => navigate(ROUTES.DASHBOARD), 2800);
     } catch (error: any) {
       console.error('Onboarding completion failed:', error);
-      const errorMessage = error?.response?.data?.message || error?.message || 'Setup failed. Please try again.';
+      const errorMessage =
+        error?.response?.data?.message
+        || error?.message
+        || t('onboarding.errors.setupFailed', { defaultValue: 'Setup failed. Please try again.' });
       setOnboardingError(errorMessage);
       // Do NOT navigate on failure
     } finally {
@@ -245,7 +248,7 @@ export default function Onboarding() {
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
           <div className="flex items-center justify-between px-6 h-14 max-w-3xl mx-auto w-full">
           <div className="flex items-center">
-            <img src={logoImg} alt="Flowkyn" className="h-10 w-10 object-contain" />
+            <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-10 w-10 object-contain" />
           </div>
           <span className="text-label-xs text-muted-foreground font-medium">
             {t('onboarding.stepOf', { current: step + 1, total: STEP_ICONS.length })}
@@ -270,7 +273,9 @@ export default function Onboarding() {
               <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-[13px] font-medium text-destructive">{onboardingError}</p>
-                <p className="text-[11px] text-destructive/60 mt-1">Please check your information and try again.</p>
+                <p className="text-[11px] text-destructive/60 mt-1">
+                  {t('onboarding.errors.checkInfoAndRetry', { defaultValue: 'Please check your information and try again.' })}
+                </p>
               </div>
               <button onClick={() => setOnboardingError('')} className="text-muted-foreground hover:text-foreground">
                 <X className="h-4 w-4" />

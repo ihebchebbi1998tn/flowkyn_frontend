@@ -43,6 +43,7 @@ import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useApiError } from '@/hooks/useApiError';
 import { eventsApi } from '@/features/app/api/events';
+import { LanguageSelector } from '@/components/common';
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
 
@@ -311,7 +312,7 @@ export default function EventLobby() {
       })
       .catch((err: any) => {
         console.error('[EventLobby] Failed to join event room:', err?.message || err);
-        showError(err, 'Failed to join event room');
+        showError(err, t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }));
       });
   }, [hasJoined, id, eventsSocket.isConnected, showError]);
 
@@ -522,7 +523,7 @@ export default function EventLobby() {
         })
         .catch((err: any) => {
           console.error('[EventLobby] Failed to send message:', err?.message || err);
-          showError(err, 'Failed to send message');
+          showError(err, t('chat.errors.sendFailed', { defaultValue: 'Failed to send message' }));
         });
     } else {
       console.warn('[EventLobby] Socket not connected, cannot send message — falling back to HTTP refetch');
@@ -597,6 +598,11 @@ export default function EventLobby() {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-primary/3" />
               <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
 
+              {/* Language switcher (top-right) */}
+              <div className="absolute top-4 right-4 z-20">
+                <LanguageSelector align="end" />
+              </div>
+
               <div className="relative p-6 sm:p-8 space-y-6">
                 {/* Draft banner */}
                 {event.status === 'draft' && (
@@ -664,7 +670,7 @@ export default function EventLobby() {
                 {profile && (
                   <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-card border border-border">
                     {profile.avatarUrl ? (
-                      <img src={profile.avatarUrl} alt="You" className="h-10 w-10 rounded-xl object-cover shrink-0" />
+                      <img src={profile.avatarUrl} alt={t('common.you', { defaultValue: 'You' })} className="h-10 w-10 rounded-xl object-cover shrink-0" />
                     ) : (
                       <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
                         {profile.displayName.slice(0, 2).toUpperCase()}
@@ -689,7 +695,10 @@ export default function EventLobby() {
                     <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center"><Users className="h-4 w-4 text-primary" /></div>
                     <div>
                       <p className="text-sm font-bold text-foreground">
-                        {(event as any).participant_count} <span className="text-xs font-normal text-muted-foreground">joined</span>
+                        {(event as any).participant_count}{' '}
+                        <span className="text-xs font-normal text-muted-foreground">
+                          {t('events.joined', { defaultValue: 'joined' })}
+                        </span>
                       </p>
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                         {(event as any).invited_count ? t('events.invitedCountFull', { count: (event as any).invited_count }) : t('events.maxParticipantsShort', { count: event.max_participants })}
@@ -773,7 +782,7 @@ export default function EventLobby() {
                     {shouldShowYouPill && (
                       <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-primary/30 bg-primary/5">
                         {profile.avatarUrl ? (
-                          <img src={profile.avatarUrl} alt="You" className="h-7 w-7 rounded-full object-cover" />
+                          <img src={profile.avatarUrl} alt={t('common.you', { defaultValue: 'You' })} className="h-7 w-7 rounded-full object-cover" />
                         ) : (
                           <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-[9px] font-bold text-primary-foreground">
                             {profile.displayName.slice(0, 2).toUpperCase()}
@@ -884,7 +893,7 @@ export default function EventLobby() {
                 </>
               ) : (
                 <>
-                  <img src={logoImg} alt="Flowkyn" className="h-5 w-5 object-contain opacity-50" />
+                  <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-5 w-5 object-contain opacity-50" />
                   <span className="text-label-xs">{t('events.poweredBy')}</span>
                 </>
               )}

@@ -20,9 +20,9 @@ const INDUSTRY_ICONS: Record<string, React.ElementType> = {
 };
 
 const LANGUAGES = [
-  { key: 'en', label: 'English' },
-  { key: 'fr', label: 'Français' },
-  { key: 'de', label: 'Deutsch' },
+  { key: 'en', i18nKey: 'languages.en', defaultLabel: 'English' },
+  { key: 'fr', i18nKey: 'languages.fr', defaultLabel: 'Français' },
+  { key: 'de', i18nKey: 'languages.de', defaultLabel: 'Deutsch' },
 ];
 
 interface CelebrationScreenProps {
@@ -43,7 +43,7 @@ export function CelebrationScreen({ data }: CelebrationScreenProps) {
       />
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-lg">
-        <motion.img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain mb-10"
+        <motion.img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-12 w-12 object-contain mb-10"
           initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} />
 
         <motion.div className="mb-8"
@@ -58,7 +58,7 @@ export function CelebrationScreen({ data }: CelebrationScreenProps) {
 
         <motion.h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight"
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.6 }}>
-          {t('onboarding.celebrationTitle', 'Welcome to Flowkyn')}
+          {t('onboarding.celebrationTitle', { defaultValue: 'Welcome to Flowkyn' })}
         </motion.h1>
 
         {data.orgName && (
@@ -84,7 +84,10 @@ export function CelebrationScreen({ data }: CelebrationScreenProps) {
           {data.language && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-xs font-medium text-muted-foreground">
               <Globe className="h-3 w-3" />
-              {LANGUAGES.find(l => l.key === data.language)?.label}
+              {(() => {
+                const lang = LANGUAGES.find(l => l.key === data.language);
+                return lang ? t(lang.i18nKey, { defaultValue: lang.defaultLabel }) : data.language;
+              })()}
             </span>
           )}
         </motion.div>

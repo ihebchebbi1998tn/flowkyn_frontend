@@ -44,7 +44,7 @@ export default function ForgotPassword() {
   return (
     <div className="space-y-5">
       <div className="lg:hidden mb-4">
-        <img src={logoImg} alt="Flowkyn" className="h-12 w-12 object-contain" />
+        <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-12 w-12 object-contain" />
       </div>
 
       <div className="space-y-1">
@@ -69,7 +69,8 @@ export default function ForgotPassword() {
               <Input
                 type="email" className="h-11 text-[13px] rounded-xl"
                 value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="you@company.com" autoFocus
+                placeholder={t('auth.emailPlaceholder', { defaultValue: 'you@company.com' })}
+                autoFocus
               />
             </div>
             <LoadingButton

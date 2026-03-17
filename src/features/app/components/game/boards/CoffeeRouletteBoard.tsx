@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Coffee, Shuffle, MessageCircle, Clock, Users,
@@ -12,6 +12,16 @@ import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { motion } from 'framer-motion';
 import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
+function clamp(n: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, n));
+}
+
+function shouldEnableTilt() {
+  // Avoid tilt on touch devices
+  return typeof window !== 'undefined' && window.matchMedia && !window.matchMedia('(pointer: coarse)').matches;
+}
 
 type CoffeeSnapshot = {
   kind: typeof GAME_TYPES.COFFEE_ROULETTE;
@@ -24,6 +34,8 @@ type CoffeeSnapshot = {
   }>;
   startedChatAt: string | null;
   chatEndsAt?: string;
+  promptsUsed?: number;
+  decisionRequired?: boolean;
 };
 
 export interface CoffeeRouletteBoardProps {
@@ -44,6 +56,8 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
   const pairs = snapshot?.pairs || [];
   const myPair = pairs.find((p) => p.person1.participantId === currentUserId || p.person2.participantId === currentUserId) || null;
   const chatEndsAt = snapshot?.chatEndsAt || null;
+  const promptsUsed = snapshot?.promptsUsed || 0;
+  const decisionRequired = !!snapshot?.decisionRequired;
 
   // Initialize from server timestamp so late-joiners see the correct remaining time
   const [chatSecondsRemaining, setChatSecondsRemaining] = useState(() => {
@@ -53,9 +67,27 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     return 30 * 60;
   });
   const [showCountdown, setShowCountdown] = useState(false);
+  const [showDecisionModal, setShowDecisionModal] = useState(false);
+  const [isSpinningTopic, setIsSpinningTopic] = useState(false);
+  const [displayTopic, setDisplayTopic] = useState<string>('');
+  const topicSpinTimerRef = useRef<number | null>(null);
   // Capture elapsed chat time so the 'complete' phase shows the correct value
   // instead of resetting to 0 when chatSecondsRemaining resets.
   const capturedElapsedRef = useRef(0);
+
+  const spinTopicPool = useMemo(
+    () => ([
+      t('gamePlay.coffeeRoulette.spin1', { defaultValue: "What's a tiny habit that improved your life?" }),
+      t('gamePlay.coffeeRoulette.spin2', { defaultValue: 'What would you teach in a 5‑minute lightning talk?' }),
+      t('gamePlay.coffeeRoulette.spin3', { defaultValue: 'What’s something you’re curious about lately?' }),
+      t('gamePlay.coffeeRoulette.spin4', { defaultValue: 'What’s a recent win you’re proud of?' }),
+      t('gamePlay.coffeeRoulette.spin5', { defaultValue: 'What’s your go-to reset when you feel stuck?' }),
+      t('gamePlay.coffeeRoulette.spin6', { defaultValue: 'What’s a tool you can’t live without at work?' }),
+      t('gamePlay.coffeeRoulette.spin7', { defaultValue: 'What’s a book/movie that stuck with you?' }),
+      t('gamePlay.coffeeRoulette.spin8', { defaultValue: 'What’s a place you’d love to visit?' }),
+    ]),
+    [t]
+  );
 
   const startMatching = () => {
     console.log('[CoffeeRouletteBoard] startMatching', {
@@ -79,6 +111,26 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     console.log('[CoffeeRouletteBoard] endSession -> coffee:end');
     onEmitAction('coffee:end', {});
   };
+  const endAndFinishSession = useCallback(async () => {
+    // End snapshot + close DB session in one server-side action (allowed for all participants)
+    await onEmitAction('coffee:end_and_finish', {});
+  }, [onEmitAction]);
+
+  // Keep displayed topic in sync unless we are spinning
+  useEffect(() => {
+    if (isSpinningTopic) return;
+    setDisplayTopic(myPair?.topic || '');
+  }, [myPair?.topic, isSpinningTopic]);
+
+  // Cleanup spin interval
+  useEffect(() => {
+    return () => {
+      if (topicSpinTimerRef.current) {
+        window.clearInterval(topicSpinTimerRef.current);
+        topicSpinTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (phase !== 'chatting' || !chatEndsAt) {
@@ -106,6 +158,15 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, chatEndsAt]);
 
+  // When server requires a decision (after ~6 prompts), open the modal.
+  useEffect(() => {
+    if (phase === 'chatting' && decisionRequired) {
+      setShowDecisionModal(true);
+    } else {
+      setShowDecisionModal(false);
+    }
+  }, [phase, decisionRequired]);
+
   const displayMinutes = Math.floor(chatSecondsRemaining / 60);
   const displaySeconds = chatSecondsRemaining % 60;
   const chatMinutesElapsed = phase === 'complete'
@@ -115,6 +176,52 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
   return (
     <div className="space-y-4">
       <CountdownOverlay active={showCountdown} onComplete={handleCountdownDone} accentColor="info" finalText="MATCH!" />
+      <Dialog open={showDecisionModal} onOpenChange={setShowDecisionModal}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {t('gamePlay.coffeeRoulette.decision.title', {
+                defaultValue: 'Keep going or wrap up?',
+              })}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-[13px] text-muted-foreground">
+              {t('gamePlay.coffeeRoulette.decision.body', {
+                defaultValue: 'You’ve gone through {{count}} conversation prompts. Do you want to continue with new prompts or end this Coffee Roulette session?',
+                count: promptsUsed || 6,
+              })}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 justify-end pt-2">
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  await onEmitAction('coffee:continue', {});
+                  setShowDecisionModal(false);
+                }}
+                className="h-10"
+              >
+                {t('gamePlay.coffeeRoulette.decision.continue', { defaultValue: 'Continue' })}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  await endAndFinishSession();
+                  setShowDecisionModal(false);
+                }}
+                className="h-10"
+              >
+                {t('gamePlay.coffeeRoulette.decision.end', { defaultValue: 'End session' })}
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              {t('gamePlay.coffeeRoulette.decision.hint', {
+                defaultValue: 'Tip: ending will wrap up for everyone in this event.',
+              })}
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* Phase header */}
       <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="p-4 sm:p-5">
@@ -187,61 +294,99 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
             </div>
             <div className="p-4 space-y-3">
               {pairs.map((pair, i) => (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.15, duration: 0.4 }}
                   key={pair.id} 
-                  className={cn(
-                    "flex items-center gap-4 p-4 rounded-xl border-2 transition-colors",
-                    i === 0 ? 'border-info/30 bg-info/[0.04] ring-2 ring-info/10' : 'border-border bg-card'
-                  )} 
+                  className="relative"
                 >
-                  {/* Person 1 */}
-                  <motion.div 
-                    initial={{ x: -30, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.15 + 0.2, type: 'spring', stiffness: 200 }}
-                    className="flex items-center gap-2 flex-1 min-w-0"
+                  <div
+                    className={cn(
+                      'group relative w-full rounded-2xl border overflow-hidden',
+                      'bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]',
+                      'backdrop-blur-md',
+                      i === 0
+                        ? 'border-info/30 ring-2 ring-info/10 shadow-[0_12px_40px_rgba(59,130,246,0.12)]'
+                        : 'border-border/70 shadow-[0_10px_30px_rgba(0,0,0,0.06)]',
+                    )}
+                    style={{
+                      transformStyle: 'preserve-3d',
+                      perspective: '900px',
+                    }}
+                    onMouseMove={(e) => {
+                      if (!shouldEnableTilt()) return;
+                      const el = e.currentTarget;
+                      const rect = el.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const y = e.clientY - rect.top;
+                      const px = (x / rect.width) * 2 - 1; // -1..1
+                      const py = (y / rect.height) * 2 - 1; // -1..1
+                      const rotateY = clamp(px * 6, -6, 6);
+                      const rotateX = clamp(-py * 6, -6, 6);
+                      el.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(0)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)';
+                    }}
                   >
-                    <Avatar className="h-10 w-10 ring-2 ring-info/20">
-                      {pair.person1.avatarUrl ? <AvatarImage src={getSafeImageUrl(pair.person1.avatarUrl) || pair.person1.avatarUrl} alt={pair.person1.name} /> : null}
-                      <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person1.avatar}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-[13px] font-medium text-foreground truncate">{pair.person1.name}</span>
-                  </motion.div>
-
-                  {/* Connector */}
-                  <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: i * 0.15 + 0.4, type: 'spring' }}
-                    className="flex items-center gap-1.5 shrink-0"
-                  >
-                    <div className="h-px w-4 bg-border" />
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-info/10">
-                      <Coffee className="h-3.5 w-3.5 text-info" />
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute -top-16 -right-20 h-40 w-40 rounded-full bg-info/10 blur-2xl" />
+                      <div className="absolute -bottom-20 -left-20 h-44 w-44 rounded-full bg-primary/10 blur-2xl" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.20),transparent_40%),radial-gradient(circle_at_80%_90%,rgba(255,255,255,0.10),transparent_55%)]" />
                     </div>
-                    <div className="h-px w-4 bg-border" />
-                  </motion.div>
 
-                  {/* Person 2 */}
-                  <motion.div 
-                    initial={{ x: 30, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.15 + 0.2, type: 'spring', stiffness: 200 }}
-                    className="flex items-center gap-2 flex-1 min-w-0 justify-end"
-                  >
-                    <span className="text-[13px] font-medium text-foreground truncate">{pair.person2.name}</span>
-                    <Avatar className="h-10 w-10 ring-2 ring-info/20">
-                      {pair.person2.avatarUrl ? <AvatarImage src={getSafeImageUrl(pair.person2.avatarUrl) || pair.person2.avatarUrl} alt={pair.person2.name} /> : null}
-                      <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person2.avatar}</AvatarFallback>
-                    </Avatar>
-                  </motion.div>
+                    <div className="relative flex items-center gap-4 p-4 sm:p-5">
+                      {/* Person 1 */}
+                      <motion.div 
+                        initial={{ x: -24, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: i * 0.15 + 0.18, type: 'spring', stiffness: 220, damping: 18 }}
+                        className="flex items-center gap-2 flex-1 min-w-0"
+                        style={{ transform: 'translateZ(18px)' }}
+                      >
+                        <Avatar className="h-10 w-10 ring-2 ring-info/20">
+                          {pair.person1.avatarUrl ? <AvatarImage src={getSafeImageUrl(pair.person1.avatarUrl) || pair.person1.avatarUrl} alt={pair.person1.name} /> : null}
+                          <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person1.avatar}</AvatarFallback>
+                        </Avatar>
+                        <span className="text-[13px] font-medium text-foreground truncate">{pair.person1.name}</span>
+                      </motion.div>
 
-                  {(pair.person1.participantId === currentUserId || pair.person2.participantId === currentUserId) && (
-                    <Badge className="text-[9px] bg-info/15 text-info border-info/25 shrink-0">{t('gamePlay.coffeeRoulette.you')}</Badge>
-                  )}
+                      {/* Connector */}
+                      <motion.div 
+                        initial={{ scale: 0.85, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: i * 0.15 + 0.34, type: 'spring', stiffness: 200, damping: 16 }}
+                        className="flex items-center gap-1.5 shrink-0"
+                        style={{ transform: 'translateZ(24px)' }}
+                      >
+                        <div className="h-px w-4 bg-border/80" />
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-info/10 border border-info/15">
+                          <Coffee className="h-4 w-4 text-info" />
+                        </div>
+                        <div className="h-px w-4 bg-border/80" />
+                      </motion.div>
+
+                      {/* Person 2 */}
+                      <motion.div 
+                        initial={{ x: 24, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: i * 0.15 + 0.18, type: 'spring', stiffness: 220, damping: 18 }}
+                        className="flex items-center gap-2 flex-1 min-w-0 justify-end"
+                        style={{ transform: 'translateZ(18px)' }}
+                      >
+                        <span className="text-[13px] font-medium text-foreground truncate">{pair.person2.name}</span>
+                        <Avatar className="h-10 w-10 ring-2 ring-info/20">
+                          {pair.person2.avatarUrl ? <AvatarImage src={getSafeImageUrl(pair.person2.avatarUrl) || pair.person2.avatarUrl} alt={pair.person2.name} /> : null}
+                          <AvatarFallback className="bg-info/10 text-info text-[11px] font-bold">{pair.person2.avatar}</AvatarFallback>
+                        </Avatar>
+                      </motion.div>
+
+                      {(pair.person1.participantId === currentUserId || pair.person2.participantId === currentUserId) && (
+                        <Badge className="text-[9px] bg-info/15 text-info border-info/25 shrink-0">{t('gamePlay.coffeeRoulette.you')}</Badge>
+                      )}
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -311,12 +456,71 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               {/* Topic */}
               <div className="rounded-xl border border-border bg-muted/30 p-4 max-w-md mx-auto mb-4">
                 <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{t('gamePlay.coffeeRoulette.needATopic')}</p>
-                <p className="text-[13px] text-foreground leading-relaxed">"{myPair.topic}"</p>
+                <p
+                  className={cn(
+                    'text-[13px] text-foreground leading-relaxed',
+                    isSpinningTopic && 'font-semibold',
+                  )}
+                >
+                  “{displayTopic || myPair.topic}”
+                </p>
+                <div className="flex justify-center pt-3">
+                  <Button
+                    variant="outline"
+                    className="h-9 px-4 text-[12px] gap-2 rounded-xl"
+                    disabled={isSpinningTopic}
+                    onClick={() => {
+                      if (isSpinningTopic) return;
+                      setIsSpinningTopic(true);
+
+                      // Emit exactly once
+                      onEmitAction('coffee:next_prompt', {});
+
+                      // Slot-machine style spin for ~700ms, then settle to server value.
+                      const start = Date.now();
+                      if (topicSpinTimerRef.current) {
+                        window.clearInterval(topicSpinTimerRef.current);
+                        topicSpinTimerRef.current = null;
+                      }
+                      topicSpinTimerRef.current = window.setInterval(() => {
+                        const elapsed = Date.now() - start;
+                        if (elapsed >= 700) {
+                          if (topicSpinTimerRef.current) {
+                            window.clearInterval(topicSpinTimerRef.current);
+                            topicSpinTimerRef.current = null;
+                          }
+                          setIsSpinningTopic(false);
+                          // Once snapshot updates, effect will sync; for safety, set immediately too.
+                          setDisplayTopic(myPair.topic);
+                          return;
+                        }
+                        const idx = Math.floor(Math.random() * spinTopicPool.length);
+                        setDisplayTopic(spinTopicPool[idx]);
+                      }, 55);
+                    }}
+                  >
+                    <Shuffle className="h-4 w-4" />
+                    {isSpinningTopic
+                      ? t('gamePlay.coffeeRoulette.spinning', { defaultValue: 'Spinning…' })
+                      : t('gamePlay.coffeeRoulette.nextPrompt', { defaultValue: 'Next prompt' })}
+                  </Button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  {t('gamePlay.coffeeRoulette.promptCounter', {
+                    defaultValue: 'Prompt {{used}} / 6',
+                    used: Math.min(promptsUsed || 0, 6),
+                  })}
+                </p>
               </div>
 
               <Button onClick={endSession} variant="outline" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
                 <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat')}
               </Button>
+              <div className="pt-3">
+                <Button onClick={endAndFinishSession} variant="destructive" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+                  <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endAndClose', { defaultValue: 'End for everyone' })}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -347,6 +551,11 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               <Button onClick={endSession} variant="outline" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
                 <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat')}
               </Button>
+              <div className="pt-3">
+                <Button onClick={endAndFinishSession} variant="destructive" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+                  <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endAndClose', { defaultValue: 'End for everyone' })}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

@@ -41,12 +41,18 @@
     "perPage": "par page",
     "success": "Succès",
     "error": "Erreur",
+    "rounds": "manches",
     "warning": "Attention",
     "info": "Info",
     "tbd": "À définir",
     "backToEvents": "Retour aux événements",
     "live": "En direct",
     "async": "Asynchrone"
+  },
+  "errors": {
+    "eventEnded": "Cette activité est terminée. Les publications sont désormais fermées.",
+    "postFailed": "Échec de la publication. Veuillez réessayer.",
+    "reactionFailed": "Échec de la réaction. Veuillez réessayer."
   },
   "landing": {
     "nav": {
@@ -442,6 +448,9 @@
   "events": {
     "title": "Événements",
     "subtitle": "Gérez vos événements et activités de team building",
+    "errors": {
+      "joinRoomFailed": "Impossible de rejoindre la salle de l’événement"
+    },
     "createEvent": "Créer un événement",
     "editEvent": "Modifier l'événement",
     "eventTitle": "Titre",
@@ -724,6 +733,10 @@
     "eventParticipantJoined": {
       "title": "Nouveau participant",
       "message": "{{guestName, default:Quelqu'un}} a rejoint \"{{eventTitle}}\"."
+    },
+    "errors": {
+      "fetchFailed": "Impossible de charger les notifications",
+      "markReadFailed": "Impossible de marquer la notification comme lue"
     }
   },
   "analytics": {
@@ -1017,6 +1030,23 @@
     }
   },
   "activities": {
+    "launch": {
+      "fields": {
+        "endsAt": "Se termine le",
+        "endsAtHelp": "Après cette date/heure, les nouveaux messages et réactions seront désactivés (lecture seule)."
+      },
+      "schedule": {
+        "pickEndDateTime": "Sélectionnez une date et une heure de fin"
+      },
+      "errors": {
+        "endsAtAfterStart": "La date/heure de fin doit être après la date/heure de début.",
+        "inviteSomeFailed": "Certaines invitations ont échoué ({{emails}}). L’événement a été créé avec succès.",
+        "inviteAllFailed": "Impossible d’envoyer les invitations. Veuillez réessayer."
+      },
+      "review": {
+        "endsAt": "Se termine le"
+      }
+    },
     "twoTruths": {
       "name": "Deux vérités et un mensonge",
       "description": "Brise-glace classique : chacun partage trois affirmations — deux vraies et une fausse. L’équipe devine laquelle est le mensonge.",
@@ -1221,7 +1251,10 @@
       "betterLuck": "Plus de chance au prochain tour !",
       "viewResults": "Voir les résultats",
       "nextRound": "Tour suivant",
-      "skipAnimation": "Passer l'animation"
+      "skipAnimation": "Passer l'animation",
+      "roundSettings": "Paramètres des manches",
+      "howManyRounds": "Combien de manches souhaitez-vous jouer ?",
+      "recommendedRounds": "Recommandé : 3 à 5 manches"
     },
     "coffeeRoulette": {
       "title": "Café Roulette",
@@ -1247,8 +1280,14 @@
       "thisWeeksPrompt": "Le sujet de la semaine",
       "contributions": "{{count}} contributions",
       "ongoing": "En cours — partagez à tout moment",
+      "closed": "Fermé",
+      "endsAt": "Se termine : {{time}}",
+      "endedAt": "Terminé : {{time}}",
       "shareYourWin": "Partagez votre victoire...",
+      "readOnlyPlaceholder": "Les publications sont fermées pour cette activité.",
       "share": "Partager",
+      "postingClosedTitle": "Publications fermées",
+      "postingClosedBody": "Cette activité est terminée. Vous pouvez toujours lire, mais les réactions sont désactivées.",
       "reply": "Répondre",
       "writeReply": "Écrire une réponse...",
       "replyCount": "{{count}} réponse",

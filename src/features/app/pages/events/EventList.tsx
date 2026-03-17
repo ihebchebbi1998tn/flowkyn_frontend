@@ -130,7 +130,7 @@ export default function EventList() {
               <div className="flex items-center justify-between px-5 py-3 border-t border-border/40 bg-muted/20 text-label text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <CalendarDays className="h-3 w-3" />
-                  {event.start_time ? new Date(event.start_time).toLocaleDateString() : '—'}
+                  {event.start_time ? new Date(event.start_time).toLocaleDateString() : t('common.emDash', { defaultValue: '—' })}
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="flex items-center gap-1.5">
@@ -139,7 +139,7 @@ export default function EventList() {
                       ? t('events.ongoing')
                       : (event.end_time && event.start_time
                           ? `${Math.round((new Date(event.end_time).getTime() - new Date(event.start_time).getTime()) / 60000)} min`
-                          : '—')}
+                          : t('common.emDash', { defaultValue: '—' }))}
                   </span>
                   {event.status === 'draft' && (
                     <Button
@@ -149,17 +149,17 @@ export default function EventList() {
                         e.stopPropagation();
                         try {
                           await eventsApi.update(event.id, { status: 'active' } as any);
-                          toast.success(t('events.lifecycle.startedToast', 'Event started'));
+                          toast.success(t('events.lifecycle.startedToast', { defaultValue: 'Event started' }));
                         } catch (err: any) {
                           toast.error(
                             err?.response?.data?.message ||
-                              t('events.lifecycle.startFailed', 'Failed to start event. Please try again.')
+                              t('events.lifecycle.startFailed', { defaultValue: 'Failed to start event. Please try again.' })
                           );
                         }
                       }}
                     >
                       <Play className="h-3 w-3" />
-                      {t('events.lifecycle.startEvent', 'Start event')}
+                      {t('events.lifecycle.startEvent', { defaultValue: 'Start event' })}
                     </Button>
                   )}
                   {event.status === 'active' && (
@@ -173,7 +173,7 @@ export default function EventList() {
                       }}
                     >
                       <ArrowRight className="h-3 w-3" />
-                      {t('events.lifecycle.enterLobby', 'Enter lobby')}
+                      {t('events.lifecycle.enterLobby', { defaultValue: 'Enter lobby' })}
                     </Button>
                   )}
                   {event.status === 'completed' && (
@@ -187,7 +187,7 @@ export default function EventList() {
                       }}
                     >
                       <ArrowRight className="h-3 w-3" />
-                      {t('events.lifecycle.viewRecap', 'View recap')}
+                      {t('events.lifecycle.viewRecap', { defaultValue: 'View recap' })}
                     </Button>
                   )}
                 </div>

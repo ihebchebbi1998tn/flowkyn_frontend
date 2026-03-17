@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence } from 'framer-motion';
@@ -148,7 +148,7 @@ function GamePlayWithoutBoundary() {
         setHasJoined(true);
       } else {
         console.error('[GamePlay] handleJoin error', err);
-        setJoinError(err?.message || 'Failed to join event');
+        setJoinError(err?.message || t('event.joinFailed', { defaultValue: 'Failed to join event' }));
       }
     } finally {
       setIsJoining(false);
@@ -206,7 +206,7 @@ function GamePlayWithoutBoundary() {
     })
     .map((p: any) => ({
     id: p.id,
-    name: p.name || 'Unknown',
+    name: p.name || t('common.unknown', { defaultValue: 'Unknown' }),
     email: p.email || null,
     avatar: (p.name || '??').slice(0, 2).toUpperCase(),
     avatarUrl: p.avatar || null,
@@ -226,7 +226,7 @@ function GamePlayWithoutBoundary() {
     // For authenticated users: server stores user_id (real user ID). For guests: no user_id.
     userId: m.user_id || m.participant_id,
     participantId: m.participant_id,
-    senderName: m.user_name || m.guest_name || 'Unknown',
+    senderName: m.user_name || m.guest_name || t('common.unknown', { defaultValue: 'Unknown' }),
     senderAvatar: (m.user_name || m.guest_name || '??').slice(0, 2).toUpperCase(),
     senderAvatarUrl: m.avatar_url || null,
     message: m.message,
@@ -248,18 +248,19 @@ function GamePlayWithoutBoundary() {
   const [activeRoundId, setActiveRoundId] = useState<string | null>(null);
   const [initialSnapshot, setInitialSnapshot] = useState<any>(null);
   const [gameData, setGameData] = useState<any>(null);
+  const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
     // Pass eventId so the socket hook can resolve the correct per-event guest token
     eventId: eventId || undefined,
-    onError: (e) => showError(e, 'Chat error'),
+    onError: (e) => showError(e, t('chat.errors.generic', { defaultValue: 'Chat error' })),
   });
 
   const gamesSocket = useGamesSocket({
     // Use eventId so guests can authenticate with their per-event guest token
     eventId: eventId || undefined,
-    onError: (e) => showError(e, 'Game connection error'),
+    onError: (e) => showError(e, t('gamePlay.errors.socket', { defaultValue: 'Game connection error' })),
   });
 
   // 3. Ensure socket connects when joined
@@ -293,7 +294,7 @@ function GamePlayWithoutBoundary() {
         })
         .catch(err => {
           console.error('[GamePlay] Failed to join event room:', err?.message || err);
-          showError(err, 'Failed to join event room');
+          showError(err, t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }));
         });
     }
   }, [eventsSocket.isConnected, eventId, isGuest, showError]);
@@ -306,6 +307,7 @@ function GamePlayWithoutBoundary() {
           const data = resp?.data || resp;
           console.log('[GamePlay] game:join resp:', data);
           if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
+          setIsGameAdmin(!!data?.isAdmin);
           if (data?.snapshot) {
             setInitialSnapshot(data.snapshot);
             setGameData(data.snapshot);
@@ -313,7 +315,7 @@ function GamePlayWithoutBoundary() {
         })
         .catch((err: any) => {
           console.error('[GamePlay] Failed to join game room:', err?.message || err);
-          showError(err, 'Failed to join game room');
+          showError(err, t('gamePlay.errors.joinRoomFailed', { defaultValue: 'Failed to join game room' }));
         });
     }
   }, [gamesSocket.isConnected, sessionId, showError]);
@@ -449,7 +451,22 @@ function GamePlayWithoutBoundary() {
   const rawPosts = (postsData as any)?.data || [];
 
   const postParticipantId = guestParticipantId || memberParticipantId || null;
-  const canPostWins = !!postParticipantId;
+  const winsEndTimeIso: string | null = (eventPublicObj?.end_time as any) || null;
+  const winsEndsAtMs = useMemo(() => {
+    if (!winsEndTimeIso) return null;
+    const ms = new Date(winsEndTimeIso).getTime();
+    return Number.isFinite(ms) ? ms : null;
+  }, [winsEndTimeIso]);
+
+  const [winsNowTick, setWinsNowTick] = useState(() => Date.now());
+  useEffect(() => {
+    if (!winsEndsAtMs) return;
+    const interval = setInterval(() => setWinsNowTick(Date.now()), 30000);
+    return () => clearInterval(interval);
+  }, [winsEndsAtMs]);
+
+  const winsPostingClosed = !!winsEndsAtMs && winsNowTick >= winsEndsAtMs;
+  const canPostWins = !!postParticipantId && !winsPostingClosed;
 
   const winsPosts = rawPosts.map((p: any) => ({
     id: p.id,
@@ -673,7 +690,7 @@ function GamePlayWithoutBoundary() {
         })
         .catch(err => {
           console.error('[GamePlay] Failed to send message:', err.message);
-          showError(err, 'Failed to send message');
+          showError(err, t('chat.errors.sendFailed', { defaultValue: 'Failed to send message' }));
         });
     } else {
       console.warn('[GamePlay] Socket not connected, cannot send message — falling back to HTTP refetch');
@@ -708,7 +725,7 @@ function GamePlayWithoutBoundary() {
       }
     } catch (err: any) {
       console.error('[GamePlay] Failed to toggle pinned message:', err?.message || err);
-      showError(err, 'Failed to update pinned message');
+      showError(err, t('chat.errors.pinFailed', { defaultValue: 'Failed to update pinned message' }));
     }
   }, [eventId, pinnedMessage, initialMessages, liveMessages, showError]);
 
@@ -783,8 +800,11 @@ function GamePlayWithoutBoundary() {
           setInitialSnapshot={setInitialSnapshot}
           gameData={gameData}
           setGameData={setGameData}
+          isGameAdmin={isGameAdmin}
           winsPosts={winsPosts}
           canPostWins={canPostWins}
+          winsEndTimeIso={winsEndTimeIso}
+          winsPostingClosed={winsPostingClosed}
           postParticipantId={postParticipantId}
           refetchPosts={refetchPosts}
           gamesSocket={gamesSocket}
@@ -799,7 +819,7 @@ function GamePlayWithoutBoundary() {
             asModal
             defaultName={profile?.displayName || currentUserName}
             defaultAvatarUrl={profile?.avatarUrl}
-            submitLabel="Save Profile"
+            submitLabel={t('profile.save', { defaultValue: 'Save Profile' })}
             onSubmit={handleProfileSave}
             onClose={profile ? () => setShowProfileEdit(false) : undefined}
           />

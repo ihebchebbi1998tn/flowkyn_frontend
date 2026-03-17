@@ -28,7 +28,10 @@ export function LeaderboardSidebar({ participants }: LeaderboardSidebarProps) {
             {t('gamePlay.leaderboard.title')}
           </h3>
           <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
-            {onlineCount} {onlineCount === 1 ? 'teammate' : 'teammates'}
+            {t('gamePlay.leaderboard.onlineCount', {
+              defaultValue: '{{count}} teammate',
+              count: onlineCount,
+            })}
           </span>
         </div>
       </div>
@@ -37,7 +40,7 @@ export function LeaderboardSidebar({ participants }: LeaderboardSidebarProps) {
       <div className="p-2 space-y-0.5">
         {sorted.length === 0 && (
           <p className="text-center text-[12px] text-muted-foreground py-6">
-            No teammates yet
+            {t('gamePlay.leaderboard.empty', { defaultValue: 'No teammates yet' })}
           </p>
         )}
         {sorted.map((p, i) => {
@@ -88,7 +91,11 @@ export function LeaderboardSidebar({ participants }: LeaderboardSidebarProps) {
                   rank === 1 ? 'text-[13px]' : 'text-[12px]'
                 )}>
                   {p.name}
-                  {p.isHost && <span className="ml-1 text-[9px] text-muted-foreground/60 font-normal">host</span>}
+                  {p.isHost && (
+                    <span className="ml-1 text-[9px] text-muted-foreground/60 font-normal">
+                      {t('events.host', { defaultValue: 'host' })}
+                    </span>
+                  )}
                 </p>
               </div>
 

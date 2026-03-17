@@ -176,7 +176,7 @@ export default function OTPVerify() {
         ) : (
           <motion.div key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }} className="w-full max-w-[400px] space-y-8">
             <div className="flex flex-col items-center gap-4">
-              <img src={logoImg} alt="Flowkyn" className="h-16 w-16 object-contain" />
+              <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-16 w-16 object-contain" />
             </div>
             <div className="text-center space-y-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-2">
@@ -249,7 +249,7 @@ export default function OTPVerify() {
               <form onSubmit={handleChangeEmail} className="space-y-4">
                 <Input
                   type="email"
-                  placeholder="new@email.com"
+                  placeholder={t('auth.newEmailPlaceholder', { defaultValue: 'new@email.com' })}
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   className="h-11 text-sm rounded-xl"

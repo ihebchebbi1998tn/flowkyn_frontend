@@ -105,11 +105,11 @@ export function ProfileSection({ displayName, setDisplayName, email, currentLang
             <Select defaultValue="Europe/Berlin">
               <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="Europe/Berlin">Europe/Berlin (GMT+1)</SelectItem>
-                <SelectItem value="Europe/Paris">Europe/Paris (GMT+1)</SelectItem>
-                <SelectItem value="America/New_York">New York (GMT-5)</SelectItem>
-                <SelectItem value="Asia/Tokyo">Tokyo (GMT+9)</SelectItem>
-                <SelectItem value="UTC">UTC</SelectItem>
+                <SelectItem value="Europe/Berlin">{t('timezones.europeBerlinGmt', { defaultValue: 'Europe/Berlin (GMT+1)' })}</SelectItem>
+                <SelectItem value="Europe/Paris">{t('timezones.europeParisGmt', { defaultValue: 'Europe/Paris (GMT+1)' })}</SelectItem>
+                <SelectItem value="America/New_York">{t('timezones.newYorkGmt', { defaultValue: 'New York (GMT-5)' })}</SelectItem>
+                <SelectItem value="Asia/Tokyo">{t('timezones.tokyoGmt', { defaultValue: 'Tokyo (GMT+9)' })}</SelectItem>
+                <SelectItem value="UTC">{t('timezones.utc', { defaultValue: 'UTC' })}</SelectItem>
               </SelectContent>
             </Select>
           </FieldGroup>

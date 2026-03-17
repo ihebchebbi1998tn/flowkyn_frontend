@@ -27,21 +27,27 @@ export function ComingSoonBoard({ gameName, onBack }: ComingSoonBoardProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl mb-10">
         <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100">
           <Clock className="w-6 h-6 text-blue-500 mx-auto mb-2" />
-          <p className="text-sm font-medium text-gray-900">Research & Design</p>
+          <p className="text-sm font-medium text-gray-900">
+            {t('games.comingSoon.milestones.researchDesign', { defaultValue: 'Research & Design' })}
+          </p>
           <div className="w-full bg-gray-100 h-1.5 rounded-full mt-2">
             <div className="bg-blue-500 h-1.5 rounded-full w-[100%]"></div>
           </div>
         </div>
         <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100">
           <MessageSquare className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-          <p className="text-sm font-medium text-gray-900">Alpha Testing</p>
+          <p className="text-sm font-medium text-gray-900">
+            {t('games.comingSoon.milestones.alphaTesting', { defaultValue: 'Alpha Testing' })}
+          </p>
           <div className="w-full bg-gray-100 h-1.5 rounded-full mt-2">
             <div className="bg-purple-500 h-1.5 rounded-full w-[85%]"></div>
           </div>
         </div>
         <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100">
           <Rocket className="w-6 h-6 text-green-500 mx-auto mb-2" />
-          <p className="text-sm font-medium text-gray-900">Final Polish</p>
+          <p className="text-sm font-medium text-gray-900">
+            {t('games.comingSoon.milestones.finalPolish', { defaultValue: 'Final Polish' })}
+          </p>
           <div className="w-full bg-gray-100 h-1.5 rounded-full mt-2">
             <div className="bg-green-500 h-1.5 rounded-full w-[40%]"></div>
           </div>

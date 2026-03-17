@@ -125,7 +125,7 @@ export function Topbar() {
       {/* Mobile: Logo + Sidebar trigger */}
       <div className="flex items-center gap-1.5">
         {isMobile && (
-          <img src={logoImg} alt="Flowkyn" className="h-6 w-6 object-contain mr-0.5" />
+          <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-6 w-6 object-contain mr-0.5" />
         )}
         <SidebarTrigger className="text-muted-foreground hover:text-foreground hover:bg-muted h-8 w-8 rounded-lg transition-colors">
           <PanelLeft className="h-4 w-4" />
@@ -181,7 +181,7 @@ export function Topbar() {
                     <div className="px-3 py-2 flex items-center gap-2">
                       <Gamepad2 className="h-3.5 w-3.5 text-primary/60" />
                       <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/70">
-                        {t('search.sessions', 'Quick Sessions')}
+                        {t('search.sessions', { defaultValue: 'Quick Sessions' })}
                       </p>
                     </div>
                     {results.activities.map(activity => (
@@ -212,7 +212,7 @@ export function Topbar() {
                     <div className="px-3 py-2 flex items-center gap-2">
                       <UserIcon className="h-3.5 w-3.5 text-primary/60" />
                       <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/70">
-                        {t('search.people', 'People')}
+                        {t('search.people', { defaultValue: 'People' })}
                       </p>
                     </div>
                     {results.members.map(member => (
@@ -248,7 +248,7 @@ export function Topbar() {
                   {t('search.noResults', 'No results for "{{query}}"', { query })}
                 </p>
                 <p className="text-[12px] text-muted-foreground mt-1">
-                  {t('search.tryDifferent', 'Try searching for people or games.')}
+                  {t('search.tryDifferent', { defaultValue: 'Try searching for people or games.' })}
                 </p>
               </div>
             )}

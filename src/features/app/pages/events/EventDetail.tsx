@@ -122,7 +122,7 @@ function InviteDialog({ eventId }: { eventId: string }) {
                   trackEvent(TRACK.EVENT_LINK_COPIED, { eventId });
                   toast.success(t('events.linkCopied'));
                 } else {
-                  toast.error(t('common.copyFailed', 'Failed to copy link. Please manually copy the URL.'));
+                  toast.error(t('common.copyFailed', { defaultValue: 'Failed to copy link. Please manually copy the URL.' }));
                 }
               }}
             >
@@ -163,7 +163,7 @@ function ActionConfirmDialog({
         <p className="text-body-sm text-muted-foreground">{description}</p>
         <div className="flex gap-2 justify-end pt-4">
           <Button variant="outline" className="h-8 sm:h-9 text-caption" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            Cancel
+            {t('common.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button 
             variant={isDangerous ? 'destructive' : 'default'} 
@@ -228,7 +228,7 @@ export default function EventDetail() {
     {
       icon: Gamepad2,
       label: 'events.gameType',
-      value: event.game_type_name || event.game_type || t('events.gameTypeUnknown', 'Not configured'),
+      value: event.game_type_name || event.game_type || t('events.gameTypeUnknown', { defaultValue: 'Not configured' }),
       gradient: 'primary' as const,
     },
     {
