@@ -377,7 +377,7 @@ export default function LaunchActivity() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {[2, 3, 4, 5, 6].map(r => (
+                    {Array.from({ length: 29 }, (_, i) => i + 2).map(r => (
                       <SelectItem key={r} value={r.toString()}>{r} {t('common.rounds')}</SelectItem>
                     ))}
                   </SelectContent>

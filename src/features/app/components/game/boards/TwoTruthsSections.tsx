@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RoundIndicator, PhaseTimer, PhaseBadge, type GamePhase } from '../shared';
@@ -128,10 +129,17 @@ export function TwoTruthsWaitingSection({
             variant="brand"
             onClick={onStart}
             size="xl"
-            className="px-10 gap-2.5 shadow-lg shadow-primary/20 transform hover:scale-105 active:scale-95 transition-all duration-200"
+            disabled={!isAdmin}
+            className="px-10 gap-2.5 shadow-lg shadow-primary/20 transform hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             <Zap className="h-5 w-5" /> {t('gamePlay.twoTruths.startRound', { round: 1 })}
           </Button>
+
+          {!isAdmin && (
+            <p className="mt-3 text-[11px] text-muted-foreground">
+              {t('gamePlay.twoTruths.waitingForHostToStart', { defaultValue: 'Waiting for the host to start the game…' })}
+            </p>
+          )}
         </div>
       </div>
     </div>
