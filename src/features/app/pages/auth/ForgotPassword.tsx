@@ -32,7 +32,7 @@ export default function ForgotPassword() {
       setSent(true);
     } catch (err) {
       if (ApiError.is(err)) {
-        setError(err.message);
+        setError(t(`apiErrors.${err.code}`, { defaultValue: err.message }));
       } else {
         setError(t('auth.errors.resetSendFailed'));
       }

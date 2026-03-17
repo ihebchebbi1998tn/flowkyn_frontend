@@ -1116,6 +1116,7 @@
     "AUTH_TOKEN_INVALID": "Session invalide. Veuillez vous reconnecter.",
     "AUTH_MISSING_TOKEN": "Vous devez vous connecter pour accéder à cette ressource.",
     "AUTH_EMAIL_IN_USE": "Cet e-mail est déjà enregistré.",
+    "AUTH_EMAIL_NOT_FOUND": "Aucun compte ne correspond à cette adresse e-mail.",
     "AUTH_ALREADY_VERIFIED": "Cet e-mail est déjà vérifié.",
     "AUTH_VERIFICATION_EXPIRED": "Le lien de vérification a expiré. Veuillez en demander un nouveau.",
     "AUTH_RESET_TOKEN_EXPIRED": "Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.",
@@ -1203,6 +1204,19 @@
       "emailRequired": "Veuillez entrer une adresse email",
       "invalidEmail": "Veuillez entrer une adresse email valide",
       "alreadyAdded": "Cet email a déjà été ajouté",
+      "bulk": {
+        "title": "Import en masse",
+        "placeholder": "Collez des emails ici (un par ligne ou séparés par des virgules)…",
+        "hint": "Nous ajoutons les emails valides, ignorons les doublons et écartons les invalides.",
+        "import": "Importer",
+        "clear": "Effacer",
+        "added": "{{count}} ajoutés",
+        "duplicates": "{{count}} doublon(s) ignoré(s)",
+        "invalid": "{{count}} invalide(s)",
+        "noneAddedInvalid": "Aucun email ajouté. {{count}} invalide(s).",
+        "noneAddedDuplicates": "Aucun email ajouté. {{count}} déjà dans la liste.",
+        "empty": "Collez un ou plusieurs emails à importer."
+      },
       "invitedList": "Collègues invités",
       "benefit1": "Les collègues peuvent être présélectionnés lors de la création d'événements",
       "benefit2": "Collaboration et configuration d'événements plus rapides"

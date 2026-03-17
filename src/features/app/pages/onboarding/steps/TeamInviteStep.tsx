@@ -5,11 +5,12 @@
  * Invitations are sent immediately and teammates can join when launching events.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail, Plus, X, AlertCircle, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
 import type { OnboardingData, TeamInvite } from '../types';
@@ -27,10 +28,52 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
   const { t } = useTranslation();
   const [emailInput, setEmailInput] = useState('');
   const [inputError, setInputError] = useState('');
+  const [bulkInput, setBulkInput] = useState('');
+  const [bulkMessage, setBulkMessage] = useState<string | null>(null);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  };
+
+  const existingEmailsLower = useMemo(() => {
+    return new Set(data.teamInvites.map(i => i.email.toLowerCase()));
+  }, [data.teamInvites]);
+
+  const parseBulkEmails = (text: string) => {
+    // Accept newlines, commas, semicolons, tabs, and spaces.
+    const raw = text
+      .split(/[\s,;]+/g)
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const uniqueLower = new Set<string>();
+    const candidates: string[] = [];
+    for (const e of raw) {
+      const lower = e.toLowerCase();
+      if (uniqueLower.has(lower)) continue;
+      uniqueLower.add(lower);
+      candidates.push(e);
+    }
+
+    const valid: string[] = [];
+    const invalid: string[] = [];
+    const duplicates: string[] = [];
+
+    for (const email of candidates) {
+      const lower = email.toLowerCase();
+      if (existingEmailsLower.has(lower)) {
+        duplicates.push(email);
+        continue;
+      }
+      if (!validateEmail(email)) {
+        invalid.push(email);
+        continue;
+      }
+      valid.push(email);
+    }
+
+    return { valid, invalid, duplicates, total: raw.length, unique: candidates.length };
   };
 
   const handleAddEmail = () => {
@@ -58,6 +101,44 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
     });
 
     setEmailInput('');
+    setInputError('');
+    setBulkMessage(null);
+  };
+
+  const handleImportBulk = () => {
+    const text = bulkInput.trim();
+    if (!text) {
+      setBulkMessage(t('onboarding.teamInvite.bulk.empty'));
+      return;
+    }
+
+    const { valid, invalid, duplicates } = parseBulkEmails(text);
+
+    if (valid.length === 0) {
+      if (invalid.length > 0) {
+        setBulkMessage(t('onboarding.teamInvite.bulk.noneAddedInvalid', { count: invalid.length }));
+      } else if (duplicates.length > 0) {
+        setBulkMessage(t('onboarding.teamInvite.bulk.noneAddedDuplicates', { count: duplicates.length }));
+      } else {
+        setBulkMessage(t('onboarding.teamInvite.bulk.empty'));
+      }
+      return;
+    }
+
+    onChange({
+      teamInvites: [
+        ...data.teamInvites,
+        ...valid.map(email => ({ email } as TeamInvite)),
+      ],
+    });
+
+    const parts: string[] = [];
+    parts.push(t('onboarding.teamInvite.bulk.added', { count: valid.length }));
+    if (duplicates.length) parts.push(t('onboarding.teamInvite.bulk.duplicates', { count: duplicates.length }));
+    if (invalid.length) parts.push(t('onboarding.teamInvite.bulk.invalid', { count: invalid.length }));
+
+    setBulkMessage(parts.join(' · '));
+    setBulkInput('');
     setInputError('');
   };
 
@@ -122,6 +203,54 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
             <AlertCircle className="h-3 w-3" />
             {inputError}
           </div>
+        )}
+      </div>
+
+      {/* Bulk import */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <label className="text-sm font-medium text-foreground">
+            {t('onboarding.teamInvite.bulk.title')}
+          </label>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setBulkInput('');
+                setBulkMessage(null);
+              }}
+            >
+              {t('onboarding.teamInvite.bulk.clear')}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleImportBulk}
+              className="gap-1.5"
+            >
+              <Plus className="h-4 w-4" />
+              {t('onboarding.teamInvite.bulk.import')}
+            </Button>
+          </div>
+        </div>
+
+        <Textarea
+          value={bulkInput}
+          onChange={(e) => {
+            setBulkInput(e.target.value);
+            setBulkMessage(null);
+          }}
+          placeholder={t('onboarding.teamInvite.bulk.placeholder')}
+          className="min-h-[110px]"
+          spellCheck={false}
+        />
+        <p className="text-xs text-muted-foreground">
+          {t('onboarding.teamInvite.bulk.hint')}
+        </p>
+        {bulkMessage && (
+          <p className="text-xs text-muted-foreground">{bulkMessage}</p>
         )}
       </div>
 

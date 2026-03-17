@@ -47,7 +47,24 @@
     "tbd": "TBD",
     "backToEvents": "Back to events",
     "live": "Live",
-    "async": "Async"
+    "async": "Async",
+    "copyFailed": "Failed to copy. Please try again.",
+    "emDash": "—",
+    "host": "Host",
+    "language": "Language",
+    "unknown": "Unknown",
+    "you": "You",
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}} entries"
+    }
+  },
+  "brand": {
+    "name": "Flowkyn"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "French",
+    "de": "German"
   },
   "errors": {
     "eventEnded": "This activity has ended. Posting is now closed.",
@@ -287,8 +304,11 @@
     "email": "Email Admin",
     "support": "Support",
     "logout": "Log Out",
-      "suppliers": "Suppliers",
-    "language": "Language"
+    "suppliers": "Suppliers",
+    "language": "Language",
+    "menu": "Menu",
+    "manage": "Manage",
+    "newEvent": "New event"
   },
   "auth": {
     "branding": {
@@ -322,7 +342,9 @@
     "login": "Log In",
     "register": "Sign Up",
     "email": "Email",
+    "emailPlaceholder": "name@company.com",
     "password": "Password",
+    "passwordMask": "••••••••",
     "confirmPassword": "Confirm Password",
     "firstName": "First Name",
     "lastName": "Last Name",
@@ -333,6 +355,7 @@
     "verifyOTP": "Verify Code",
     "otpCode": "Verification Code",
     "otpSent": "A verification code has been sent to your email.",
+    "newEmailPlaceholder": "new-email@company.com",
     "resendOTP": "Resend Code",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
@@ -393,9 +416,13 @@
     "or": "or",
     "backTo": "Back to"
   },
+  "event": {
+    "joinFailed": "Failed to join. Please try again."
+  },
   "organizations": {
     "title": "Workspace",
     "myOrg": "My Workspace",
+    "company": "Company",
     "name": "Name",
     "slug": "Slug",
     "owner": "Owner",
@@ -404,8 +431,11 @@
     "roles": { "owner": "Owner", "admin": "Admin", "member": "Member", "viewer": "Viewer" },
     "inviteMember": "Invite Member",
     "inviteEmail": "Email address",
+    "inviteEmailPlaceholder": "colleague@company.com",
     "inviteRole": "Role",
     "inviteSent": "Invitation sent successfully",
+    "invitedMember": "Invited",
+    "invitedPending": "Pending",
     "removeMember": "Remove Member",
     "removeConfirm": "Are you sure you want to remove this member?",
     "changeRole": "Change Role",
@@ -415,9 +445,6 @@
   "events": {
     "title": "Events",
     "subtitle": "Manage your team-building events and activities",
-    "errors": {
-      "joinRoomFailed": "Failed to join event room"
-    },
     "createEvent": "Create Event",
     "editEvent": "Edit Event",
     "eventTitle": "Title",
@@ -476,7 +503,19 @@
     "continueToLobby": "Continue to Lobby",
     "invalidInvitationToken": "Invalid invitation token. Please check the link.",
     "joinFailed": "Failed to join. Please try again.",
+    "mode": "Mode",
+    "online": "Online",
+    "offline": "Offline",
+    "reconnecting": "Reconnecting…",
+    "syncing": "Syncing…",
+    "membersOnly": "Members only",
+    "guestsAllowed": "Guests allowed",
+    "host": "Host",
+    "statusLabel": "Status",
+    "inviteFailed": "Failed to invite. Please try again.",
+    "selectedAvatarAlt": "Selected avatar",
     "errors": {
+      "joinRoomFailed": "Failed to join event room",
       "nameTaken": "This name is already taken in this lobby. Please choose a slightly different one.",
       "full": "This event is full. Ask your host if they can increase the limit.",
       "guestsNotAllowed": "This event is for members only. Please sign in or ask your host for access.",
@@ -593,6 +632,108 @@
       "nameTooShort": "Name must be at least {{min}} characters"
     }
   },
+  "games": {
+    "title": "Activities",
+    "subtitle": "Team-building activities to strengthen your remote team",
+    "gameTypes": "Activity types",
+    "createSession": "Create activity",
+    "joinSession": "Join",
+    "startActivity": "Start",
+    "activeSessions": "Active sessions",
+    "sessionDashboard": "Session dashboard",
+    "participants": "Participants",
+    "tableActions": "Actions",
+    "submitAction": "Submit",
+    "gameStatus": "Status",
+    "statuses": { "waiting": "Waiting", "inProgress": "In progress", "completed": "Completed", "cancelled": "Cancelled", "active": "Active", "paused": "Paused" },
+    "round": "Round",
+    "score": "Score",
+    "activeCount": "{{count}} active",
+    "noGames": "No activities available",
+    "categories": {
+      "all": "All",
+      "icebreaker": "Icebreaker",
+      "connection": "Connection",
+      "wellness": "Wellness",
+      "competition": "Competition"
+    },
+    "filters": {
+      "searchPlaceholder": "Search activities...",
+      "type": "Type",
+      "teamSize": "Team size",
+      "duration": "Duration",
+      "difficulty": "Difficulty",
+      "allTypes": "All types",
+      "sync": "Live (Sync)",
+      "async": "Async",
+      "allSizes": "All sizes",
+      "pairs": "Pairs (2)",
+      "smallTeam": "Small (4–15)",
+      "mediumTeam": "Medium (5–30)",
+      "largeTeam": "Large (6–40+)",
+      "anySize": "Any size",
+      "allDurations": "All durations",
+      "quick": "Quick (≤20 min)",
+      "mediumDuration": "Medium (25–30 min)",
+      "longDuration": "Long (45+ min)",
+      "ongoing": "Ongoing",
+      "allLevels": "All levels",
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "clearAll": "Clear filters",
+      "showingAll": "Showing {{count}} activities",
+      "showingFiltered": "Showing {{count}} of {{total}} activities",
+      "noResults": "No activities match your filters",
+      "noResultsHint": "Try adjusting your filters or search"
+    },
+    "actions": {
+      "start": "Start",
+      "resume": "Resume"
+    },
+    "toasts": {
+      "launching": "We’re launching {{gameName}} for this event. Hang tight — your screen will update shortly."
+    },
+    "comingSoonDescription": "This activity is coming soon.",
+    "comingSoon": {
+      "milestones": {
+        "researchDesign": "Research & design",
+        "alphaTesting": "Alpha testing",
+        "finalPolish": "Final polish"
+      }
+    },
+    "errors": {
+      "actionFailed": "Action failed. Please try again.",
+      "genericStartFailed": "Failed to start. Please try again.",
+      "notAuthorizedToStart": "You’re not authorized to start this activity.",
+      "notMember": "You’re not a member of this workspace.",
+      "sessionNotActive": "This session is not active."
+    },
+    "detail": {
+      "category": "Category",
+      "teamSize": "Team size",
+      "materials": "Materials",
+      "materialsNone": "None",
+      "difficulty": "Difficulty",
+      "difficultyBeginner": "Beginner-friendly",
+      "difficultyIntermediate": "Intermediate",
+      "difficultyAdvanced": "Advanced",
+      "typeSync": "Sync (Live)",
+      "typeAsync": "Async (Flexible)",
+      "badgeSync": "Live",
+      "badgeAsync": "Async",
+      "whyThisWorks": "Why this works",
+      "launchActivity": "Launch this activity",
+      "saveToLibrary": "Save to library",
+      "sectionBefore": "📋 Before the activity",
+      "sectionDuring": "▶️ During the activity",
+      "sectionAfter": "✅ After the activity",
+      "proTips": "💡 Pro tips",
+      "readyTitle": "Ready to launch {{name}}?",
+      "readySubtitle": "Set up your session, invite your team, and launch in minutes.",
+      "launchNow": "Launch now"
+    }
+  },
   "gamePlay": {
     "errors": {
       "socket": "Game connection error",
@@ -601,6 +742,12 @@
     "twoTruths": {
       "title": "Two Truths & a Lie",
       "description": "Each player submits two truths and one lie. The team votes on which is the lie. Points for fooling others!",
+      "defaultStatement1": "I once lived in another country.",
+      "defaultStatement2": "I can play a musical instrument.",
+      "defaultStatement3": "I’ve met a celebrity.",
+      "findingTruth": "Finding the truth…",
+      "revealHost": "Host will reveal when ready",
+      "waitingForPresenter": "Waiting for the presenter…",
       "startRound": "Start Round {{round}}",
       "yourTurn": "Your turn — Submit your statements",
       "makeItBelievable": "Enter two truths and one lie. Make the lie believable!",
@@ -644,15 +791,43 @@
       "startChatting": "Start Chatting",
       "needATopic": "💡 Need a topic?",
       "nextTopic": "Next topic",
+      "nextPrompt": "Next prompt",
+      "promptCounter": "{{current}} of {{total}}",
+      "defaultTopic": "What’s something you’re excited about right now?",
+      "needMoreParticipants": "You need more participants to start.",
+      "waitingForTeam": "Waiting for your team…",
+      "waitingForOthers": "Waiting for others…",
+      "spinning": "Spinning…",
+      "spin1": "Shuffling names…",
+      "spin2": "Finding matches…",
+      "spin3": "Mixing it up…",
+      "spin4": "Almost there…",
+      "spin5": "Pairing people…",
+      "spin6": "Finalizing pairs…",
+      "spin7": "Locking it in…",
+      "spin8": "Done!",
+      "spectatorTitle": "Coffee Roulette in progress",
+      "spectatorMessage": "Pairs are being matched. You’ll see your partner shortly.",
       "endChat": "End Chat",
+      "endAndClose": "End & close",
       "greatConnection": "Great Connection! ☕",
       "chattedFor": "You chatted for {{minutes}} minutes. These moments build real team bonds.",
       "connectionMade": "Connection made",
       "newPairing": "New Pairing",
+      "decision": {
+        "title": "Continue?",
+        "body": "You’ve gone through {{count}} prompts. Continue with new prompts or end this session?",
+        "hint": "You can end anytime — progress will still be saved.",
+        "continue": "Continue",
+        "end": "End session"
+      },
       "backToEvents": "Back to Events",
       "you": "You"
     },
     "winsOfWeek": {
+      "defaultPrompt": "Share your win from this week — work or personal, big or small!",
+      "emptyTitle": "No wins yet",
+      "emptySubtitle": "Be the first to share a win.",
       "thisWeeksPrompt": "This week's prompt",
       "contributions": "{{count}} contributions",
       "ongoing": "Ongoing — share anytime",
@@ -685,7 +860,10 @@
     },
     "leaderboard": {
       "title": "Leaderboard",
+      "empty": "No scores yet",
       "online": "{{count}} online",
+      "onlineCount": "{{count}} online",
+      "teamProgressTitle": "Team progress",
       "pending": "Pending"
     },
     "shell": {
@@ -705,6 +883,9 @@
       "copy": "Copy",
       "inviteHelp": "Share this link with teammates you want to bring into this session.",
       "chat": "Chat",
+      "chatLabel": "Chat",
+      "scoresLabel": "Scores",
+      "userJoinedToast": "{{name}} joined",
       "scores": "Scores"
     },
     "phases": {
@@ -903,6 +1084,7 @@
     },
     "rolesMeta": {
       "playerLabel": "You",
+      "roleNameLabel": "Role",
       "unknownPlayer": "Participant",
       "secret": "Secret role",
       "loading": "Waiting for your role…",
@@ -957,19 +1139,84 @@
       "teamSize": "4–12 people"
     },
     "launch": {
+      "title": "Launch activity",
+      "subtitle": "Set up your session, invite people, and start.",
+      "steps": {
+        "configure": "Configure",
+        "invite": "Invite",
+        "review": "Review"
+      },
+      "actions": {
+        "nextInvite": "Next: Invite",
+        "nextReview": "Next: Review",
+        "launchNow": "Launch now"
+      },
+      "defaultEventTitle": "Team activity",
+      "untitledEvent": "Untitled event",
       "fields": {
+        "eventTitle": "Event title",
+        "descriptionOptional": "Description (optional)",
+        "maxParticipants": "Max participants",
+        "visibility": "Visibility",
+        "whenToStart": "When to start",
+        "durationMinutes": "Duration (minutes)",
         "endsAt": "Ends at",
         "endsAtHelp": "After this time, new wins and reactions will be disabled (read-only)."
       },
+      "placeholders": {
+        "eventTitle": "e.g., Weekly Wins",
+        "description": "Add a short description…"
+      },
       "schedule": {
+        "pickDateTime": "Pick a date & time",
+        "startNow": "Start now",
+        "scheduleLater": "Schedule for later",
         "pickEndDateTime": "Select an end date and time"
       },
+      "invite": {
+        "title": "Invite",
+        "subtitle": "Invite by email, or share a link.",
+        "emailAddresses": "Email addresses",
+        "emailPlaceholder": "name@company.com",
+        "pasteList": "Paste a list",
+        "pastePlaceholder": "Paste one email per line…",
+        "invitedCount": "{{count}} invited",
+        "clearAll": "Clear all",
+        "addHint": "Press Enter to add",
+        "allowNickname": "Allow nickname join",
+        "noSignup": "No signup required"
+      },
+      "visibility": {
+        "inviteOnly": "Invite only",
+        "workspace": "Workspace"
+      },
       "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "missingOrgId": "Missing workspace. Please refresh and try again.",
         "endsAtAfterStart": "End date/time must be after the start date/time.",
         "inviteSomeFailed": "Some invitations failed ({{emails}}). The event was created successfully.",
         "inviteAllFailed": "Failed to send invitations. Please try again."
       },
+      "progress": {
+        "creating": "Creating…",
+        "inviting": "Inviting…"
+      },
       "review": {
+        "title": "Review",
+        "subtitle": "Double-check the details before launching.",
+        "activity": "Activity",
+        "eventTitle": "Event title",
+        "participants": "Participants",
+        "participantsLine": "{{count}} participants",
+        "invited": "Invited",
+        "inviteEmailCount": "{{count}} email(s)",
+        "moreCount": "+{{count}} more",
+        "noInvites": "No invites",
+        "signupRequired": "Signup required",
+        "nicknameJoin": "Nickname join enabled",
+        "notSet": "Not set",
+        "schedule": "Schedule",
+        "startingImmediately": "Starting immediately",
         "endsAt": "Ends at"
       }
     }
@@ -977,6 +1224,13 @@
   "chat": {
     "title": "Chat",
     "messages": "messages",
+    "connected": "Connected",
+    "offline": "Offline",
+    "offlinePlaceholder": "You’re offline. Messages will send when you reconnect.",
+    "reconnecting": "Reconnecting…",
+    "retry": "Retry",
+    "pin": "Pin",
+    "unpin": "Unpin",
     "noMessages": "No messages yet",
     "beFirst": "Be the first to say something!",
     "isTyping": "{{name}} is typing...",
@@ -1004,12 +1258,14 @@
     "expiredMessage": "This invitation has expired or has already been used.",
     "somethingWrong": "Something went wrong",
     "missingEventInfo": "Missing event information in invitation link.",
+    "missingEventId": "Missing event id in invitation link.",
     "orgInviteTitle": "Organization Invitation",
     "orgInviteDescription": "You have been invited to join an organization on Flowkyn.",
     "goToHomepage": "Go to homepage"
   },
   "notifications": {
     "title": "Notifications",
+    "viewAll": "View all",
     "markAsRead": "Mark as Read",
     "markAllRead": "Mark All as Read",
     "noNotifications": "No notifications",
@@ -1061,13 +1317,15 @@
   },
   "profile": {
     "title": "Profile",
+    "editTitle": "Edit profile",
     "editProfile": "Edit Profile",
     "avatar": "Avatar",
     "displayName": "Display Name",
     "bio": "Bio",
     "timezone": "Timezone",
     "language": "Language",
-    "saved": "Profile saved successfully"
+    "saved": "Profile saved successfully",
+    "save": "Save"
   },
   "users": {
     "title": "Users",
@@ -1147,7 +1405,15 @@
     "saving": "Saving...",
     "saveAllChanges": "Save All Changes",
     "quickNav": "Quick navigation",
-    "quickNavHint": "Jump directly to a section below"
+    "quickNavHint": "Jump directly to a section below",
+    "deleteAccountTitle": "Delete your account",
+    "deleteAccountWarning": "This action is permanent and cannot be undone.",
+    "deleteAccountConfirm": "Type DELETE to confirm",
+    "deleteAccountConfirmHint": "This helps prevent accidental deletions.",
+    "deleteAccountPlaceholder": "Type DELETE",
+    "deleting": "Deleting…",
+    "accountDeleted": "Account deleted",
+    "accountDeleteFailed": "Failed to delete account. Please try again."
   },
   "bugReports": {
     "title": "Report an Issue",
@@ -1221,7 +1487,85 @@
     "updating": "Updating...",
     "close": "Close",
     "confirmDelete": "Are you sure you want to delete this report?",
-    "resolutionNotes": "Resolution Notes"
+    "resolutionNotes": "Resolution Notes",
+    "attachmentCount": "{{count}} attachments",
+    "errors": {
+      "loadFailed": "Failed to load reports",
+      "submitFailed": "Failed to submit report",
+      "deleteFailed": "Failed to delete report"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required",
+      "someFilesTooLarge": "Some files are too large"
+    }
+  },
+  "tickets": {
+    "myTicketsTitle": "My Tickets",
+    "myTicketsSubtitle": "Track your bug reports and feature requests",
+    "newTicket": "New Ticket",
+    "searchPlaceholder": "Search tickets by title, description...",
+    "statusLabel": "Status",
+    "allStatuses": "All Statuses",
+    "empty": "No tickets found",
+    "createFirst": "Create Your First Ticket",
+    "viewDetails": "View Details",
+    "assignedTo": "Assigned to {{name}}",
+    "attachmentsCount": "{{count}} file(s)",
+    "confirmDelete": "Are you sure you want to delete this ticket? This action cannot be undone.",
+    "allStatusesLabel": "All Statuses",
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "attachments": {
+      "tooLarge": "File \"{{name}}\" is too large",
+      "typeNotSupported": "File type \"{{type}}\" not supported for \"{{name}}\"",
+      "uploadFailed": "Failed to upload \"{{name}}\"",
+      "previewAlt": "attachment preview"
+    },
+    "typeOptions": {
+      "bugReport": "Bug Report",
+      "bugReportDesc": "Something isn't working correctly",
+      "featureRequest": "Feature Request",
+      "featureRequestDesc": "Suggest a new feature",
+      "issue": "Issue",
+      "issueDesc": "General problem or concern",
+      "generalFeedback": "General Feedback",
+      "generalFeedbackDesc": "General comment or suggestion"
+    },
+    "submit": {
+      "title": "Report Issue / Request Feature",
+      "subtitle": "Help us improve by letting us know about bugs, feature requests, or general feedback",
+      "typeLabel": "Type of Report *",
+      "priorityLabel": "Priority",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "e.g., Cannot upload images larger than 5MB",
+      "descriptionLabel": "Description *",
+      "descriptionPlaceholder": "Provide as much detail as possible…",
+      "attachmentsLabel": "Attachments (Screenshots, Logs, etc.)",
+      "dropzone": {
+        "title": "Drop files here or click to select",
+        "subtitle": "Max 10MB per file. Supported: Images, PDF, Word, Excel, Text"
+      },
+      "submitCta": "Submit Ticket",
+      "submitting": "Submitting…"
+    },
+    "toast": {
+      "submitted": "Ticket submitted successfully!",
+      "deleted": "Ticket deleted"
+    },
+    "errors": {
+      "loadFailed": "Failed to load tickets",
+      "submitFailed": "Failed to submit ticket",
+      "deleteFailed": "Failed to delete ticket"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required"
+    }
   },
   "support": {
     "title": "Help & Support",
@@ -1376,6 +1720,7 @@
     "AUTH_TOKEN_INVALID": "Invalid session. Please log in again.",
     "AUTH_MISSING_TOKEN": "You need to log in to access this.",
     "AUTH_EMAIL_IN_USE": "This email is already registered.",
+    "AUTH_EMAIL_NOT_FOUND": "No account found with that email address.",
     "AUTH_ALREADY_VERIFIED": "This email is already verified.",
     "AUTH_VERIFICATION_EXPIRED": "Verification link has expired. Please request a new one.",
     "AUTH_RESET_TOKEN_EXPIRED": "Password reset link has expired. Please request a new one.",
@@ -1416,6 +1761,16 @@
       "branding": { "title": "Language & Branding", "description": "Final touches" },
       "teamInvite": { "title": "Invite Your Team", "description": "Add teammates to collaborate together (optional)" }
     },
+    "errors": {
+      "checkInfoAndRetry": "Please check your information and try again.",
+      "createOrgFailed": "Failed to create workspace. Please try again.",
+      "setupFailed": "Setup failed. Please try again."
+    },
+    "logoAlt": "Organization logo",
+    "logoUploadCta": "Upload logo",
+    "logoUploadHint": "PNG, JPG, GIF or WebP. Max 2MB.",
+    "logoUploaded": "Logo uploaded",
+    "logoUploadedHint": "You can replace it anytime.",
     "orgName": "Organization Name",
     "orgNamePlaceholder": "e.g., Acme Inc.",
     "orgNameHint": "This is how your team will see your organization",
@@ -1463,6 +1818,19 @@
       "emailRequired": "Please enter an email address",
       "invalidEmail": "Please enter a valid email address",
       "alreadyAdded": "This email has already been added",
+      "bulk": {
+        "title": "Bulk import",
+        "placeholder": "Paste emails here (one per line, or separated by commas)…",
+        "hint": "We’ll add valid emails, skip duplicates, and ignore invalid ones.",
+        "import": "Import",
+        "clear": "Clear",
+        "added": "{{count}} added",
+        "duplicates": "{{count}} duplicate(s) skipped",
+        "invalid": "{{count}} invalid",
+        "noneAddedInvalid": "No emails added. {{count}} invalid.",
+        "noneAddedDuplicates": "No emails added. {{count}} already in the list.",
+        "empty": "Paste one or more emails to import."
+      },
       "invitedList": "Invited Teammates",
       "benefit1": "Team members can be preselected when creating events",
       "benefit2": "Faster collaboration and event setup"
@@ -1512,17 +1880,42 @@
   "orgDetail": {
     "currentPlan": "Current plan",
     "sending": "Sending...",
+    "logoUploadFailed": "Logo upload failed. Please try again.",
     "uploadImageError": "Please upload an image file",
     "logoSizeError": "Logo must be under 5MB"
   },
   "notificationsPage": {
     "allCaughtUp": "You're all caught up! New notifications will appear here.",
+    "subtitle": "Stay up to date with what’s happening in your workspace.",
     "total": "All notifications",
     "unread": "Unread",
     "last7Days": "Last 7 days"
   },
   "search": {
-    "noResults": "No results for \"{{query}}\""
+    "noResults": "No results for \"{{query}}\"",
+    "people": "People",
+    "sessions": "Sessions",
+    "tryDifferent": "Try a different search"
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "moderator": "Moderator",
+    "member": "Member"
+  },
+  "plans": {
+    "free": "Free"
+  },
+  "timezones": {
+    "utc": "UTC",
+    "europeBerlin": "Europe/Berlin",
+    "europeParis": "Europe/Paris",
+    "americaNewYork": "America/New York",
+    "asiaTokyo": "Asia/Tokyo",
+    "europeBerlinGmt": "Europe/Berlin (GMT+1)",
+    "europeParisGmt": "Europe/Paris (GMT+1)",
+    "newYorkGmt": "New York (GMT-5)",
+    "tokyoGmt": "Tokyo (GMT+9)"
   },
   "tour": {
     "welcome": {

@@ -1103,6 +1103,7 @@
     "AUTH_TOKEN_INVALID": "Ungültige Sitzung. Bitte melden Sie sich erneut an.",
     "AUTH_MISSING_TOKEN": "Sie müssen sich anmelden, um darauf zuzugreifen.",
     "AUTH_EMAIL_IN_USE": "Diese E-Mail-Adresse ist bereits registriert.",
+    "AUTH_EMAIL_NOT_FOUND": "Es wurde kein Konto mit dieser E-Mail-Adresse gefunden.",
     "AUTH_ALREADY_VERIFIED": "Diese E-Mail-Adresse wurde bereits bestätigt.",
     "AUTH_VERIFICATION_EXPIRED": "Der Bestätigungslink ist abgelaufen. Bitte fordern Sie einen neuen an.",
     "AUTH_RESET_TOKEN_EXPIRED": "Der Passwort-Reset-Link ist abgelaufen. Bitte fordern Sie einen neuen an.",
@@ -1190,6 +1191,19 @@
       "emailRequired": "Bitte geben Sie eine E-Mail-Adresse ein",
       "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
       "alreadyAdded": "Diese E-Mail-Adresse wurde bereits hinzugefügt",
+      "bulk": {
+        "title": "Massenimport",
+        "placeholder": "E-Mails hier einfügen (eine pro Zeile oder durch Kommas getrennt)…",
+        "hint": "Wir fügen gültige E-Mails hinzu, überspringen Duplikate und ignorieren ungültige Einträge.",
+        "import": "Importieren",
+        "clear": "Leeren",
+        "added": "{{count}} hinzugefügt",
+        "duplicates": "{{count}} Duplikat(e) übersprungen",
+        "invalid": "{{count}} ungültig",
+        "noneAddedInvalid": "Keine E-Mails hinzugefügt. {{count}} ungültig.",
+        "noneAddedDuplicates": "Keine E-Mails hinzugefügt. {{count}} bereits in der Liste.",
+        "empty": "Fügen Sie eine oder mehrere E-Mails zum Importieren ein."
+      },
       "invitedList": "Eingeladene Teamkollegen",
       "benefit1": "Teamkollegen können bei der Ereigniserstellung vorausgewählt werden",
       "benefit2": "Schnellere Zusammenarbeit und Ereignissetup"
