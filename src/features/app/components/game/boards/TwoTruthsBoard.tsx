@@ -71,6 +71,7 @@ export function TwoTruthsBoard({
 
   const [localStatements, setLocalStatements] = useState(['', '', '']);
   const [selectedVote, setSelectedVote] = useState<'s0' | 's1' | 's2' | null>(null);
+  const [lieIndex, setLieIndex] = useState(2);
   const voted = !!votes[currentUserId];
   const [showCountdown, setShowCountdown] = useState(false);
 
@@ -82,8 +83,8 @@ export function TwoTruthsBoard({
 
   const submit = useCallback(async () => {
     if (!sessionId || !activeRoundId) return;
-    await onEmitAction('two_truths:submit', { statements: localStatements });
-  }, [sessionId, activeRoundId, localStatements, onEmitAction]);
+    await onEmitAction('two_truths:submit', { statements: localStatements, lieIndex });
+  }, [sessionId, activeRoundId, localStatements, lieIndex, onEmitAction]);
 
   const submitVote = useCallback(async () => {
     if (!selectedVote) return;
@@ -99,6 +100,7 @@ export function TwoTruthsBoard({
     await onEmitAction('two_truths:next_round', {});
     setLocalStatements(['', '', '']);
     setSelectedVote(null);
+    setLieIndex(2);
   }, [onEmitAction, onRoundComplete, round]);
 
   const maxTime = phase === 'submit' ? 30 : 20;
@@ -180,6 +182,8 @@ export function TwoTruthsBoard({
             next[index] = value;
             setLocalStatements(next);
           }}
+          lieIndex={lieIndex}
+          onLieIndexChange={setLieIndex}
           onSubmit={submit}
           isSubmitDisabled={localStatements.some((s) => !s.trim())}
         />

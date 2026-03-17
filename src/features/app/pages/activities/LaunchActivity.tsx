@@ -172,6 +172,7 @@ export default function LaunchActivity() {
         start_time: startTimeIso,
         end_time: endTimeIso,
         allow_guests: allowNickname,
+        ...(id === '1' ? { max_rounds: parseInt(totalRounds, 10) } : {}),
       };
 
       const createdEvent = await eventsApi.create(eventData);

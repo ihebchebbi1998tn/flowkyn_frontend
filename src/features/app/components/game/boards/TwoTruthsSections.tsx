@@ -140,6 +140,8 @@ export function TwoTruthsWaitingSection({
 interface SubmitSectionProps {
   statements: string[];
   onChange: (index: number, value: string) => void;
+  lieIndex: number;
+  onLieIndexChange: (index: number) => void;
   onSubmit: () => void;
   isSubmitDisabled: boolean;
 }
@@ -147,6 +149,8 @@ interface SubmitSectionProps {
 export function TwoTruthsSubmitSection({
   statements,
   onChange,
+  lieIndex,
+  onLieIndexChange,
   onSubmit,
   isSubmitDisabled,
 }: SubmitSectionProps) {
@@ -184,12 +188,25 @@ export function TwoTruthsSubmitSection({
               <label className="text-[11px] font-medium text-muted-foreground">
                 {t('gamePlay.twoTruths.statementLabel', { defaultValue: 'Statement {{num}}', num: i + 1 })}
               </label>
+              <button
+                type="button"
+                onClick={() => onLieIndexChange(i)}
+                className={cn(
+                  'ml-auto inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-1 rounded-full border transition-colors',
+                  lieIndex === i
+                    ? 'bg-destructive/10 text-destructive border-destructive/30'
+                    : 'bg-muted/40 text-muted-foreground border-border hover:bg-muted/60 hover:text-foreground',
+                )}
+              >
+                <AlertCircle className="h-3 w-3" />
+                {t('gamePlay.twoTruths.markAsLie', { defaultValue: 'Mark as lie' })}
+              </button>
             </div>
             <Textarea
               value={s}
               onChange={(e) => onChange(i, e.target.value)}
               placeholder={
-                i === 2
+                lieIndex === i
                   ? t('gamePlay.twoTruths.liePlaceholder', { defaultValue: 'This could be your lie…' })
                   : t('gamePlay.twoTruths.truthPlaceholder', { defaultValue: 'Write a truth (or a lie)…' })
               }
