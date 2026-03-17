@@ -175,21 +175,21 @@ export function GamePlayShell({
                       ? (<><div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" /> {t('gamePlay.shell.liveSession', 'Live session')}</>)
                       : (<><Radio className="h-2.5 w-2.5" /> {t('gamePlay.shell.asyncSession', 'Async session')}</>)}
                   </Badge>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsReportOpen(true)}
+                    title={t('support.reportBugCta', { defaultValue: 'Report a bug' })}
+                    className="h-7 w-7 shrink-0 rounded-lg bg-background/40 backdrop-blur-sm border border-border/40 hover:bg-background/70"
+                  >
+                    <Bug className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
                 <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5 sm:mt-1">{subtitle}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsReportOpen(true)}
-                title={t('support.reportBugCta', { defaultValue: 'Report a bug' })}
-                className="h-9 w-9 shrink-0 rounded-xl bg-background/50 backdrop-blur-sm border border-border/50 hover:bg-background/80"
-              >
-                <Bug className="h-4 w-4" />
-              </Button>
               {/* Current user's profile pill */}
               {(currentUserAvatarUrl || currentUserName) && (
                 <button
