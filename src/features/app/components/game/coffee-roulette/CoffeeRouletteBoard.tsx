@@ -185,7 +185,12 @@ export function CoffeeRouletteBoard({
   const handleNextPrompt = useCallback(async () => {
     try {
       setIsLoading(true);
-      await onEmitAction('coffee:next_prompt');
+      await Promise.race([
+        onEmitAction('coffee:next_prompt'),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timeout')), 5000)
+        ),
+      ]);
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to get next prompt:', error);
     } finally {
@@ -197,7 +202,12 @@ export function CoffeeRouletteBoard({
   const handleContinue = useCallback(async () => {
     try {
       setIsLoading(true);
-      await onEmitAction('coffee:continue');
+      await Promise.race([
+        onEmitAction('coffee:continue'),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timeout')), 5000)
+        ),
+      ]);
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to continue:', error);
     } finally {
@@ -209,7 +219,12 @@ export function CoffeeRouletteBoard({
   const handleEnd = useCallback(async () => {
     try {
       setIsLoading(true);
-      await onEmitAction('coffee:end');
+      await Promise.race([
+        onEmitAction('coffee:end'),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timeout')), 5000)
+        ),
+      ]);
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to end session:', error);
     } finally {
