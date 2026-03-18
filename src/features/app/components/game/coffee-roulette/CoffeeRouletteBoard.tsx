@@ -51,7 +51,7 @@ interface CoffeeRouletteBoardProps {
   initialSnapshot?: any;
   gameData?: any;
   onEmitAction: (actionType: string, payload?: any) => Promise<void>;
-  gamesSocket?: any; // Socket for listening to real-time updates
+  gamesSocket?: any; // Socket dfor listening to real-time updates
 }
 
 export function CoffeeRouletteBoard({
