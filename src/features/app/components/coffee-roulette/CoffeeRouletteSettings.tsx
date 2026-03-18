@@ -76,7 +76,7 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
         setShuffleOnRepeat(response.shuffle_on_repeat);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load configuration');
+      setError(err instanceof Error ? err.message : t('games.coffeeRoulette.admin.settings.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create configuration');
+      setError(err instanceof Error ? err.message : t('games.coffeeRoulette.admin.settings.failedToCreate'));
     } finally {
       setSaving(false);
     }
@@ -131,7 +131,7 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update configuration');
+      setError(err instanceof Error ? err.message : t('games.coffeeRoulette.admin.settings.failedToUpdate'));
     } finally {
       setSaving(false);
     }
@@ -149,7 +149,7 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Settings2 className="h-6 w-6 text-primary" />
-        <h2 className="text-2xl font-bold">Coffee Roulette Settings</h2>
+        <h2 className="text-2xl font-bold">{t('games.coffeeRoulette.admin.settings.title')}</h2>
       </div>
 
       {error && (
@@ -163,31 +163,31 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
         <Alert className="border-green-200 bg-green-50">
           <CheckCircle2 className="h-4 w-4 text-green-600" />
           <AlertDescription className="text-green-800">
-            Configuration saved successfully!
+            {t('games.coffeeRoulette.admin.settings.savedSuccessfully')}
           </AlertDescription>
         </Alert>
       )}
 
       <Card>
         <CardHeader>
-          <CardTitle>Game Configuration</CardTitle>
+          <CardTitle>{t('games.coffeeRoulette.admin.settings.gameConfiguration')}</CardTitle>
           <CardDescription>
-            Configure how Coffee Roulette matches participants and selects topics
+            {t('games.coffeeRoulette.admin.settings.configureDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="basic" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="basic">Basic Settings</TabsTrigger>
-              <TabsTrigger value="strategies">Selection Strategies</TabsTrigger>
-              <TabsTrigger value="advanced">Advanced</TabsTrigger>
+              <TabsTrigger value="basic">{t('games.coffeeRoulette.admin.settings.basicSettings')}</TabsTrigger>
+              <TabsTrigger value="strategies">{t('games.coffeeRoulette.admin.settings.selectionStrategies')}</TabsTrigger>
+              <TabsTrigger value="advanced">{t('games.coffeeRoulette.admin.settings.advanced')}</TabsTrigger>
             </TabsList>
 
             {/* Basic Settings Tab */}
             <TabsContent value="basic" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="duration">Chat Duration (minutes)</Label>
+                  <Label htmlFor="duration">{t('games.coffeeRoulette.admin.settings.chatDuration')}</Label>
                   <Input
                     id="duration"
                     type="number"
@@ -198,12 +198,12 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
                     className="w-full"
                   />
                   <p className="text-xs text-gray-500">
-                    How long each pair will chat (5-120 minutes)
+                    {t('games.coffeeRoulette.admin.settings.allowGeneral')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="maxPrompts">Max Conversation Topics</Label>
+                  <Label htmlFor="maxPrompts">{t('games.coffeeRoulette.admin.settings.maxPrompts')}</Label>
                   <Input
                     id="maxPrompts"
                     type="number"
@@ -214,7 +214,7 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
                     className="w-full"
                   />
                   <p className="text-xs text-gray-500">
-                    How many topics before asking to continue or end (1-20)
+                    {t('games.coffeeRoulette.admin.settings.allowGeneral')}
                   </p>
                 </div>
               </div>
@@ -224,7 +224,7 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
             <TabsContent value="strategies" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="topicStrategy">Topic Selection Strategy</Label>
+                  <Label htmlFor="topicStrategy">{t('games.coffeeRoulette.admin.settings.topicStrategy')}</Label>
                   <Select value={topicStrategy} onValueChange={(val) => setTopicStrategy(val as TopicSelectionStrategy)}>
                     <SelectTrigger id="topicStrategy">
                       <SelectValue />
@@ -232,31 +232,31 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
                     <SelectContent>
                       <SelectItem value="random">
                         <div>
-                          <div className="font-medium">Random</div>
-                          <div className="text-xs text-gray-500">Uniformly random selection</div>
+                          <div className="font-medium">{t('games.coffeeRoulette.admin.settings.random')}</div>
+                          <div className="text-xs text-gray-500">{t('games.coffeeRoulette.admin.settings.random')}</div>
                         </div>
                       </SelectItem>
                       <SelectItem value="sequential">
                         <div>
-                          <div className="font-medium">Sequential</div>
-                          <div className="text-xs text-gray-500">Round-robin through topics</div>
+                          <div className="font-medium">{t('games.coffeeRoulette.admin.settings.sequential')}</div>
+                          <div className="text-xs text-gray-500">{t('games.coffeeRoulette.admin.settings.sequential')}</div>
                         </div>
                       </SelectItem>
                       <SelectItem value="weighted">
                         <div>
-                          <div className="font-medium">Weighted</div>
-                          <div className="text-xs text-gray-500">Based on topic weights</div>
+                          <div className="font-medium">{t('games.coffeeRoulette.admin.settings.weighted')}</div>
+                          <div className="text-xs text-gray-500">{t('games.coffeeRoulette.admin.settings.weighted')}</div>
                         </div>
                       </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-gray-500 mt-1">
-                    How topics are selected for each conversation pair
+                    {t('games.coffeeRoulette.admin.settings.topicStrategy')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="questionStrategy">Question Selection Strategy</Label>
+                  <Label htmlFor="questionStrategy">{t('games.coffeeRoulette.admin.settings.questionStrategy')}</Label>
                   <Select value={questionStrategy} onValueChange={(val) => setQuestionStrategy(val as QuestionSelectionStrategy)}>
                     <SelectTrigger id="questionStrategy">
                       <SelectValue />
@@ -264,26 +264,26 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
                     <SelectContent>
                       <SelectItem value="random">
                         <div>
-                          <div className="font-medium">Random</div>
-                          <div className="text-xs text-gray-500">Random question each time</div>
+                          <div className="font-medium">{t('games.coffeeRoulette.admin.settings.random')}</div>
+                          <div className="text-xs text-gray-500">{t('games.coffeeRoulette.admin.settings.random')}</div>
                         </div>
                       </SelectItem>
                       <SelectItem value="sequential">
                         <div>
-                          <div className="font-medium">Sequential</div>
-                          <div className="text-xs text-gray-500">Go through all questions</div>
+                          <div className="font-medium">{t('games.coffeeRoulette.admin.settings.sequential')}</div>
+                          <div className="text-xs text-gray-500">{t('games.coffeeRoulette.admin.settings.sequential')}</div>
                         </div>
                       </SelectItem>
                       <SelectItem value="all">
                         <div>
-                          <div className="font-medium">All</div>
-                          <div className="text-xs text-gray-500">Show all available questions</div>
+                          <div className="font-medium">{t('common.all')}</div>
+                          <div className="text-xs text-gray-500">{t('common.all')}</div>
                         </div>
                       </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-gray-500 mt-1">
-                    How questions are selected during conversations
+                    {t('games.coffeeRoulette.admin.settings.questionStrategy')}
                   </p>
                 </div>
               </div>
@@ -300,10 +300,10 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
                   />
                   <div className="flex-1">
                     <Label htmlFor="allowGeneral" className="font-medium cursor-pointer">
-                      Allow General Questions
+                      {t('games.coffeeRoulette.admin.settings.allowGeneral')}
                     </Label>
                     <p className="text-xs text-gray-500 mt-1">
-                      Use general fallback questions if topic-specific questions run out
+                      {t('games.coffeeRoulette.admin.settings.allowGeneral')}
                     </p>
                   </div>
                 </div>
@@ -316,10 +316,10 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
                   />
                   <div className="flex-1">
                     <Label htmlFor="shuffleOnRepeat" className="font-medium cursor-pointer">
-                      Shuffle on Repeat
+                      {t('games.coffeeRoulette.admin.settings.shuffleOnRepeat')}
                     </Label>
                     <p className="text-xs text-gray-500 mt-1">
-                      Reshuffle questions when all have been used in sequential mode
+                      {t('games.coffeeRoulette.admin.settings.shuffleOnRepeat')}
                     </p>
                   </div>
                 </div>
@@ -330,17 +330,17 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
           {/* Action Buttons */}
           <div className="flex gap-2 justify-end mt-6">
             <Button variant="outline" onClick={loadConfig} disabled={saving}>
-              Reset
+              {t('games.coffeeRoulette.admin.settings.reset')}
             </Button>
             {config ? (
               <Button onClick={handleUpdate} disabled={saving}>
                 {saving ? (
                   <>
                     <Loader className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
+                    {t('common.loading')}
                   </>
                 ) : (
-                  'Update Settings'
+                  t('games.coffeeRoulette.admin.settings.update')
                 )}
               </Button>
             ) : (
@@ -348,10 +348,10 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
                 {saving ? (
                   <>
                     <Loader className="h-4 w-4 mr-2 animate-spin" />
-                    Creating...
+                    {t('common.loading')}
                   </>
                 ) : (
-                  'Create Configuration'
+                  t('games.coffeeRoulette.admin.settings.create')
                 )}
               </Button>
             )}
@@ -362,17 +362,17 @@ export function CoffeeRouletteSettings({ eventId }: CoffeeRouletteSettingsProps)
       {config && (
         <Card className="bg-blue-50 border-blue-200">
           <CardHeader>
-            <CardTitle className="text-base">Configuration Details</CardTitle>
+            <CardTitle className="text-base">{t('games.coffeeRoulette.admin.settings.configurationDetails')}</CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-2">
             <div className="grid grid-cols-2 gap-2">
-              <span className="font-medium">Configuration ID:</span>
+              <span className="font-medium">{t('games.coffeeRoulette.admin.settings.configurationId')}:</span>
               <span className="font-mono text-xs break-all">{config.id}</span>
-              <span className="font-medium">Event ID:</span>
+              <span className="font-medium">{t('games.coffeeRoulette.admin.settings.eventId')}:</span>
               <span className="font-mono text-xs break-all">{config.event_id}</span>
-              <span className="font-medium">Created:</span>
+              <span className="font-medium">{t('games.coffeeRoulette.admin.settings.createdAt')}:</span>
               <span>{new Date(config.created_at).toLocaleString()}</span>
-              <span className="font-medium">Last Updated:</span>
+              <span className="font-medium">{t('games.coffeeRoulette.admin.settings.updatedAt')}:</span>
               <span>{new Date(config.updated_at).toLocaleString()}</span>
             </div>
           </CardContent>

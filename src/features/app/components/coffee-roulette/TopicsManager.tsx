@@ -61,7 +61,7 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
       const response = await coffeeRouletteConfigApi.getTopics(configId, eventId);
       setTopics(response || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load topics');
+      setError(err instanceof Error ? err.message : t('games.coffeeRoulette.admin.topics.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
       setOpenDialog(false);
       resetForm();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create topic');
+      setError(err instanceof Error ? err.message : t('games.coffeeRoulette.admin.topics.failedToCreate'));
     } finally {
       setSaving(false);
     }
@@ -133,14 +133,14 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
       setOpenDialog(false);
       resetForm();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update topic');
+      setError(err instanceof Error ? err.message : t('games.coffeeRoulette.admin.topics.failedToUpdate'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (topicId: string) => {
-    if (!window.confirm('Are you sure you want to delete this topic?')) return;
+    if (!window.confirm(t('games.coffeeRoulette.admin.topics.deleteConfirm'))) return;
 
     try {
       setSaving(true);
@@ -148,7 +148,7 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
       await coffeeRouletteConfigApi.deleteTopic(topicId, eventId);
       await loadTopics();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete topic');
+      setError(err instanceof Error ? err.message : t('games.coffeeRoulette.admin.topics.failedToDelete'));
     } finally {
       setSaving(false);
     }
@@ -176,28 +176,28 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold">Topics</h3>
-          <p className="text-sm text-gray-500">Manage discussion topics for this event</p>
+          <h3 className="text-xl font-bold">{t('games.coffeeRoulette.admin.topics.title')}</h3>
+          <p className="text-sm text-gray-500">{t('games.coffeeRoulette.admin.topics.title')}</p>
         </div>
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
           <DialogTrigger asChild>
             <Button onClick={handleOpenCreate}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Topic
+              {t('games.coffeeRoulette.admin.topics.addTopic')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingTopic ? 'Edit Topic' : 'Create Topic'}</DialogTitle>
+              <DialogTitle>{editingTopic ? t('games.coffeeRoulette.admin.topics.editTopic') : t('games.coffeeRoulette.admin.topics.createTopic')}</DialogTitle>
               <DialogDescription>
                 {editingTopic
-                  ? 'Update the topic details'
-                  : 'Create a new conversation topic'}
+                  ? t('games.coffeeRoulette.admin.topics.editTopic')
+                  : t('games.coffeeRoulette.admin.topics.createTopic')}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="topic-icon">Icon</Label>
+                <Label htmlFor="topic-icon">{t('games.coffeeRoulette.admin.topics.topicIcon')}</Label>
                 <Input
                   id="topic-icon"
                   type="text"
@@ -209,29 +209,29 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="topic-title">Title *</Label>
+                <Label htmlFor="topic-title">{t('games.coffeeRoulette.admin.topics.topicTitle')} *</Label>
                 <Input
                   id="topic-title"
                   type="text"
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="E.g., Career Growth"
+                  placeholder={t('games.coffeeRoulette.admin.topics.topicTitle')}
                   className="w-full"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="topic-description">Description</Label>
+                <Label htmlFor="topic-description">{t('games.coffeeRoulette.admin.topics.topicDescription')}</Label>
                 <Input
                   id="topic-description"
                   type="text"
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
-                  placeholder="Optional description..."
+                  placeholder={t('games.coffeeRoulette.admin.topics.topicDescription')}
                   className="w-full"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="topic-weight">Weight (for weighted selection)</Label>
+                <Label htmlFor="topic-weight">{t('games.coffeeRoulette.admin.topics.weight')}</Label>
                 <Input
                   id="topic-weight"
                   type="number"
@@ -241,11 +241,11 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
                   onChange={(e) => setFormWeight(parseFloat(e.target.value) || 1)}
                   className="w-full"
                 />
-                <p className="text-xs text-gray-500">Higher weight = more likely to be selected</p>
+                <p className="text-xs text-gray-500">{t('games.coffeeRoulette.admin.topics.weight')}</p>
               </div>
               <div className="flex gap-2 justify-end pt-4">
                 <Button variant="outline" onClick={() => setOpenDialog(false)}>
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   onClick={editingTopic ? handleUpdate : handleCreate}
@@ -254,12 +254,12 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
                   {saving ? (
                     <>
                       <Loader className="h-4 w-4 mr-2 animate-spin" />
-                      {editingTopic ? 'Updating...' : 'Creating...'}
+                      {t('common.loading')}
                     </>
                   ) : editingTopic ? (
-                    'Update Topic'
+                    t('games.coffeeRoulette.admin.topics.editTopic')
                   ) : (
-                    'Create Topic'
+                    t('games.coffeeRoulette.admin.topics.createTopic')
                   )}
                 </Button>
               </div>
@@ -278,7 +278,7 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
       {topics.length === 0 ? (
         <Card>
           <CardContent className="pt-6 text-center">
-            <p className="text-gray-500">No topics yet. Create one to get started!</p>
+            <p className="text-gray-500">{t('games.coffeeRoulette.admin.topics.noTopics')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -346,11 +346,11 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
                 {expandedTopic === topic.id && (
                   <div className="mt-3 pt-3 border-t space-y-2">
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <span className="font-medium">Weight:</span>
+                      <span className="font-medium">{t('games.coffeeRoulette.admin.topics.weight')}:</span>
                       <span>{topic.weight}</span>
-                      <span className="font-medium">Active:</span>
-                      <span>{topic.is_active ? '✓ Yes' : '✗ No'}</span>
-                      <span className="font-medium">Created:</span>
+                      <span className="font-medium">{t('games.coffeeRoulette.admin.topics.active')}:</span>
+                      <span>{topic.is_active ? t('common.yes') : t('common.no')}</span>
+                      <span className="font-medium">{t('games.coffeeRoulette.admin.topics.createdDate')}:</span>
                       <span className="text-xs">{new Date(topic.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
