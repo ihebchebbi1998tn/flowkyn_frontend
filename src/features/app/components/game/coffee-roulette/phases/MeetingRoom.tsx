@@ -63,16 +63,16 @@ export function MeetingRoom({
       <div
         className="min-h-screen flex flex-col"
         style={{
-          background: `linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%)`,
+          background: `linear-gradient(135deg, #f8f9ff 0%, #f5f0ff 50%, #fff5f9 100%)`,
         }}
       >
         {/* Compact Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="px-6 py-3 border-b"
+          className="px-6 py-2 border-b"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
             borderColor: 'var(--color-primary-light)',
             backdropFilter: 'blur(10px)',
           }}
@@ -120,8 +120,8 @@ export function MeetingRoom({
           </div>
         </motion.div>
 
-        {/* Main Content - Optimized Layout */}
-        <div className="flex-1 flex items-center justify-center px-4 py-4 overflow-y-auto">
+        {/* Main Content - Optimized Layout - 30% more compact */}
+        <div className="flex-1 flex items-center justify-center px-4 py-2 overflow-y-auto">
           <div className="w-full max-w-4xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -129,28 +129,29 @@ export function MeetingRoom({
               transition={{ duration: 0.5 }}
             >
               {/* Two-Column Layout: Participants + Topic */}
-              <div className="grid grid-cols-2 gap-4 items-center">
+              <div className="grid grid-cols-2 gap-3 items-center">
                 {/* Left: Participants Side-by-Side */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   {/* Person 1 */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="rounded-lg p-3"
+                    className="rounded-lg p-2.5"
                     style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.85)',
-                      border: `1px solid var(--color-primary-light)`,
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: `1px solid hsl(270 100% 95%)`,
+                      boxShadow: '0 2px 8px rgba(108, 92, 231, 0.08)',
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <Avatar className="w-16 h-16 flex-shrink-0" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-14 h-14 flex-shrink-0" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
                         <AvatarImage src={getSafeImageUrl(person1.avatarUrl)} alt={person1.name} />
                         <AvatarFallback
                           style={{
                             backgroundColor: 'var(--color-primary)',
                             color: 'white',
-                            fontSize: '16px',
+                            fontSize: '14px',
                             fontWeight: '700',
                           }}
                         >
@@ -158,10 +159,10 @@ export function MeetingRoom({
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
-                        <p className="font-semibold text-sm truncate" style={{ color: 'var(--color-text)' }}>
+                        <p className="font-semibold text-xs truncate" style={{ color: 'var(--color-text)' }}>
                           {person1.name}
                         </p>
-                        <p className="text-xs" style={{ color: 'var(--color-text-light)' }}>
+                        <p className="text-[11px]" style={{ color: 'var(--color-text-light)' }}>
                           {t('gamePlay.coffeeRoulette.chatting.participant', { defaultValue: 'Participant' })}
                         </p>
                       </div>
@@ -173,20 +174,21 @@ export function MeetingRoom({
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: 0.1 }}
-                    className="rounded-lg p-3"
+                    className="rounded-lg p-2.5"
                     style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.85)',
-                      border: `1px solid var(--color-primary-light)`,
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: `1px solid hsl(270 100% 95%)`,
+                      boxShadow: '0 2px 8px rgba(108, 92, 231, 0.08)',
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <Avatar className="w-16 h-16 flex-shrink-0" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-14 h-14 flex-shrink-0" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
                         <AvatarImage src={getSafeImageUrl(person2.avatarUrl)} alt={person2.name} />
                         <AvatarFallback
                           style={{
                             backgroundColor: 'var(--color-primary)',
                             color: 'white',
-                            fontSize: '16px',
+                            fontSize: '14px',
                             fontWeight: '700',
                           }}
                         >
@@ -194,10 +196,10 @@ export function MeetingRoom({
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
-                        <p className="font-semibold text-sm truncate" style={{ color: 'var(--color-text)' }}>
+                        <p className="font-semibold text-xs truncate" style={{ color: 'var(--color-text)' }}>
                           {person2.name}
                         </p>
-                        <p className="text-xs" style={{ color: 'var(--color-text-light)' }}>
+                        <p className="text-[11px]" style={{ color: 'var(--color-text-light)' }}>
                           {t('gamePlay.coffeeRoulette.chatting.participant', { defaultValue: 'Participant' })}
                         </p>
                       </div>
@@ -210,17 +212,18 @@ export function MeetingRoom({
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="rounded-lg p-4 flex flex-col justify-between h-full"
+                  className="rounded-lg p-3 flex flex-col justify-between h-full"
                   style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 240, 255, 0.6) 100%)',
                     border: `2px solid var(--color-primary)`,
-                    boxShadow: '0 8px 24px rgba(108, 92, 231, 0.12)',
+                    boxShadow: '0 4px 16px rgba(108, 92, 231, 0.15)',
                   }}
                 >
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Lightbulb className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
-                      <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-primary)' }}>
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Lightbulb className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
+                      <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--color-primary)' }}>
                         {t('gamePlay.coffeeRoulette.chatting.todaysTopic', { defaultValue: 'Topic' })}
                       </p>
                     </div>
@@ -229,7 +232,7 @@ export function MeetingRoom({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="text-base font-semibold leading-relaxed"
+                      className="text-sm font-semibold leading-tight"
                       style={{ color: 'var(--color-text)' }}
                     >
                       "{topic}"
@@ -241,10 +244,10 @@ export function MeetingRoom({
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-3 pt-3 border-t"
-                      style={{ borderColor: 'var(--color-primary-light)' }}
+                      className="mt-2 pt-2 border-t"
+                      style={{ borderColor: 'hsl(270 100% 90%)' }}
                     >
-                      <p className="text-xs font-semibold" style={{ color: 'var(--color-primary)' }}>
+                      <p className="text-[11px] font-semibold" style={{ color: 'var(--color-primary)' }}>
                         ✓ {t('gamePlay.coffeeRoulette.chatting.timeToDecide', { defaultValue: 'Time to decide!' })}
                       </p>
                     </motion.div>
@@ -260,27 +263,27 @@ export function MeetingRoom({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="px-6 py-3 border-t"
+          className="px-6 py-2 border-t"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderColor: 'var(--color-primary-light)',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderColor: 'hsl(270 100% 95%)',
             backdropFilter: 'blur(10px)',
           }}
         >
           <div className="max-w-7xl mx-auto">
-            <div className="flex gap-2 flex-wrap justify-center">
+            <div className="flex gap-1.5 flex-wrap justify-center">
               {onNextPrompt && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
                     onClick={onNextPrompt}
                     disabled={isLoading}
-                    className="gap-1.5 px-3 py-2 rounded-lg font-semibold text-sm transition-all text-white"
+                    className="gap-1 px-3 py-1.5 rounded-lg font-semibold text-xs transition-all text-white"
                     style={{
                       backgroundColor: 'var(--color-primary)',
                       border: 'none',
                     }}
                   >
-                    <MessageCircle className="w-3.5 h-3.5" />
+                    <MessageCircle className="w-3 h-3" />
                     {t('gamePlay.coffeeRoulette.chatting.nextPrompt', { defaultValue: 'Next' })}
                   </Button>
                 </motion.div>
@@ -291,7 +294,7 @@ export function MeetingRoom({
                   <Button
                     onClick={onContinue}
                     disabled={isLoading}
-                    className="gap-1.5 px-3 py-2 rounded-lg font-semibold text-sm transition-all"
+                    className="gap-1 px-3 py-1.5 rounded-lg font-semibold text-xs transition-all"
                     variant="outline"
                     style={{
                       borderColor: 'var(--color-primary)',
@@ -299,7 +302,7 @@ export function MeetingRoom({
                       borderWidth: '1px',
                     }}
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
+                    <RotateCcw className="w-3 h-3" />
                     {t('gamePlay.coffeeRoulette.chatting.continue', { defaultValue: 'Continue' })}
                   </Button>
                 </motion.div>
@@ -310,12 +313,12 @@ export function MeetingRoom({
                   <Button
                     onClick={onEnd}
                     disabled={isLoading}
-                    className="gap-1.5 px-3 py-2 rounded-lg font-semibold text-sm transition-all text-white"
+                    className="gap-1 px-3 py-1.5 rounded-lg font-semibold text-xs transition-all text-white"
                     style={{
                       backgroundColor: '#ef4444',
                     }}
                   >
-                    <LogOut className="w-3.5 h-3.5" />
+                    <LogOut className="w-3 h-3" />
                     {t('gamePlay.coffeeRoulette.chatting.end', { defaultValue: 'End' })}
                   </Button>
                 </motion.div>

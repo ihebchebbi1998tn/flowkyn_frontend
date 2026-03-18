@@ -191,26 +191,17 @@ export function GameBoardRouter({
         return;
       }
 
-      try {
-        const ack = await gamesSocket.emit('game:action', {
-          sessionId: sid,
-          roundId: activeRoundId || undefined,
-          actionType,
-          payload: payload || {},
-        });
-        console.log('[GamePlay] game:action ack', {
-          actionType,
-          sessionId: sid,
-          ack,
-        });
-      } catch (err: any) {
-        console.error('[GamePlay] game:action failed', {
-          actionType,
-          sessionId: sid,
-          error: err?.message || err,
-        });
-        showError(err, t('games.errors.actionFailed', { defaultValue: 'Game action failed' }));
-      }
+      const ack = await gamesSocket.emit('game:action', {
+        sessionId: sid,
+        roundId: activeRoundId || undefined,
+        actionType,
+        payload: payload || {},
+      });
+      console.log('[GamePlay] game:action ack', {
+        actionType,
+        sessionId: sid,
+        ack,
+      });
     },
     [
       activeRoundId,
