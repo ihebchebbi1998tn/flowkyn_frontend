@@ -74,7 +74,7 @@ export function MeetingRoom({
           <div
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(135deg, ${theme.colors.window} 0%, ${theme.colors.windowLight || theme.colors.background} 100%)`,
+              background: `linear-gradient(135deg, ${theme.colors.window} 0%, ${theme.colors.background} 100%)`,
               opacity: 0.1,
             }}
           />
@@ -144,7 +144,7 @@ export function MeetingRoom({
         </motion.div>
 
         {/* Main chat area */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-4">
           {/* Meeting room container */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -156,21 +156,21 @@ export function MeetingRoom({
             <WindowView theme={theme} />
 
             {/* Room content */}
-            <div className="relative z-10 px-8 py-12 rounded-lg backdrop-blur-sm" style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            <div className="relative z-10 px-6 py-8 rounded-xl backdrop-blur-sm" style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.85)',
               border: `2px solid var(--color-primary-light)`,
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
             }}>
               {/* Participants seated */}
-              <div className="flex items-end justify-between mb-12">
+              <div className="flex items-end justify-between mb-8">
                 {/* Person 1 */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4 }}
-                  className="flex flex-col items-center gap-3"
+                  className="flex flex-col items-center gap-2"
                 >
-                  <Avatar className="w-24 h-24 ring-4" style={{ ringColor: 'var(--color-primary)' }}>
+                  <Avatar className="w-20 h-20 ring-4" style={{ borderColor: 'var(--color-primary)' }}>
                     <AvatarImage
                       src={getSafeImageUrl(person1.avatarUrl)}
                       alt={person1.name}
@@ -179,13 +179,13 @@ export function MeetingRoom({
                       style={{
                         backgroundColor: 'var(--color-primary)',
                         color: 'white',
-                        fontSize: '18px',
+                        fontSize: '16px',
                       }}
                     >
                       {person1.avatar}
                     </AvatarFallback>
                   </Avatar>
-                  <p className="text-center font-semibold text-sm" style={{ color: 'var(--color-text)' }}>
+                  <p className="text-center font-semibold text-xs" style={{ color: 'var(--color-text)' }}>
                     {person1.name}
                   </p>
                 </motion.div>
@@ -204,9 +204,9 @@ export function MeetingRoom({
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.1 }}
-                  className="flex flex-col items-center gap-3"
+                  className="flex flex-col items-center gap-2"
                 >
-                  <Avatar className="w-24 h-24 ring-4" style={{ ringColor: 'var(--color-primary)' }}>
+                  <Avatar className="w-20 h-20 ring-4" style={{ borderColor: 'var(--color-primary)' }}>
                     <AvatarImage
                       src={getSafeImageUrl(person2.avatarUrl)}
                       alt={person2.name}
@@ -215,13 +215,13 @@ export function MeetingRoom({
                       style={{
                         backgroundColor: 'var(--color-primary)',
                         color: 'white',
-                        fontSize: '18px',
+                        fontSize: '16px',
                       }}
                     >
                       {person2.avatar}
                     </AvatarFallback>
                   </Avatar>
-                  <p className="text-center font-semibold text-sm" style={{ color: 'var(--color-text)' }}>
+                  <p className="text-center font-semibold text-xs" style={{ color: 'var(--color-text)' }}>
                     {person2.name}
                   </p>
                 </motion.div>
@@ -229,9 +229,9 @@ export function MeetingRoom({
 
               {/* Divider */}
               <div
-                className="h-0.5 my-8 rounded-full"
+                className="h-1 my-6 rounded-full bg-gradient-to-r"
                 style={{
-                  background: `linear-gradient(90deg, transparent, var(--color-primary), transparent)`,
+                  background: `linear-gradient(90deg, transparent, var(--color-primary-light), transparent)`,
                 }}
               />
 
@@ -246,18 +246,18 @@ export function MeetingRoom({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="relative z-20 px-4 py-8 border-t backdrop-blur-sm"
+          className="relative z-20 px-4 py-6 border-t backdrop-blur-sm"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
             borderColor: 'var(--color-primary-light)',
           }}
         >
-          <div className="max-w-2xl mx-auto flex flex-col gap-4">
+          <div className="max-w-2xl mx-auto flex flex-col gap-3">
             {decisionRequired && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="px-4 py-3 rounded-lg border-l-4"
+                className="px-4 py-2 rounded-lg border-l-4"
                 style={{
                   backgroundColor: 'var(--color-accent)',
                   borderColor: 'var(--color-text)',
@@ -273,13 +273,13 @@ export function MeetingRoom({
               </motion.div>
             )}
 
-            <div className="flex gap-3 flex-wrap justify-center">
+            <div className="flex gap-2 flex-wrap justify-center">
               {onNextPrompt && (
                 <Button
                   onClick={onNextPrompt}
-                  disabled={isLoading || !decisionRequired}
+                  disabled={isLoading}
                   variant="outline"
-                  className="gap-2"
+                  className="gap-2 rounded-lg hover:bg-blue-50 border-2 border-blue-400 text-blue-600 hover:text-blue-700 font-semibold transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
                   {t('gamePlay.coffeeRoulette.chatting.nextPrompt', {
@@ -288,11 +288,11 @@ export function MeetingRoom({
                 </Button>
               )}
 
-              {onContinue && decisionRequired && (
+              {onContinue && (
                 <Button
                   onClick={onContinue}
                   disabled={isLoading}
-                  className="gap-2"
+                  className="gap-2 rounded-lg font-semibold transition-all"
                   style={{ backgroundColor: 'var(--color-primary)' }}
                 >
                   <RotateCcw className="w-4 h-4" />
@@ -307,7 +307,7 @@ export function MeetingRoom({
                   onClick={onEnd}
                   disabled={isLoading}
                   variant="destructive"
-                  className="gap-2"
+                  className="gap-2 rounded-lg hover:bg-red-600 font-semibold transition-all"
                 >
                   <LogOut className="w-4 h-4" />
                   {t('gamePlay.coffeeRoulette.chatting.end', {
@@ -349,12 +349,12 @@ function PromptDisplay({ topic }: { topic: string }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="text-center"
+      className="text-center px-4 py-5 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200"
     >
-      <div className="mb-3 flex items-center justify-center gap-2">
-        <Lightbulb className="w-5 h-5" style={{ color: 'var(--color-accent)' }} />
-        <p className="text-xs font-semibold" style={{ color: 'var(--color-text-light)' }}>
-          TODAY'S PROMPT
+      <div className="mb-2 flex items-center justify-center gap-2">
+        <Lightbulb className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
+        <p className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--color-text-light)' }}>
+          Conversation Starter
         </p>
       </div>
 
@@ -362,7 +362,7 @@ function PromptDisplay({ topic }: { topic: string }) {
         key={topic}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-lg md:text-xl font-semibold leading-relaxed"
+        className="text-base md:text-lg font-semibold leading-relaxed"
         style={{ color: 'var(--color-primary)' }}
       >
         "{topic}"
