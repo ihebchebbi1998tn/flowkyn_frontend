@@ -104,4 +104,58 @@ export const gamesApi = {
       text: string;
       category?: string | null;
     }>>(`/game-types/${gameTypeId}/prompts`, category ? { category } : undefined),
+
+  /**
+   * Strategic Escape Challenge — get debrief results for a session.
+   * Returns aggregated rankings, action counts, and statistics.
+   * Only admins/moderators can call this.
+   */
+  getDebriefResults: (sessionId: string) =>
+    api.get<{
+      sessionId: string;
+      totalActions: number;
+      participantCount: number;
+      rankings: Array<{
+        participantId: string;
+        roleKey: string;
+        actionCount: number;
+        score: number;
+        rank: number;
+      }>;
+      mostVocalRole: string;
+      actionsByRole: Record<string, number>;
+      rolesPresent: string[];
+    }>(`/strategic-sessions/${sessionId}/debrief-results`),
+
+  /**
+   * Strategic Escape Challenge — start the debrief phase.
+   * Calculates final results, updates session state, and emits notifications.
+   * Only admins/moderators can call this.
+   */
+  startDebrief: (sessionId: string) =>
+    api.post<{
+      sessionId: string;
+      phase: 'debrief';
+      results: {
+        sessionId: string;
+        totalActions: number;
+        participantCount: number;
+        rankings: Array<{
+          participantId: string;
+          roleKey: string;
+          actionCount: number;
+          score: number;
+          rank: number;
+        }>;
+        mostVocalRole: string;
+        actionsByRole: Record<string, number>;
+        rolesPresent: string[];
+      };
+      snapshot: {
+        kind: string;
+        phase: 'debrief';
+        debrief_results: any;
+        debrief_started_at: string;
+      };
+    }>(`/strategic-sessions/${sessionId}/start-debrief`, {}),
 };
