@@ -52,6 +52,16 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     ? gameData
     : (initialSnapshot?.kind === GAME_TYPES.COFFEE_ROULETTE ? initialSnapshot : null)) as any;
 
+  // Add logging for state changes
+  useEffect(() => {
+    console.log('[CoffeeRouletteBoard] Snapshot updated:', {
+      phase: snapshot?.phase,
+      pairsCount: snapshot?.pairs?.length || 0,
+      myPairExists: !!snapshot?.pairs?.find((p) => p.person1.participantId === currentUserId || p.person2.participantId === currentUserId),
+      currentUserId,
+    });
+  }, [snapshot, currentUserId]);
+
   const phase = (snapshot?.phase || 'waiting') as GamePhase;
   const pairs = snapshot?.pairs || [];
   const myPair = pairs.find((p) => p.person1.participantId === currentUserId || p.person2.participantId === currentUserId) || null;

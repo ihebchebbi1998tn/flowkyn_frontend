@@ -521,29 +521,58 @@ function GamePlayWithoutBoundary() {
     const unsubState = gamesSocket.on('game:state', (payload: any) => {
       const snap = payload?.state?.snapshot;
       const ar = payload?.state?.activeRoundId;
+      console.log('[GamePlay] Received game:state event:', { hasSnapshot: !!snap, hasActiveRound: !!ar });
       if (ar) setActiveRoundId(ar);
       if (snap) {
+        console.log('[GamePlay] Updating game state from game:state event:', snap.kind);
         setInitialSnapshot(snap);
         setGameData(snap);
       }
     });
     const unsubData = gamesSocket.on('game:data', (payload: any) => {
-      if (payload?.gameData) setGameData(payload.gameData);
+      if (payload?.gameData) {
+        console.log('[GamePlay] Received game:data event:', payload.gameData.kind);
+        setGameData(payload.gameData);
+      }
     });
 
     // Handle game lifecycle events emitted by host actions
     const unsubStarted = gamesSocket.on('game:started', () => {
-      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+      console.log('[GamePlay] Received game:started event, syncing state...');
+      if (sessionId) {
+        gamesSocket.emit('game:state_sync', { sessionId })
+          .catch((err: any) => {
+            console.error('[GamePlay] game:state_sync failed on game:started:', err?.message || err);
+          });
+      }
     });
     const unsubRoundStarted = gamesSocket.on('game:round_started', (payload: any) => {
+      console.log('[GamePlay] Received game:round_started event');
       if (payload?.roundId) setActiveRoundId(payload.roundId);
-      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+      if (sessionId) {
+        gamesSocket.emit('game:state_sync', { sessionId })
+          .catch((err: any) => {
+            console.error('[GamePlay] game:state_sync failed on game:round_started:', err?.message || err);
+          });
+      }
     });
     const unsubRoundEnded = gamesSocket.on('game:round_ended', () => {
-      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+      console.log('[GamePlay] Received game:round_ended event, syncing state...');
+      if (sessionId) {
+        gamesSocket.emit('game:state_sync', { sessionId })
+          .catch((err: any) => {
+            console.error('[GamePlay] game:state_sync failed on game:round_ended:', err?.message || err);
+          });
+      }
     });
     const unsubEnded = gamesSocket.on('game:ended', () => {
-      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+      console.log('[GamePlay] Received game:ended event, syncing state...');
+      if (sessionId) {
+        gamesSocket.emit('game:state_sync', { sessionId })
+          .catch((err: any) => {
+            console.error('[GamePlay] game:state_sync failed on game:ended:', err?.message || err);
+          });
+      }
     });
 
     return () => { 

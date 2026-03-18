@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Send, Heart, Star, ThumbsUp, MessageCircle, Award,
-  Clock,
+  Clock, Calendar, AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,6 +16,69 @@ const REACTION_ICONS: Record<string, typeof Heart> = {
   thumbsUp: ThumbsUp,
   award: Award,
 };
+
+/**
+ * Format timestamp into a human-readable, localized string
+ * Examples: "Just now", "2 minutes ago", "Yesterday", "Mar 18, 2026"
+ */
+function formatTimeAgo(timestamp: string | Date): string {
+  const now = new Date();
+  const postDate = new Date(timestamp);
+  const diff = now.getTime() - postDate.getTime();
+
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days}d ago`;
+
+  // For older posts, show formatted date (e.g., "Mar 18, 2026 at 2:30 PM")
+  return postDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
+/**
+ * Format absolute end time for display
+ * Examples: "Ends in 2h 45m", "Ends today at 5:00 PM", "Ended Mar 18"
+ */
+function formatEndTime(endsAt: string, isClosed: boolean): string {
+  const now = new Date();
+  const endDate = new Date(endsAt);
+  const diff = endDate.getTime() - now.getTime();
+
+  if (isClosed) {
+    return endDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  if (diff < 0) return 'Ended';
+
+  const minutes = Math.floor((diff / 1000) % 60);
+  const hours = Math.floor((diff / 1000 / 60) % 60);
+  const totalHours = Math.floor(diff / 3600000);
+
+  if (totalHours === 0) {
+    return `${minutes}m left`;
+  }
+  if (totalHours < 24) {
+    return `${hours}h ${minutes}m left`;
+  }
+
+  const days = Math.floor(diff / 86400000);
+  return `${days}d left`;
+}
 
 export interface WinsOfTheWeekBoardProps {
   prompt?: string;
@@ -60,16 +123,35 @@ export function WinsOfTheWeekBoard({
   const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
   const [showReplyFor, setShowReplyFor] = useState<string | null>(null);
   const [submittingReply, setSubmittingReply] = useState<string | null>(null);
+  const [liveEndTime, setLiveEndTime] = useState<string>('');
+
+  // Update end time display every minute
+  useEffect(() => {
+    if (!endsAt) return;
+    const updateEndTime = () => {
+      setLiveEndTime(formatEndTime(endsAt, postingClosed));
+    };
+    updateEndTime();
+    const interval = setInterval(updateEndTime, 60000);
+    return () => clearInterval(interval);
+  }, [endsAt, postingClosed]);
 
   const handlePost = async () => {
     if (!newPost.trim()) return;
-    console.log('[WinsOfTheWeekBoard] handlePost', { length: newPost.trim().length });
+    console.log('[WinsOfTheWeekBoard] handlePost', { 
+      length: newPost.trim().length,
+      timestamp: new Date().toISOString(),
+    });
     await onPost(newPost.trim());
     setNewPost('');
   };
 
   const toggleReaction = (postId: string, reactionType: string) => {
-    console.log('[WinsOfTheWeekBoard] toggleReaction', { postId, reactionType });
+    console.log('[WinsOfTheWeekBoard] toggleReaction', { 
+      postId, 
+      reactionType,
+      timestamp: new Date().toISOString(),
+    });
     if (!canReact) return;
     onToggleReaction(postId, reactionType);
   };
@@ -87,6 +169,7 @@ export function WinsOfTheWeekBoard({
         postId,
         authorName,
         length: text.length,
+        timestamp: new Date().toISOString(),
       });
       await onPost(`@${authorName}: ${text}`);
       setReplyInputs(prev => ({ ...prev, [postId]: '' }));
@@ -106,22 +189,39 @@ export function WinsOfTheWeekBoard({
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning/10 shrink-0">
               <Star className="h-5 w-5 text-warning" />
             </div>
-            <div>
+            <div className="flex-1">
               <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.winsOfWeek.thisWeeksPrompt', { defaultValue: "This week's prompt" })}</h3>
               <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">{displayPrompt}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" /> {t('gamePlay.winsOfWeek.contributions', { defaultValue: '{{count}} contributions', count: posts.length })}</span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" /> {postingClosed ? t('gamePlay.winsOfWeek.closed', { defaultValue: 'Closed' }) : t('gamePlay.winsOfWeek.ongoing', { defaultValue: 'Ongoing' })}
+          
+          {/* Status bar with detailed info */}
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground flex-wrap">
+            {/* Contribution count */}
+            <span className="flex items-center gap-1 bg-muted/30 px-2 py-1 rounded-md">
+              <MessageCircle className="h-3 w-3" /> 
+              {t('gamePlay.winsOfWeek.contributions', { defaultValue: '{{count}} contributions', count: posts.length })}
             </span>
+
+            {/* Status indicator */}
+            <span className={cn(
+              'flex items-center gap-1 px-2 py-1 rounded-md font-medium',
+              postingClosed
+                ? 'bg-muted/30 text-muted-foreground'
+                : 'bg-success/10 text-success'
+            )}>
+              <Clock className="h-3 w-3" /> 
+              {postingClosed 
+                ? t('gamePlay.winsOfWeek.closed', { defaultValue: 'Closed' }) 
+                : t('gamePlay.winsOfWeek.ongoing', { defaultValue: 'Ongoing' })
+              }
+            </span>
+
+            {/* Time indicator */}
             {endsAt && (
-              <span className="flex items-center gap-1">
-                <span className="text-muted-foreground/60">·</span>
-                {postingClosed
-                  ? t('gamePlay.winsOfWeek.endedAt', { defaultValue: 'Ended: {{time}}', time: new Date(endsAt).toLocaleString() })
-                  : t('gamePlay.winsOfWeek.endsAt', { defaultValue: 'Ends: {{time}}', time: new Date(endsAt).toLocaleString() })}
+              <span className="flex items-center gap-1 px-2 py-1 rounded-md bg-muted/30">
+                <Calendar className="h-3 w-3" />
+                {liveEndTime || formatEndTime(endsAt, postingClosed)}
               </span>
             )}
           </div>
@@ -131,13 +231,16 @@ export function WinsOfTheWeekBoard({
       {/* New post input */}
       <div className="rounded-xl border border-border bg-card p-4">
         {postingClosed && (
-          <div className="mb-3 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
-            <span className="font-medium text-foreground">
-              {t('gamePlay.winsOfWeek.postingClosedTitle', { defaultValue: 'Posting is closed' })}
-            </span>
-            <span className="ml-1">
-              {t('gamePlay.winsOfWeek.postingClosedBody', { defaultValue: 'This activity has ended. You can still read and react is disabled.' })}
-            </span>
+          <div className="mb-3 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-warning" />
+            <div>
+              <span className="font-medium text-foreground block">
+                {t('gamePlay.winsOfWeek.postingClosedTitle', { defaultValue: 'Posting is closed' })}
+              </span>
+              <span className="block mt-0.5">
+                {t('gamePlay.winsOfWeek.postingClosedBody', { defaultValue: 'This activity has ended. You can still read and react is disabled.' })}
+              </span>
+            </div>
           </div>
         )}
         <div className="flex items-start gap-3">
@@ -154,7 +257,10 @@ export function WinsOfTheWeekBoard({
               className="text-[13px] resize-none border-0 bg-muted/30 focus-visible:ring-1"
               disabled={!canPost}
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
+              <span className="text-[10px] text-muted-foreground self-center">
+                {newPost.length > 0 && `${newPost.length} / 5000`}
+              </span>
               <Button onClick={handlePost} disabled={!newPost.trim() || !canPost} className="h-9 px-5 text-[12px] gap-2">
                 <Send className="h-3.5 w-3.5" /> {t('gamePlay.winsOfWeek.share', { defaultValue: 'Share' })}
               </Button>
@@ -185,18 +291,22 @@ export function WinsOfTheWeekBoard({
               exit={{ opacity: 0, scale: 0.9, y: -20 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               key={post.id}
-              className="rounded-xl border border-border bg-card overflow-hidden"
+              className="rounded-xl border border-border bg-card overflow-hidden hover:border-border/80 transition-colors"
             >
               <div className="p-4">
-                {/* Author */}
-                <div className="flex items-center gap-2.5 mb-3">
-                  <Avatar className="h-8 w-8">
-                    {post.authorAvatarUrl ? <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} /> : null}
-                    <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-semibold">{post.authorAvatar}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-[13px] font-medium text-foreground">{post.authorName}</p>
-                    <p className="text-[10px] text-muted-foreground">{post.timestamp}</p>
+                {/* Author section with improved timestamp */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2.5 flex-1">
+                    <Avatar className="h-8 w-8 shrink-0">
+                      {post.authorAvatarUrl ? <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} /> : null}
+                      <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-semibold">{post.authorAvatar}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-[13px] font-medium text-foreground">{post.authorName}</p>
+                      <time className="text-[10px] text-muted-foreground" dateTime={post.timestamp} title={new Date(post.timestamp).toLocaleString()}>
+                        {formatTimeAgo(post.timestamp)}
+                      </time>
+                    </div>
                   </div>
                 </div>
 
@@ -216,6 +326,7 @@ export function WinsOfTheWeekBoard({
                           'flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium transition-all',
                           r.reacted ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/50 text-muted-foreground hover:bg-muted border border-transparent'
                         )}
+                        title={`${r.count} reaction${r.count > 1 ? 's' : ''}`}
                       >
                         <Icon className={cn('h-3 w-3', r.reacted && 'fill-current')} />
                         {r.count}
@@ -234,6 +345,7 @@ export function WinsOfTheWeekBoard({
                           whileHover={{ scale: 1.1, rotate: 5 }}
                           whileTap={{ scale: 0.9 }}
                           className="p-1 rounded text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+                          title={`Add ${type} reaction`}
                         >
                           <Icon className="h-3 w-3" />
                         </motion.button>
@@ -252,7 +364,12 @@ export function WinsOfTheWeekBoard({
 
                 {/* Reply input (persists reply as a new post on the server) */}
                 {showReplyFor === post.id && (
-                  <div className="mt-3 pl-[42px] flex items-center gap-2">
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mt-3 pl-[42px] flex items-center gap-2"
+                  >
                     <Avatar className="h-6 w-6 shrink-0">
                       {currentUserAvatarUrl ? <img src={currentUserAvatarUrl} alt={currentUserName} className="h-full w-full object-cover" /> : null}
                       <AvatarFallback className="bg-primary/10 text-primary text-[8px] font-semibold">{currentUserAvatar}</AvatarFallback>
@@ -264,6 +381,7 @@ export function WinsOfTheWeekBoard({
                       onKeyDown={e => { if (e.key === 'Enter') handleReply(post.id, post.authorName); }}
                       placeholder={t('gamePlay.winsOfWeek.writeReply', { defaultValue: 'Write a reply…' })}
                       className="flex-1 h-8 px-3 text-[12px] rounded-lg bg-muted/50 border-0 outline-none focus:ring-1 focus:ring-ring"
+                      autoFocus
                     />
                     <Button
                       size="sm"
@@ -273,7 +391,7 @@ export function WinsOfTheWeekBoard({
                     >
                       <Send className="h-3 w-3" />
                     </Button>
-                  </div>
+                  </motion.div>
                 )}
               </div>
             </motion.div>
