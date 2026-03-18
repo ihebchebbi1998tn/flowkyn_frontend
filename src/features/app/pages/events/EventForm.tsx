@@ -236,8 +236,8 @@ export default function EventForm() {
   const isPending = createEvent.isPending || updateEvent.isPending;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
-      <div className="flex items-center gap-2 sm:gap-3">
+    <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
+      <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/events')} aria-label={t('common.backToEvents')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -253,7 +253,7 @@ export default function EventForm() {
 
       <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="h-1 w-full bg-gradient-to-r from-primary/80 to-primary" />
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
+        <div className="p-3.5 sm:p-5 space-y-3.5 sm:space-y-4.5">
           {!isEditing && (
             <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.presets.title')}</Label>

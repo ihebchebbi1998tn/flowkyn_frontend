@@ -22,7 +22,7 @@ export function ActivityBreakdownSection({ data, delay = 0.5 }: ActivityBreakdow
 
   return (
     <motion.div
-      className="grid gap-4 lg:grid-cols-2"
+      className="grid gap-3 lg:grid-cols-2"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
@@ -42,22 +42,22 @@ export function ActivityBreakdownSection({ data, delay = 0.5 }: ActivityBreakdow
       </ChartCard>
 
       <ChartCard title={t('dashboard.categoryDistribution')} subtitle={t('dashboard.byActivityCategory')}>
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
           <div className="relative shrink-0">
-            <ResponsiveContainer width={180} height={180}>
+            <ResponsiveContainer width={160} height={160}>
               <PieChart>
-                <Pie data={data} cx="50%" cy="50%" outerRadius={80} innerRadius={56} paddingAngle={3} dataKey="value" strokeWidth={0}>
+                <Pie data={data} cx="50%" cy="50%" outerRadius={72} innerRadius={50} paddingAngle={3} dataKey="value" strokeWidth={0}>
                   {data.map((e, i) => <Cell key={i} fill={e.fill} />)}
                 </Pie>
                 <Tooltip contentStyle={chartTooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-[24px] font-extrabold text-foreground">{totalSessions}</span>
+              <span className="text-[22px] font-extrabold text-foreground">{totalSessions}</span>
               <span className="text-[10px] text-muted-foreground font-medium">{t('dashboard.sessions')}</span>
             </div>
           </div>
-          <div className="flex-1 space-y-4">
+          <div className="flex-1 space-y-3">
             {data.map(item => {
               const pct = totalSessions > 0 ? Math.round((item.value / totalSessions) * 100) : 0;
               return (

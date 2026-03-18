@@ -32,8 +32,8 @@ export function RecentActivitySection({ sessions, delay = 0.8 }: RecentActivityS
       <ChartCard title={t('dashboard.recentActivity')} subtitle={t('dashboard.latestGameSessions')} noPadding>
         <div className="divide-y divide-border">
           {sessions.map(session => (
-            <div key={session.id} className="flex items-center gap-2.5 px-4 sm:px-5 py-2.5 sm:py-3 hover:bg-accent/40 transition-colors">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+            <div key={session.id} className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 hover:bg-accent/40 transition-colors">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[13px] font-medium text-foreground truncate">{session.game_type_name}</p>

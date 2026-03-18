@@ -26,11 +26,11 @@ export function PerformanceSection({ totalSessions, totalParticipants, completio
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       <ChartCard title={t('dashboard.performanceOverview')} subtitle={t('dashboard.keyMetrics')}>
-        <div className="flex flex-col sm:flex-row items-center justify-around gap-3 sm:gap-2 py-3">
+        <div className="flex flex-col sm:flex-row items-center justify-around gap-2.5 sm:gap-1.5 py-2">
           {metrics.map(metric => {
             const pct = metric.max > 0 ? Math.min((metric.value / metric.max) * 100, 100) : 0;
             return (
-              <div key={metric.name} className="flex flex-col items-center gap-2">
+              <div key={metric.name} className="flex flex-col items-center gap-1.5">
                 <div className="relative">
                   <svg width="80" height="80" viewBox="0 0 88 88" className="sm:w-[88px] sm:h-[88px]">
                     <circle cx="44" cy="44" r="36" fill="none" stroke="hsl(var(--muted))" strokeWidth="6" />

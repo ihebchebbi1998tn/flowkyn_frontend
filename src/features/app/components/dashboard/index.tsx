@@ -45,7 +45,7 @@ export function PageShell({ children, className }: { children: React.ReactNode; 
     <div
       className={cn(
         // Full-width within the main app content with optimized spacing
-        'space-y-3 w-full animate-fade-in',
+        'space-y-2 w-full animate-fade-in',
         className,
       )}
     >
@@ -63,12 +63,12 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/60 pb-2.5 mb-2.5">
-      <div className="min-w-0 space-y-1">
+    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between border-b border-border/60 pb-2 mb-2">
+      <div className="min-w-0 space-y-0.5">
         {subtitle && <p className="text-body-sm text-muted-foreground">{subtitle}</p>}
         <h1 className="text-page-title text-foreground leading-none truncate tracking-tight">{title}</h1>
       </div>
-      {actions && <div className="flex items-center gap-2 shrink-0 mt-2.5 sm:mt-0">{actions}</div>}
+      {actions && <div className="flex items-center gap-2 shrink-0 mt-2 sm:mt-0">{actions}</div>}
     </div>
   );
 }
@@ -103,8 +103,8 @@ export function DashStat({ label, value, icon: Icon, change, trend, gradient = '
       {/* Top accent bar */}
       <div className={cn("h-0.5 w-full bg-gradient-to-r opacity-50 group-hover:opacity-100 transition-opacity duration-200", accentBarMap[gradient])} />
       
-      <div className="p-3 sm:p-4">
-        <div className="flex items-center justify-between mb-2 sm:mb-2.5 gap-3">
+      <div className="p-2.5 sm:p-3.5">
+        <div className="flex items-center justify-between mb-2 gap-3">
           <div className={cn(
             "flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105",
             iconColorMap[gradient]
@@ -121,14 +121,14 @@ export function DashStat({ label, value, icon: Icon, change, trend, gradient = '
             </div>
           )}
         </div>
-        <p className="text-[24px] sm:text-[28px] font-bold text-foreground tracking-tight leading-none mb-1">
+        <p className="text-[24px] sm:text-[28px] font-bold text-foreground tracking-tight leading-none mb-0.5">
           {value}
         </p>
         <p className="text-[11px] sm:text-label text-muted-foreground uppercase tracking-[0.16em]">
           {label}
         </p>
         {change && (
-          <p className="text-label-xs text-muted-foreground/70 mt-1.5">{change}</p>
+          <p className="text-label-xs text-muted-foreground/70 mt-1">{change}</p>
         )}
       </div>
     </div>
@@ -148,14 +148,14 @@ interface ChartCardProps {
 export function ChartCard({ title, subtitle, action, children, className, noPadding }: ChartCardProps) {
   return (
     <div className={cn('rounded-2xl border border-border bg-card/95 backdrop-blur-sm overflow-hidden shadow-card', className)}>
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border/60">
+      <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between px-3 sm:px-3.5 py-2 sm:py-2.5 border-b border-border/60">
         <div>
           <h3 className="text-card-title font-semibold text-foreground truncate">{title}</h3>
           {subtitle && <p className="text-label text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
         {action && <div className="flex items-center justify-end shrink-0">{action}</div>}
       </div>
-      <div className={noPadding ? '' : 'p-3 sm:p-4'}>{children}</div>
+      <div className={noPadding ? '' : 'p-2.5 sm:p-3.5'}>{children}</div>
     </div>
   );
 }
@@ -172,7 +172,7 @@ interface RankedItemProps {
 export function RankedItem({ rank, icon, title, subtitle, right }: RankedItemProps) {
   const medalColors = ['text-warning', 'text-muted-foreground', 'text-warning/60'];
   return (
-    <div className="flex items-center gap-2.5 group p-2 -mx-2 rounded-xl hover:bg-muted/50 transition-colors">
+    <div className="flex items-center gap-2 group p-1.5 -mx-1.5 rounded-xl hover:bg-muted/50 transition-colors">
       <span className={cn("text-caption font-bold w-5 text-center shrink-0", rank <= 3 ? medalColors[rank - 1] : 'text-muted-foreground/40')}>
         {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
       </span>
