@@ -4,13 +4,18 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Search, MoreHorizontal, Trash2, Eye, Users } from 'lucide-react';
+import { Search, MoreHorizontal, Trash2, Eye, Users, Loader } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
 import { adminApi } from '@/api/admin';
 import { PageHeader } from '@/components/common/PageHeader';
 import { TableSkeleton } from '@/components/loading/Skeletons';
@@ -29,6 +34,10 @@ export default function AdminOrganizations() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState<Partial<Organization>>({});
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const fetchOrgs = useCallback(async () => {
     setLoading(true);
@@ -45,6 +54,41 @@ export default function AdminOrganizations() {
 
   useEffect(() => { fetchOrgs(); }, [fetchOrgs]);
   useEffect(() => { setPage(1); }, [search]);
+
+  const handleViewDetails = async (org: Organization) => {
+    try {
+      const fullOrg = await adminApi.getOrganization(org.id);
+      setEditingOrg(fullOrg);
+      setEditFormData({
+        name: fullOrg.name,
+        description: fullOrg.description,
+        industry: fullOrg.industry,
+        company_size: fullOrg.company_size,
+      });
+      setEditModalOpen(true);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to load organization details');
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingOrg) return;
+    
+    try {
+      setSavingEdit(true);
+      const updated = await adminApi.updateOrganization(editingOrg.id, editFormData);
+      
+      // Update local state
+      setOrgs(orgs.map(o => o.id === updated.id ? updated : o));
+      setEditingOrg(updated);
+      setEditModalOpen(false);
+      toast.success('Organization updated successfully');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to save organization');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this organization? This cannot be undone.')) return;
@@ -116,9 +160,11 @@ export default function AdminOrganizations() {
                           <Button variant="ghost" size="icon" className="h-7 w-7"><MoreHorizontal className="h-4 w-4" /></Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-44">
-                          <DropdownMenuItem className="text-[13px] gap-2"><Eye className="h-3.5 w-3.5" /> View Details</DropdownMenuItem>
+                          <DropdownMenuItem className="text-[13px] gap-2 cursor-pointer" onClick={() => handleViewDetails(org)}>
+                            <Eye className="h-3.5 w-3.5" /> Edit
+                          </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-[13px] gap-2 text-destructive" onClick={() => handleDelete(org.id)}>
+                          <DropdownMenuItem className="text-[13px] gap-2 text-destructive cursor-pointer" onClick={() => handleDelete(org.id)}>
                             <Trash2 className="h-3.5 w-3.5" /> Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -142,6 +188,78 @@ export default function AdminOrganizations() {
           <Button variant="outline" size="sm" disabled={page >= Math.ceil(total / 20)} onClick={() => setPage(p => p + 1)}>Next</Button>
         </div>
       )}
+
+      {/* Edit Organization Modal */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Organization</DialogTitle>
+          </DialogHeader>
+
+          {editingOrg && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="org-name" className="text-[13px] font-medium">Organization Name</Label>
+                <Input
+                  id="org-name"
+                  value={editFormData.name || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  placeholder="e.g. Acme Corporation"
+                  className="mt-1.5 h-9"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="org-description" className="text-[13px] font-medium">Description</Label>
+                <Textarea
+                  id="org-description"
+                  value={editFormData.description || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                  placeholder="Brief description of your organization"
+                  rows={3}
+                  className="mt-1.5 text-[13px]"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="org-industry" className="text-[13px] font-medium">Industry</Label>
+                <Input
+                  id="org-industry"
+                  value={editFormData.industry || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, industry: e.target.value })}
+                  placeholder="e.g. Technology, Finance, etc."
+                  className="mt-1.5 h-9"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="org-size" className="text-[13px] font-medium">Company Size</Label>
+                <Input
+                  id="org-size"
+                  value={editFormData.company_size || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, company_size: e.target.value })}
+                  placeholder="e.g. 10-50 employees"
+                  className="mt-1.5 h-9"
+                />
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setEditModalOpen(false)}>Cancel</Button>
+            <Button size="sm" onClick={handleSaveEdit} disabled={savingEdit}>
+              {savingEdit ? (
+                <>
+                  <Loader className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

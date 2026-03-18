@@ -146,6 +146,12 @@ export const adminApi = {
       ...(search ? { search } : {}),
     }),
 
+  getOrganization: (id: string) =>
+    adminClient.get<Organization>(`/admin/organizations/${id}`),
+
+  updateOrganization: (id: string, data: Partial<Organization>) =>
+    adminClient.patch<Organization>(`/admin/organizations/${id}`, data),
+
   deleteOrganization: (id: string) =>
     adminClient.del(`/admin/organizations/${id}`),
 
