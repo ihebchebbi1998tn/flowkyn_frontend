@@ -558,7 +558,7 @@ export function StrategicEscapeBoard({
             <div className="flex flex-col gap-2 border-t border-border pt-3">
               <Button
                 className="w-full h-10 text-[13px]"
-                disabled={!isHost || !isConfigured || !!sessionId || isCreating}
+                disabled={!isHost || !isConfigured || isCreating}
                 onClick={async () => {
                   await handleCreateSession();
                   setIsConfigModalOpen(false);
@@ -566,7 +566,9 @@ export function StrategicEscapeBoard({
               >
                 {isCreating
                   ? t('strategic.actions.creating', { defaultValue: 'Creating session…' })
-                  : t('strategic.actions.createSession', { defaultValue: 'Create strategic session' })}
+                  : sessionId 
+                    ? t('strategic.actions.sessionCreated', { defaultValue: 'Session already created' })
+                    : t('strategic.actions.createSession', { defaultValue: 'Create strategic session' })}
               </Button>
               {createError && (
                 <p className="text-[10px] text-destructive">
