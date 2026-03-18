@@ -181,8 +181,8 @@ export function QuestionsManager({ eventId, configId }: QuestionsManagerProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold">Questions & Prompts</h3>
-          <p className="text-sm text-gray-500">Manage conversation questions for this event</p>
+          <h3 className="text-xl font-bold">{t('games.coffeeRoulette.admin.questions.title', { defaultValue: 'Questions & Prompts' })}</h3>
+          <p className="text-sm text-gray-500">{t('games.coffeeRoulette.admin.questions.subtitle', { defaultValue: 'Manage conversation questions for this event' })}</p>
         </div>
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
           <DialogTrigger asChild>
@@ -320,12 +320,12 @@ export function QuestionsManager({ eventId, configId }: QuestionsManagerProps) {
       {filteredQuestions.length === 0 ? (
         <Card>
           <CardContent className="pt-6 text-center">
-            <p className="text-gray-500">No questions match the current filters. Create one to get started!</p>
+            <p className="text-gray-500">{t('games.coffeeRoulette.admin.questions.noMatches', { defaultValue: 'No questions match the current filters. Create one to get started!' })}</p>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-2">
-          <p className="text-sm text-gray-600">Showing {filteredQuestions.length} of {questions.length} questions</p>
+          <p className="text-sm text-gray-600">{t('games.coffeeRoulette.admin.questions.showing', { defaultValue: 'Showing {{count}} of {{total}} questions', count: filteredQuestions.length, total: questions.length })}</p>
           {filteredQuestions.map((question) => (
             <Card key={question.id} className="hover:shadow-md transition-shadow">
               <div className="p-4">
@@ -390,11 +390,11 @@ export function QuestionsManager({ eventId, configId }: QuestionsManagerProps) {
                 {expandedQuestion === question.id && (
                   <div className="mt-3 pt-3 border-t space-y-2">
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <span className="font-medium">Question ID:</span>
+                      <span className="font-medium">{t('games.coffeeRoulette.admin.questions.id', { defaultValue: 'Question ID:' })}</span>
                       <span className="font-mono text-xs break-all">{question.id}</span>
-                      <span className="font-medium">Created:</span>
+                      <span className="font-medium">{t('games.coffeeRoulette.admin.questions.createdLabel', { defaultValue: 'Created:' })}</span>
                       <span className="text-xs">{new Date(question.created_at).toLocaleString()}</span>
-                      <span className="font-medium">Updated:</span>
+                      <span className="font-medium">{t('games.coffeeRoulette.admin.questions.updatedLabel', { defaultValue: 'Updated:' })}</span>
                       <span className="text-xs">{new Date(question.updated_at).toLocaleString()}</span>
                     </div>
                   </div>

@@ -173,8 +173,8 @@ export function TopicQuestionsMapper({ eventId, configId }: TopicQuestionsMapper
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold">Topic-Questions Mapping</h3>
-        <p className="text-sm text-gray-500">Assign questions to topics and manage their order</p>
+        <h3 className="text-xl font-bold">{t('games.coffeeRoulette.admin.mapping.title', { defaultValue: 'Topic-Questions Mapping' })}</h3>
+        <p className="text-sm text-gray-500">{t('games.coffeeRoulette.admin.mapping.subtitle', { defaultValue: 'Assign questions to topics and manage their order' })}</p>
       </div>
 
       {error && (
@@ -186,16 +186,16 @@ export function TopicQuestionsMapper({ eventId, configId }: TopicQuestionsMapper
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Assign Questions to Topics</CardTitle>
-          <CardDescription>Select a topic and add questions to it</CardDescription>
+          <CardTitle className="text-base">{t('games.coffeeRoulette.admin.mapping.assignTitle', { defaultValue: 'Assign Questions to Topics' })}</CardTitle>
+          <CardDescription>{t('games.coffeeRoulette.admin.mapping.assignDesc', { defaultValue: 'Select a topic and add questions to it' })}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Select Topic</label>
+              <label className="text-sm font-medium">{t('games.coffeeRoulette.admin.mapping.selectTopic', { defaultValue: 'Select Topic' })}</label>
               <Select value={selectedTopic} onValueChange={setSelectedTopic}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a topic..." />
+                  <SelectValue placeholder={t('games.coffeeRoulette.admin.mapping.chooseTopic', { defaultValue: 'Choose a topic...' })} />
                 </SelectTrigger>
                 <SelectContent>
                   {topics.map((topic) => (
@@ -208,10 +208,10 @@ export function TopicQuestionsMapper({ eventId, configId }: TopicQuestionsMapper
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Select Question</label>
+              <label className="text-sm font-medium">{t('games.coffeeRoulette.admin.mapping.selectQuestion', { defaultValue: 'Select Question' })}</label>
               <Select value={selectedQuestion} onValueChange={setSelectedQuestion}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a question..." />
+                  <SelectValue placeholder={t('games.coffeeRoulette.admin.mapping.chooseQuestion', { defaultValue: 'Choose a question...' })} />
                 </SelectTrigger>
                 <SelectContent>
                   {availableQuestions.length > 0 ? (
@@ -284,7 +284,7 @@ export function TopicQuestionsMapper({ eventId, configId }: TopicQuestionsMapper
               {expandedTopic === topic.id && (
                 <div className="border-t p-4 space-y-2 bg-gray-50">
                   {assignedQuestions.length === 0 ? (
-                    <p className="text-sm text-gray-500 italic">No questions assigned yet</p>
+                    <p className="text-sm text-gray-500 italic">{t('games.coffeeRoulette.admin.mapping.noQuestionsAssigned', { defaultValue: 'No questions assigned yet' })}</p>
                   ) : (
                     <div className="space-y-2">
                       {assignedQuestions.map((question, index) => (
