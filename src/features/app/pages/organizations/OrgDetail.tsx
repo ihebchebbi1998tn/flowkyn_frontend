@@ -14,9 +14,10 @@ import { PageShell, PageHeader, DashStat, ChartCard } from '@/features/app/compo
 import { TableSkeleton, StatCardSkeleton } from '@/components/loading/Skeletons';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useMyOrganization, useOrgPeople, useInviteOrgMember, useRemoveOrgMember, useUploadOrgLogo } from '@/hooks/queries';
+import { useCreateDepartment, useDeleteDepartment, useMyOrganization, useOrgDepartments, useOrgPeople, useInviteOrgMember, useRemoveOrgMember, useUploadOrgLogo } from '@/hooks/queries';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import type { OrgMember } from '@/types';
+import type { Department } from '@/types';
 import { useApiError } from '@/hooks/useApiError';
 
 const roleStyle: Record<string, { bg: string; text: string; border: string }> = {
@@ -31,6 +32,7 @@ export default function OrgDetail() {
   const [showInvite, setShowInvite] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('member');
+  const [departmentName, setDepartmentName] = useState('');
   const [removeTarget, setRemoveTarget] = useState<OrgMember | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showError } = useApiError();
@@ -38,9 +40,12 @@ export default function OrgDetail() {
   const { data: org, isLoading: orgLoading } = useMyOrganization();
   const orgId = org?.id || '';
   const { data: people, isLoading: membersLoading } = useOrgPeople(orgId);
+  const { data: departments, isLoading: departmentsLoading } = useOrgDepartments(orgId);
   const inviteMember = useInviteOrgMember();
   const removeMember = useRemoveOrgMember();
   const uploadLogo = useUploadOrgLogo();
+  const createDepartment = useCreateDepartment();
+  const deleteDepartment = useDeleteDepartment();
 
   const isLoading = orgLoading || membersLoading;
   const members = people?.members || [];
@@ -189,6 +194,40 @@ export default function OrgDetail() {
 
   const pageTransition = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } };
 
+  const departmentColumns: Column<Department>[] = [
+    {
+      key: 'name',
+      header: t('departments.name', { defaultValue: 'Department' }),
+      sortable: true,
+      render: (row) => <span className="text-body-sm font-medium text-foreground">{(row as Department).name}</span>,
+    },
+    {
+      key: 'actions',
+      header: '',
+      hideOnMobile: true,
+      render: (row) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 text-muted-foreground hover:text-destructive"
+          disabled={deleteDepartment.isPending}
+          onClick={() => {
+            if (!orgId) return;
+            deleteDepartment.mutate(
+              { orgId, departmentId: (row as Department).id },
+              {
+                onSuccess: () => setDepartmentName(''),
+                onError: (err) => showError(err, t('apiErrors.INTERNAL_ERROR')),
+              }
+            );
+          }}
+        >
+          {t('common.delete', { defaultValue: 'Delete' })}
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <PageShell>
       <motion.div className="space-y-5" {...pageTransition}>
@@ -228,6 +267,47 @@ export default function OrgDetail() {
         <ChartCard title={t('organizations.members')}
           action={<Button variant="outline" size="sm" className="h-8 text-[12px] gap-1.5 sm:hidden" onClick={() => setShowInvite(true)}><UserPlus className="h-3.5 w-3.5" /> {t('gameShell.invite')}</Button>}>
           <DataTable columns={columns} data={membersList} searchable searchPlaceholder={t('common.search')} />
+        </ChartCard>
+
+        <ChartCard title={t('departments.title', { defaultValue: 'Departments' })}>
+          <div className="space-y-4">
+            <div className="flex gap-2 items-center">
+              <Input
+                value={departmentName}
+                onChange={(e) => setDepartmentName(e.target.value)}
+                placeholder={t('departments.placeholder', { defaultValue: 'e.g., Engineering' })}
+                className="h-10"
+                disabled={createDepartment.isPending || departmentsLoading}
+              />
+              <Button
+                onClick={() => {
+                  if (!orgId) return;
+                  const name = departmentName.trim();
+                  if (!name) return;
+                  createDepartment.mutate(
+                    { orgId, name },
+                    {
+                      onSuccess: () => setDepartmentName(''),
+                    }
+                  );
+                }}
+                disabled={createDepartment.isPending || departmentsLoading || !departmentName.trim()}
+                className="h-10"
+              >
+                {t('common.create', { defaultValue: 'Create' })}
+              </Button>
+            </div>
+
+            {departmentsLoading ? (
+              <TableSkeleton rows={5} cols={2} />
+            ) : (
+              <DataTable
+                columns={departmentColumns}
+                data={departments || []}
+                searchable={false}
+              />
+            )}
+          </div>
         </ChartCard>
       </motion.div>
 

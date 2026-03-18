@@ -45,40 +45,50 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
     return new Set(data.teamInvites.map(i => i.email.toLowerCase()));
   }, [data.teamInvites]);
 
-  const parseBulkEmails = (text: string) => {
-    // Accept newlines, commas, semicolons, tabs, and spaces.
-    const raw = text
-      .split(/[\s,;]+/g)
-      .map(s => s.trim())
+  /**
+   * Parse bulk invite lines.
+   * Supported row formats:
+   * - `email`
+   * - `email,department`
+   * - `email;department`
+   * - `email[TAB]department`
+   */
+  const parseBulkInvites = (text: string) => {
+    const lines = text
+      .split(/\r?\n/g)
+      .map((l) => l.trim())
       .filter(Boolean);
 
     const uniqueLower = new Set<string>();
-    const candidates: string[] = [];
-    for (const e of raw) {
-      const lower = e.toLowerCase();
-      if (uniqueLower.has(lower)) continue;
-      uniqueLower.add(lower);
-      candidates.push(e);
-    }
-
-    const valid: string[] = [];
+    const valid: TeamInvite[] = [];
     const invalid: string[] = [];
     const duplicates: string[] = [];
 
-    for (const email of candidates) {
+    for (const line of lines) {
+      // Split by typical CSV-ish separators; take first two columns.
+      const parts = line.split(/[,\t;]+/g).map((p) => p.trim()).filter(Boolean);
+      const email = parts[0] || '';
+      const department = (parts[1] || '').trim() || 'General';
+
+      if (!email) continue;
+
       const lower = email.toLowerCase();
-      if (existingEmailsLower.has(lower)) {
+      if (existingEmailsLower.has(lower) || uniqueLower.has(lower)) {
         duplicates.push(email);
         continue;
       }
+
+      uniqueLower.add(lower);
+
       if (!validateEmail(email)) {
         invalid.push(email);
         continue;
       }
-      valid.push(email);
+
+      valid.push({ email, department } as TeamInvite);
     }
 
-    return { valid, invalid, duplicates, total: raw.length, unique: candidates.length };
+    return { valid, invalid, duplicates, total: lines.length, unique: uniqueLower.size };
   };
 
   const handleAddEmail = () => {
@@ -102,7 +112,7 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
 
     // Add the email
     onChange({
-      teamInvites: [...data.teamInvites, { email }]
+      teamInvites: [...data.teamInvites, { email, department: 'General' }]
     });
 
     setEmailInput('');
@@ -117,7 +127,7 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
       return;
     }
 
-    const { valid, invalid, duplicates } = parseBulkEmails(text);
+    const { valid, invalid, duplicates } = parseBulkInvites(text);
 
     if (valid.length === 0) {
       if (invalid.length > 0) {
@@ -133,7 +143,7 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
     onChange({
       teamInvites: [
         ...data.teamInvites,
-        ...valid.map(email => ({ email } as TeamInvite)),
+        ...valid,
       ],
     });
 
@@ -191,7 +201,10 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
       onChange({
         teamInvites: [
           ...data.teamInvites,
-          ...newInvites.map(email => ({ email: email.email } as TeamInvite)),
+          ...newInvites.map((row) => ({
+            email: row.email,
+            department: row.department || 'General',
+          }) as TeamInvite),
         ],
       });
 
@@ -410,6 +423,9 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
                   invite.error ? 'text-destructive' : 'text-primary'
                 )} />
                 <span className="text-sm text-foreground truncate">{invite.email}</span>
+                {!invite.error && invite.department && (
+                  <span className="text-xs text-muted-foreground truncate">{invite.department}</span>
+                )}
                 {!invite.error && (
                   <Check className="h-4 w-4 text-success shrink-0" />
                 )}

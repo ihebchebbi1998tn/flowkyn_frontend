@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertBanner } from '@/components/notifications/AlertBanner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft } from 'lucide-react';
-import { useCreateEvent, useUpdateEvent, useEvent } from '@/hooks/queries';
+import { useCreateEvent, useUpdateEvent, useEvent, useOrgDepartments } from '@/hooks/queries';
 import { organizationsApi } from '@/features/app/api/organizations';
 import { JoinAfterCreateModal } from '@/features/app/components/events/JoinAfterCreateModal';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
@@ -45,6 +45,7 @@ export default function EventForm() {
 
   const [teamMembers, setTeamMembers] = useState<{ email: string; name?: string; status: string }[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<string[]>([]);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [createdEventId, setCreatedEventId] = useState<string | null>(null);
 
@@ -162,6 +163,17 @@ export default function EventForm() {
     fetchMembers();
   }, [form.organization_id, isEditing, selectedMembers.length]);
 
+  // Fetch departments for department-based invites
+  const { data: departments, isLoading: departmentsLoading } = useOrgDepartments(form.organization_id);
+
+  // When creating a new event, default-select all departments
+  useEffect(() => {
+    if (isEditing) return;
+    if (departmentsLoading) return;
+    if (!departments || departments.length === 0) return;
+    setSelectedDepartmentIds((prev) => (prev.length > 0 ? prev : departments.map((d: any) => d.id)));
+  }, [departments, departmentsLoading, isEditing]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setOrgIdError('');
@@ -200,8 +212,18 @@ export default function EventForm() {
         onSuccess: () => navigate(`/events/${editId}`),
       });
     } else {
+      const createPayload: any = {
+        ...payload,
+      };
+
+      if (selectedDepartmentIds.length > 0) {
+        createPayload.invite_department_ids = selectedDepartmentIds;
+      } else {
+        createPayload.invites = selectedMembers;
+      }
+
       createEvent.mutate(
-        { ...payload, invites: selectedMembers },
+        createPayload,
         { 
           onSuccess: (data: any) => {
             setCreatedEventId(data.id);
@@ -428,26 +450,50 @@ export default function EventForm() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[13px]">{t('events.selectTeamMembers')}</Label>
+            <Label className="text-[13px]">{t('events.selectDepartments', { defaultValue: 'Select departments' })}</Label>
+
             <div className="flex flex-wrap gap-2">
-              {teamMembers.map(member => (
-                <label key={member.email} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
+              {(departments || []).map((dept: any) => (
+                <label key={dept.id} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={selectedMembers.includes(member.email)}
-                    onChange={e => {
-                      setSelectedMembers(sel =>
-                        e.target.checked
-                          ? [...sel, member.email]
-                          : sel.filter(email => email !== member.email)
+                    checked={selectedDepartmentIds.includes(dept.id)}
+                    onChange={(e) => {
+                      setSelectedDepartmentIds((sel) =>
+                        e.target.checked ? [...sel, dept.id] : sel.filter((id) => id !== dept.id)
                       );
                     }}
                   />
-                  <span className="text-sm">{member.name || member.email} ({member.status === 'invited' ? t('events.invited') : t('events.active')})</span>
+                  <span className="text-sm">{dept.name}</span>
                 </label>
               ))}
+              {departmentsLoading && <span className="text-xs text-muted-foreground">{t('common.loading', { defaultValue: 'Loading...' })}</span>}
             </div>
           </div>
+
+          {selectedDepartmentIds.length === 0 && (
+            <div className="space-y-1.5">
+              <Label className="text-[13px]">{t('events.selectTeamMembers')}</Label>
+              <div className="flex flex-wrap gap-2">
+                {teamMembers.map(member => (
+                  <label key={member.email} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedMembers.includes(member.email)}
+                      onChange={e => {
+                        setSelectedMembers(sel =>
+                          e.target.checked
+                            ? [...sel, member.email]
+                            : sel.filter(email => email !== member.email)
+                        );
+                      }}
+                    />
+                    <span className="text-sm">{member.name || member.email} ({member.status === 'invited' ? t('events.invited') : t('events.active')})</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
             <Button variant="outline" type="button" className="h-10 text-[13px]" onClick={() => navigate('/events')}>{t('common.cancel')}</Button>
             <Button type="submit" className="h-10 text-[13px]" disabled={isPending}>

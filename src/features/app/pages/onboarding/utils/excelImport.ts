@@ -6,7 +6,7 @@
 import * as XLSX from 'xlsx';
 
 export interface ExcelImportResult {
-  valid: Array<{ email: string; name?: string }>;
+  valid: Array<{ email: string; name?: string; department?: string }>;
   invalid: Array<{ value: string; reason: string; row: number }>;
   duplicates: Array<{ email: string; rows: number[] }>;
 }
@@ -44,12 +44,15 @@ export async function parseExcelFile(file: File): Promise<ExcelImportResult> {
         const nameColIndex = headers.findIndex(h =>
           h === 'name' || h === 'first name' || h === 'full name'
         );
+        const departmentColIndex = headers.findIndex(h =>
+          h === 'department' || h === 'dept' || h === 'department name' || h === 'departement'
+        );
 
         if (emailColIndex === -1) {
           throw new Error('No "Email" column found. Please ensure your Excel file has an "Email" column.');
         }
 
-        const valid: Array<{ email: string; name?: string }> = [];
+        const valid: Array<{ email: string; name?: string; department?: string }> = [];
         const invalid: Array<{ value: string; reason: string; row: number }> = [];
         const duplicatesMap = new Map<string, number[]>();
         const seenEmails = new Set<string>();
@@ -59,6 +62,7 @@ export async function parseExcelFile(file: File): Promise<ExcelImportResult> {
           const row = rows[i] || [];
           const emailValue = String(row[emailColIndex] || '').trim();
           const nameValue = nameColIndex >= 0 ? String(row[nameColIndex] || '').trim() : undefined;
+          const departmentValue = departmentColIndex >= 0 ? String(row[departmentColIndex] || '').trim() : undefined;
 
           // Skip empty rows
           if (!emailValue) continue;
@@ -89,6 +93,7 @@ export async function parseExcelFile(file: File): Promise<ExcelImportResult> {
           valid.push({
             email: emailValue,
             name: nameValue || undefined,
+            department: departmentValue || undefined,
           });
         }
 
@@ -122,27 +127,27 @@ export async function parseExcelFile(file: File): Promise<ExcelImportResult> {
 export function generateExcelTemplate(language: string = 'en'): Blob {
   const templates: Record<string, { headers: string[]; sampleData: any[] }> = {
     en: {
-      headers: ['Email', 'Name'],
+      headers: ['Email', 'Name', 'Department'],
       sampleData: [
-        { Email: 'john.doe@company.com', Name: 'John Doe' },
-        { Email: 'jane.smith@company.com', Name: 'Jane Smith' },
-        { Email: 'mike.johnson@company.com', Name: 'Mike Johnson' },
+        { Email: 'john.doe@company.com', Name: 'John Doe', Department: 'Engineering' },
+        { Email: 'jane.smith@company.com', Name: 'Jane Smith', Department: 'Marketing' },
+        { Email: 'mike.johnson@company.com', Name: 'Mike Johnson', Department: 'Operations' },
       ],
     },
     fr: {
-      headers: ['Email', 'Nom'],
+      headers: ['Email', 'Nom', 'Department'],
       sampleData: [
-        { Email: 'john.doe@company.com', Nom: 'John Doe' },
-        { Email: 'jane.smith@company.com', Nom: 'Jane Smith' },
-        { Email: 'mike.johnson@company.com', Nom: 'Mike Johnson' },
+        { Email: 'john.doe@company.com', Nom: 'John Doe', Department: 'Ingénierie' },
+        { Email: 'jane.smith@company.com', Nom: 'Jane Smith', Department: 'Marketing' },
+        { Email: 'mike.johnson@company.com', Nom: 'Mike Johnson', Department: 'Opérations' },
       ],
     },
     de: {
-      headers: ['Email', 'Name'],
+      headers: ['Email', 'Name', 'Department'],
       sampleData: [
-        { Email: 'john.doe@company.com', Name: 'John Doe' },
-        { Email: 'jane.smith@company.com', Name: 'Jane Smith' },
-        { Email: 'mike.johnson@company.com', Name: 'Mike Johnson' },
+        { Email: 'john.doe@company.com', Name: 'John Doe', Department: 'Engineering' },
+        { Email: 'jane.smith@company.com', Name: 'Jane Smith', Department: 'Marketing' },
+        { Email: 'mike.johnson@company.com', Name: 'Mike Johnson', Department: 'Operations' },
       ],
     },
   };
@@ -158,6 +163,7 @@ export function generateExcelTemplate(language: string = 'en'): Blob {
   worksheet['!cols'] = [
     { wch: 30 }, // Email column
     { wch: 25 }, // Name column
+    { wch: 25 }, // Department column
   ];
 
   // Style header row (bold)

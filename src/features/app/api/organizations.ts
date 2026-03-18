@@ -13,7 +13,7 @@
  */
 
 import { api } from './client';
-import type { Organization, OrgMember } from '@/types';
+import type { Organization, OrgMember, Department } from '@/types';
 
 export const organizationsApi = {
   /**
@@ -69,6 +69,18 @@ export const organizationsApi = {
   /** Remove a member from the organization */
   removeMember: (orgId: string, memberId: string) =>
     api.del(`/organizations/${orgId}/members/${memberId}`),
+
+  /** List organization departments */
+  listDepartments: (orgId: string) =>
+    api.get<Department[]>(`/organizations/${orgId}/departments`),
+
+  /** Create an organization department */
+  createDepartment: (orgId: string, name: string) =>
+    api.post<Department>(`/organizations/${orgId}/departments`, { name }),
+
+  /** Delete an organization department */
+  deleteDepartment: (orgId: string, departmentId: string) =>
+    api.del(`/organizations/${orgId}/departments/${departmentId}`),
 
   /**
    * Upload an organization logo.

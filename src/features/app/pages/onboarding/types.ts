@@ -5,6 +5,7 @@
 /** Team member email invitation data */
 export interface TeamInvite {
   email: string;
+  department?: string;
   error?: string;
 }
 

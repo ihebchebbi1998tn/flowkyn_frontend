@@ -535,6 +535,9 @@
     "invitedCountFull": "{{count}} invited",
     "maxParticipantsShort": "Max {{count}}",
     "selectTeamMembers": "Select Team Members",
+    "selectDepartments": "Select departments",
+    "departmentsSelected": "{{count}} department(s) selected",
+    "inviteByDepartmentsHelp": "Invitations will be sent to everyone in the selected departments (members + pending invitations).",
     "invited": "Invited",
     "active": "Active",
     "emailPlaceholder": "colleague@company.com",
@@ -2076,6 +2079,11 @@
     "logoUploadFailed": "Logo upload failed. Please try again.",
     "uploadImageError": "Please upload an image file",
     "logoSizeError": "Logo must be under 5MB"
+  },
+  "departments": {
+    "title": "Departments",
+    "name": "Department",
+    "placeholder": "e.g., Engineering"
   },
   "notificationsPage": {
     "allCaughtUp": "You're all caught up! New notifications will appear here.",

@@ -8,6 +8,7 @@ export const orgKeys = {
   detail: (id: string) => ['organizations', id] as const,
   members: (id: string) => ['organizations', id, 'members'] as const,
   people: (id: string) => ['organizations', id, 'people'] as const,
+  departments: (id: string) => ['organizations', id, 'departments'] as const,
 };
 
 export function useMyOrganization() {
@@ -37,6 +38,14 @@ export function useOrgPeople(orgId: string) {
   return useQuery({
     queryKey: orgKeys.people(orgId),
     queryFn: () => organizationsApi.listPeople(orgId),
+    enabled: !!orgId,
+  });
+}
+
+export function useOrgDepartments(orgId: string) {
+  return useQuery({
+    queryKey: orgKeys.departments(orgId),
+    queryFn: () => organizationsApi.listDepartments(orgId),
     enabled: !!orgId,
   });
 }
@@ -112,6 +121,36 @@ export function useRemoveOrgMember() {
       queryClient.invalidateQueries({ queryKey: orgKeys.members(orgId) });
       queryClient.invalidateQueries({ queryKey: orgKeys.people(orgId) });
       toast.success('Member removed');
+    },
+    onError: (err) => showError(err),
+  });
+}
+
+export function useCreateDepartment() {
+  const queryClient = useQueryClient();
+  const { showError } = useApiError();
+
+  return useMutation({
+    mutationFn: ({ orgId, name }: { orgId: string; name: string }) =>
+      organizationsApi.createDepartment(orgId, name),
+    onSuccess: (_, { orgId }) => {
+      queryClient.invalidateQueries({ queryKey: orgKeys.departments(orgId) });
+      toast.success('Department created');
+    },
+    onError: (err) => showError(err),
+  });
+}
+
+export function useDeleteDepartment() {
+  const queryClient = useQueryClient();
+  const { showError } = useApiError();
+
+  return useMutation({
+    mutationFn: ({ orgId, departmentId }: { orgId: string; departmentId: string }) =>
+      organizationsApi.deleteDepartment(orgId, departmentId),
+    onSuccess: (_, { orgId }) => {
+      queryClient.invalidateQueries({ queryKey: orgKeys.departments(orgId) });
+      toast.success('Department deleted');
     },
     onError: (err) => showError(err),
   });

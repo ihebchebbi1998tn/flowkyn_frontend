@@ -610,6 +610,9 @@
     "invitedCountFull": "{{count}} invitados",
     "maxParticipantsShort": "Máx. {{count}}",
     "selectTeamMembers": "Seleccionar miembros del equipo",
+    "selectDepartments": "Seleccionar departamentos",
+    "departmentsSelected": "{{count}} departamento(s) seleccionados",
+    "inviteByDepartmentsHelp": "Las invitaciones se enviarán a todos los miembros de los departamentos seleccionados (miembros + invitaciones pendientes).",
     "invited": "Invitado",
     "active": "Activo",
     "emailPlaceholder": "compañero@empresa.com",
@@ -1777,6 +1780,11 @@
     "logoUploadFailed": "Error al subir el logo. Inténtalo de nuevo.",
     "uploadImageError": "Sube un archivo de imagen",
     "logoSizeError": "El logo debe pesar menos de 5MB"
+  },
+  "departments": {
+    "title": "Departamentos",
+    "name": "Departamento",
+    "placeholder": "p. ej., Ingeniería"
   },
   "notificationsPage": {
     "allCaughtUp": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",

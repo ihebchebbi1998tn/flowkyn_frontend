@@ -48,6 +48,14 @@ export interface OrgMember {
   created_at: string;
 }
 
+export interface Department {
+  id: string;
+  organization_id: string;
+  name: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface FlowkynEvent {
   id: string;
   organization_id: string;

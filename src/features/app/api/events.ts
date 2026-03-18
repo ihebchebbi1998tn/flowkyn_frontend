@@ -35,7 +35,9 @@ export const eventsApi = {
   create: (data: {
     organization_id: string; title: string; description?: string;
     event_mode?: string; visibility?: string; max_participants?: number;
-    start_time?: string; end_time?: string; invites?: string[];
+    start_time?: string; end_time?: string;
+    invites?: string[];
+    invite_department_ids?: string[];
     allow_guests?: boolean;
     allow_chat?: boolean;
     auto_start_games?: boolean;

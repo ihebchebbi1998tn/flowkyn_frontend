@@ -533,6 +533,9 @@
     "invitedCountFull": "{{count}} eingeladen",
     "maxParticipantsShort": "Max {{count}}",
     "selectTeamMembers": "Teammitglieder auswählen",
+    "selectDepartments": "Abteilungen auswählen",
+    "departmentsSelected": "{{count}} Abteilung(en) ausgewählt",
+    "inviteByDepartmentsHelp": "Einladungen werden an alle Personen in den ausgewählten Abteilungen gesendet (Mitglieder + ausstehende Einladungen).",
     "invited": "Eingeladen",
     "active": "Aktiv",
     "emailPlaceholder": "kollege@firma.de",
@@ -1599,6 +1602,11 @@
     "sending": "Wird gesendet...",
     "uploadImageError": "Bitte laden Sie eine Bilddatei hoch",
     "logoSizeError": "Das Logo muss unter 5 MB sein"
+  },
+  "departments": {
+    "title": "Abteilungen",
+    "name": "Abteilung",
+    "placeholder": "z.B. Engineering"
   },
   "notificationsPage": {
     "allCaughtUp": "Alles aktuell! Neue Benachrichtigungen erscheinen hier.",

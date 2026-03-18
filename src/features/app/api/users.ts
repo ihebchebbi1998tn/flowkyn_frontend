@@ -42,7 +42,7 @@ export const usersApi = {
     }),
 
   /** Send team invitations during onboarding */
-  sendOnboardingInvites: (orgId: string, invites: Array<{ email: string }>, lang?: string) =>
+  sendOnboardingInvites: (orgId: string, invites: Array<{ email: string; department?: string }>, lang?: string) =>
     api.post<{ success: string[]; failed: Array<{ email: string; reason: string }> }>('/users/onboarding-invites', {
       orgId,
       invites,
