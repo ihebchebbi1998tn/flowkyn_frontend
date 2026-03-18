@@ -70,72 +70,66 @@ export function MeetingRoom({
       >
         {/* Room background with depth */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Parallax window background */}
+          {/* Professional gradient background */}
           <div
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(135deg, ${theme.colors.window} 0%, ${theme.colors.background} 100%)`,
-              opacity: 0.1,
+              background: `linear-gradient(to right, ${theme.colors.background}, ${theme.colors.surface})`,
+              opacity: 0.4,
             }}
           />
 
           {/* Floor perspective */}
           <div
-            className="absolute bottom-0 inset-x-0 h-1/3"
+            className="absolute bottom-0 inset-x-0 h-1/4"
             style={{
               background: `linear-gradient(to bottom, transparent, ${theme.colors.floor})`,
-              opacity: 0.15,
+              opacity: 0.25,
             }}
           />
         </div>
 
-        {/* Top bar with theme-based styling */}
+        {/* Top bar with professional styling */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="relative z-20 px-4 py-4 border-b"
+          className="relative z-20 px-4 py-3 border-b backdrop-blur-sm"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-            borderColor: 'var(--color-primary)',
-            backdropFilter: 'blur(10px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            borderColor: 'var(--color-primary-light)',
           }}
         >
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MessageCircle
-                className="w-5 h-5"
-                style={{ color: 'var(--color-primary)' }}
-              />
-              <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
-                {t('gamePlay.coffeeRoulette.chatting.inProgress', {
-                  defaultValue: 'In Progress',
+          <div className="max-w-6xl mx-auto flex justify-between items-center">
+            <div className="flex gap-4">
+              <div
+                className="px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wide"
+                style={{
+                  backgroundColor: 'var(--color-primary)',
+                  color: 'white',
+                }}
+              >
+                {t('gamePlay.coffeeRoulette.chatting.meeting', {
+                  defaultValue: 'Meeting',
                 })}
-              </p>
+              </div>
+              <motion.div
+                className="px-3 py-1.5 rounded-md text-xs font-mono font-bold"
+                style={{
+                  backgroundColor: 'var(--color-surface)',
+                  color: 'var(--color-primary)',
+                }}
+                animate={isWarning ? { scale: [1, 1.05, 1] } : {}}
+                transition={isWarning ? { duration: 1, repeat: Infinity } : {}}
+              >
+                <Clock className="w-3 h-3 inline mr-1" />
+                {displayTime}
+              </motion.div>
             </div>
-
-            {/* Timer - Large and prominent */}
-            <motion.div
-              className={cn(
-                'px-4 py-2 rounded-lg font-mono font-bold text-lg',
-                isWarning ? 'animate-pulse' : ''
-              )}
-              style={{
-                backgroundColor: isWarning
-                  ? 'var(--color-accent)'
-                  : 'var(--color-surface)',
-                color: isWarning
-                  ? 'var(--color-text)'
-                  : 'var(--color-primary)',
-              }}
-              animate={isWarning ? { scale: [1, 1.05, 1] } : {}}
-              transition={isWarning ? { duration: 1, repeat: Infinity } : {}}
+            <p
+              className="text-xs font-semibold"
+              style={{ color: 'var(--color-text-light)' }}
             >
-              <Clock className="w-4 h-4 inline mr-2" />
-              {displayTime}
-            </motion.div>
-
-            <p className="text-sm" style={{ color: 'var(--color-text-light)' }}>
               {t('gamePlay.coffeeRoulette.chatting.prompts', {
                 defaultValue: `Prompts: ${promptsUsed}/${maxPrompts}`,
               })}
@@ -144,33 +138,30 @@ export function MeetingRoom({
         </motion.div>
 
         {/* Main chat area */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-4">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-6">
           {/* Meeting room container */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-2xl relative"
+            className="w-full max-w-3xl relative"
           >
-            {/* Window view (background decoration) */}
-            <WindowView theme={theme} />
-
-            {/* Room content */}
-            <div className="relative z-10 px-6 py-8 rounded-xl backdrop-blur-sm" style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            {/* Room content - Professional card style */}
+            <div className="relative z-10 px-8 py-10 rounded-2xl backdrop-blur-md" style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.96)',
               border: `2px solid var(--color-primary-light)`,
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
             }}>
-              {/* Participants seated */}
-              <div className="flex items-end justify-between mb-8">
+              {/* Participants section */}
+              <div className="flex items-end justify-between mb-10 pb-6 border-b border-gray-200">
                 {/* Person 1 */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4 }}
-                  className="flex flex-col items-center gap-2"
+                  className="flex flex-col items-center gap-3"
                 >
-                  <Avatar className="w-20 h-20 ring-4" style={{ borderColor: 'var(--color-primary)' }}>
+                  <Avatar className="w-24 h-24 ring-4 ring-offset-2" style={{ borderColor: 'var(--color-primary)' }}>
                     <AvatarImage
                       src={getSafeImageUrl(person1.avatarUrl)}
                       alt={person1.name}
@@ -179,24 +170,27 @@ export function MeetingRoom({
                       style={{
                         backgroundColor: 'var(--color-primary)',
                         color: 'white',
-                        fontSize: '16px',
+                        fontSize: '20px',
+                        fontWeight: '600',
                       }}
                     >
                       {person1.avatar}
                     </AvatarFallback>
                   </Avatar>
-                  <p className="text-center font-semibold text-xs" style={{ color: 'var(--color-text)' }}>
-                    {person1.name}
-                  </p>
+                  <div className="text-center">
+                    <p className="font-bold text-sm" style={{ color: 'var(--color-text)' }}>
+                      {person1.name}
+                    </p>
+                  </div>
                 </motion.div>
 
-                {/* Cup decoration */}
+                {/* Visual separator */}
                 <motion.div
-                  animate={{ y: [0, -8, 0] }}
+                  animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="text-4xl"
+                  className="text-3xl opacity-60"
                 >
-                  ☕
+                  ·
                 </motion.div>
 
                 {/* Person 2 */}
@@ -204,9 +198,9 @@ export function MeetingRoom({
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.1 }}
-                  className="flex flex-col items-center gap-2"
+                  className="flex flex-col items-center gap-3"
                 >
-                  <Avatar className="w-20 h-20 ring-4" style={{ borderColor: 'var(--color-primary)' }}>
+                  <Avatar className="w-24 h-24 ring-4 ring-offset-2" style={{ borderColor: 'var(--color-primary)' }}>
                     <AvatarImage
                       src={getSafeImageUrl(person2.avatarUrl)}
                       alt={person2.name}
@@ -215,105 +209,132 @@ export function MeetingRoom({
                       style={{
                         backgroundColor: 'var(--color-primary)',
                         color: 'white',
-                        fontSize: '16px',
+                        fontSize: '20px',
+                        fontWeight: '600',
                       }}
                     >
                       {person2.avatar}
                     </AvatarFallback>
                   </Avatar>
-                  <p className="text-center font-semibold text-xs" style={{ color: 'var(--color-text)' }}>
-                    {person2.name}
-                  </p>
+                  <div className="text-center">
+                    <p className="font-bold text-sm" style={{ color: 'var(--color-text)' }}>
+                      {person2.name}
+                    </p>
+                  </div>
                 </motion.div>
               </div>
 
               {/* Divider */}
               <div
-                className="h-1 my-6 rounded-full bg-gradient-to-r"
+                className="h-0.5 my-8 rounded-full"
                 style={{
                   background: `linear-gradient(90deg, transparent, var(--color-primary-light), transparent)`,
                 }}
               />
 
-              {/* Prompt Display */}
+              {/* Prompt Display - Professional style */}
               <PromptDisplay topic={topic} />
             </div>
           </motion.div>
         </div>
 
-        {/* Action buttons */}
+        {/* Action buttons - Fixed layout */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
           className="relative z-20 px-4 py-6 border-t backdrop-blur-sm"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderColor: 'var(--color-primary-light)',
           }}
         >
-          <div className="max-w-2xl mx-auto flex flex-col gap-3">
+          <div className="max-w-3xl mx-auto">
             {decisionRequired && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="px-4 py-2 rounded-lg border-l-4"
+                className="px-4 py-3 rounded-lg border-l-4 mb-4"
                 style={{
                   backgroundColor: 'var(--color-accent)',
-                  borderColor: 'var(--color-text)',
+                  borderColor: 'var(--color-primary)',
                   color: 'var(--color-text)',
                 }}
               >
                 <p className="text-sm font-semibold flex items-center gap-2">
                   <Lightbulb className="w-4 h-4" />
                   {t('gamePlay.coffeeRoulette.chatting.keepTalking', {
-                    defaultValue: 'Want to keep talking?',
+                    defaultValue: 'What would you like to do?',
                   })}
                 </p>
               </motion.div>
             )}
 
-            <div className="flex gap-2 flex-wrap justify-center">
+            <div className="flex gap-3 flex-wrap justify-center">
               {onNextPrompt && (
-                <Button
-                  onClick={onNextPrompt}
-                  disabled={isLoading}
-                  variant="outline"
-                  className="gap-2 rounded-lg hover:bg-blue-50 border-2 border-blue-400 text-blue-600 hover:text-blue-700 font-semibold transition-all"
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  {t('gamePlay.coffeeRoulette.chatting.nextPrompt', {
-                    defaultValue: 'Next Prompt',
-                  })}
-                </Button>
+                  <Button
+                    onClick={onNextPrompt}
+                    disabled={isLoading}
+                    className="gap-2 rounded-lg font-semibold transition-all px-6 py-2.5 text-white"
+                    style={{
+                      backgroundColor: 'var(--color-primary)',
+                      border: 'none',
+                    }}
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    {t('gamePlay.coffeeRoulette.chatting.nextPrompt', {
+                      defaultValue: 'New Prompt',
+                    })}
+                  </Button>
+                </motion.div>
               )}
 
               {onContinue && (
-                <Button
-                  onClick={onContinue}
-                  disabled={isLoading}
-                  className="gap-2 rounded-lg font-semibold transition-all"
-                  style={{ backgroundColor: 'var(--color-primary)' }}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <RotateCcw className="w-4 h-4" />
-                  {t('gamePlay.coffeeRoulette.chatting.continue', {
-                    defaultValue: 'Continue Chatting',
-                  })}
-                </Button>
+                  <Button
+                    onClick={onContinue}
+                    disabled={isLoading}
+                    className="gap-2 rounded-lg font-semibold transition-all px-6 py-2.5"
+                    variant="outline"
+                    style={{
+                      borderColor: 'var(--color-primary)',
+                      color: 'var(--color-primary)',
+                      backgroundColor: 'transparent',
+                      borderWidth: '2px',
+                    }}
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    {t('gamePlay.coffeeRoulette.chatting.continue', {
+                      defaultValue: 'Keep Chatting',
+                    })}
+                  </Button>
+                </motion.div>
               )}
 
               {onEnd && (
-                <Button
-                  onClick={onEnd}
-                  disabled={isLoading}
-                  variant="destructive"
-                  className="gap-2 rounded-lg hover:bg-red-600 font-semibold transition-all"
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <LogOut className="w-4 h-4" />
-                  {t('gamePlay.coffeeRoulette.chatting.end', {
-                    defaultValue: 'End Session',
-                  })}
-                </Button>
+                  <Button
+                    onClick={onEnd}
+                    disabled={isLoading}
+                    variant="destructive"
+                    className="gap-2 rounded-lg font-semibold transition-all px-6 py-2.5"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {t('gamePlay.coffeeRoulette.chatting.end', {
+                      defaultValue: 'End Session',
+                    })}
+                  </Button>
+                </motion.div>
               )}
             </div>
           </div>
@@ -349,12 +370,16 @@ function PromptDisplay({ topic }: { topic: string }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="text-center px-4 py-5 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200"
+      className="text-center px-6 py-6 rounded-lg"
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        border: `1px solid var(--color-primary-light)`,
+      }}
     >
-      <div className="mb-2 flex items-center justify-center gap-2">
-        <Lightbulb className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
-        <p className="text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--color-text-light)' }}>
-          Conversation Starter
+      <div className="mb-3 flex items-center justify-center gap-2">
+        <Lightbulb className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
+        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-light)' }}>
+          Today's Topic
         </p>
       </div>
 
@@ -362,7 +387,7 @@ function PromptDisplay({ topic }: { topic: string }) {
         key={topic}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-base md:text-lg font-semibold leading-relaxed"
+        className="text-lg font-semibold leading-relaxed"
         style={{ color: 'var(--color-primary)' }}
       >
         "{topic}"

@@ -63,46 +63,46 @@ const baseAnimationConfig = {
 
 /**
  * COZY THEME
- * Warm, inviting, comfortable
- * Color palette: Warm tans, soft browns, terracotta accents
- * Feeling: Like a café you'd actually want to sit in
+ * Professional, inviting, comfortable
+ * Color palette: App purple (#6C5CE7), soft lavenders, professional neutrals
+ * Feeling: Polished professional environment
  */
 export const cozyTheme: RoomThemeConfig = {
   name: 'cozy',
-  displayName: 'Cozy Café',
-  description: 'Warm, inviting, and comfortable like a local café',
+  displayName: 'Professional Purple',
+  description: 'Professional, polished, and inviting',
   colors: {
-    primary: '#D4A574', // Warm tan
-    primaryLight: '#E8C4A0',
-    primaryDark: '#B88860',
-    secondary: '#8B6F47', // Deeper brown
-    accent: '#D4644E', // Warm terracotta
-    background: '#F5EFE7', // Cream
-    backgroundLight: '#FAF8F3',
-    surface: '#EDE6DB', // Soft tan
-    surfaceLight: '#F8F5F0',
-    text: '#4A3F35', // Dark brown
-    textLight: '#6B5F55',
-    wall: '#E8D5C4',
-    wallLight: '#F0E8E0',
-    floor: '#C9A877',
-    window: '#A8D8EA', // Soft sky blue
-    door: '#8B6F47',
-    doorHandle: '#D4A574',
+    primary: '#6C5CE7', // App primary purple
+    primaryLight: '#8B7AED',
+    primaryDark: '#5844D0',
+    secondary: '#5844D0', // Darker purple
+    accent: '#A29BFE', // App accent light purple
+    background: '#F8F9FC', // App background light
+    backgroundLight: '#FCFDFF',
+    surface: '#F3F2FB', // Soft purple tint
+    surfaceLight: '#F9F8FD',
+    text: '#2D2A3D', // Professional dark
+    textLight: '#6B6B7D',
+    wall: '#E8E5F5', // Light purple wall
+    wallLight: '#F3F0FB',
+    floor: '#D8D4E8', // Soft purple floor
+    window: '#E0E5FF', // Light blue tint
+    door: '#6C5CE7',
+    doorHandle: '#A29BFE',
   },
   gradient: {
-    room: 'linear-gradient(135deg, #F5EFE7 0%, #EDE6DB 50%, #E8D5C4 100%)',
-    elevator: 'linear-gradient(180deg, #D4A574 0%, #B88860 100%)',
-    floor: 'linear-gradient(90deg, #C9A877 0%, #D4A574 50%, #B88860 100%)',
+    room: 'linear-gradient(135deg, #F8F9FC 0%, #F3F2FB 50%, #E8E5F5 100%)',
+    elevator: 'linear-gradient(180deg, #6C5CE7 0%, #5844D0 100%)',
+    floor: 'linear-gradient(90deg, #D8D4E8 0%, #E0DDF0 50%, #D0CDE5 100%)',
   },
   animation: baseAnimationConfig,
   window: {
-    background: '#A8D8EA',
-    description: 'Gentle morning light through café windows',
-    layers: ['#E0F7FF', '#B8DFFF', '#90C7FF'],
+    background: '#E0E5FF',
+    description: 'Professional skyline view',
+    layers: ['#EEF0FF', '#E0E5FF', '#D0D8FF'],
   },
   typography: {
-    headingFont: 'Georgia, serif',
+    headingFont: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
     bodyFont: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
   },
   parallax: {
@@ -113,43 +113,43 @@ export const cozyTheme: RoomThemeConfig = {
 
 /**
  * MODERN THEME
- * Clean, professional, contemporary
- * Color palette: Cool blues, crisp whites, silver accents
- * Feeling: Sleek corporate but not sterile
+ * Clean, professional, sleek
+ * Color palette: App purple tones with cool neutrals
+ * Feeling: Contemporary professional workspace
  */
 export const modernTheme: RoomThemeConfig = {
   name: 'modern',
-  displayName: 'Modern Office',
-  description: 'Clean, professional, and contemporary',
+  displayName: 'Modern Professional',
+  description: 'Clean, sleek, and contemporary',
   colors: {
-    primary: '#1E88E5', // Modern blue
-    primaryLight: '#42A5F5',
-    primaryDark: '#1565C0',
-    secondary: '#0D47A1', // Deep blue
-    accent: '#00BCD4', // Cyan accent
-    background: '#F5F7FA', // Off-white
-    backgroundLight: '#FCFCFC',
-    surface: '#EAEEF5', // Light blue-gray
-    surfaceLight: '#F8FAFB',
-    text: '#1A237E', // Dark navy
-    textLight: '#37474F',
-    wall: '#E3F2FD', // Very light blue
-    wallLight: '#F8F9FA',
-    floor: '#CFD8DC', // Cool gray
-    window: '#87CEEB', // Sky blue
-    door: '#1E88E5',
-    doorHandle: '#00BCD4',
+    primary: '#6C5CE7', // App primary
+    primaryLight: '#7D6EF5',
+    primaryDark: '#5A4DB0',
+    secondary: '#4F46B8', // Deeper blue-purple
+    accent: '#7C3AED', // Vibrant purple
+    background: '#F8F9FC', // App light background
+    backgroundLight: '#FCFDFF',
+    surface: '#F0EDFF', // Soft lavender
+    surfaceLight: '#F9F8FD',
+    text: '#1F1B2E', // Dark neutral
+    textLight: '#5B5A6F',
+    wall: '#E8E5F5', // Professional light
+    wallLight: '#F3F0FB',
+    floor: '#D5CFEB', // Neutral-purple floor
+    window: '#D4D8FF', // Cool light
+    door: '#6C5CE7',
+    doorHandle: '#7C3AED',
   },
   gradient: {
-    room: 'linear-gradient(135deg, #F5F7FA 0%, #EAEEF5 50%, #E3F2FD 100%)',
-    elevator: 'linear-gradient(180deg, #1E88E5 0%, #1565C0 100%)',
-    floor: 'linear-gradient(90deg, #CFD8DC 0%, #E0E7FF 50%, #C5D9F1 100%)',
+    room: 'linear-gradient(135deg, #F8F9FC 0%, #F0EDFF 50%, #E8E5F5 100%)',
+    elevator: 'linear-gradient(180deg, #6C5CE7 0%, #5A4DB0 100%)',
+    floor: 'linear-gradient(90deg, #D5CFEB 0%, #DFD8F0 50%, #CEC6E0 100%)',
   },
   animation: baseAnimationConfig,
   window: {
-    background: '#87CEEB',
-    description: 'Crystal clear city skyline view',
-    layers: ['#B0E0E6', '#ADD8E6', '#87CEEB'],
+    background: '#D4D8FF',
+    description: 'Clear professional cityscape',
+    layers: ['#E8EBFF', '#D4D8FF', '#C0C8FF'],
   },
   typography: {
     headingFont: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
@@ -163,43 +163,43 @@ export const modernTheme: RoomThemeConfig = {
 
 /**
  * CREATIVE THEME
- * Vibrant, artistic, imaginative
- * Color palette: Purple, magenta, lime accents
- * Feeling: Artistic studio with creative energy
+ * Professional yet creative, artistic
+ * Color palette: Purple with indigo accents
+ * Feeling: Creative workspace with polish
  */
 export const creativeTheme: RoomThemeConfig = {
   name: 'creative',
-  displayName: 'Creative Studio',
-  description: 'Vibrant, artistic, and imaginative',
+  displayName: 'Creative Professional',
+  description: 'Professional with creative edge',
   colors: {
-    primary: '#9C27B0', // Purple
-    primaryLight: '#BA68C8',
-    primaryDark: '#7B1FA2',
-    secondary: '#6A1B9A', // Deep purple
-    accent: '#00E676', // Lime green
-    background: '#F3E5F5', // Light purple
-    backgroundLight: '#FAF6FF',
-    surface: '#EDE7F6', // Lavender
-    surfaceLight: '#F8F5FA',
-    text: '#4A148C', // Very dark purple
-    textLight: '#5E35B1',
-    wall: '#F3E5F5', // Light lavender
-    wallLight: '#FCE4EC',
-    floor: '#D1C4E9', // Soft purple
-    window: '#BA68C8', // Medium purple
-    door: '#9C27B0',
-    doorHandle: '#00E676',
+    primary: '#7C3AED', // Vibrant purple
+    primaryLight: '#8B5CF6',
+    primaryDark: '#6D28D9',
+    secondary: '#6D28D9', // Deep purple
+    accent: '#A78BFA', // Light purple
+    background: '#F8F9FC', // App background
+    backgroundLight: '#FCFDFF',
+    surface: '#F3E8FF', // Very light purple
+    surfaceLight: '#FDFCFE',
+    text: '#2E1065', // Deep dark purple
+    textLight: '#5B4B8A',
+    wall: '#E9D5FF', // Light purple wall
+    wallLight: '#F5F0FF',
+    floor: '#DDD6FE', // Soft purple
+    window: '#EDE9FE', // Pale purple
+    door: '#7C3AED',
+    doorHandle: '#A78BFA',
   },
   gradient: {
-    room: 'linear-gradient(135deg, #F3E5F5 0%, #EDE7F6 50%, #F8F5FA 100%)',
-    elevator: 'linear-gradient(180deg, #9C27B0 0%, #7B1FA2 100%)',
-    floor: 'linear-gradient(90deg, #D1C4E9 0%, #E1BEE7 50%, #CE93D8 100%)',
+    room: 'linear-gradient(135deg, #F8F9FC 0%, #F3E8FF 50%, #E9D5FF 100%)',
+    elevator: 'linear-gradient(180deg, #7C3AED 0%, #6D28D9 100%)',
+    floor: 'linear-gradient(90deg, #DDD6FE 0%, #E9D5FF 50%, #D8BFFF 100%)',
   },
   animation: baseAnimationConfig,
   window: {
-    background: '#BA68C8',
-    description: 'Sunset over an artistic city',
-    layers: ['#E1BEE7', '#CE93D8', '#BA68C8'],
+    background: '#EDE9FE',
+    description: 'Creative horizons view',
+    layers: ['#F5F0FF', '#EDE9FE', '#E9D5FF'],
   },
   typography: {
     headingFont: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
@@ -213,43 +213,43 @@ export const creativeTheme: RoomThemeConfig = {
 
 /**
  * ZEN THEME
- * Calm, peaceful, minimalist
- * Color palette: Soft greens, whites, natural tones
- * Feeling: Meditation room meets office
+ * Calm, peaceful, professional minimalist
+ * Color palette: Cool blues with purple tones, naturals
+ * Feeling: Peaceful professional space
  */
 export const zenTheme: RoomThemeConfig = {
   name: 'zen',
-  displayName: 'Zen Garden',
-  description: 'Calm, peaceful, and minimalist',
+  displayName: 'Zen Professional',
+  description: 'Calm, peaceful, and professional',
   colors: {
-    primary: '#2E7D32', // Natural green
-    primaryLight: '#43A047',
-    primaryDark: '#1B5E20',
-    secondary: '#1B5E20', // Deep forest
-    accent: '#81C784', // Light green
-    background: '#F1F8E9', // Very light green
-    backgroundLight: '#FFFDE7',
-    surface: '#DCEDC8', // Soft green
-    surfaceLight: '#F5F5F5',
-    text: '#1B5E20', // Forest green
-    textLight: '#388E3C',
-    wall: '#E8F5E9', // Very light green
-    wallLight: '#F5F5F5',
-    floor: '#A1887F', // Natural stone
-    window: '#B5D6F9', // Pale sky
-    door: '#558B2F',
-    doorHandle: '#81C784',
+    primary: '#4F46E5', // Indigo
+    primaryLight: '#6366F1',
+    primaryDark: '#4338CA',
+    secondary: '#4338CA', // Deep indigo
+    accent: '#A5B4FC', // Light indigo
+    background: '#F8F9FC', // App light
+    backgroundLight: '#FCFDFF',
+    surface: '#EEF2FF', // Very light indigo
+    surfaceLight: '#F8F9FE',
+    text: '#312E81', // Dark indigo
+    textLight: '#4F46E5',
+    wall: '#E0E7FF', // Light indigo wall
+    wallLight: '#F0F4FF',
+    floor: '#C7D2FE', // Soft indigo
+    window: '#D1D5DB', // Cool gray-blue
+    door: '#4F46E5',
+    doorHandle: '#A5B4FC',
   },
   gradient: {
-    room: 'linear-gradient(135deg, #F1F8E9 0%, #DCEDC8 50%, #E8F5E9 100%)',
-    elevator: 'linear-gradient(180deg, #2E7D32 0%, #1B5E20 100%)',
-    floor: 'linear-gradient(90deg, #A1887F 0%, #BCAAA4 50%, #8D6E63 100%)',
+    room: 'linear-gradient(135deg, #F8F9FC 0%, #EEF2FF 50%, #E0E7FF 100%)',
+    elevator: 'linear-gradient(180deg, #4F46E5 0%, #4338CA 100%)',
+    floor: 'linear-gradient(90deg, #C7D2FE 0%, #D1D5DB 50%, #BFDBFE 100%)',
   },
   animation: baseAnimationConfig,
   window: {
-    background: '#B5D6F9',
-    description: 'Serene mountain landscape',
-    layers: ['#D0E8F2', '#B5D6F9', '#87CEEB'],
+    background: '#D1D5DB',
+    description: 'Serene minimalist horizon',
+    layers: ['#E5E7EB', '#D1D5DB', '#C7D2FE'],
   },
   typography: {
     headingFont: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
@@ -263,43 +263,43 @@ export const zenTheme: RoomThemeConfig = {
 
 /**
  * VIBRANT THEME
- * Energetic, bold, exciting
- * Color palette: Red, orange, yellow - warm and energetic
- * Feeling: Exciting lounge with high energy
+ * Professional and energetic
+ * Color palette: Bold purples, professional accents
+ * Feeling: Energetic professional environment
  */
 export const vibrantTheme: RoomThemeConfig = {
   name: 'vibrant',
-  displayName: 'Vibrant Lounge',
-  description: 'Energetic, bold, and exciting',
+  displayName: 'Vibrant Professional',
+  description: 'Professional and energetic',
   colors: {
-    primary: '#E53935', // Vibrant red
-    primaryLight: '#EF5350',
-    primaryDark: '#C62828',
-    secondary: '#F57C00', // Vibrant orange
-    accent: '#FDD835', // Golden yellow
-    background: '#FFEBEE', // Light red
-    backgroundLight: '#FFF8E1',
-    surface: '#FFCCBC', // Light orange
-    surfaceLight: '#FFF5E1',
-    text: '#B71C1C', // Dark red
-    textLight: '#D32F2F',
-    wall: '#FFE0B2', // Light orange
-    wallLight: '#FFF5E1',
-    floor: '#D7CCC8', // Warm gray
-    window: '#FFCA28', // Golden
-    door: '#E53935',
-    doorHandle: '#FDD835',
+    primary: '#6C5CE7', // App primary
+    primaryLight: '#9379E0',
+    primaryDark: '#544BBD',
+    secondary: '#E879F9', // Vibrant magenta
+    accent: '#A29BFE', // App accent
+    background: '#F8F9FC', // App light
+    backgroundLight: '#FCFDFF',
+    surface: '#F0E6FF', // Light purple
+    surfaceLight: '#FDFCFE',
+    text: '#3D1F47', // Deep purple
+    textLight: '#6C5CE7',
+    wall: '#E8D5F2', // Vibrant light purple
+    wallLight: '#F4E6FF',
+    floor: '#D8C3E8', // Vibrant soft
+    window: '#F0DEFF', // Pale vibrant
+    door: '#6C5CE7',
+    doorHandle: '#E879F9',
   },
   gradient: {
-    room: 'linear-gradient(135deg, #FFEBEE 0%, #FFCCBC 50%, #FFE0B2 100%)',
-    elevator: 'linear-gradient(180deg, #E53935 0%, #C62828 100%)',
-    floor: 'linear-gradient(90deg, #D7CCC8 0%, #D4A574 50%, #C9A877 100%)',
+    room: 'linear-gradient(135deg, #F8F9FC 0%, #F0E6FF 50%, #E8D5F2 100%)',
+    elevator: 'linear-gradient(180deg, #6C5CE7 0%, #544BBD 100%)',
+    floor: 'linear-gradient(90deg, #D8C3E8 0%, #E8D5F2 50%, #D0BDD8 100%)',
   },
   animation: baseAnimationConfig,
   window: {
-    background: '#FFCA28',
-    description: 'Warm sunset over tropical island',
-    layers: ['#FFE082', '#FFCA28', '#FFA726'],
+    background: '#F0DEFF',
+    description: 'Vibrant professional energy',
+    layers: ['#F8E6FF', '#F0DEFF', '#E8D5F2'],
   },
   typography: {
     headingFont: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
