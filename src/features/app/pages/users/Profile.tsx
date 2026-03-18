@@ -40,17 +40,17 @@ export default function Profile() {
   };
 
   return (
-    <motion.div className="max-w-2xl mx-auto space-y-4 sm:space-y-6"
+    <motion.div className="w-full space-y-3 sm:space-y-4"
       initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}>
       <h1 className="text-lg sm:text-xl font-bold tracking-tight">{t('profile.title')}</h1>
 
       <form onSubmit={handleSave} className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="h-1 w-full bg-gradient-to-r from-primary/80 to-primary" />
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-          <div className="flex items-center gap-3 sm:gap-4">
+        <div className="p-3.5 sm:p-5 space-y-3 sm:space-y-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <label className="cursor-pointer">
-              <Avatar className="h-12 w-12 sm:h-14 sm:w-14">
+              <Avatar className="h-12 w-12 sm:h-13 sm:w-13">
                 {user.avatar_url && <AvatarImage src={user.avatar_url} />}
                 <AvatarFallback className="bg-primary/15 text-primary text-base sm:text-lg font-bold">{initials}</AvatarFallback>
               </Avatar>
@@ -62,13 +62,13 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <Label className="text-[13px]">{t('profile.displayName')}</Label>
             <Input value={name} onChange={e => setName(e.target.value)} className="h-10 text-[13px]" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="space-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+            <div className="space-y-1">
               <Label className="text-[13px]">{t('profile.language')}</Label>
               <Select value={language} onValueChange={setLanguage}>
                 <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
@@ -79,7 +79,7 @@ export default function Profile() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Label className="text-[13px]">{t('profile.timezone')}</Label>
               <Select defaultValue="Europe/Berlin">
                 <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
