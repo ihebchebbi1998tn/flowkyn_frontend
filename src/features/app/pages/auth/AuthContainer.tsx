@@ -22,11 +22,6 @@ export default function AuthContainer() {
   const location = useLocation();
   const [currentView, setCurrentView] = useState<AuthView>('login');
 
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />;
-  }
-
   // Determine initial view from URL params or reset token
   useEffect(() => {
     const token = searchParams.get('token');
@@ -45,6 +40,11 @@ export default function AuthContainer() {
       setCurrentView('login');
     }
   }, [searchParams, location.pathname]);
+
+  // Redirect if already authenticated (check AFTER all hooks are declared)
+  if (isAuthenticated) {
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
+  }
 
   const switchView = (view: AuthView) => {
     setCurrentView(view);
