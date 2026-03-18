@@ -346,7 +346,7 @@ export default function LaunchActivity() {
                 {t('activities.launch.fields.descriptionOptional', { defaultValue: 'Description (optional)' })}
               </Label>
               <Textarea value={description} onChange={e => setDescription(e.target.value)}
-                rows={2} className="text-[13px]" placeholder={t('activities.launch.placeholders.description', { defaultValue: "What's this event about?" })} />
+                rows={1} className="text-[13px]" placeholder={t('activities.launch.placeholders.description', { defaultValue: "What's this event about?" })} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
