@@ -231,6 +231,12 @@ export function StrategicEscapeBoard({
         config: res.config,
       });
       onSessionCreated(res.sessionId);
+      
+      // Immediately emit to ensure game state syncs
+      onEmitSocketAction('strategic:session_created', { sessionId: res.sessionId }).catch(err => {
+        console.warn('[StrategicEscapeBoard] strategic:session_created emit failed:', err);
+      });
+      
       toast.success(
         t('games.toasts.launching', {
           defaultValue: 'We’re launching {{gameName}} for this event. Hang tight — your screen will update in a moment.',
@@ -685,6 +691,21 @@ export function StrategicEscapeBoard({
                   <Settings2 className="h-4 w-4 mr-1.5" />
                   {t('strategic.modal.openLabel', { defaultValue: 'Configure scenario' })}
                 </Button>
+
+                <Button
+                  className="w-full h-9 text-[12px]"
+                  disabled={!sessionId || rolesAssigned || isAssigningRoles || !isConfigured}
+                  onClick={handleAssignRoles}
+                >
+                  {isAssigningRoles
+                    ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles and sending emails…' })
+                    : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles & send emails' })}
+                </Button>
+                {assignError && (
+                  <p className="text-[10px] text-destructive">
+                    {assignError}
+                  </p>
+                )}
               </div>
             </div>
           )}
