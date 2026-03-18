@@ -89,10 +89,21 @@ export default function EventForm() {
   // Auto-populate org ID from auth context or localStorage (fallback)
   useEffect(() => {
     const orgId = user?.organization_id || localStorage.getItem('flowkyn_org_id');
+    
     if (orgId && !form.organization_id) {
+      console.log('[EventForm] Setting org ID from user or localStorage:', orgId);
       setForm(f => ({ ...f, organization_id: orgId }));
     }
-  }, [user?.organization_id]);
+    
+    // If org ID is still missing but user exists, provide diagnostic info
+    if (!orgId && user?.id && !form.organization_id) {
+      console.warn('[EventForm] Organization ID not found. User:', {
+        userId: user.id,
+        userOrgId: user.organization_id,
+        localStorageOrgId: localStorage.getItem('flowkyn_org_id'),
+      });
+    }
+  }, [user?.organization_id, user?.id]); // Added user?.id as dependency
 
   // Populate form when editing
   useEffect(() => {
@@ -156,6 +167,23 @@ export default function EventForm() {
     setOrgIdError('');
 
     if (!form.organization_id) {
+      // Diagnostic: Try to recover org ID before failing
+      const recoveredOrgId = user?.organization_id || localStorage.getItem('flowkyn_org_id');
+      
+      if (recoveredOrgId) {
+        console.log('[EventForm] Recovered org ID from recovery attempt:', recoveredOrgId);
+        setForm(f => ({ ...f, organization_id: recoveredOrgId }));
+        // Let next render cycle use the recovered ID
+        return;
+      }
+      
+      // Still missing after recovery attempt - this is a real error
+      console.error('[EventForm] Organization ID missing even after recovery attempt', {
+        userOrgId: user?.organization_id,
+        localStorageOrgId: localStorage.getItem('flowkyn_org_id'),
+        userId: user?.id,
+      });
+      
       setOrgIdError(t('auth.errors.orgRequired'));
       return;
     }

@@ -128,12 +128,15 @@ export default function Onboarding() {
 
       if (!org?.id) throw new Error(t('onboarding.errors.createOrgFailed', { defaultValue: 'Failed to create organization' }));
 
-      // Cache org ID for EventForm auto-population
+      // Cache org ID for EventForm auto-population (do this IMMEDIATELY)
       localStorage.setItem('flowkyn_org_id', org.id);
+      console.log('[Onboarding] Cached org ID in localStorage:', org.id);
 
       // Also update user state so components using useAuth() see it immediately
       if (user) {
-        setUser({ ...user, organization_id: org.id });
+        const updatedUser = { ...user, organization_id: org.id };
+        setUser(updatedUser);
+        console.log('[Onboarding] Updated user state with org ID:', org.id);
       }
 
       // 2. Upload logo (if provided)
@@ -191,7 +194,19 @@ export default function Onboarding() {
 
       // Show celebration and navigate on SUCCESS only
       setShowCelebration(true);
-      navigationTimeoutRef.current = setTimeout(() => navigate(ROUTES.DASHBOARD), 2800);
+      
+      // Add a small delay to ensure auth context is updated before navigation
+      navigationTimeoutRef.current = setTimeout(() => {
+        // Before navigating, verify org ID is set
+        const orgId = user?.organization_id || localStorage.getItem('flowkyn_org_id');
+        console.log('[Onboarding] Navigating to dashboard with org ID:', orgId);
+        
+        if (!orgId) {
+          console.error('[Onboarding] WARNING: Organization ID not found before navigation');
+        }
+        
+        navigate(ROUTES.DASHBOARD);
+      }, 2800);
     } catch (error: any) {
       console.error('Onboarding completion failed:', error);
       const errorMessage =
