@@ -186,59 +186,108 @@ export function TwoTruthsSubmitSection({
         </div>
       </div>
       <div className="p-5 space-y-3">
-        {statements.map((s, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <div className="flex items-center gap-2 mb-1.5">
-              <span
-                className={cn(
-                  'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold',
-                  s.trim() ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground',
-                )}
-              >
-                {String.fromCharCode(65 + i)}
-              </span>
-              <label className="text-[11px] font-medium text-muted-foreground">
-                {t('gamePlay.twoTruths.statementLabel', { defaultValue: 'Statement {{num}}', num: i + 1 })}
-              </label>
-              <button
-                type="button"
-                onClick={() => onLieIndexChange(i)}
-                className={cn(
-                  'ml-auto inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-1 rounded-full border transition-colors',
+        {statements.map((s, i) => {
+          const isComplete = s.trim().length > 0;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={cn(
+                'p-3.5 rounded-xl border-2 transition-all',
+                isComplete
+                  ? 'border-primary/40 bg-primary/5'
+                  : 'border-border/50 bg-muted/30'
+              )}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                {/* Status indicator */}
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className={cn(
+                    'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold transition-colors',
+                    isComplete
+                      ? 'bg-primary/20 text-primary'
+                      : 'bg-muted/50 text-muted-foreground'
+                  )}
+                >
+                  {isComplete ? <CheckCircle className="h-3.5 w-3.5" /> : String.fromCharCode(65 + i)}
+                </motion.div>
+
+                <label className="text-[11px] font-medium text-muted-foreground">
+                  {t('gamePlay.twoTruths.statementLabel', { defaultValue: 'Statement {{num}}', num: i + 1 })}
+                </label>
+                
+                {/* Mark as lie button */}
+                <button
+                  type="button"
+                  onClick={() => onLieIndexChange(i)}
+                  className={cn(
+                    'ml-auto inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-1 rounded-full border transition-all duration-200',
+                    lieIndex === i
+                      ? 'bg-destructive/15 text-destructive border-destructive/30 shadow-sm shadow-destructive/20'
+                      : 'bg-muted/40 text-muted-foreground border-border hover:bg-muted/60 hover:text-foreground hover:border-primary/30'
+                  )}
+                >
+                  <AlertCircle className="h-3 w-3" />
+                  {t('gamePlay.twoTruths.markAsLie', { defaultValue: 'Lie' })}
+                </button>
+              </div>
+              
+              <Textarea
+                value={s}
+                onChange={(e) => onChange(i, e.target.value)}
+                placeholder={
                   lieIndex === i
-                    ? 'bg-destructive/10 text-destructive border-destructive/30'
-                    : 'bg-muted/40 text-muted-foreground border-border hover:bg-muted/60 hover:text-foreground',
-                )}
-              >
-                <AlertCircle className="h-3 w-3" />
-                {t('gamePlay.twoTruths.markAsLie', { defaultValue: 'Mark as lie' })}
-              </button>
-            </div>
-            <Textarea
-              value={s}
-              onChange={(e) => onChange(i, e.target.value)}
-              placeholder={
-                lieIndex === i
-                  ? t('gamePlay.twoTruths.liePlaceholder', { defaultValue: 'This could be your lie…' })
-                  : t('gamePlay.twoTruths.truthPlaceholder', { defaultValue: 'Write a truth (or a lie)…' })
-              }
-              rows={1}
-              className="text-[13px] resize-none min-h-[44px] rounded-xl border-border/60 focus:border-primary/40 transition-all"
+                    ? t('gamePlay.twoTruths.liePlaceholder', { defaultValue: 'This could be your lie…' })
+                    : t('gamePlay.twoTruths.truthPlaceholder', { defaultValue: 'Write a fact (true or false)…' })
+                }
+                rows={1}
+                className="text-[13px] resize-none min-h-[44px] rounded-lg border-border/60 focus:border-primary/50 focus:ring-primary/30 transition-all"
+              />
+            </motion.div>
+          );
+        })}
+        
+        {/* Completion indicator */}
+        <motion.div
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="pt-1 px-1"
+        >
+          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+            <span>Statements completed</span>
+            <span className="font-semibold">
+              {statements.filter(s => s.trim()).length} / {statements.length}
+            </span>
+          </div>
+          {/* Visual completion bar */}
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden mt-1.5">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${(statements.filter(s => s.trim()).length / statements.length) * 100}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full"
             />
-          </motion.div>
-        ))}
-        <div className="flex justify-end pt-3">
+          </div>
+        </motion.div>
+
+        {/* Submit button */}
+        <div className="flex justify-end pt-4">
           <Button
             onClick={onSubmit}
             disabled={isSubmitDisabled}
-            className="h-10 px-6 text-[13px] gap-2 rounded-xl"
+            className={cn(
+              'h-10 px-6 text-[13px] gap-2 rounded-xl transition-all duration-200',
+              isSubmitDisabled
+                ? 'opacity-60 cursor-not-allowed'
+                : 'hover:scale-105 active:scale-95'
+            )}
           >
-            <Send className="h-4 w-4" /> {t('gamePlay.twoTruths.submit', { defaultValue: 'Submit' })}
+            <Send className="h-4 w-4" />
+            {t('gamePlay.twoTruths.submit', { defaultValue: 'Submit' })}
           </Button>
         </div>
       </div>
@@ -331,46 +380,52 @@ export function TwoTruthsVoteSection({
             whileHover={!voted ? { scale: 1.015, y: -2 } : {}}
             whileTap={!voted ? { scale: 0.98 } : {}}
             className={cn(
-              'w-full text-left p-4 rounded-xl border-2 transition-colors duration-200 group/vote relative overflow-hidden',
+              'w-full text-left p-4 rounded-xl border-2 transition-all duration-200 group/vote relative overflow-hidden',
               selectedVote === stmt.id
-                ? 'border-primary bg-primary/5 shadow-sm shadow-primary/10'
-                : 'border-border hover:border-primary/30 hover:bg-accent/30 hover:shadow-sm',
-              voted && 'cursor-default opacity-80',
+                ? 'border-primary bg-primary/8 shadow-md shadow-primary/20'
+                : voted
+                ? 'border-border opacity-70 cursor-default'
+                : 'border-border hover:border-primary/50 hover:bg-accent/40 hover:shadow-sm',
             )}
           >
-            <AnimatePresence>
-              {selectedVote === stmt.id && (
-                <motion.div
-                  layoutId="selected-vote-bg"
-                  className="absolute inset-0 bg-primary/5 pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                />
-              )}
-            </AnimatePresence>
+            {/* Subtle animated background pulse for selected vote */}
+            {selectedVote === stmt.id && !voted && (
+              <motion.div
+                className="absolute inset-0 bg-primary/5 pointer-events-none"
+                animate={{ opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            )}
 
             <div className="flex items-start gap-3 relative z-10">
-              <span
+              {/* Letter badge with animation */}
+              <motion.span
+                initial={{ scale: 0.9 }}
+                animate={{ scale: selectedVote === stmt.id ? 1.1 : 1 }}
                 className={cn(
                   'flex h-7 w-7 items-center justify-center rounded-lg text-[12px] font-bold shrink-0 transition-all',
                   selectedVote === stmt.id
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'bg-muted text-muted-foreground group/vote:hover:bg-primary/10 group/vote:hover:text-primary',
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'bg-muted text-muted-foreground group/vote:hover:bg-primary/15 group/vote:hover:text-primary',
                 )}
               >
                 {String.fromCharCode(65 + i)}
-              </span>
-              <p className="text-[13px] text-foreground leading-relaxed pt-0.5">
+              </motion.span>
+              
+              {/* Statement text */}
+              <p className="text-[13px] text-foreground leading-relaxed pt-0.5 flex-1">
                 {stmt.text}
               </p>
+              
+              {/* Checkmark animation for selected vote */}
               {selectedVote === stmt.id && (
                 <motion.div
                   initial={{ scale: 0, rotate: -45 }}
                   animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   className="ml-auto"
                 >
-                  <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 </motion.div>
               )}
             </div>

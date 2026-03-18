@@ -10,6 +10,7 @@ import {
   TwoTruthsRevealSection,
 } from './TwoTruthsSections';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
+import { useGamePhaseTimer } from '@/hooks/useGamePhaseTimer';
 
 type TwoTruthsSnapshot = {
   kind: typeof GAME_TYPES.TWO_TRUTHS;
@@ -74,9 +75,16 @@ export function TwoTruthsBoard({
   const [lieIndex, setLieIndex] = useState(2);
   const voted = !!votes[currentUserId];
   const [showCountdown, setShowCountdown] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [celebrationMessage, setCelebrationMessage] = useState('');
+  const [activeSubmissionPhase, setActiveSubmissionPhase] = useState<'input' | 'review' | null>(null);
+  const [animatingReveal, setAnimatingReveal] = useState(false);
 
+  // Use the new timer hook instead of manual interval
+  const timeLeft = useGamePhaseTimer(
+    phase === 'submit' ? submitEndsAt : phase === 'vote' ? voteEndsAt : null,
+    phase === 'submit' ? 30 : 20
+  );
+
+  // State machine for submission UX
   const startGame = () => { setShowCountdown(true); };
   const handleCountdownDone = useCallback(async () => {
     setShowCountdown(false);
@@ -85,19 +93,11 @@ export function TwoTruthsBoard({
 
   const submit = useCallback(async () => {
     if (!sessionId || !activeRoundId) return;
-    // Show celebration when presenter submits
-    setCelebrationMessage('✓ Statements submitted!');
-    setShowCelebration(true);
-    setTimeout(() => setShowCelebration(false), 2000);
     await onEmitAction('two_truths:submit', { statements: localStatements, lieIndex });
   }, [sessionId, activeRoundId, localStatements, lieIndex, onEmitAction]);
 
   const submitVote = useCallback(async () => {
     if (!selectedVote) return;
-    // Show celebration when user votes
-    setCelebrationMessage('✓ Vote submitted!');
-    setShowCelebration(true);
-    setTimeout(() => setShowCelebration(false), 2000);
     await onEmitAction('two_truths:vote', { statementId: selectedVote });
   }, [selectedVote, onEmitAction]);
 
@@ -115,26 +115,9 @@ export function TwoTruthsBoard({
 
   const maxTime = phase === 'submit' ? 30 : 20;
 
-  const [timeLeft, setTimeLeft] = useState(maxTime);
-
-  useEffect(() => {
-    let targetTime: string | null = null;
-    if (phase === 'submit' && submitEndsAt) targetTime = submitEndsAt;
-    else if (phase === 'vote' && voteEndsAt) targetTime = voteEndsAt;
-
-    if (!targetTime) {
-      setTimeLeft(maxTime);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      const remaining = Math.max(0, Math.ceil((new Date(targetTime).getTime() - Date.now()) / 1000));
-      setTimeLeft(remaining);
-      if (remaining === 0) clearInterval(interval);
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, [phase, submitEndsAt, voteEndsAt, maxTime]);
+  // Remove old useEffect with manual interval - handled by useGamePhaseTimer hook
+  // const [timeLeft, setTimeLeft] = useState(maxTime);
+  // useEffect(() => { ... }) - REMOVED, replaced by useGamePhaseTimer
 
   const presenterName =
     participants.find((p: any) => p.id === presenterId)?.name || currentUserName;
@@ -166,15 +149,6 @@ export function TwoTruthsBoard({
   return (
     <div className="space-y-4">
       <CountdownOverlay active={showCountdown} onComplete={handleCountdownDone} />
-      
-      {/* Celebration Toast */}
-      {showCelebration && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4 duration-500">
-          <div className="px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium text-sm shadow-lg">
-            {celebrationMessage}
-          </div>
-        </div>
-      )}
       
       <TwoTruthsHeader
         round={round}
