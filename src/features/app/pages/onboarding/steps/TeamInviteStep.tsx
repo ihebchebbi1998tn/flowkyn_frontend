@@ -2,16 +2,18 @@
  * @fileoverview Team Invite Step — Optional fifth step for onboarding.
  * 
  * Allows users to invite teammates by email during onboarding.
+ * Supports manual entry, bulk paste, and Excel file import.
  * Invitations are sent immediately and teammates can join when launching events.
  */
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, Plus, X, AlertCircle, Check } from 'lucide-react';
+import { Mail, Plus, X, AlertCircle, Check, Download, FileText, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import { parseExcelFile, downloadExcelTemplate } from '../utils/excelImport';
 
 import type { OnboardingData, TeamInvite } from '../types';
 
@@ -25,11 +27,14 @@ interface TeamInviteStepProps {
 }
 
 export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStepProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [emailInput, setEmailInput] = useState('');
   const [inputError, setInputError] = useState('');
   const [bulkInput, setBulkInput] = useState('');
   const [bulkMessage, setBulkMessage] = useState<string | null>(null);
+  const [excelMessage, setExcelMessage] = useState<string | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -155,6 +160,65 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
     }
   };
 
+  const handleExcelImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    setExcelMessage(null);
+
+    try {
+      const result = await parseExcelFile(file);
+
+      if (result.valid.length === 0) {
+        const parts: string[] = [];
+        if (result.invalid.length > 0) {
+          parts.push(t('onboarding.teamInvite.excel.invalid', { count: result.invalid.length }));
+        }
+        if (result.duplicates.length > 0) {
+          parts.push(t('onboarding.teamInvite.excel.duplicates', { count: result.duplicates.length }));
+        }
+        setExcelMessage(parts.join(' · ') || t('onboarding.teamInvite.excel.noValid'));
+        return;
+      }
+
+      // Merge with existing invites, avoiding duplicates
+      const existingLower = new Set(data.teamInvites.map(i => i.email.toLowerCase()));
+      const newInvites = result.valid.filter(
+        v => !existingLower.has(v.email.toLowerCase())
+      );
+
+      onChange({
+        teamInvites: [
+          ...data.teamInvites,
+          ...newInvites.map(email => ({ email: email.email } as TeamInvite)),
+        ],
+      });
+
+      const parts: string[] = [];
+      parts.push(t('onboarding.teamInvite.excel.added', { count: newInvites.length }));
+      if (result.invalid.length) parts.push(t('onboarding.teamInvite.excel.invalid', { count: result.invalid.length }));
+      if (result.duplicates.length) parts.push(t('onboarding.teamInvite.excel.duplicates', { count: result.duplicates.length }));
+
+      setExcelMessage(parts.join(' · '));
+
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error: any) {
+      setExcelMessage(
+        error?.message || t('onboarding.teamInvite.excel.error')
+      );
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleDownloadTemplate = () => {
+    downloadExcelTemplate(i18n.language?.substring(0, 2) || 'en');
+  };
+
   return (
     <div className="space-y-6">
       {/* Info Banner */}
@@ -254,7 +318,73 @@ export function TeamInviteStep({ data, onChange, inviteResults }: TeamInviteStep
         )}
       </div>
 
-      {/* Invited List */}
+      {/* Excel Import */}
+      <div className="space-y-3 p-4 rounded-lg border border-border/50 bg-muted/20">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary" />
+            <label className="text-sm font-medium text-foreground">
+              {t('onboarding.teamInvite.excel.title')}
+            </label>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadTemplate}
+            className="gap-1.5"
+          >
+            <Download className="h-4 w-4" />
+            {t('onboarding.teamInvite.excel.downloadTemplate')}
+          </Button>
+        </div>
+
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            onChange={handleExcelImport}
+            disabled={isImporting}
+            className="hidden"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isImporting}
+            className="gap-1.5 flex-1"
+          >
+            {isImporting ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                {t('onboarding.teamInvite.excel.importing')}
+              </>
+            ) : (
+              <>
+                <Upload className="h-4 w-4" />
+                {t('onboarding.teamInvite.excel.importButton')}
+              </>
+            )}
+          </Button>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          {t('onboarding.teamInvite.excel.hint')}
+        </p>
+
+        {excelMessage && (
+          <div className={cn(
+            'flex items-start gap-2 text-xs p-2 rounded',
+            excelMessage.includes(t('onboarding.teamInvite.excel.added') || 'added')
+              ? 'text-success/80 bg-success/5'
+              : 'text-muted-foreground bg-muted/30'
+          )}>
+            {excelMessage}
+          </div>
+        )}
+      </div>
       {data.teamInvites.length > 0 && (
         <div className="space-y-3">
           <label className="text-sm font-medium text-foreground">

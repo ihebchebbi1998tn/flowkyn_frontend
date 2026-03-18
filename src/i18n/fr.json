@@ -1246,7 +1246,19 @@
       },
       "invitedList": "Collègues invités",
       "benefit1": "Les collègues peuvent être présélectionnés lors de la création d'événements",
-      "benefit2": "Collaboration et configuration d'événements plus rapides"
+      "benefit2": "Collaboration et configuration d'événements plus rapides",
+      "excel": {
+        "title": "Importer depuis Excel",
+        "downloadTemplate": "Télécharger le modèle",
+        "importButton": "Choisir un fichier",
+        "importing": "Import en cours...",
+        "hint": "Téléchargez un fichier .xlsx, .xls ou .csv avec les colonnes Email et Nom. Téléchargez notre modèle pour commencer.",
+        "added": "{{count}} ajoutés",
+        "invalid": "{{count}} invalide(s)",
+        "duplicates": "{{count}} doublon(s) ignoré(s)",
+        "noValid": "Aucun email valide trouvé dans le fichier.",
+        "error": "Impossible d'importer le fichier. Veuillez vérifier le format et réessayer."
+      }
     },
     "summary": "Résumé",
     "summaryOrg": "Organisation",

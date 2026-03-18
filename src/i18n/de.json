@@ -1225,7 +1225,19 @@
       },
       "invitedList": "Eingeladene Teamkollegen",
       "benefit1": "Teamkollegen können bei der Ereigniserstellung vorausgewählt werden",
-      "benefit2": "Schnellere Zusammenarbeit und Ereignissetup"
+      "benefit2": "Schnellere Zusammenarbeit und Ereignissetup",
+      "excel": {
+        "title": "Aus Excel importieren",
+        "downloadTemplate": "Vorlage herunterladen",
+        "importButton": "Datei auswählen",
+        "importing": "Import läuft...",
+        "hint": "Laden Sie eine .xlsx-, .xls- oder .csv-Datei mit E-Mail- und Namensspalten hoch. Laden Sie unsere Vorlage herunter, um zu beginnen.",
+        "added": "{{count}} hinzugefügt",
+        "invalid": "{{count}} ungültig",
+        "duplicates": "{{count}} Duplikat(e) übersprungen",
+        "noValid": "Keine gültigen E-Mails in der Datei gefunden.",
+        "error": "Datei konnte nicht importiert werden. Bitte überprüfen Sie das Format und versuchen Sie es erneut."
+      }
     },
     "summary": "Zusammenfassung",
     "summaryOrg": "Organisation",

@@ -1886,7 +1886,19 @@
       },
       "invitedList": "Invited Teammates",
       "benefit1": "Team members can be preselected when creating events",
-      "benefit2": "Faster collaboration and event setup"
+      "benefit2": "Faster collaboration and event setup",
+      "excel": {
+        "title": "Import from Excel",
+        "downloadTemplate": "Download Template",
+        "importButton": "Choose File",
+        "importing": "Importing...",
+        "hint": "Upload an .xlsx, .xls, or .csv file with Email and Name columns. Download our template to get started.",
+        "added": "{{count}} added",
+        "invalid": "{{count}} invalid",
+        "duplicates": "{{count}} duplicate(s) skipped",
+        "noValid": "No valid emails found in the file.",
+        "error": "Failed to import file. Please check the format and try again."
+      }
     },
     "summary": "Summary",
     "summaryOrg": "Organization",
