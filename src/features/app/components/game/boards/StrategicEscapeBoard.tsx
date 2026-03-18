@@ -89,6 +89,7 @@ export function StrategicEscapeBoard({
   const [myRoleKey, setMyRoleKey] = useState<string | null>(null);
   const [roleLoading, setRoleLoading] = useState(false);
   const [swapWindowSeconds, setSwapWindowSeconds] = useState<number | null>(null);
+  const [discussionTimeLeft, setDiscussionTimeLeft] = useState<number>(0);
 
   const snapshot: StrategicEscapeSnapshot | null =
     gameData?.kind === 'strategic-escape'
@@ -309,6 +310,19 @@ export function StrategicEscapeBoard({
     [discussionEndsAt]
   );
 
+  useEffect(() => {
+    if (!discussionEndsAtDate) return;
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const end = discussionEndsAtDate.getTime();
+      const timeLeft = Math.max(0, Math.floor((end - now) / 1000));
+      setDiscussionTimeLeft(timeLeft);
+      if (timeLeft <= 0) clearInterval(interval);
+    }, 1000);
+    console.log('[StrategicEscapeBoard] discussion timer started', { discussionEndsAtDate });
+    return () => clearInterval(interval);
+  }, [discussionEndsAtDate]);
+
   const difficultyLabelKey =
     selectedDifficulty === 'easy'
       ? 'strategic.difficulties.easy'
@@ -375,7 +389,10 @@ export function StrategicEscapeBoard({
           {phase === 'discussion' && discussionEndsAtDate && (
             <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2">
               <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-              <PhaseTimer targetTime={discussionEndsAtDate.toISOString()} />
+              <PhaseTimer 
+                timeLeft={discussionTimeLeft}
+                maxTime={30 * 60}
+              />
             </div>
           )}
 
