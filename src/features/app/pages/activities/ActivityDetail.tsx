@@ -59,7 +59,7 @@ export default function ActivityDetail() {
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-4xl">
+    <div className="space-y-3 sm:space-y-4 w-full">
       {/* Back + header */}
       <div className="flex items-center gap-2 sm:gap-3">
         <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(ROUTES.GAMES)}>
@@ -82,8 +82,8 @@ export default function ActivityDetail() {
       {/* Hero card */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className={cn("h-1.5 w-full bg-gradient-to-r", gradient)} />
-        <div className="p-4 sm:p-6">
-          <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
+        <div className="p-3.5 sm:p-5">
+          <div className="flex items-start gap-3 sm:gap-3.5 mb-3.5 sm:mb-4">
             <div className={cn("flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-2xl shrink-0", activity.bgColor)}>
               <Icon className={cn("h-5 w-5 sm:h-7 sm:w-7", activity.color)} />
             </div>
@@ -93,7 +93,7 @@ export default function ActivityDetail() {
                   ? t(`${activity.i18nKey}.description`, { defaultValue: activity.description })
                   : activity.description}
               </p>
-              <div className="flex items-center gap-2 sm:gap-4 mt-2 sm:mt-3 flex-wrap">
+              <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-2.5 flex-wrap">
                 <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-[12px] text-muted-foreground">
                   <Timer className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {activity.duration}
                 </div>
@@ -132,20 +132,20 @@ export default function ActivityDetail() {
           </div>
 
           {/* Info grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 sm:mb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-2.5 mb-3.5 sm:mb-4">
             {infoItems.map(item => (
-              <div key={item.label} className="rounded-lg bg-muted/30 p-2.5 sm:p-3">
+              <div key={item.label} className="rounded-lg bg-muted/30 p-2 sm:p-2.5">
                 <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">{item.label}</p>
                 <p className="text-[11px] sm:text-[12px] font-medium text-foreground">{item.value}</p>
               </div>
             ))}
           </div>
 
-          <Separator className="my-4 sm:my-5" />
+          <Separator className="my-3 sm:my-4" />
 
           {/* Why it works */}
-          <div className="mb-4 sm:mb-6">
-            <div className="flex items-center gap-2 mb-2 sm:mb-3">
+          <div className="mb-3.5 sm:mb-4.5">
+            <div className="flex items-center gap-2 mb-2 sm:mb-2.5">
               <Lightbulb className="h-4 w-4 text-warning" />
               <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">
                 {t('games.detail.whyThisWorks')}
@@ -155,7 +155,7 @@ export default function ActivityDetail() {
           </div>
 
           {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5">
             <Button onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))} className="h-10 px-6 text-[13px] gap-2 shadow-sm">
               <Play className="h-4 w-4" /> {t('games.detail.launchActivity')}
             </Button>
@@ -167,7 +167,7 @@ export default function ActivityDetail() {
       </div>
 
       {/* How to Run It */}
-      <div className="grid gap-3 sm:gap-4 md:grid-cols-3">
+      <div className="grid gap-2.5 sm:gap-3 md:grid-cols-3 lg:grid-cols-3">
         {[
           { key: 'before', label: t('games.detail.sectionBefore'), items: activity.before, icon: ListChecks, color: 'text-info', bg: 'bg-info/10', gradient: 'from-info/60 to-info', ItemIcon: CheckCircle },
           { key: 'during', label: t('games.detail.sectionDuring'), items: activity.during, icon: Play, color: 'text-success', bg: 'bg-success/10', gradient: 'from-success/60 to-success', ItemIcon: null },
@@ -175,7 +175,7 @@ export default function ActivityDetail() {
         ].map((section) => (
           <div key={section.key} className="rounded-xl border border-border bg-card overflow-hidden">
             <div className={cn("h-1 w-full bg-gradient-to-r", section.gradient)} />
-            <div className="p-4 sm:p-5">
+            <div className="p-3.5 sm:p-4">
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <div className={cn("flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg", section.bg)}>
                   <section.icon className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", section.color)} />
@@ -202,8 +202,8 @@ export default function ActivityDetail() {
       {/* Pro Tips */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="h-1 w-full bg-gradient-to-r from-primary/60 to-primary" />
-        <div className="p-4 sm:p-5">
-          <div className="flex items-center gap-2 mb-3 sm:mb-4">
+        <div className="p-3.5 sm:p-4">
+          <div className="flex items-center gap-2 mb-3 sm:mb-3.5">
             <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-primary/10">
               <Lightbulb className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             </div>
@@ -211,7 +211,7 @@ export default function ActivityDetail() {
               {t('games.detail.proTips')}
             </h3>
           </div>
-          <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2">
+          <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2 lg:grid-cols-3">
             {activity.tips.map((tip, i) => (
               <div key={i} className="flex items-start gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-lg bg-muted/30">
                 <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary mt-0.5 shrink-0" />
@@ -223,7 +223,7 @@ export default function ActivityDetail() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 sm:p-5 rounded-xl border border-primary/20 bg-primary/[0.03]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl border border-primary/20 bg-primary/[0.03]">
         <div>
           <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">
             {t('games.detail.readyTitle', {
