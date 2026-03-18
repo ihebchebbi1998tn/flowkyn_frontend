@@ -155,3 +155,171 @@ export interface MetricCard {
   change?: number;
   icon?: string;
 }
+
+/* ── Coffee Roulette Configuration Types ── */
+
+export type TopicSelectionStrategy = 'random' | 'sequential' | 'weighted';
+export type QuestionSelectionStrategy = 'random' | 'sequential' | 'all';
+export type QuestionType = 'general' | 'topic-specific';
+export type DifficultyLevel = 'easy' | 'moderate' | 'challenging';
+
+export interface CoffeeRouletteConfig {
+  id: string;
+  event_id: string;
+  duration_minutes: number;
+  max_prompts: number;
+  topic_selection_strategy: TopicSelectionStrategy;
+  question_selection_strategy: QuestionSelectionStrategy;
+  allow_general_questions: boolean;
+  shuffle_on_repeat: boolean;
+  created_by_member_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CoffeeRouletteTopic {
+  id: string;
+  config_id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  weight: number;
+  display_order: number;
+  is_active: boolean;
+  created_by_member_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CoffeeRouletteQuestion {
+  id: string;
+  config_id: string;
+  text: string;
+  category?: string;
+  difficulty: DifficultyLevel;
+  question_type: QuestionType;
+  weight: number;
+  display_order: number;
+  is_active: boolean;
+  created_by_member_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CoffeeRouletteTopicQuestion {
+  id: string;
+  topic_id: string;
+  question_id: string;
+  display_order: number;
+  created_at: string;
+}
+
+export interface CoffeeRoulettePairContext {
+  id: string;
+  event_id: string;
+  participant1_id: string;
+  participant2_id: string;
+  session_start_time: string;
+  session_end_time?: string;
+  duration_seconds?: number;
+  topic_id?: string;
+  questions_used: string[];
+  questions_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateConfigRequest {
+  event_id: string;
+  duration_minutes?: number;
+  max_prompts?: number;
+  topic_selection_strategy?: TopicSelectionStrategy;
+  question_selection_strategy?: QuestionSelectionStrategy;
+  allow_general_questions?: boolean;
+  shuffle_on_repeat?: boolean;
+}
+
+export interface UpdateConfigRequest {
+  duration_minutes?: number;
+  max_prompts?: number;
+  topic_selection_strategy?: TopicSelectionStrategy;
+  question_selection_strategy?: QuestionSelectionStrategy;
+  allow_general_questions?: boolean;
+  shuffle_on_repeat?: boolean;
+}
+
+export interface CreateTopicRequest {
+  config_id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  weight?: number;
+  display_order?: number;
+}
+
+export interface UpdateTopicRequest {
+  title?: string;
+  description?: string;
+  icon?: string;
+  weight?: number;
+  display_order?: number;
+  is_active?: boolean;
+}
+
+export interface CreateQuestionRequest {
+  config_id: string;
+  text: string;
+  category?: string;
+  difficulty?: DifficultyLevel;
+  question_type?: QuestionType;
+  weight?: number;
+  display_order?: number;
+}
+
+export interface UpdateQuestionRequest {
+  text?: string;
+  category?: string;
+  difficulty?: DifficultyLevel;
+  question_type?: QuestionType;
+  weight?: number;
+  display_order?: number;
+  is_active?: boolean;
+}
+
+export interface SelectedQuestion {
+  id: string;
+  text: string;
+  category?: string;
+  difficulty: DifficultyLevel;
+}
+
+export interface SelectedTopic {
+  id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface ConfigStats {
+  config_id: string;
+  event_id: string;
+  total_topics: number;
+  active_topics: number;
+  total_questions: number;
+  active_questions: number;
+  general_questions: number;
+  topic_specific_questions: number;
+  total_pairings: number;
+  average_duration_seconds: number;
+  last_updated: string;
+}
+
+export interface TopicStats {
+  topic_id: string;
+  title: string;
+  total_questions: number;
+  times_selected: number;
+  average_difficulty: number;
+  last_used?: string;
+}
+
