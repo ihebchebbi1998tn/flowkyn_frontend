@@ -274,6 +274,12 @@
   "layout": {
     "liveExperience": "Live-Erlebnis"
   },
+  "languages": {
+    "en": "Englisch",
+    "fr": "Französisch",
+    "de": "Deutsch",
+    "es": "Spanisch"
+  },
   "nav": {
     "dashboard": "Dashboard",
     "organizations": "Arbeitsbereich",

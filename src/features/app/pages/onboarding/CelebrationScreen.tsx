@@ -23,6 +23,7 @@ const LANGUAGES = [
   { key: 'en', i18nKey: 'languages.en', defaultLabel: 'English' },
   { key: 'fr', i18nKey: 'languages.fr', defaultLabel: 'Français' },
   { key: 'de', i18nKey: 'languages.de', defaultLabel: 'Deutsch' },
+  { key: 'es', i18nKey: 'languages.es', defaultLabel: 'Español' },
 ];
 
 interface CelebrationScreenProps {

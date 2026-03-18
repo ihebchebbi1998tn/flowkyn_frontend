@@ -28,14 +28,23 @@ const FlagDE = ({ size = 20 }: { size?: number }) => (
   </svg>
 );
 
+const FlagES = ({ size = 20 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2" width={size * 1.5} height={size} className="rounded-[2px] shrink-0">
+    <rect width="3" height="2" fill="#AA151B" />
+    <rect width="3" height="1" y="0.5" fill="#F1BF00" />
+  </svg>
+);
+
 export const FLAGS: Record<string, (props?: { size?: number }) => JSX.Element> = {
   en: FlagEN,
   fr: FlagFR,
   de: FlagDE,
+  es: FlagES,
 };
 
 export const LANGUAGES = [
   { code: 'en', label: 'English' },
   { code: 'fr', label: 'Français' },
   { code: 'de', label: 'Deutsch' },
+  { code: 'es', label: 'Español' },
 ] as const;

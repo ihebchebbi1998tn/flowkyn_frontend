@@ -64,7 +64,8 @@
   "languages": {
     "en": "English",
     "fr": "French",
-    "de": "German"
+    "de": "German",
+    "es": "Spanish"
   },
   "errors": {
     "eventEnded": "This activity has ended. Posting is now closed.",

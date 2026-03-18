@@ -76,6 +76,7 @@ export default function Profile() {
                   <SelectItem value="en">{t('languages.en', { defaultValue: 'English' })}</SelectItem>
                   <SelectItem value="fr">{t('languages.fr', { defaultValue: 'Français' })}</SelectItem>
                   <SelectItem value="de">{t('languages.de', { defaultValue: 'Deutsch' })}</SelectItem>
+                  <SelectItem value="es">{t('languages.es', { defaultValue: 'Español' })}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

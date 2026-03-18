@@ -25,6 +25,7 @@ export function BrandingStep({ data, onChange, onLogoUpload }: BrandingStepProps
     { key: 'en', label: t('languages.en', { defaultValue: 'English' }), flag: '🇬🇧' },
     { key: 'fr', label: t('languages.fr', { defaultValue: 'Français' }), flag: '🇫🇷' },
     { key: 'de', label: t('languages.de', { defaultValue: 'Deutsch' }), flag: '🇩🇪' },
+    { key: 'es', label: t('languages.es', { defaultValue: 'Español' }), flag: '🇪🇸' },
   ];
 
   return (

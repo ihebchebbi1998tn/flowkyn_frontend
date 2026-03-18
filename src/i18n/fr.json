@@ -286,7 +286,8 @@
   "languages": {
     "en": "Anglais",
     "fr": "Français",
-    "de": "Allemand"
+    "de": "Allemand",
+    "es": "Espagnol"
   },
   "nav": {
     "dashboard": "Tableau de bord",
