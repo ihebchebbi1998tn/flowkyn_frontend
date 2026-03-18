@@ -1342,7 +1342,45 @@
         "p8": "Quel endroit aimeriez-vous visiter ?"
       },
       "backToEvents": "Retour aux événements",
-      "you": "Vous"
+      "you": "Vous",
+      "lobby": {
+        "title": "Vestibule du bureau",
+        "subtitle": "Bienvenue au Café Roulette ! Appariement aléatoire pour des conversations significatives.",
+        "participants": "Participants",
+        "pairs": "Paires possibles",
+        "waitingFor": "En attente de participants...",
+        "waiting": "En attente...",
+        "needMore": "Il faut {{count}} participant(s) de plus",
+        "starting": "Démarrage...",
+        "start": "Commencer le Café Roulette",
+        "ready": "Prêt à créer des paires et à mettre tout le monde en correspondance !"
+      },
+      "matching": {
+        "floorCounter": "Étage {{floor}}",
+        "matching": "Recherche de votre correspondance...",
+        "doors": "Portes d'ascenseur",
+        "progress": "Progression"
+      },
+      "chatting": {
+        "title": "Salle de réunion",
+        "topic": "Sujet",
+        "timeRemaining": "Temps restant",
+        "minutes": "{{minutes}}m {{seconds}}s",
+        "promptsUsed": "Questions utilisées : {{count}}",
+        "keepTalking": "Voulez-vous continuer à discuter ?",
+        "nextPrompt": "Prochaine question",
+        "continue": "Continuer à discuter",
+        "end": "Terminer la session"
+      },
+      "complete": {
+        "title": "Belle connexion ! ☕",
+        "duration": "Durée",
+        "promptsUsed": "Questions utilisées",
+        "topicDiscussed": "Sujet discuté",
+        "minutes": "{{minutes}} minutes",
+        "matchAgain": "Correspondance à nouveau",
+        "exit": "Quitter"
+      }
     },
     "winsOfWeek": {
       "thisWeeksPrompt": "Le sujet de la semaine",

@@ -834,7 +834,45 @@
         "end": "End session"
       },
       "backToEvents": "Back to Events",
-      "you": "You"
+      "you": "You",
+      "lobby": {
+        "title": "Office Lobby",
+        "subtitle": "Welcome to Coffee Roulette! Random pairing for meaningful conversations.",
+        "participants": "Participants",
+        "pairs": "Possible Pairs",
+        "waitingFor": "Waiting for participants...",
+        "waiting": "Waiting...",
+        "needMore": "Need {{count}} more participants",
+        "starting": "Starting...",
+        "start": "Start Coffee Roulette",
+        "ready": "Ready to create pairs and match everyone!"
+      },
+      "matching": {
+        "floorCounter": "Floor {{floor}}",
+        "matching": "Finding your match...",
+        "doors": "Elevator Doors",
+        "progress": "Progress"
+      },
+      "chatting": {
+        "title": "Meeting Room",
+        "topic": "Topic",
+        "timeRemaining": "Time remaining",
+        "minutes": "{{minutes}}m {{seconds}}s",
+        "promptsUsed": "Prompts used: {{count}}",
+        "keepTalking": "Want to keep talking?",
+        "nextPrompt": "Next Prompt",
+        "continue": "Continue Chatting",
+        "end": "End Session"
+      },
+      "complete": {
+        "title": "Great Connection! ☕",
+        "duration": "Duration",
+        "promptsUsed": "Prompts Used",
+        "topicDiscussed": "Topic Discussed",
+        "minutes": "{{minutes}} minutes",
+        "matchAgain": "Match Again",
+        "exit": "Exit"
+      }
     },
     "winsOfWeek": {
       "defaultPrompt": "Share your win from this week — work or personal, big or small!",

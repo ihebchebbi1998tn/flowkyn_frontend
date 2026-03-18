@@ -1321,7 +1321,45 @@
         "end": "Session beenden"
       },
       "backToEvents": "Zurück zu Veranstaltungen",
-      "you": "Sie"
+      "you": "Sie",
+      "lobby": {
+        "title": "Büro-Lobby",
+        "subtitle": "Willkommen bei Kaffee-Roulette! Zufällige Paarung für bedeutungsvolle Gespräche.",
+        "participants": "Teilnehmer",
+        "pairs": "Mögliche Paare",
+        "waitingFor": "Warten auf Teilnehmer...",
+        "waiting": "Wird geladen...",
+        "needMore": "Sie benötigen {{count}} weitere Teilnehmer",
+        "starting": "Wird gestartet...",
+        "start": "Kaffee-Roulette starten",
+        "ready": "Bereit, Paare zu erstellen und alle zuzuordnen!"
+      },
+      "matching": {
+        "floorCounter": "Etage {{floor}}",
+        "matching": "Suche nach Ihrer Übereinstimmung...",
+        "doors": "Aufzugstüren",
+        "progress": "Fortschritt"
+      },
+      "chatting": {
+        "title": "Besprechungsraum",
+        "topic": "Thema",
+        "timeRemaining": "Verbleibende Zeit",
+        "minutes": "{{minutes}}m {{seconds}}s",
+        "promptsUsed": "Verwendete Fragen: {{count}}",
+        "keepTalking": "Möchten Sie weitertalten?",
+        "nextPrompt": "Nächste Frage",
+        "continue": "Weiterchatten",
+        "end": "Session beenden"
+      },
+      "complete": {
+        "title": "Tolle Verbindung! ☕",
+        "duration": "Dauer",
+        "promptsUsed": "Verwendete Fragen",
+        "topicDiscussed": "Diskutiertes Thema",
+        "minutes": "{{minutes}} Minuten",
+        "matchAgain": "Erneut zuordnen",
+        "exit": "Beenden"
+      }
     },
     "winsOfWeek": {
       "thisWeeksPrompt": "Das Thema dieser Woche",
