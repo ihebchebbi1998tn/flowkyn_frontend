@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Send, Heart, Star, ThumbsUp, MessageCircle, Award,
-  Clock, Calendar, AlertCircle,
+  Clock, Calendar, AlertCircle, CheckCircle2, Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useWinsFeed } from '@/hooks/useWinsFeed';
 
 const REACTION_ICONS: Record<string, typeof Heart> = {
   heart: Heart,
@@ -124,6 +125,12 @@ export function WinsOfTheWeekBoard({
   const [showReplyFor, setShowReplyFor] = useState<string | null>(null);
   const [submittingReply, setSubmittingReply] = useState<string | null>(null);
   const [liveEndTime, setLiveEndTime] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [characterWarningLevel, setCharacterWarningLevel] = useState<'normal' | 'caution' | 'warning'>('normal');
+  const feedRef = useRef<HTMLDivElement>(null);
+
+  // Use feed management hook
+  const { newPostsCount, markPostsAsSeen, hasMilestone, currentMilestone } = useWinsFeed(posts.length);
 
   // Update end time display every minute
   useEffect(() => {
@@ -138,12 +145,35 @@ export function WinsOfTheWeekBoard({
 
   const handlePost = async () => {
     if (!newPost.trim()) return;
-    console.log('[WinsOfTheWeekBoard] handlePost', { 
-      length: newPost.trim().length,
-      timestamp: new Date().toISOString(),
-    });
-    await onPost(newPost.trim());
-    setNewPost('');
+    setIsSubmitting(true);
+    try {
+      console.log('[WinsOfTheWeekBoard] handlePost', { 
+        length: newPost.trim().length,
+        timestamp: new Date().toISOString(),
+      });
+      await onPost(newPost.trim());
+      setNewPost('');
+      setCharacterWarningLevel('normal');
+    } catch (error) {
+      console.error('[WinsOfTheWeekBoard] handlePost error', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * Handle input changes and update character warning level
+   */
+  const handleInputChange = (value: string) => {
+    setNewPost(value);
+    const percentage = (value.length / 5000) * 100;
+    if (percentage > 90) {
+      setCharacterWarningLevel('warning');
+    } else if (percentage > 75) {
+      setCharacterWarningLevel('caution');
+    } else {
+      setCharacterWarningLevel('normal');
+    }
   };
 
   const toggleReaction = (postId: string, reactionType: string) => {
@@ -251,26 +281,102 @@ export function WinsOfTheWeekBoard({
           <div className="flex-1 space-y-2">
             <Textarea
               value={newPost}
-              onChange={e => setNewPost(e.target.value)}
+              onChange={e => handleInputChange(e.target.value)}
               placeholder={canPost ? t('gamePlay.winsOfWeek.shareYourWin', { defaultValue: 'Share your win…' }) : t('gamePlay.winsOfWeek.readOnlyPlaceholder', { defaultValue: 'Posting is closed for this activity.' })}
               rows={2}
               className="text-[13px] resize-none border-0 bg-muted/30 focus-visible:ring-1"
-              disabled={!canPost}
+              disabled={!canPost || isSubmitting}
             />
-            <div className="flex justify-end gap-2">
-              <span className="text-[10px] text-muted-foreground self-center">
+            <div className="flex justify-end gap-2 items-center">
+              <motion.span 
+                className={cn(
+                  'text-[10px] transition-all',
+                  characterWarningLevel === 'warning' && 'text-red-500 font-bold',
+                  characterWarningLevel === 'caution' && 'text-orange-500 font-medium',
+                  characterWarningLevel === 'normal' && 'text-muted-foreground'
+                )}
+                animate={characterWarningLevel === 'warning' ? { scale: [1, 1.05, 1] } : {}}
+                transition={{ duration: 0.3 }}
+              >
                 {newPost.length > 0 && `${newPost.length} / 5000`}
-              </span>
-              <Button onClick={handlePost} disabled={!newPost.trim() || !canPost} className="h-9 px-5 text-[12px] gap-2">
-                <Send className="h-3.5 w-3.5" /> {t('gamePlay.winsOfWeek.share', { defaultValue: 'Share' })}
-              </Button>
+              </motion.span>
+              <motion.div
+                animate={isSubmitting ? { opacity: 0.7 } : { opacity: 1 }}
+              >
+                <Button 
+                  onClick={handlePost} 
+                  disabled={!newPost.trim() || !canPost || isSubmitting} 
+                  className="h-9 px-5 text-[12px] gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> 
+                      {t('gamePlay.winsOfWeek.sharing', { defaultValue: 'Sharing…' })}
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3.5 w-3.5" /> 
+                      {t('gamePlay.winsOfWeek.share', { defaultValue: 'Share' })}
+                    </>
+                  )}
+                </Button>
+              </motion.div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Posts feed */}
-      <div className="space-y-3">
+      <div className="space-y-3 relative" ref={feedRef}>
+        {/* New posts indicator badge */}
+        <AnimatePresence>
+          {newPostsCount > 0 && (
+            <motion.button
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -50, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              onClick={() => {
+                markPostsAsSeen();
+                feedRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="sticky top-0 z-20 w-full py-2.5 px-3 bg-primary/90 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 hover:bg-primary transition-colors"
+            >
+              <motion.div
+                animate={{ y: [0, 3, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                ↓
+              </motion.div>
+              <span>
+                {newPostsCount} new {newPostsCount === 1 ? 'post' : 'posts'}
+              </span>
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        {/* Milestone celebration toast */}
+        <AnimatePresence>
+          {hasMilestone && currentMilestone && (
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="w-full py-3 px-4 bg-gradient-to-r from-success/10 to-success/5 border border-success/20 rounded-lg flex items-center justify-center gap-2 text-success font-medium text-sm"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.6 }}
+              >
+                <CheckCircle2 className="h-5 w-5" />
+              </motion.div>
+              <span>
+                🎉 Incredible! {currentMilestone} wins celebrated this week!
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {posts.length === 0 && (
           <div className="rounded-xl border border-dashed border-border p-8 text-center bg-muted/20">
             <Heart className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
@@ -320,16 +426,28 @@ export function WinsOfTheWeekBoard({
                       <motion.button
                         key={r.type}
                         onClick={() => toggleReaction(post.id, r.type)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.08, y: -1 }}
+                        whileTap={{ scale: 0.85 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                         className={cn(
                           'flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium transition-all',
                           r.reacted ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/50 text-muted-foreground hover:bg-muted border border-transparent'
                         )}
                         title={`${r.count} reaction${r.count > 1 ? 's' : ''}`}
                       >
-                        <Icon className={cn('h-3 w-3', r.reacted && 'fill-current')} />
-                        {r.count}
+                        <motion.div
+                          animate={r.reacted ? { scale: [1, 1.2, 1] } : {}}
+                          transition={{ duration: 0.4 }}
+                        >
+                          <Icon className={cn('h-3 w-3', r.reacted && 'fill-current')} />
+                        </motion.div>
+                        <motion.span
+                          key={r.count}
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {r.count}
+                        </motion.span>
                       </motion.button>
                     );
                   })}
@@ -342,8 +460,9 @@ export function WinsOfTheWeekBoard({
                         <motion.button
                           key={type}
                           onClick={() => toggleReaction(post.id, type)}
-                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          whileHover={{ scale: 1.15, rotate: 5 }}
                           whileTap={{ scale: 0.9 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                           className="p-1 rounded text-muted-foreground/40 hover:text-muted-foreground transition-colors"
                           title={`Add ${type} reaction`}
                         >
@@ -365,32 +484,45 @@ export function WinsOfTheWeekBoard({
                 {/* Reply input (persists reply as a new post on the server) */}
                 {showReplyFor === post.id && (
                   <motion.div 
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: -10, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: -10, height: 0 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                     className="mt-3 pl-[42px] flex items-center gap-2"
                   >
                     <Avatar className="h-6 w-6 shrink-0">
                       {currentUserAvatarUrl ? <img src={currentUserAvatarUrl} alt={currentUserName} className="h-full w-full object-cover" /> : null}
                       <AvatarFallback className="bg-primary/10 text-primary text-[8px] font-semibold">{currentUserAvatar}</AvatarFallback>
                     </Avatar>
-                    <input
+                    <motion.input
+                      initial={{ scale: 0.95 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                       type="text"
                       value={replyInputs[post.id] || ''}
                       onChange={e => setReplyInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
                       onKeyDown={e => { if (e.key === 'Enter') handleReply(post.id, post.authorName); }}
                       placeholder={t('gamePlay.winsOfWeek.writeReply', { defaultValue: 'Write a reply…' })}
-                      className="flex-1 h-8 px-3 text-[12px] rounded-lg bg-muted/50 border-0 outline-none focus:ring-1 focus:ring-ring"
+                      className="flex-1 h-8 px-3 text-[12px] rounded-lg bg-muted/50 border-0 outline-none focus:ring-1 focus:ring-ring transition-all"
                       autoFocus
+                      disabled={submittingReply === post.id}
                     />
-                    <Button
-                      size="sm"
-                      onClick={() => handleReply(post.id, post.authorName)}
-                      disabled={!replyInputs[post.id]?.trim() || submittingReply === post.id}
-                      className="h-8 px-3 text-[11px]"
+                    <motion.div
+                      animate={submittingReply === post.id ? { opacity: 0.7 } : { opacity: 1 }}
                     >
-                      <Send className="h-3 w-3" />
-                    </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleReply(post.id, post.authorName)}
+                        disabled={!replyInputs[post.id]?.trim() || submittingReply === post.id}
+                        className="h-8 px-3 text-[11px]"
+                      >
+                        {submittingReply === post.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <Send className="h-3 w-3" />
+                        )}
+                      </Button>
+                    </motion.div>
                   </motion.div>
                 )}
               </div>
