@@ -23,15 +23,15 @@ export default {
         mono: ["'JetBrains Mono'", "'SF Mono'", "'Fira Code'", "monospace"],
       },
       fontSize: {
-        /* Strict semantic scale — use these, not arbitrary values */
-        "page-title": ["24px", { lineHeight: "1.2", fontWeight: "600", letterSpacing: "-0.02em" }],
-        "section-title": ["18px", { lineHeight: "1.3", fontWeight: "600", letterSpacing: "-0.01em" }],
-        "card-title": ["14px", { lineHeight: "1.4", fontWeight: "600" }],
-        "body": ["14px", { lineHeight: "1.6", fontWeight: "400" }],
-        "body-sm": ["13px", { lineHeight: "1.5", fontWeight: "400" }],
-        "caption": ["12px", { lineHeight: "1.4", fontWeight: "400" }],
-        "label": ["11px", { lineHeight: "1.3", fontWeight: "500", letterSpacing: "0.04em" }],
-        "label-xs": ["10px", { lineHeight: "1.3", fontWeight: "500", letterSpacing: "0.05em" }],
+        /* Optimized semantic scale — better readability & modern standards */
+        "page-title": ["28px", { lineHeight: "1.2", fontWeight: "600", letterSpacing: "-0.02em" }],
+        "section-title": ["20px", { lineHeight: "1.3", fontWeight: "600", letterSpacing: "-0.01em" }],
+        "card-title": ["16px", { lineHeight: "1.4", fontWeight: "600" }],
+        "body": ["15px", { lineHeight: "1.6", fontWeight: "400" }],
+        "body-sm": ["14px", { lineHeight: "1.5", fontWeight: "400" }],
+        "caption": ["13px", { lineHeight: "1.4", fontWeight: "400" }],
+        "label": ["12px", { lineHeight: "1.3", fontWeight: "500", letterSpacing: "0.04em" }],
+        "label-xs": ["11px", { lineHeight: "1.3", fontWeight: "500", letterSpacing: "0.05em" }],
       },
 
       /* ─── Spacing (strict 4px scale) ─── */

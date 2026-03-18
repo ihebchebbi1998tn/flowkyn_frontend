@@ -22,7 +22,7 @@ export function ActivityBreakdownSection({ data, delay = 0.5 }: ActivityBreakdow
 
   return (
     <motion.div
-      className="grid gap-5 lg:grid-cols-2"
+      className="grid gap-4 lg:grid-cols-2"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}

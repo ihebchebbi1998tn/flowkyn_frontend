@@ -26,7 +26,7 @@ export function PerformanceSection({ totalSessions, totalParticipants, completio
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       <ChartCard title={t('dashboard.performanceOverview')} subtitle={t('dashboard.keyMetrics')}>
-        <div className="flex flex-col sm:flex-row items-center justify-around gap-4 sm:gap-2 py-4">
+        <div className="flex flex-col sm:flex-row items-center justify-around gap-3 sm:gap-2 py-3">
           {metrics.map(metric => {
             const pct = metric.max > 0 ? Math.min((metric.value / metric.max) * 100, 100) : 0;
             return (

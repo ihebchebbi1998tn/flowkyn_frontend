@@ -56,7 +56,7 @@ export function UpcomingEvents({ events, stats }: UpcomingEventsProps) {
             <button 
               key={event.id} 
               onClick={() => navigate(ROUTES.EVENT_DETAIL(event.id))}
-              className="flex items-center gap-3 w-full px-4 sm:px-5 py-3.5 sm:py-4 text-left hover:bg-accent/40 transition-colors group"
+              className="flex items-center gap-2.5 w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left hover:bg-accent/40 transition-colors group"
             >
               <div className="flex flex-col items-center justify-center w-11 shrink-0">
                 <span className="text-[10px] font-semibold uppercase text-muted-foreground leading-none tracking-[0.12em]">

@@ -44,8 +44,8 @@ export function PageShell({ children, className }: { children: React.ReactNode; 
   return (
     <div
       className={cn(
-        // Full-width within the main app content with compact vertical rhythm
-        'space-y-4 w-full animate-fade-in',
+        // Full-width within the main app content with optimized spacing
+        'space-y-3 w-full animate-fade-in',
         className,
       )}
     >
@@ -63,12 +63,12 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/60 pb-3 mb-3">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/60 pb-2.5 mb-2.5">
       <div className="min-w-0 space-y-1">
         {subtitle && <p className="text-body-sm text-muted-foreground">{subtitle}</p>}
         <h1 className="text-page-title text-foreground leading-none truncate tracking-tight">{title}</h1>
       </div>
-      {actions && <div className="flex items-center gap-2.5 shrink-0 mt-3 sm:mt-0">{actions}</div>}
+      {actions && <div className="flex items-center gap-2 shrink-0 mt-2.5 sm:mt-0">{actions}</div>}
     </div>
   );
 }
@@ -103,8 +103,8 @@ export function DashStat({ label, value, icon: Icon, change, trend, gradient = '
       {/* Top accent bar */}
       <div className={cn("h-0.5 w-full bg-gradient-to-r opacity-50 group-hover:opacity-100 transition-opacity duration-200", accentBarMap[gradient])} />
       
-      <div className="p-3.5 sm:p-5">
-        <div className="flex items-center justify-between mb-2.5 sm:mb-3 gap-3">
+      <div className="p-3 sm:p-4">
+        <div className="flex items-center justify-between mb-2 sm:mb-2.5 gap-3">
           <div className={cn(
             "flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105",
             iconColorMap[gradient]
@@ -148,14 +148,14 @@ interface ChartCardProps {
 export function ChartCard({ title, subtitle, action, children, className, noPadding }: ChartCardProps) {
   return (
     <div className={cn('rounded-2xl border border-border bg-card/95 backdrop-blur-sm overflow-hidden shadow-card', className)}>
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-5 py-3.5 sm:py-4 border-b border-border/60">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border/60">
         <div>
           <h3 className="text-card-title font-semibold text-foreground truncate">{title}</h3>
           {subtitle && <p className="text-label text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
         {action && <div className="flex items-center justify-end shrink-0">{action}</div>}
       </div>
-      <div className={noPadding ? '' : 'p-4 sm:p-5'}>{children}</div>
+      <div className={noPadding ? '' : 'p-3 sm:p-4'}>{children}</div>
     </div>
   );
 }
@@ -172,7 +172,7 @@ interface RankedItemProps {
 export function RankedItem({ rank, icon, title, subtitle, right }: RankedItemProps) {
   const medalColors = ['text-warning', 'text-muted-foreground', 'text-warning/60'];
   return (
-    <div className="flex items-center gap-3 group p-2.5 -mx-2 rounded-xl hover:bg-muted/50 transition-colors">
+    <div className="flex items-center gap-2.5 group p-2 -mx-2 rounded-xl hover:bg-muted/50 transition-colors">
       <span className={cn("text-caption font-bold w-5 text-center shrink-0", rank <= 3 ? medalColors[rank - 1] : 'text-muted-foreground/40')}>
         {rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : rank}
       </span>
@@ -197,10 +197,10 @@ export function InfoCard({ title, gradient, children }: InfoCardProps) {
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden shadow-card">
       {gradient && <div className={cn("h-0.5 w-full bg-gradient-to-r", accentBarMap[gradient])} />}
-      <div className="px-5 py-3.5 border-b border-border/60">
+      <div className="px-4 sm:px-5 py-2.5 sm:py-3 border-b border-border/60">
         <h3 className="text-card-title font-semibold text-foreground">{title}</h3>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-4 sm:p-5">{children}</div>
     </div>
   );
 }
@@ -215,7 +215,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon: Icon, message, description, action }: EmptyStateProps) {
   return (
-    <div className="relative flex flex-col items-center justify-center py-20 px-6 text-center rounded-xl border border-dashed border-border/80 bg-muted/20">
+    <div className="relative flex flex-col items-center justify-center py-16 px-6 text-center rounded-xl border border-dashed border-border/80 bg-muted/20">
       {/* Subtle dot pattern */}
       <div className="absolute inset-0 opacity-[0.03] rounded-xl"
         style={{ backgroundImage: 'radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
