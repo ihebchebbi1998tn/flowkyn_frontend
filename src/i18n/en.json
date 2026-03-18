@@ -862,7 +862,15 @@
         "keepTalking": "Want to keep talking?",
         "nextPrompt": "Next Prompt",
         "continue": "Continue Chatting",
-        "end": "End Session"
+        "end": "End Session",
+        "liveBadge": "LIVE MEETING",
+        "topicCounter": "Topic {{current}}/{{max}}",
+        "participantLabel": "Participant",
+        "topicCardLabel": "Today's Topic",
+        "decisionMessage": "Time to decide together!",
+        "nextTopicButton": "Next Topic",
+        "keepTalkingButton": "Keep Talking",
+        "endMeetingButton": "End Meeting"
       },
       "complete": {
         "title": "Great Connection! ☕",

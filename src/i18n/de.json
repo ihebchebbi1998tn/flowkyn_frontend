@@ -1361,7 +1361,15 @@
         "keepTalking": "Möchten Sie weitertalten?",
         "nextPrompt": "Nächste Frage",
         "continue": "Weiterchatten",
-        "end": "Session beenden"
+        "end": "Session beenden",
+        "liveBadge": "LIVE-BESPRECHUNG",
+        "topicCounter": "Thema {{current}}/{{max}}",
+        "participantLabel": "Teilnehmer",
+        "topicCardLabel": "Heutiges Thema",
+        "decisionMessage": "Zeit, gemeinsam zu entscheiden!",
+        "nextTopicButton": "Nächstes Thema",
+        "keepTalkingButton": "Weiterchatten",
+        "endMeetingButton": "Besprechung beenden"
       },
       "complete": {
         "title": "Tolle Verbindung! ☕",

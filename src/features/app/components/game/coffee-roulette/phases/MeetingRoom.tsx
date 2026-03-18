@@ -97,7 +97,7 @@ export function MeetingRoom({
               }}
             >
               <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              LIVE MEETING
+              {t('gamePlay.coffeeRoulette.chatting.liveBadge', { defaultValue: 'LIVE MEETING' })}
             </div>
           </div>
 
@@ -119,7 +119,7 @@ export function MeetingRoom({
             </div>
             <div className="h-5 w-px" style={{ backgroundColor: '#e5e7eb' }} />
             <span className="text-sm font-medium" style={{ color: '#6b7280' }}>
-              Topic {promptsUsed}/{maxPrompts}
+              {t('gamePlay.coffeeRoulette.chatting.topicCounter', { defaultValue: 'Topic {{current}}/{{max}}', current: promptsUsed, max: maxPrompts })}
             </span>
           </div>
 
@@ -177,7 +177,7 @@ export function MeetingRoom({
                 {person1.name}
               </p>
               <p className="text-sm" style={{ color: '#6b7280' }}>
-                Participant
+                {t('gamePlay.coffeeRoulette.chatting.participantLabel', { defaultValue: 'Participant' })}
               </p>
             </div>
           </motion.div>
@@ -202,7 +202,7 @@ export function MeetingRoom({
                 <div className="flex items-center gap-2.5 mb-5">
                   <Lightbulb className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
                   <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-primary)' }}>
-                    Today's Topic
+                    {t('gamePlay.coffeeRoulette.chatting.topicCardLabel', { defaultValue: "Today's Topic" })}
                   </p>
                 </div>
                 <motion.p
@@ -227,7 +227,7 @@ export function MeetingRoom({
                   style={{ borderColor: '#e5e7eb' }}
                 >
                   <p className="text-sm font-bold text-center" style={{ color: 'var(--color-primary)' }}>
-                    ✓ Time to decide together!
+                    ✓ {t('gamePlay.coffeeRoulette.chatting.decisionMessage', { defaultValue: 'Time to decide together!' })}
                   </p>
                 </motion.div>
               )}
@@ -277,7 +277,7 @@ export function MeetingRoom({
                 {person2.name}
               </p>
               <p className="text-sm" style={{ color: '#6b7280' }}>
-                Participant
+                {t('gamePlay.coffeeRoulette.chatting.participantLabel', { defaultValue: 'Participant' })}
               </p>
             </div>
           </motion.div>
@@ -303,7 +303,7 @@ export function MeetingRoom({
                 }}
               >
                 <MessageCircle className="w-4 h-4" />
-                Next Topic
+                {t('gamePlay.coffeeRoulette.chatting.nextTopicButton', { defaultValue: 'Next Topic' })}
               </Button>
             </motion.div>
           )}
@@ -323,7 +323,7 @@ export function MeetingRoom({
                 }}
               >
                 <RotateCcw className="w-4 h-4" />
-                Keep Talking
+                {t('gamePlay.coffeeRoulette.chatting.keepTalkingButton', { defaultValue: 'Keep Talking' })}
               </Button>
             </motion.div>
           )}
@@ -341,7 +341,7 @@ export function MeetingRoom({
                 }}
               >
                 <LogOut className="w-4 h-4" />
-                End Meeting
+                {t('gamePlay.coffeeRoulette.chatting.endMeetingButton', { defaultValue: 'End Meeting' })}
               </Button>
             </motion.div>
           )}

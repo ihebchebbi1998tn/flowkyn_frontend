@@ -1382,7 +1382,15 @@
         "keepTalking": "Voulez-vous continuer à discuter ?",
         "nextPrompt": "Prochaine question",
         "continue": "Continuer à discuter",
-        "end": "Terminer la session"
+        "end": "Terminer la session",
+        "liveBadge": "RÉUNION EN DIRECT",
+        "topicCounter": "Sujet {{current}}/{{max}}",
+        "participantLabel": "Participant",
+        "topicCardLabel": "Sujet du jour",
+        "decisionMessage": "Temps de décider ensemble!",
+        "nextTopicButton": "Prochain sujet",
+        "keepTalkingButton": "Continuer à discuter",
+        "endMeetingButton": "Terminer la réunion"
       },
       "complete": {
         "title": "Belle connexion ! ☕",
