@@ -143,7 +143,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                     className="flex-shrink-0"
                   >
                     <div className="flex flex-col items-center gap-2">
-                      <Avatar className="w-14 h-14 ring-2 ring-offset-1" style={{ borderColor: 'var(--color-primary)' }}>
+                      <Avatar className="w-14 h-14 ring-2" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
                         <AvatarImage
                           src={getSafeImageUrl(participant.avatarUrl)}
                           alt={participant.name}
@@ -208,7 +208,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                       >
                         {/* Person 1 */}
                         <div className="flex items-center gap-2 flex-1">
-                          <Avatar className="w-12 h-12 ring-2" style={{ borderColor: 'var(--color-primary)' }}>
+                          <Avatar className="w-12 h-12 ring-2" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
                             <AvatarImage
                               src={getSafeImageUrl(pair.person1.avatarUrl)}
                               alt={pair.person1.name}
@@ -247,7 +247,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                               {pair.person2.name}
                             </p>
                           </div>
-                          <Avatar className="w-12 h-12 ring-2" style={{ borderColor: 'var(--color-primary)' }}>
+                          <Avatar className="w-12 h-12 ring-2" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
                             <AvatarImage
                               src={getSafeImageUrl(pair.person2.avatarUrl)}
                               alt={pair.person2.name}
