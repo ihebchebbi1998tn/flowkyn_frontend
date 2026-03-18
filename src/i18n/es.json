@@ -1853,6 +1853,321 @@
     "participation": "Participación",
     "copied": "¡Copiado!",
     "copy": "Copiar"
+  },
+  "event": {
+    "joinFailed": "No se pudo unirte. Inténtalo de nuevo."
+  },
+  "activities": {
+    "twoTruths": {
+      "name": "Dos verdades y una mentira",
+      "description": "Icebreaker clásico donde cada persona comparte tres afirmaciones — dos son verdades y una es mentira. El equipo adivina cuál es la mentira.",
+      "duration": "15 min",
+      "teamSize": "5–30 personas"
+    },
+    "coffeeRoulette": {
+      "name": "Ruleta de café",
+      "description": "Emparejamientos aleatorios 1:1 para chats virtuales de café. Crea conexiones entre equipos y rompe silos mediante una conversación personal.",
+      "duration": "30 min",
+      "teamSize": "Parejas (2 personas)"
+    },
+    "winsOfWeek": {
+      "name": "Logros de la semana",
+      "description": "Hilo semanal de Slack/Teams donde todos comparten un logro de su semana — trabajo o personal. Genera una cultura positiva y celebra el progreso.",
+      "duration": "Continuo",
+      "teamSize": "Cualquier tamaño"
+    },
+    "strategicEscape": {
+      "name": "Desafío de escape estratégico",
+      "description": "Simulación estratégica asíncrona en la que tu equipo navega un escenario de crisis realista desde diferentes roles y perspectivas.",
+      "duration": "45–60 min (asíncrono)",
+      "teamSize": "4–12 personas"
+    },
+    "launch": {
+      "title": "Lanzar actividad",
+      "subtitle": "Configura tu sesión, invita a las personas y empieza.",
+      "steps": {
+        "configure": "Configurar",
+        "invite": "Invitar",
+        "review": "Revisar"
+      },
+      "actions": {
+        "nextInvite": "Siguiente: Invitar",
+        "nextReview": "Siguiente: Revisar",
+        "launchNow": "Lanzar ahora"
+      },
+      "defaultEventTitle": "{{activityName}} — Evento del equipo",
+      "untitledEvent": "Evento sin título",
+      "fields": {
+        "eventTitle": "Título del evento",
+        "descriptionOptional": "Descripción (opcional)",
+        "maxParticipants": "Máximo de participantes",
+        "visibility": "Visibilidad",
+        "whenToStart": "Cuándo empezar",
+        "durationMinutes": "Duración (minutos)",
+        "endsAt": "Termina el",
+        "endsAtHelp": "Después de este tiempo, se desactivarán los nuevos logros y reacciones (solo lectura)."
+      },
+      "placeholders": {
+        "eventTitle": "p. ej., Logros de la semana",
+        "description": "Añade una descripción breve…"
+      },
+      "schedule": {
+        "pickDateTime": "Elige una fecha y hora",
+        "startNow": "Empezar ahora",
+        "scheduleLater": "Programar para más tarde",
+        "pickEndDateTime": "Selecciona fecha y hora de finalización"
+      },
+      "invite": {
+        "title": "Invitar",
+        "subtitle": "Invita por correo o comparte un enlace.",
+        "emailAddresses": "Correos electrónicos",
+        "emailPlaceholder": "nombre@empresa.com",
+        "pasteList": "Pega una lista",
+        "pastePlaceholder": "Pega un correo por línea…",
+        "invitedCount": "{{count}} invitados",
+        "clearAll": "Borrar todo",
+        "addHint": "Pulsa Enter para añadir",
+        "allowNickname": "Permitir unirse con apodo",
+        "noSignup": "No se requiere registro"
+      },
+      "visibility": {
+        "inviteOnly": "Solo por invitación",
+        "workspace": "Espacio de trabajo"
+      },
+      "errors": {
+        "generic": "Algo salió mal. Inténtalo de nuevo.",
+        "missingOrgId": "Falta el espacio de trabajo. Recarga y vuelve a intentarlo.",
+        "endsAtAfterStart": "La fecha/hora de fin debe ser posterior a la de inicio.",
+        "inviteSomeFailed": "Algunas invitaciones fallaron ({{emails}}). El evento se creó correctamente.",
+        "inviteAllFailed": "No se pudieron enviar las invitaciones. Inténtalo de nuevo."
+      },
+      "progress": {
+        "creating": "Creando…",
+        "inviting": "Invitando…"
+      },
+      "review": {
+        "title": "Revisar",
+        "subtitle": "Revisa los detalles antes de lanzarlo.",
+        "activity": "Actividad",
+        "eventTitle": "Título del evento",
+        "participants": "Participantes",
+        "participantsLine": "{{count}} participantes",
+        "participantsLine_one": "{{count}} participante",
+        "participantsLine_other": "{{count}} participantes",
+        "invited": "Invitados",
+        "inviteEmailCount": "{{count}} correo(s)",
+        "moreCount": "+{{count}} más",
+        "noInvites": "Sin invitaciones",
+        "signupRequired": "Se requiere registro",
+        "nicknameJoin": "Unirse con apodo activado",
+        "notSet": "No configurado",
+        "schedule": "Programación",
+        "startingImmediately": "Empezando ahora mismo",
+        "endsAt": "Termina el"
+      }
+    }
+  },
+  "strategic": {
+    "label": "Desafío de escape estratégico",
+    "phases": {
+      "setup": "Configuración",
+      "rolesAssignment": "Roles y correos",
+      "discussion": "Discusión",
+      "debrief": "Puesta en común"
+    },
+    "meta": {
+      "hostLabel": "Facilitador/a: {{name}}",
+      "phaseLabel": "Fase: {{phase}}"
+    },
+    "howItWorks": {
+      "label": "Cómo funciona",
+      "point1": "Cada persona recibe un rol secreto.",
+      "point2": "Recibirás un correo + una tarjeta en la app con instrucciones.",
+      "point3": "Al final haremos una puesta en común de lo aprendido."
+    },
+    "phaseIntro": {
+      "setup": "Ahora mismo, el facilitador está configurando el escenario.",
+      "rolesAssignment": "Ahora mismo se están asignando roles secretos: revisa tu bandeja de entrada.",
+      "discussion": "Ahora mismo, comparte perspectivas y decisiones a lo largo del tiempo.",
+      "debrief": "Ahora mismo, convierte los aprendizajes en cambios concretos."
+    },
+    "configure": {
+      "title": "Personaliza tu escenario",
+      "subtitle": "Elige una industria, una crisis y un nivel de dificultad para que el escenario se sienta real para tu equipo.",
+      "industryLabel": "¿Cuál es tu industria?",
+      "crisisLabel": "Elige el tipo de crisis",
+      "difficultyLabel": "Nivel de dificultad"
+    },
+    "preview": {
+      "title": "Lo que vivirá tu equipo",
+      "body": "Cada participante recibe un correo privado con su rol secreto e instrucciones. Cuando se una, verá una tarjeta de rol que le recuerda cómo pensar y hablar durante el desafío.",
+      "hint": "Esta actividad es asíncrona: puedes unirte desde cualquier huso horario, compartir perspectivas a tu ritmo y luego hacer la puesta en común juntos.",
+      "hostOnly": "Tu facilitador está configurando el escenario. Verás tu rol secreto aquí en cuanto se lance el desafío.",
+      "configureHint": "Usa el botón Configurar para elegir industria, crisis y dificultad antes de lanzarlo.",
+      "summaryTitle": "Configuración actual",
+      "summaryIndustry": "Industria",
+      "summaryCrisis": "Tipo de crisis",
+      "summaryDifficulty": "Dificultad",
+      "summaryUnset": "No configurado"
+    },
+    "modal": {
+      "openLabel": "Configurar escenario",
+      "title": "Configurar escenario estratégico",
+      "subtitle": "Elige la industria, la crisis y la dificultad para esta simulación asíncrona."
+    },
+    "errors": {
+      "createFailed": "No se pudo crear la sesión estratégica. Revisa tus permisos e inténtalo de nuevo.",
+      "assignFailed": "No se pudieron asignar los roles. Asegúrate de que los participantes se hayan unido y de que eres anfitrión o admin."
+    },
+    "actions": {
+      "createSession": "Crear sesión estratégica",
+      "creating": "Creando sesión…",
+      "createHelp": "Una vez creada, podrás asignar roles, activar correos y comenzar la discusión asíncrona.",
+      "assignRoles": "Asignar roles y enviar correos",
+      "assigningRoles": "Asignando roles y enviando correos…",
+      "assignHelp": "Primero, asigna roles para que todos reciban su correo. Luego inicia la discusión asíncrona cuando estés listo.",
+      "startDiscussion": "Iniciar discusión asíncrona",
+      "endDiscussion": "Terminar la discusión y pasar a la puesta en común"
+    },
+    "industries": {
+      "techSaaS": {
+        "label": "Tecnología / SaaS",
+        "description": "Lanzamientos de producto, caídas, cambios de roadmap y decisiones de alto crecimiento."
+      },
+      "finance": {
+        "label": "Finanzas",
+        "description": "Cambios regulatorios, altibajos del mercado y decisiones entre riesgo y crecimiento."
+      },
+      "healthcare": {
+        "label": "Sanidad",
+        "description": "Seguridad del paciente, cumplimiento y planificación de capacidad bajo presión."
+      },
+      "retail": {
+        "label": "Retail / Comercio electrónico",
+        "description": "Campañas, inventario y experiencia del cliente durante la demanda máxima."
+      },
+      "manufacturing": {
+        "label": "Manufactura",
+        "description": "Disrupciones en la cadena de suministro, problemas de calidad y cuellos de botella de producción."
+      },
+      "education": {
+        "label": "Educación",
+        "description": "Cambios de matrícula, expectativas de stakeholders y concesiones en aprendizaje mixto."
+      }
+    },
+    "crises": {
+      "marketDisruption": {
+        "label": "Disrupción del mercado",
+        "meta": "Dificultad: Media · Enfoque: estrategia y competencia",
+        "description": "Un nuevo competidor lanza y amenaza tu cuota de mercado. Debes responder sin reaccionar en exceso ni perder el foco."
+      },
+      "productLaunchCrisis": {
+        "label": "Crisis de lanzamiento de producto",
+        "meta": "Dificultad: Difícil · Enfoque: gestión de crisis",
+        "description": "Tu lanzamiento de producto es en 7 días y todo va mal. Debes decidir qué recortar, qué mantener y cómo comunicar."
+      },
+      "budgetCuts": {
+        "label": "Recortes de presupuesto",
+        "meta": "Dificultad: Media · Enfoque: asignación de recursos",
+        "description": "El consejo exige una reducción de costes del 30% manteniendo objetivos de crecimiento. Cada rol siente el impacto de forma distinta."
+      },
+      "teamConflict": {
+        "label": "Conflicto de equipo",
+        "meta": "Dificultad: Fácil · Enfoque: comunicación y alineamiento",
+        "description": "Departamentos clave no se están comunicando y los proyectos se están retrasando. Debes reconstruir la confianza y las prioridades compartidas."
+      }
+    },
+    "difficulties": {
+      "easy": {
+        "label": "Fácil — respuesta correcta clara",
+        "hint": "Ideal para una primera sesión o para equipos nuevos."
+      },
+      "medium": {
+        "label": "Media — múltiples soluciones",
+        "hint": "Los equipos deben sopesar concesiones y alinearse en un camino."
+      },
+      "hard": {
+        "label": "Difícil — alta ambigüedad",
+        "hint": "Perfecto para equipos senior que quieren poner a prueba la estrategia bajo presión."
+      }
+    },
+    "roles": {
+      "product_lead": {
+        "name": "Responsable de producto",
+        "brief": "Asume los resultados del producto, las concesiones del roadmap y qué se lanza y cuándo.",
+        "secret": "Estás bajo presión para mostrar progreso. Quieres mantener el mayor alcance posible del lanzamiento — pero sabes que la calidad y la confianza están en juego. Impulsa un recorte pequeño y coherente que aun así cuente una historia sólida."
+      },
+      "marketing_lead": {
+        "name": "Responsable de marketing",
+        "brief": "Asume el relato, la preparación del lanzamiento y la generación de demanda.",
+        "secret": "Ya tienes campañas reservadas y stakeholders atentos. Necesitas un lanzamiento que puedas respaldar — incluso si eso implica reducir el alcance — y una historia clara para clientes si las cosas cambian."
+      },
+      "cfo": {
+        "name": "CFO / Responsable de finanzas",
+        "brief": "Asume los límites de presupuesto, la liquidez (runway) y los objetivos de crecimiento.",
+        "secret": "Te importan la liquidez, CAC y la previsibilidad de ingresos. No estás aquí para decir “no” — estás para mantener al equipo honesto sobre concesiones y para señalar dónde se está quemando dinero en silencio."
+      },
+      "ops_lead": {
+        "name": "Responsable de operaciones",
+        "brief": "Asume cómo los planes se convierten en entrega real entre equipos.",
+        "secret": "Ves capacidad, dependencias y fricción del proceso. Tu rol es mostrar lo que es realista en los próximos 7 días — y qué tiene que cambiar para cumplir el plan sin quemar a la gente."
+      },
+      "customer_success_lead": {
+        "name": "Responsable de Customer Success",
+        "brief": "Asume el impacto en primera línea en clientes y la confianza.",
+        "secret": "Llevas la relación con clientes existentes. Serás de los primeros en escuchar quejas. Impulsa decisiones que protejan la confianza, reduzcan sorpresas y te den puntos de conversación honestos."
+      }
+    },
+    "rolesSection": {
+      "title": "Tu rol secreto",
+      "subtitle": "Revisa tu bandeja de entrada para ver instrucciones completas. Esta tarjeta es un resumen visual rápido."
+    },
+    "discussion": {
+      "title": "Discusión asíncrona de crisis",
+      "subtitle": "Comparte actualizaciones, decisiones y concesiones en tus herramientas del día a día. Usa este espacio para mantener visible el escenario.",
+      "prompt": "Tu equipo se enfrenta a una crisis de lanzamiento de producto a última hora con prioridades en competencia y recursos limitados.",
+      "promptHint": "Cada rol aporta una perspectiva única. Captura puntos de tensión, decisiones y riesgos mientras avanzan.",
+      "guidingQuestions": "Preguntas guía",
+      "q1": "¿Cuál es el mayor riesgo si no hacemos nada en los próximos 7 días?",
+      "q2": "¿Dónde estamos desalineados entre producto, marketing y operaciones?",
+      "q3": "¿Qué concesión estás personalmente dispuesto/a a asumir?",
+      "teamInstructions": "Para tu equipo",
+      "i1": "Publica actualizaciones en tus herramientas habituales (Slack, Teams, Notion, etc.).",
+      "i2": "Responde en el mismo hilo para que las conversaciones se mantengan conectadas y no se fragmenten.",
+      "i3": "Registra un log de decisiones que revisaréis juntos en la puesta en común.",
+      "hostToolsTitle": "Controles del anfitrión",
+      "hostToolsBody": "Puedes terminar la discusión asíncrona cuando sientas que el equipo ha explorado suficientes perspectivas."
+    },
+    "rolesMeta": {
+      "playerLabel": "Tú",
+      "roleNameLabel": "Rol",
+      "unknownPlayer": "Participante",
+      "secret": "Rol secreto",
+      "loading": "Esperando tu rol…",
+      "pending": "Asignación pendiente",
+      "pendingHint": "Tu facilitador está asignando roles. Mantente atento — tu perspectiva importará.",
+      "secretHint": "Cuando conozcas tu rol, piensa en lo que solo tú puedes ver que los demás podrían pasar por alto.",
+      "refreshing": "Actualizando tu rol…",
+      "swapTitle": "Cambio rápido y alineamiento",
+      "swapBody": "Durante la ventana corta de cambio, los compañeros pueden acordar intercambiar mentalmente roles si otra perspectiva encaja mejor. Usa el chat o tu reunión para confirmarlo.",
+      "swapWindow": "Ventana de cambio de rol: {{seconds}}s",
+      "swapCountdown": "La ventana de cambio se cierra en {{seconds}}s",
+      "swapClosed": "La ventana de cambio de rol ha terminado. Mantén tu rol actual para la discusión."
+    },
+    "debrief": {
+      "title": "Puesta en común: ¿qué aprendimos?",
+      "subtitle": "Usa una retro o una sesión de liderazgo para reflexionar sobre cómo tomaste decisiones, qué se te pasó y qué significa para el trabajo real.",
+      "questionsTitle": "Preguntas sugeridas para la puesta en común",
+      "q1": "¿Dónde avanzamos demasiado rápido y dónde demasiado lento?",
+      "q2": "¿Qué roles vieron el riesgo primero — y fueron escuchados?",
+      "q3": "¿Qué haríamos diferente en un incidente real que empiece mañana?",
+      "actionsTitle": "Convierte aprendizajes en acciones",
+      "a1": "Registra 2–3 cambios concretos que harás en procesos, comunicación o responsabilidades.",
+      "a2": "Asigna responsables claros y fechas límite para cada acción.",
+      "a3": "Programa un seguimiento en 4–6 semanas para revisar el impacto.",
+      "summaryTitle": "Resumen para el liderazgo",
+      "summaryBody": "Comparte tres puntos: lo que simulamos, lo que aprendiste sobre cómo trabajas bajo presión y lo que cambiarás como resultado."
+    }
   }
 }
 
