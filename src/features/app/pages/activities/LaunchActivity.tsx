@@ -264,7 +264,7 @@ export default function LaunchActivity() {
   const currentStepIndex = steps.findIndex(s => s.key === step);
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
+    <div className="space-y-3 sm:space-y-4 w-full">
       {/* Header */}
       <div className="flex items-center gap-2 sm:gap-3">
         <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(`/activities/${id}`)}>
@@ -286,13 +286,13 @@ export default function LaunchActivity() {
       </div>
 
       {/* Step indicator */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-1 sm:gap-1.5">
         {steps.map((s, i) => (
-          <div key={s.key} className="flex items-center gap-1.5 sm:gap-2 flex-1">
+          <div key={s.key} className="flex items-center gap-1 sm:gap-1.5 flex-1">
             <button
               onClick={() => i <= currentStepIndex && setStep(s.key)}
               className={cn(
-                "flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg text-[11px] sm:text-[12px] font-medium transition-all flex-1 justify-center",
+                "flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1.5 rounded-lg text-[10px] sm:text-[11px] font-medium transition-all flex-1 justify-center",
                 step === s.key
                   ? 'bg-primary text-primary-foreground shadow-sm'
                   : i < currentStepIndex
@@ -315,8 +315,8 @@ export default function LaunchActivity() {
 
       {/* Error Banner */}
       {error && (
-        <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg border border-destructive/30 bg-destructive/5">
-          <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 p-2.5 sm:p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-[12px] sm:text-[13px] font-medium text-destructive">{error}</p>
           </div>
@@ -332,8 +332,8 @@ export default function LaunchActivity() {
 
         {/* STEP 1: Configure */}
         {step === 'configure' && (
-          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
-            <div className="space-y-1.5">
+          <div className="p-3.5 sm:p-5 space-y-3 sm:space-y-4">
+            <div className="space-y-1">
               <Label className="text-[13px] font-medium">
                 {t('activities.launch.fields.eventTitle', { defaultValue: 'Event Title' })}
               </Label>
@@ -341,7 +341,7 @@ export default function LaunchActivity() {
                 className="h-10 text-[13px]" placeholder={t('activities.launch.placeholders.eventTitle', { defaultValue: 'Give your event a name' })} />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Label className="text-[13px] font-medium">
                 {t('activities.launch.fields.descriptionOptional', { defaultValue: 'Description (optional)' })}
               </Label>
@@ -349,8 +349,8 @@ export default function LaunchActivity() {
                 rows={2} className="text-[13px]" placeholder={t('activities.launch.placeholders.description', { defaultValue: "What's this event about?" })} />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div className="space-y-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+              <div className="space-y-1">
                 <Label className="text-[13px] font-medium">
                   {t('activities.launch.fields.maxParticipants', { defaultValue: 'Max Participants' })}
                 </Label>
@@ -359,7 +359,7 @@ export default function LaunchActivity() {
                   className="h-10 text-[13px]" />
               </div>
               {activity.type === 'sync' && (
-                <div className="space-y-1.5">
+                <div className="space-y-1">
                   <Label className="text-[13px] font-medium">
                     {t('activities.launch.fields.durationMinutes', { defaultValue: 'Duration (minutes)' })}
                   </Label>
@@ -371,7 +371,7 @@ export default function LaunchActivity() {
             </div>
             
             {id === '1' && (
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Label className="text-[13px] font-medium">{t('gamePlay.twoTruths.howManyRounds')}</Label>
                 <Select value={totalRounds} onValueChange={setTotalRounds}>
                   <SelectTrigger className="h-10 text-[13px]">
@@ -387,7 +387,7 @@ export default function LaunchActivity() {
               </div>
             )}
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Label className="text-[13px] font-medium">
                 {t('activities.launch.fields.visibility', { defaultValue: 'Visibility' })}
               </Label>
@@ -410,11 +410,11 @@ export default function LaunchActivity() {
 
             <Separator />
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Label className="text-[13px] font-medium">
                 {t('activities.launch.fields.whenToStart', { defaultValue: 'When to start?' })}
               </Label>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 <Button type="button" variant={scheduleType === 'now' ? 'default' : 'outline'}
                   onClick={() => setScheduleType('now')} className="h-9 text-[12px] flex-1">
                   {t('activities.launch.schedule.startNow', { defaultValue: 'Start Now' })}
@@ -435,7 +435,7 @@ export default function LaunchActivity() {
 
             {/* Wins of the Week: end date/time */}
             {id === '3' && (
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Label className="text-[13px] font-medium">
                   {t('activities.launch.fields.endsAt', { defaultValue: 'Ends at' })}
                 </Label>
@@ -450,7 +450,7 @@ export default function LaunchActivity() {
               </div>
             )}
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-1">
               <Button onClick={() => setStep('invite')} className="h-10 px-6 text-[13px] gap-2">
                 {t('activities.launch.actions.nextInvite', { defaultValue: 'Next: Invite' })} <ArrowRight className="h-4 w-4" />
               </Button>
@@ -460,9 +460,9 @@ export default function LaunchActivity() {
 
         {/* STEP 2: Invite Team */}
         {step === 'invite' && (
-          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
+          <div className="p-3.5 sm:p-5 space-y-3 sm:space-y-4">
             <div>
-              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-1">
+              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-0.5">
                 {t('activities.launch.invite.title', { defaultValue: 'Invite your team' })}
               </h3>
               <p className="text-[11px] sm:text-[12px] text-muted-foreground">
@@ -470,11 +470,11 @@ export default function LaunchActivity() {
               </p>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Label className="text-[13px] font-medium">
                 {t('activities.launch.invite.emailAddresses', { defaultValue: 'Email Addresses' })}
               </Label>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 <Input value={emailInput} onChange={e => setEmailInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addEmail())}
                   className="h-10 text-[13px] flex-1 min-w-0" placeholder={t('activities.launch.invite.emailPlaceholder', { defaultValue: 'colleague@company.com' })} />
@@ -487,7 +487,7 @@ export default function LaunchActivity() {
               </p>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Label className="text-[13px] font-medium">
                 {t('activities.launch.invite.pasteList', { defaultValue: 'Or paste a list' })}
               </Label>
@@ -497,7 +497,7 @@ export default function LaunchActivity() {
             </div>
 
             {emails.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <p className="text-[12px] font-medium text-foreground">
                     {t('activities.launch.invite.invitedCount', { defaultValue: '{{count}} invited', count: emails.length })}
@@ -506,9 +506,9 @@ export default function LaunchActivity() {
                     {t('activities.launch.invite.clearAll', { defaultValue: 'Clear all' })}
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-1.5 max-h-[200px] overflow-y-auto">
+                <div className="flex flex-wrap gap-1 max-h-[200px] overflow-y-auto">
                   {emails.map(email => (
-                    <Badge key={email} variant="secondary" className="text-[10px] sm:text-[11px] gap-1 pl-2 sm:pl-2.5 pr-1.5 py-1 h-auto">
+                    <Badge key={email} variant="secondary" className="text-[10px] sm:text-[11px] gap-1 pl-2 sm:pl-2 pr-1.5 py-0.5 h-auto">
                       <Mail className="h-3 w-3 text-muted-foreground" />
                       <span className="truncate max-w-[120px] sm:max-w-none">{email}</span>
                       <button onClick={() => removeEmail(email)} className="ml-0.5 hover:text-destructive transition-colors">
@@ -522,7 +522,7 @@ export default function LaunchActivity() {
 
             <Separator />
 
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 gap-3">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 gap-2">
               <div className="min-w-0">
                 <p className="text-[12px] sm:text-[13px] font-medium text-foreground">
                   {t('activities.launch.invite.allowNickname', { defaultValue: 'Allow nickname join' })}
@@ -534,7 +534,7 @@ export default function LaunchActivity() {
               <Switch checked={allowNickname} onCheckedChange={setAllowNickname} />
             </div>
 
-            <div className="flex flex-col-reverse sm:flex-row justify-between gap-2 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row justify-between gap-1.5 pt-1">
               <Button variant="outline" onClick={() => setStep('configure')} className="h-10 text-[13px] gap-2">
                 <ArrowLeft className="h-4 w-4" /> {t('common.back', { defaultValue: 'Back' })}
               </Button>
@@ -547,9 +547,9 @@ export default function LaunchActivity() {
 
         {/* STEP 3: Review & Launch */}
         {step === 'review' && (
-          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
+          <div className="p-3.5 sm:p-5 space-y-3 sm:space-y-4">
             <div>
-              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-1">
+              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground mb-0.5">
                 {t('activities.launch.review.title', { defaultValue: 'Review & Launch' })}
               </h3>
               <p className="text-[11px] sm:text-[12px] text-muted-foreground">
@@ -557,10 +557,10 @@ export default function LaunchActivity() {
               </p>
             </div>
 
-            <div className="space-y-2 sm:space-y-3">
-              <div className="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-2">
-                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="grid gap-2 sm:gap-2.5 grid-cols-1 sm:grid-cols-2">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
                     {t('activities.launch.review.activity', { defaultValue: 'Activity' })}
                   </p>
                   <div className="flex items-center gap-2">
@@ -570,16 +570,16 @@ export default function LaunchActivity() {
                     <span className="text-[12px] sm:text-[13px] font-semibold text-foreground truncate">{activity.name}</span>
                   </div>
                 </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
                     {t('activities.launch.review.eventTitle', { defaultValue: 'Event Title' })}
                   </p>
                   <p className="text-[12px] sm:text-[13px] font-semibold text-foreground truncate">
                     {eventTitle || t('activities.launch.untitledEvent', { defaultValue: 'Untitled Event' })}
                   </p>
                 </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
                     {t('activities.launch.review.participants', { defaultValue: 'Participants' })}
                   </p>
                   <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
@@ -589,8 +589,8 @@ export default function LaunchActivity() {
                     })}
                   </p>
                 </div>
-                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
                     {t('activities.launch.review.schedule', { defaultValue: 'Schedule' })}
                   </p>
                   <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
@@ -600,8 +600,8 @@ export default function LaunchActivity() {
                   </p>
                 </div>
                 {id === '3' && (
-                  <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                    <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
+                    <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
                       {t('activities.launch.review.endsAt', { defaultValue: 'Ends at' })}
                     </p>
                     <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
@@ -612,11 +612,11 @@ export default function LaunchActivity() {
               </div>
 
               {emails.length > 0 && (
-                <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
-                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
                     {t('activities.launch.review.invited', { defaultValue: 'Invited ({{count}})', count: emails.length })}
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1">
                     {emails.slice(0, 8).map(email => (
                       <Badge key={email} variant="outline" className="text-[9px] sm:text-[10px]">{email}</Badge>
                     ))}
@@ -632,9 +632,9 @@ export default function LaunchActivity() {
 
             <Separator />
 
-            <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-success/20 bg-success/[0.03]">
-              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-success/10 shrink-0">
-                <Send className="h-4 w-4 sm:h-5 sm:w-5 text-success" />
+            <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl border border-success/20 bg-success/[0.03]">
+              <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-success/10 shrink-0">
+                <Send className="h-4 w-4 text-success" />
               </div>
               <div className="min-w-0">
                 <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
@@ -650,7 +650,7 @@ export default function LaunchActivity() {
               </div>
             </div>
 
-            <div className="flex flex-col-reverse sm:flex-row justify-between gap-2 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row justify-between gap-1.5 pt-1">
               <Button variant="outline" onClick={() => setStep('invite')} className="h-10 text-[13px] gap-2">
                 <ArrowLeft className="h-4 w-4" /> {t('common.back', { defaultValue: 'Back' })}
               </Button>
