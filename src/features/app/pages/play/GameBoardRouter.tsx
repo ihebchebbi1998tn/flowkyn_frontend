@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard, StrategicEscapeBoard, ComingSoonBoard } from '@/features/app/components/game/boards';
+import { TwoTruthsBoard, WinsOfTheWeekBoard, StrategicEscapeBoard, ComingSoonBoard } from '@/features/app/components/game/boards';
+import { CoffeeRouletteBoard } from '@/features/app/components/game/coffee-roulette';
 import type { GameParticipant } from '@/features/app/components/game/shell';
 import { eventsApi } from '@/features/app/api/events';
 import { postsApi } from '@/features/app/api/posts';
@@ -246,6 +247,7 @@ export function GameBoardRouter({
           initialSnapshot={initialSnapshot}
           gameData={gameData}
           onEmitAction={onEmitAction}
+          gamesSocket={gamesSocket}
         />
       );
     case GAME_TYPES.WINS_OF_WEEK:

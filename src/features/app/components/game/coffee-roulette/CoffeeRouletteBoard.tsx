@@ -51,6 +51,7 @@ interface CoffeeRouletteBoardProps {
   initialSnapshot?: any;
   gameData?: any;
   onEmitAction: (actionType: string, payload?: any) => Promise<void>;
+  gamesSocket?: any; // Socket for listening to real-time updates
 }
 
 export function CoffeeRouletteBoard({
@@ -59,6 +60,7 @@ export function CoffeeRouletteBoard({
   initialSnapshot,
   gameData,
   onEmitAction,
+  gamesSocket,
 }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
   const snapshot: CoffeeSnapshot | null = (gameData?.kind === GAME_TYPES.COFFEE_ROULETTE
@@ -93,6 +95,35 @@ export function CoffeeRouletteBoard({
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const capturedElapsedRef = useRef(0);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Listen for real-time socket events from other players
+  useEffect(() => {
+    if (!gamesSocket?.on) return;
+
+    const unsubShuffle = gamesSocket.on('game:state', (payload: any) => {
+      const snap = payload?.state?.snapshot;
+      if (snap?.kind === GAME_TYPES.COFFEE_ROULETTE) {
+        console.log('[CoffeeRouletteBoard] Received game:state update:', {
+          phase: snap.phase,
+          pairsCount: snap.pairs?.length,
+        });
+      }
+    });
+
+    const unsubData = gamesSocket.on('game:data', (payload: any) => {
+      if (payload?.gameData?.kind === GAME_TYPES.COFFEE_ROULETTE) {
+        console.log('[CoffeeRouletteBoard] Received game:data update:', {
+          phase: payload.gameData.phase,
+          pairsCount: payload.gameData.pairs?.length,
+        });
+      }
+    });
+
+    return () => {
+      unsubShuffle?.();
+      unsubData?.();
+    };
+  }, [gamesSocket]);
 
   // Log state changes for debugging
   useEffect(() => {
