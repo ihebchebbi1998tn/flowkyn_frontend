@@ -74,6 +74,8 @@ export function TwoTruthsBoard({
   const [lieIndex, setLieIndex] = useState(2);
   const voted = !!votes[currentUserId];
   const [showCountdown, setShowCountdown] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationMessage, setCelebrationMessage] = useState('');
 
   const startGame = () => { setShowCountdown(true); };
   const handleCountdownDone = useCallback(async () => {
@@ -83,11 +85,19 @@ export function TwoTruthsBoard({
 
   const submit = useCallback(async () => {
     if (!sessionId || !activeRoundId) return;
+    // Show celebration when presenter submits
+    setCelebrationMessage('✓ Statements submitted!');
+    setShowCelebration(true);
+    setTimeout(() => setShowCelebration(false), 2000);
     await onEmitAction('two_truths:submit', { statements: localStatements, lieIndex });
   }, [sessionId, activeRoundId, localStatements, lieIndex, onEmitAction]);
 
   const submitVote = useCallback(async () => {
     if (!selectedVote) return;
+    // Show celebration when user votes
+    setCelebrationMessage('✓ Vote submitted!');
+    setShowCelebration(true);
+    setTimeout(() => setShowCelebration(false), 2000);
     await onEmitAction('two_truths:vote', { statementId: selectedVote });
   }, [selectedVote, onEmitAction]);
 
@@ -156,6 +166,16 @@ export function TwoTruthsBoard({
   return (
     <div className="space-y-4">
       <CountdownOverlay active={showCountdown} onComplete={handleCountdownDone} />
+      
+      {/* Celebration Toast */}
+      {showCelebration && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium text-sm shadow-lg">
+            {celebrationMessage}
+          </div>
+        </div>
+      )}
+      
       <TwoTruthsHeader
         round={round}
         totalRounds={totalRounds}

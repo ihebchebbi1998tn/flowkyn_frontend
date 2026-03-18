@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RoundIndicator, PhaseTimer, PhaseBadge, type GamePhase } from '../shared';
+import { RoundIndicator, PhaseTimer, PhaseBadge, type GamePhase, ConfettiParticles } from '../shared';
 
 export interface TwoTruthsHeaderProps {
   round: number;
@@ -36,6 +36,8 @@ export function TwoTruthsHeader({
   timeLeft,
   maxTime,
 }: TwoTruthsHeaderProps) {
+  const progressPercentage = Math.round(((round - 1) / (totalRounds || 1)) * 100);
+  
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
       <div className="p-4 sm:p-5">
@@ -47,6 +49,16 @@ export function TwoTruthsHeader({
               <PhaseTimer timeLeft={timeLeft} maxTime={maxTime} />
             )}
           </div>
+        </div>
+        
+        {/* Progress bar */}
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercentage}%` }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full"
+          />
         </div>
       </div>
     </div>
@@ -100,7 +112,7 @@ export function TwoTruthsWaitingSection({
                   <span className="text-[12px] font-medium text-muted-foreground">
                     {t('gamePlay.twoTruths.howManyRounds', { defaultValue: 'This activity is set to play:' })}
                   </span>
-                  <Badge variant="brand" className="text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
+                  <Badge variant="secondary" className="text-[11px] px-2.5 py-0.5 rounded-full shadow-sm">
                     {rounds} {t('common.rounds', { count: rounds })}
                   </Badge>
                 </div>
@@ -175,7 +187,12 @@ export function TwoTruthsSubmitSection({
       </div>
       <div className="p-5 space-y-3">
         {statements.map((s, i) => (
-          <div key={i}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
             <div className="flex items-center gap-2 mb-1.5">
               <span
                 className={cn(
@@ -213,7 +230,7 @@ export function TwoTruthsSubmitSection({
               rows={1}
               className="text-[13px] resize-none min-h-[44px] rounded-xl border-border/60 focus:border-primary/40 transition-all"
             />
-          </div>
+          </motion.div>
         ))}
         <div className="flex justify-end pt-3">
           <Button
@@ -417,9 +434,13 @@ export function TwoTruthsRevealSection({
   isLastRound,
 }: TwoTruthsRevealSectionProps) {
   const { t } = useTranslation();
+  const isCorrect = selectedVote === revealedLie;
 
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden animate-fade-in relative">
+      {/* Confetti for correct answers */}
+      {isCorrect && <ConfettiParticles />}
+      
       <AnimatePresence>
         {showDrumroll && (
           <motion.div
