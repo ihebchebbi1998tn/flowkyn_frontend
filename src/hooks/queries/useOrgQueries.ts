@@ -183,6 +183,22 @@ export function useDeleteDepartment() {
       queryClient.invalidateQueries({ queryKey: orgKeys.departments(orgId) });
       toast.success(t('departments.toast.deleted'));
     },
+    onError: (err) => showError(err, t('departments.toast.deleteFailed')),
+  });
+}
+
+export function useUpdateDepartment() {
+  const queryClient = useQueryClient();
+  const { showError } = useApiError();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: ({ orgId, departmentId, name }: { orgId: string; departmentId: string; name: string }) =>
+      organizationsApi.updateDepartment(orgId, departmentId, name),
+    onSuccess: (_, { orgId }) => {
+      queryClient.invalidateQueries({ queryKey: orgKeys.departments(orgId) });
+      toast.success(t('departments.toast.updated'));
+    },
     onError: (err) => showError(err),
   });
 }

@@ -6,40 +6,15 @@ import {
 } from 'lucide-react';
 import { LogoLoader } from '@/components/loading/LogoLoader';
 import { bugReportsApi } from '@/features/app/api/bugReports';
+import type { BugReportListItem, BugReportStats } from '@/features/app/api/bugReports';
 
 type StatusFilter = 'all' | 'open' | 'in_progress' | 'resolved' | 'closed';
 type PriorityFilter = 'all' | 'low' | 'medium' | 'high' | 'critical';
 
-interface BugReport {
-  id: string;
-  title: string;
-  description: string;
-  type: string;
-  priority: string;
-  status: string;
-  user_name?: string;
-  user_email?: string;
-  assigned_to_name?: string;
-  created_at: string;
-  updated_at: string;
-  resolved_at?: string;
-  attachment_count?: number;
-}
-
-interface Stats {
-  totalReports: number;
-  openCount: number;
-  inProgressCount: number;
-  resolvedCount: number;
-  closedCount: number;
-  criticalCount: number;
-  averageResolutionTime: string;
-}
-
 export const AdminBugReportsPage: React.FC = () => {
   const { t } = useTranslation();
-  const [reports, setReports] = useState<BugReport[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [reports, setReports] = useState<BugReportListItem[]>([]);
+  const [stats, setStats] = useState<BugReportStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -69,10 +44,14 @@ export const AdminBugReportsPage: React.FC = () => {
         search: search || undefined,
       });
 
-      setReports(result.data);
+      setReports(result.data ?? []);
       setTotalPages(result.pagination.totalPages);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load reports');
+    } catch (err: unknown) {
+      const message =
+        (err as any)?.response?.data?.message ||
+        (err as any)?.message ||
+        'Failed to load reports';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -82,7 +61,7 @@ export const AdminBugReportsPage: React.FC = () => {
     try {
       const data = await bugReportsApi.getStats();
       setStats(data.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load stats:', err);
     }
   };
@@ -94,14 +73,18 @@ export const AdminBugReportsPage: React.FC = () => {
     setUpdatingReportId(reportId);
     try {
       await bugReportsApi.update(reportId, {
-        status: updates.status as any,
-        priority: updates.priority as any,
+        status: updates.status,
+        priority: updates.priority,
       });
       await loadReports();
       await loadStats();
       setSelectedReport(null);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update report');
+    } catch (err: unknown) {
+      const message =
+        (err as any)?.response?.data?.message ||
+        (err as any)?.message ||
+        'Failed to update report';
+      setError(message);
     } finally {
       setUpdatingReportId(null);
     }
@@ -114,8 +97,12 @@ export const AdminBugReportsPage: React.FC = () => {
       await bugReportsApi.delete(reportId);
       await loadReports();
       await loadStats();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete report');
+    } catch (err: unknown) {
+      const message =
+        (err as any)?.response?.data?.message ||
+        (err as any)?.message ||
+        'Failed to delete report';
+      setError(message);
     }
   };
 

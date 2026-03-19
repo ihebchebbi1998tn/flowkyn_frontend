@@ -93,6 +93,40 @@ export function FeaturesSection() {
           })}
         </div>
       </div>
+
+      {/* Flagship activities overview */}
+      <div className="border-t border-border/20 bg-background/60">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <FadeUp className="text-center mb-8 sm:mb-10">
+            <h3
+              className="text-[22px] sm:text-[26px] md:text-[30px] font-bold tracking-[-0.02em] mb-2"
+              style={{ fontFamily: HEADING_FONT }}
+            >
+              {t('landing.features.activitiesGrid.title')}
+            </h3>
+            <p className="text-[14px] sm:text-[15px] text-muted-foreground max-w-[560px] mx-auto leading-relaxed">
+              {t('landing.features.activitiesGrid.subtitle')}
+            </p>
+          </FadeUp>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            {(['strategicEscape', 'coffeeRoulette', 'twoTruths', 'winsOfWeek'] as const).map((key) => (
+              <SlideIn key={key} from="bottom">
+                <div className="h-full rounded-xl border border-border/40 bg-card/80 backdrop-blur-sm p-4 sm:p-5 flex flex-col gap-2.5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+                  <p className="text-[11px] uppercase tracking-[0.12em] font-semibold text-primary/80">
+                    {t(`landing.features.activitiesGrid.${key}.tag`)}
+                  </p>
+                  <h4 className="text-[15px] sm:text-[16px] font-semibold">
+                    {t(`landing.features.activitiesGrid.${key}.title`)}
+                  </h4>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">
+                    {t(`landing.features.activitiesGrid.${key}.description`)}
+                  </p>
+                </div>
+              </SlideIn>
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

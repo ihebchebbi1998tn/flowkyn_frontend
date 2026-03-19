@@ -3,6 +3,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Users, Building2, Gamepad2, Activity, TrendingUp, UserPlus } from 'lucide-react';
 import { StatCard, InfoCard } from '@/components/cards/StatCard';
 import { PageHeader } from '@/components/common/PageHeader';
@@ -10,6 +11,7 @@ import { LogoLoader } from '@/components/loading/LogoLoader';
 import { adminApi, type AdminStats, type AuditLogEntry } from '@/api/admin';
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [recentLogs, setRecentLogs] = useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,8 +26,8 @@ export default function AdminDashboard() {
         ]);
         setStats(statsData);
         setRecentLogs(logsData.data);
-      } catch (err: any) {
-        setError(err?.message || 'Failed to load dashboard data');
+      } catch (err: unknown) {
+        setError((err as any)?.message || 'Failed to load dashboard data');
       } finally {
         setLoading(false);
       }
@@ -56,7 +58,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Total Users" value={(stats?.totalUsers ?? 0).toLocaleString()} icon={<Users className="h-4 w-4" />} gradient="primary" />
-        <StatCard title="Organizations" value={(stats?.totalOrganizations ?? 0).toLocaleString()} icon={<Building2 className="h-4 w-4" />} gradient="info" />
+        <StatCard title="Organizations" value {(stats?.totalOrganizations ?? 0).toLocaleString()} icon={<Building2 className="h-4 w-4" />} gradient="info" />
         <StatCard title="Game Sessions" value={(stats?.totalGameSessions ?? 0).toLocaleString()} icon={<Gamepad2 className="h-4 w-4" />} gradient="success" />
         <StatCard title="Active Users (30d)" value={(stats?.activeUsers30d ?? 0).toLocaleString()} icon={<Activity className="h-4 w-4" />} gradient="warning" />
       </div>
@@ -66,6 +68,18 @@ export default function AdminDashboard() {
         <StatCard title="New Users Today" value={stats?.newUsersToday ?? 0} icon={<UserPlus className="h-4 w-4" />} />
         <StatCard title="New Orgs Today" value={stats?.newOrgsToday ?? 0} icon={<Building2 className="h-4 w-4" />} />
       </div>
+
+      {/* Sessions by activity type */}
+      {stats?.sessionsByGame && (
+        <InfoCard title="Sessions by activity type">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <StatCard title={t('games.twoTruthsTitle', 'Two Truths & a Lie')} value={stats.sessionsByGame.twoTruths} icon={<Gamepad2 className="h-4 w-4" />} />
+            <StatCard title={t('games.coffeeRouletteTitle', 'Coffee Roulette')} value={stats.sessionsByGame.coffeeRoulette} icon={<Gamepad2 className="h-4 w-4" />} />
+            <StatCard title={t('games.winsOfWeekTitle', 'Wins of the Week')} value={stats.sessionsByGame.winsOfWeek} icon={<Gamepad2 className="h-4 w-4" />} />
+            <StatCard title={t('games.strategicEscapeTitle', 'Strategic Escape')} value={stats.sessionsByGame.strategicEscape} icon={<Gamepad2 className="h-4 w-4" />} />
+          </div>
+        </InfoCard>
+      )}
 
       <InfoCard title="Recent Platform Activity">
         <div className="space-y-0">

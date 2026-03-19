@@ -14,7 +14,7 @@ import { PageShell, PageHeader, DashStat, ChartCard } from '@/features/app/compo
 import { TableSkeleton, StatCardSkeleton } from '@/components/loading/Skeletons';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useCreateDepartment, useDeleteDepartment, useMyOrganization, useOrgDepartments, useOrgPeople, useRemoveOrgMember, useSendOrgInvites, useUploadOrgLogo } from '@/hooks/queries';
+import { useCreateDepartment, useDeleteDepartment, useMyOrganization, useOrgDepartments, useOrgPeople, useRemoveOrgMember, useSendOrgInvites, useUpdateDepartment, useUploadOrgLogo } from '@/hooks/queries';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import type { OrgMember } from '@/types';
 import type { Department } from '@/types';
@@ -53,6 +53,9 @@ export default function OrgDetail() {
   const uploadLogo = useUploadOrgLogo();
   const createDepartment = useCreateDepartment();
   const deleteDepartment = useDeleteDepartment();
+  const updateDepartment = useUpdateDepartment();
+  const [editingDepartmentId, setEditingDepartmentId] = useState<string | null>(null);
+  const [editingDepartmentName, setEditingDepartmentName] = useState('');
 
   const isLoading = orgLoading || membersLoading;
   const members = people?.members || [];
@@ -345,31 +348,86 @@ export default function OrgDetail() {
       key: 'name',
       header: t('departments.name'),
       sortable: true,
-      render: (row) => <span className="text-body-sm font-medium text-foreground">{(row as Department).name}</span>,
+      render: (row) => {
+        const dept = row as Department;
+        const isEditing = editingDepartmentId === dept.id;
+        if (isEditing) {
+          return (
+            <Input
+              value={editingDepartmentName}
+              onChange={(e) => setEditingDepartmentName(e.target.value)}
+              className="h-8 text-body-sm max-w-xs"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const name = editingDepartmentName.trim();
+                  if (!name || !orgId) return;
+                  updateDepartment.mutate(
+                    { orgId, departmentId: dept.id, name },
+                    {
+                      onSuccess: () => {
+                        setEditingDepartmentId(null);
+                        setEditingDepartmentName('');
+                      },
+                    }
+                  );
+                }
+                if (e.key === 'Escape') {
+                  setEditingDepartmentId(null);
+                  setEditingDepartmentName('');
+                }
+              }}
+              onBlur={() => {
+                setEditingDepartmentId(null);
+                setEditingDepartmentName('');
+              }}
+            />
+          );
+        }
+        return (
+          <span className="text-body-sm font-medium text-foreground">
+            {dept.name}
+          </span>
+        );
+      },
     },
     {
       key: 'actions',
       header: '',
       hideOnMobile: true,
       render: (row) => (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 text-muted-foreground hover:text-destructive"
-          disabled={deleteDepartment.isPending}
-          onClick={() => {
-            if (!orgId) return;
-            deleteDepartment.mutate(
-              { orgId, departmentId: (row as Department).id },
-              {
-                onSuccess: () => setDepartmentName(''),
-                onError: (err) => showError(err, t('apiErrors.INTERNAL_ERROR')),
-              }
-            );
-          }}
-        >
-          {t('common.delete')}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 text-muted-foreground"
+            onClick={() => {
+              const dept = row as Department;
+              setEditingDepartmentId(dept.id);
+              setEditingDepartmentName(dept.name);
+            }}
+          >
+            {t('common.edit')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 text-muted-foreground hover:text-destructive"
+            disabled={deleteDepartment.isPending}
+            onClick={() => {
+              if (!orgId) return;
+              deleteDepartment.mutate(
+                { orgId, departmentId: (row as Department).id },
+                {
+                  onSuccess: () => setDepartmentName(''),
+                  onError: (err) => showError(err, t('apiErrors.INTERNAL_ERROR')),
+                }
+              );
+            }}
+          >
+            {t('common.delete')}
+          </Button>
+        </div>
       ),
     },
   ];

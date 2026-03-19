@@ -349,6 +349,30 @@
         "label": "Event Management",
         "title": "Schedule, Invite, and Manage in One Place",
         "description": "Plan activities, send invitations, manage recurring events, and coordinate across multiple teams — all from a single intuitive dashboard."
+      },
+      "activitiesGrid": {
+        "title": "Four flagship activities, ready on day one",
+        "subtitle": "Start with battle‑tested formats your team will recognize and love — then expand with more templates over time.",
+        "strategicEscape": {
+          "tag": "Strategic escape",
+          "title": "Strategic Escape Game",
+          "description": "Asynchronous crisis simulation where each participant plays a different leadership role. Great for cross‑functional thinking and decision‑making."
+        },
+        "coffeeRoulette": {
+          "tag": "Connections",
+          "title": "Coffee Roulette",
+          "description": "Smart 1:1 pairing for virtual coffees. Perfect for onboarding, cross‑team connection, and breaking silos in hybrid organizations."
+        },
+        "twoTruths": {
+          "tag": "Icebreaker",
+          "title": "Two Truths & a Lie",
+          "description": "Fast, fun game to warm up meetings. Players submit prompts, vote, and reveal together — with built‑in scoring and animations."
+        },
+        "winsOfWeek": {
+          "tag": "Async ritual",
+          "title": "Wins of the Week",
+          "description": "Lightweight async check‑in where everyone shares a weekly win. Builds recognition, momentum, and a positive team narrative."
+        }
       }
     },
     "howItWorks": {

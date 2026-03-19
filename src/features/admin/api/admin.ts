@@ -16,6 +16,15 @@ export interface AdminStats {
   activeUsers30d: number;
   newUsersToday: number;
   newOrgsToday: number;
+  sessionsByGame?: {
+    twoTruths: number;
+    coffeeRoulette: number;
+    winsOfWeek: number;
+    strategicEscape: number;
+    trivia: number;
+    scavengerHunt: number;
+    gratitude: number;
+  };
 }
 
 export interface AuditLogEntry {

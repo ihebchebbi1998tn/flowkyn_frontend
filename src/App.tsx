@@ -62,7 +62,14 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   }
 
   if (mode === 'admin') {
-    return <AdminAuthProvider>{children}</AdminAuthProvider>;
+    // Admin pages may reuse shared components that call `useAuth()`.
+    // Keeping `AuthProvider` mounted avoids runtime crashes even when the admin user
+    // is authenticated via `AdminAuthProvider`.
+    return (
+      <AuthProvider>
+        <AdminAuthProvider>{children}</AdminAuthProvider>
+      </AuthProvider>
+    );
   }
 
   return <AuthProvider>{children}</AuthProvider>;

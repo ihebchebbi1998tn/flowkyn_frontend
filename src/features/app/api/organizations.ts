@@ -78,6 +78,10 @@ export const organizationsApi = {
   createDepartment: (orgId: string, name: string) =>
     api.post<Department>(`/organizations/${orgId}/departments`, { name }),
 
+  /** Update an organization department */
+  updateDepartment: (orgId: string, departmentId: string, name: string) =>
+    api.patch<Department>(`/organizations/${orgId}/departments/${departmentId}`, { name }),
+
   /** Delete an organization department */
   deleteDepartment: (orgId: string, departmentId: string) =>
     api.del(`/organizations/${orgId}/departments/${departmentId}`),

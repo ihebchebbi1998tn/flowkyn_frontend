@@ -102,7 +102,7 @@ export function OfficeExitAnimation({
   return (
     <div style={themeVars as React.CSSProperties}>
       <div
-        className="min-h-screen relative overflow-hidden flex items-center justify-center"
+        className="min-h-[460px] md:min-h-[520px] relative overflow-hidden flex items-center justify-center py-10 md:py-16"
         style={{
           background: `var(--gradient-room)`,
         }}
@@ -126,11 +126,11 @@ export function OfficeExitAnimation({
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="relative z-10 max-w-2xl mx-auto px-4"
+          className="relative z-10 max-w-xl mx-auto px-4"
         >
           {/* Success checkmark */}
           <motion.div
-            className="flex justify-center mb-8"
+            className="flex justify-center mb-6"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{
@@ -141,13 +141,13 @@ export function OfficeExitAnimation({
             }}
           >
             <div
-              className="w-20 h-20 rounded-full flex items-center justify-center"
+              className="w-16 h-16 rounded-full flex items-center justify-center"
               style={{
                 backgroundColor: 'var(--color-accent)',
                 boxShadow: '0 0 30px var(--color-accent)',
               }}
             >
-              <CheckCircle className="w-12 h-12 text-white" />
+              <CheckCircle className="w-10 h-10 text-white" />
             </div>
           </motion.div>
 
@@ -156,7 +156,7 @@ export function OfficeExitAnimation({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-4xl md:text-5xl font-bold text-center mb-6"
+            className="text-3xl md:text-4xl font-bold text-center mb-4"
             style={{ color: 'var(--color-text)' }}
           >
             {t('gamePlay.coffeeRoulette.complete.title', {
@@ -169,24 +169,24 @@ export function OfficeExitAnimation({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="mb-10 text-center"
+            className="mb-6 text-center"
           >
-            <p className="text-lg mb-6" style={{ color: 'var(--color-text-light)' }}>
+            <p className="text-base md:text-lg mb-4" style={{ color: 'var(--color-text-light)' }}>
               {t('gamePlay.coffeeRoulette.complete.subtitle', {
                 defaultValue: 'You had an amazing conversation!',
               })}
             </p>
 
             {/* Participants */}
-            <div className="flex items-center justify-center gap-6 mb-8">
+            <div className="flex items-center justify-center gap-4 md:gap-6 mb-6">
               {/* Person 1 */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.7 }}
-                className="flex flex-col items-center gap-2"
+                className="flex flex-col items-center gap-1.5"
               >
-                <Avatar className="w-16 h-16 ring-2" style={{ ringColor: 'var(--color-primary)' }}>
+                <Avatar className="w-12 h-12 md:w-14 md:h-14 ring-2" style={{ ringColor: 'var(--color-primary)' }}>
                   <AvatarImage
                     src={getSafeImageUrl(person1.avatarUrl)}
                     alt={person1.name}
@@ -200,7 +200,7 @@ export function OfficeExitAnimation({
                     {person1.avatar}
                   </AvatarFallback>
                 </Avatar>
-                <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+                <p className="text-xs md:text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
                   {person1.name}
                 </p>
               </motion.div>
@@ -221,9 +221,9 @@ export function OfficeExitAnimation({
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.7 }}
-                className="flex flex-col items-center gap-2"
+                className="flex flex-col items-center gap-1.5"
               >
-                <Avatar className="w-16 h-16 ring-2" style={{ ringColor: 'var(--color-primary)' }}>
+                <Avatar className="w-12 h-12 md:w-14 md:h-14 ring-2" style={{ ringColor: 'var(--color-primary)' }}>
                   <AvatarImage
                     src={getSafeImageUrl(person2.avatarUrl)}
                     alt={person2.name}
@@ -237,7 +237,7 @@ export function OfficeExitAnimation({
                     {person2.avatar}
                   </AvatarFallback>
                 </Avatar>
-                <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+                <p className="text-xs md:text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
                   {person2.name}
                 </p>
               </motion.div>
@@ -249,7 +249,7 @@ export function OfficeExitAnimation({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="grid grid-cols-2 gap-4 mb-10"
+            className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6"
           >
             {/* Duration card */}
             <StatCard
@@ -363,7 +363,7 @@ function StatCard({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="px-4 py-4 rounded-lg"
+      className="px-4 py-3 rounded-lg"
       style={{
         backgroundColor: 'var(--color-surface)',
       }}
