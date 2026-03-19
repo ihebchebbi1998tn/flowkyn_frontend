@@ -58,7 +58,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Total Users" value={(stats?.totalUsers ?? 0).toLocaleString()} icon={<Users className="h-4 w-4" />} gradient="primary" />
-        <StatCard title="Organizations" value {(stats?.totalOrganizations ?? 0).toLocaleString()} icon={<Building2 className="h-4 w-4" />} gradient="info" />
+        <StatCard title="Organizations" value={(stats?.totalOrganizations ?? 0).toLocaleString()} icon={<Building2 className="h-4 w-4" />} gradient="info" />
         <StatCard title="Game Sessions" value={(stats?.totalGameSessions ?? 0).toLocaleString()} icon={<Gamepad2 className="h-4 w-4" />} gradient="success" />
         <StatCard title="Active Users (30d)" value={(stats?.activeUsers30d ?? 0).toLocaleString()} icon={<Activity className="h-4 w-4" />} gradient="warning" />
       </div>
