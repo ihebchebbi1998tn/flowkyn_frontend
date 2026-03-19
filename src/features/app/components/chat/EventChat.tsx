@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, memo } from 'react';
+import { useState, useRef, useEffect, useCallback, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send, MessageCircle, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,12 @@ interface EventChatProps {
   pinnedMessageId?: string | null;
   /** Called when host wants to pin/unpin a message */
   onTogglePinMessage?: (messageId: string) => void;
+  /** Latest participant profiles for live name/avatar hydration of historic messages */
+  participantProfiles?: Array<{
+    participantId: string;
+    displayName?: string | null;
+    avatarUrl?: string | null;
+  }>;
 }
 
 function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: string | null; isOwn: boolean }) {
@@ -76,6 +82,7 @@ export const EventChat = memo(function EventChat({
   hostParticipantId,
   pinnedMessageId,
   onTogglePinMessage,
+  participantProfiles = [],
   isGuest = false,
 }: EventChatProps) {
   const { t } = useTranslation();
@@ -136,12 +143,27 @@ export const EventChat = memo(function EventChat({
     catch { return ''; }
   };
 
+  const participantProfileMap = useMemo(() => {
+    const map = new Map<string, { displayName?: string | null; avatarUrl?: string | null }>();
+    for (const p of participantProfiles) {
+      if (!p?.participantId) continue;
+      map.set(p.participantId, {
+        displayName: p.displayName || null,
+        avatarUrl: p.avatarUrl || null,
+      });
+    }
+    return map;
+  }, [participantProfiles]);
+
   // Group consecutive messages from same user
   const groupedMessages = messages.reduce<(ChatMessage & { showAvatar: boolean })[]>((acc, msg, i) => {
     const prev = i > 0 ? messages[i - 1] : null;
     const nextMsg = i < messages.length - 1 ? messages[i + 1] : null;
-    const showAvatar = !prev || prev.userId !== msg.userId;
-    const isLastInGroup = !nextMsg || nextMsg.userId !== msg.userId;
+    const prevKey = prev ? `${prev.userId || ''}:${prev.participantId || ''}` : null;
+    const currKey = `${msg.userId || ''}:${msg.participantId || ''}`;
+    const nextKey = nextMsg ? `${nextMsg.userId || ''}:${nextMsg.participantId || ''}` : null;
+    const showAvatar = !prev || prevKey !== currKey;
+    const isLastInGroup = !nextMsg || nextKey !== currKey;
     acc.push({ ...msg, showAvatar, isLastInGroup } as any);
     return acc;
   }, []);
@@ -178,8 +200,10 @@ export const EventChat = memo(function EventChat({
           <AnimatePresence initial={false}>
             {groupedMessages.map((msg) => {
               const isOwn = msg.isOwn || msg.userId === currentUserId || (isGuest && !!currentUserId && msg.userId === `guest:${currentUserId}`);
+              const latestProfile = participantProfileMap.get(msg.participantId);
+              const senderNameResolved = latestProfile?.displayName || msg.senderName;
               // Use the message's own avatarUrl, or fall back to currentUserAvatarUrl for own messages
-              const avatarUrl = msg.senderAvatarUrl || (isOwn ? currentUserAvatarUrl : null);
+              const avatarUrl = latestProfile?.avatarUrl || msg.senderAvatarUrl || (isOwn ? currentUserAvatarUrl : null);
               const isHost = hostParticipantId && msg.participantId === hostParticipantId;
               const isPinned = pinnedMessageId === msg.id;
               return (
@@ -195,14 +219,14 @@ export const EventChat = memo(function EventChat({
                   {/* Avatar — only show for last message in group */}
                   <div className="w-8 shrink-0">
                     {(msg as any).isLastInGroup ? (
-                      <AvatarBubble name={msg.senderName} avatarUrl={avatarUrl} isOwn={isOwn} />
+                      <AvatarBubble name={senderNameResolved} avatarUrl={avatarUrl} isOwn={isOwn} />
                     ) : null}
                   </div>
 
                   <div className={cn("max-w-[72%] min-w-0 space-y-0.5", isOwn && "items-end flex flex-col")}>
                     {msg.showAvatar && (
                       <p className={cn("text-[10px] font-semibold px-1", isOwn ? "text-right text-primary" : "text-muted-foreground")}>
-                        <span>{isOwn ? t('common.you', { defaultValue: 'You' }) : msg.senderName}</span>
+                        <span>{isOwn ? t('common.you', { defaultValue: 'You' }) : senderNameResolved}</span>
                         {isHost && (
                           <span className="ml-1 inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-full">
                             ★

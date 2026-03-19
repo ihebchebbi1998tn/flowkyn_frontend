@@ -13,6 +13,10 @@ import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPos
 import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { hasEventToken } from '@/hooks/queries/useMyEventParticipant';
 import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
+import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
+import { useGameChatState } from '@/hooks/useGameChatState';
+import { useGameStateSync } from '@/hooks/useGameStateSync';
+import { useParticipantPresenceSync } from '@/hooks/useParticipantPresenceSync';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useApiError } from '@/hooks/useApiError';
@@ -28,12 +32,6 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 function getDataArray(v: unknown): unknown[] {
   if (isRecord(v) && Array.isArray(v.data)) return v.data as unknown[];
   return [];
-}
-
-function parseRevisionTime(value: unknown): number {
-  if (typeof value !== 'string') return 0;
-  const ts = Date.parse(value);
-  return Number.isFinite(ts) ? ts : 0;
 }
 
 // ─── Profile helpers (same keys as EventLobby) ────────────────────────────────
@@ -242,34 +240,6 @@ function GamePlayWithoutBoundary() {
     }));
 
   // ─── Chat messages (persistent API load + live WebSocket) ─────────────────
-  const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
-  const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
-  const [disconnectedBadgeCount, setDisconnectedBadgeCount] = useState(0);
-  const disconnectedBadgeTimerRef = useRef<number | null>(null);
-
-  const rawMessages = getDataArray(messagesData);
-  const initialMessages: ChatMessage[] = rawMessages
-    .filter((m) => isRecord(m) && typeof m.id === 'string' && typeof m.message === 'string')
-    .map((m) => ({
-    id: String((m as any).id),
-    // For authenticated users: server stores user_id (real user ID). For guests: no user_id.
-    userId: (m as any).user_id || (m as any).participant_id,
-    participantId: (m as any).participant_id,
-    senderName: (m as any).user_name || (m as any).guest_name || t('common.unknown', { defaultValue: 'Unknown' }),
-    senderAvatar: String((m as any).user_name || (m as any).guest_name || '??').slice(0, 2).toUpperCase(),
-    senderAvatarUrl: (m as any).avatar_url || null,
-    message: String((m as any).message),
-    timestamp: String((m as any).created_at),
-    // isOwn: compare against user.id for auth users, guest participant ID for guests
-    isOwn: isGuest
-      ? (m as any).participant_id === guestParticipantId
-      : !!((m as any).user_id && (m as any).user_id === user?.id),
-  }));
-
-  // Merge pinned (if any) + initial (from API) + live (from WebSocket) — deduplicate by id
-  const allMessages = [...(pinnedMessage ? [pinnedMessage] : []), ...initialMessages, ...liveMessages].filter((m, i, self) => 
-    i === self.findIndex((t) => t.id === m.id)
-  );
 
   // ─── Game session state (moved up for use in callbacks) ────────────────────
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -278,11 +248,6 @@ function GamePlayWithoutBoundary() {
   const [initialSnapshot, setInitialSnapshot] = useState<unknown>(null);
   const [gameData, setGameData] = useState<unknown>(null);
   const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
-  const lastServerGameUpdateAtRef = useRef<number>(Date.now());
-  const lastSnapshotRevisionIdRef = useRef<string | null>(null);
-  const lastSnapshotRevisionTimeRef = useRef<number>(0);
-  const stateSyncInFlightRef = useRef(false);
-  const lastStateSyncStartedAtRef = useRef(0);
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
@@ -336,67 +301,10 @@ function GamePlayWithoutBoundary() {
     }
   }, [eventsSocket.isConnected, eventId, isGuest, showError]);
 
-  const joinGameRoom = useCallback(() => {
-    // Avoid joining too early before participant identity is hydrated.
-    if (!participantId && !hasJoined) return;
-    if (gamesSocket.isConnected && sessionId) {
-      console.log('[GamePlay] Emitting game:join for', sessionId);
-      gamesSocket.emit<any>('game:join', { sessionId })
-        .then((resp: any) => {
-          const data = resp?.data || resp;
-          console.log('[GamePlay] game:join resp:', data);
-          if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
-          setIsGameAdmin(!!data?.isAdmin);
-          if (data?.snapshot) {
-            const incomingRevisionTime = parseRevisionTime(data?.snapshotCreatedAt);
-            if (incomingRevisionTime > 0) {
-              lastSnapshotRevisionTimeRef.current = incomingRevisionTime;
-              lastSnapshotRevisionIdRef.current =
-                typeof data?.snapshotRevisionId === 'string' ? data.snapshotRevisionId : null;
-            }
-            lastServerGameUpdateAtRef.current = Date.now();
-            setInitialSnapshot(data.snapshot);
-            setGameData(data.snapshot);
-          }
-        })
-        .catch((err: any) => {
-          // Transient during startup/reconnect; retry logic elsewhere will recover.
-          console.warn('[GamePlay] Failed to join game room (transient):', err?.message || err);
-        });
-    }
-  }, [gamesSocket.isConnected, hasJoined, participantId, sessionId]);
-
-  const requestStateSync = useCallback(async (reason: string) => {
-    if (!gamesSocket.isConnected || !sessionId) return;
-    const now = Date.now();
-    if (stateSyncInFlightRef.current) return;
-    // Small cooldown prevents sync storms if multiple effects/events fire together.
-    if (now - lastStateSyncStartedAtRef.current < 600) return;
-
-    stateSyncInFlightRef.current = true;
-    lastStateSyncStartedAtRef.current = now;
-    try {
-      console.log('[GamePlay][sync] requesting game:state_sync', { sessionId, reason });
-      await gamesSocket.emit('game:state_sync', { sessionId });
-    } catch (err: any) {
-      console.warn('[GamePlay][sync] game:state_sync failed', {
-        sessionId,
-        reason,
-        error: err?.message || err,
-      });
-    } finally {
-      stateSyncInFlightRef.current = false;
-    }
-  }, [gamesSocket, gamesSocket.isConnected, sessionId]);
-
   // Initial joins
   useEffect(() => {
     if (eventsSocket.isConnected && eventId) joinEventRoom();
   }, [eventsSocket.isConnected, eventId, joinEventRoom]);
-
-  useEffect(() => {
-    if (gamesSocket.isConnected && sessionId) joinGameRoom();
-  }, [gamesSocket.isConnected, sessionId, joinGameRoom]);
 
   // Re-join on socket reconnection + refetch messages that may have been missed
   useEffect(() => {
@@ -411,92 +319,17 @@ function GamePlayWithoutBoundary() {
     return () => { eventsSocket.socket?.off('connect', onConnect); };
   }, [eventsSocket.socket, joinEventRoom, refetchMessages]);
 
-  useEffect(() => {
-    if (!gamesSocket.socket) return;
-    const onConnect = () => {
-      console.log('[GamePlay] Games socket reconnected, re-joining room...');
-      joinGameRoom();
-      if (sessionId) void requestStateSync('socket_connect_listener');
-    };
-    gamesSocket.socket.on('connect', onConnect);
-    return () => { gamesSocket.socket?.off('connect', onConnect); };
-  }, [gamesSocket.socket, sessionId, joinGameRoom, requestStateSync]);
-
-  // Listen for incoming chat messages
-  const liveMessagesRef = useRef(liveMessages);
-  liveMessagesRef.current = liveMessages;
-
-  const makeWsId = useCallback(() => {
-    return `ws-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
-  }, []);
-
-  useEffect(() => {
-    if (!eventsSocket.isConnected) {
-      console.log('[GamePlay] Chat listener: socket not connected');
-      return;
-    }
-
-    console.log('[GamePlay] Setting up chat message listener for eventId:', eventId);
-
-    const handleChatMessage = (data: any) => {
-      console.log('[GamePlay] Socket message received:', data);
-      const idCurrent = identityRef.current;
-      const usr = userRef.current;
-      
-      const name = data.senderName || 'Player';
-      const isOwn = idCurrent?.isGuest
-        ? data.participantId === idCurrent.participantId
-        : !!(data.userId && data.userId === usr?.id);
-        
-      const msg: ChatMessage = {
-        id: data.id || makeWsId(),
-        userId: data.userId,
-        participantId: data.participantId,
-        senderName: name,
-        senderAvatar: name.slice(0, 2).toUpperCase(),
-        senderAvatarUrl: getSafeImageUrl(data.senderAvatarUrl) || null,
-        message: data.message,
-        timestamp: data.timestamp || new Date().toISOString(),
-        isOwn,
-      };
-      
-      console.log('[GamePlay] Appending to liveMessages:', msg);
-      setLiveMessages(prev => {
-        if (prev.some(m => m.id === msg.id)) return prev;
-        return [...prev, msg];
-      });
-    };
-
-    const unsub = eventsSocket.on('chat:message', handleChatMessage);
-    return unsub;
-  }, [eventsSocket.isConnected, eventId, eventsSocket, makeWsId]);
-
-  // Fetch pinned message for in-game chat once the eventId is known
-  useEffect(() => {
-    if (!eventId) return;
-    eventsApi.getPinnedMessage(eventId)
-      .then((row: any) => {
-        if (!row) {
-          setPinnedMessage(null);
-          return;
-        }
-        const name = row.user_name || 'Player';
-        setPinnedMessage({
-          id: row.id,
-          userId: row.user_id || row.participant_id,
-          participantId: row.participant_id,
-          senderName: name,
-          senderAvatar: (name || '??').slice(0, 2).toUpperCase(),
-          senderAvatarUrl: getSafeImageUrl(row.avatar_url) || null,
-          message: row.message,
-          timestamp: row.created_at,
-          isOwn: false,
-        });
-      })
-      .catch(() => {
-        // Non-fatal; ignore errors here to avoid breaking game play
-      });
-  }, [eventId]);
+  const { allMessages, initialMessages, liveMessages, pinnedMessage, setPinnedMessage } = useGameChatState({
+    eventId: eventId || undefined,
+    messagesData,
+    isGuest,
+    guestParticipantId,
+    userId: user?.id,
+    tUnknown: t('common.unknown', { defaultValue: 'Unknown' }),
+    eventsSocket,
+    identityRef,
+    userRef,
+  });
 
   // Cleanup: leave event room on unmount
   useEffect(() => {
@@ -582,104 +415,6 @@ function GamePlayWithoutBoundary() {
     return () => { cancelled = true; };
   }, [eventId]);
 
-
-
-  // Listen for game snapshots pushed by server
-  useEffect(() => {
-    if (!gamesSocket.isConnected) return;
-    const unsubState = gamesSocket.on('game:state', (payload: any) => {
-      const snap = payload?.state?.snapshot;
-      const ar = payload?.state?.activeRoundId;
-      const incomingRevisionId =
-        typeof payload?.state?.snapshotRevisionId === 'string' ? payload.state.snapshotRevisionId : null;
-      const incomingRevisionTime = parseRevisionTime(payload?.state?.snapshotCreatedAt);
-      console.log('[GamePlay] Received game:state event:', { hasSnapshot: !!snap, hasActiveRound: !!ar });
-      if (ar) setActiveRoundId(ar);
-      if (snap) {
-        const currentRevisionTime = lastSnapshotRevisionTimeRef.current;
-        const isNewer = incomingRevisionTime > 0 ? incomingRevisionTime >= currentRevisionTime : true;
-        if (!isNewer) {
-          console.log('[GamePlay][sync] Ignoring stale game:state snapshot', {
-            incomingRevisionId,
-            incomingRevisionTime,
-            currentRevisionTime,
-          });
-          return;
-        }
-        lastSnapshotRevisionTimeRef.current = incomingRevisionTime || currentRevisionTime;
-        lastSnapshotRevisionIdRef.current = incomingRevisionId;
-        lastServerGameUpdateAtRef.current = Date.now();
-        console.log('[GamePlay] Updating game state from game:state event:', snap.kind, {
-          incomingRevisionId,
-          incomingRevisionTime,
-        });
-        setInitialSnapshot(snap);
-        setGameData(snap);
-      }
-    });
-    const unsubData = gamesSocket.on('game:data', (payload: any) => {
-      if (payload?.gameData) {
-        const incomingRevisionId =
-          typeof payload?.snapshotRevisionId === 'string' ? payload.snapshotRevisionId : null;
-        const incomingRevisionTime = parseRevisionTime(payload?.snapshotCreatedAt);
-        const currentRevisionTime = lastSnapshotRevisionTimeRef.current;
-        const isNewer = incomingRevisionTime > 0 ? incomingRevisionTime >= currentRevisionTime : true;
-        if (!isNewer) {
-          console.log('[GamePlay][sync] Ignoring stale game:data snapshot', {
-            incomingRevisionId,
-            incomingRevisionTime,
-            currentRevisionTime,
-          });
-          return;
-        }
-        lastSnapshotRevisionTimeRef.current = incomingRevisionTime || currentRevisionTime;
-        lastSnapshotRevisionIdRef.current = incomingRevisionId;
-        lastServerGameUpdateAtRef.current = Date.now();
-        console.log('[GamePlay] Received game:data event:', payload.gameData.kind, {
-          incomingRevisionId,
-          incomingRevisionTime,
-        });
-        setGameData(payload.gameData);
-      }
-    });
-
-    // Handle game lifecycle events emitted by host actions
-    const unsubStarted = gamesSocket.on('game:started', () => {
-      console.log('[GamePlay] Received game:started event, syncing state...');
-      if (sessionId) {
-        void requestStateSync('event:game_started');
-      }
-    });
-    const unsubRoundStarted = gamesSocket.on('game:round_started', (payload: any) => {
-      console.log('[GamePlay] Received game:round_started event');
-      if (payload?.roundId) setActiveRoundId(payload.roundId);
-      if (sessionId) {
-        void requestStateSync('event:round_started');
-      }
-    });
-    const unsubRoundEnded = gamesSocket.on('game:round_ended', () => {
-      console.log('[GamePlay] Received game:round_ended event, syncing state...');
-      if (sessionId) {
-        void requestStateSync('event:round_ended');
-      }
-    });
-    const unsubEnded = gamesSocket.on('game:ended', () => {
-      console.log('[GamePlay] Received game:ended event, syncing state...');
-      if (sessionId) {
-        void requestStateSync('event:game_ended');
-      }
-    });
-
-    return () => { 
-      unsubState?.(); 
-      unsubData?.(); 
-      unsubStarted?.();
-      unsubRoundStarted?.();
-      unsubRoundEnded?.();
-      unsubEnded?.();
-    };
-  }, [gamesSocket.isConnected, sessionId, gamesSocket, requestStateSync]);
-
   // Reconnect backfill: when events socket reconnects, refetch messages/participants/posts
   const wasEventsConnectedRef = useRef(false);
   useEffect(() => {
@@ -741,144 +476,34 @@ function GamePlayWithoutBoundary() {
     return unsub;
   }, [eventsSocket.isConnected, eventId, refetchPosts]);
 
-  // Real-time participant sync (Event level & Game level)
-  useEffect(() => {
-    if (!eventsSocket.isConnected || !eventId) return;
-    const triggerRefetch = () => {
-      console.log('[GamePlay] Participant joined/left event, refetching...');
-      refetchParticipants();
-    };
-    const unsubJoin = eventsSocket.on('event:user_joined', triggerRefetch);
-    const unsubLeave = eventsSocket.on('event:user_left', triggerRefetch);
-    return () => { unsubJoin?.(); unsubLeave?.(); };
-  }, [eventsSocket.isConnected, eventId, refetchParticipants]);
-
-  useEffect(() => {
-    if (!gamesSocket.isConnected || !sessionId) return;
-    const triggerRefetchOnJoin = () => {
-      console.log('[GamePlay] Player joined game, refetching participants...');
-      refetchParticipants();
-    };
-
-    const triggerRefetchOnLeave = () => {
-      console.log('[GamePlay] Player left game, refetching participants...');
-      refetchParticipants();
-
-      // Show a temporary "user disconnected" badge in the game shell.
-      setDisconnectedBadgeCount((prev) => prev + 1);
-      if (disconnectedBadgeTimerRef.current) {
-        window.clearTimeout(disconnectedBadgeTimerRef.current);
-      }
-      disconnectedBadgeTimerRef.current = window.setTimeout(() => {
-        setDisconnectedBadgeCount(0);
-      }, 9000);
-    };
-
-    const unsubJoin = gamesSocket.on('game:player_joined', triggerRefetchOnJoin);
-    const unsubLeave = gamesSocket.on('game:player_left', triggerRefetchOnLeave);
-    return () => { unsubJoin?.(); unsubLeave?.(); };
-  }, [gamesSocket.isConnected, sessionId, refetchParticipants]);
-
-  useEffect(() => {
-    return () => {
-      if (disconnectedBadgeTimerRef.current) {
-        window.clearTimeout(disconnectedBadgeTimerRef.current);
-      }
-    };
-  }, []);
-
-  // If we learn about a session while connected, proactively join its game room.
-  // IMPORTANT: this must retry briefly because `game:join` can race with identity
-  // hydration (participant not yet resolvable on first attempt), which would cause
-  // users to miss subsequent real-time game:data updates until a full reload.
-  useEffect(() => {
-    if (!gamesSocket.isConnected || !sessionId) return;
-    if (!participantId && !hasJoined) return;
-
-    let cancelled = false;
-    const retryDelaysMs = [0, 700, 1600, 3000];
-    const timers: number[] = [];
-
-    const attemptJoin = async (attempt: number) => {
-      if (cancelled) return;
-      try {
-        const ack = await gamesSocket.emit<any>('game:join', { sessionId });
-        const ok = (ack as any)?.ok;
-        const data = (ack as any)?.data;
-        if (ok === false) {
-          throw new Error((ack as any)?.error || 'JOIN_FAILED');
-        }
-
-        // Sync snapshot immediately on successful room join.
-        if (data?.snapshot) {
-          setInitialSnapshot(data.snapshot);
-          setGameData(data.snapshot);
-        }
-        if (data?.activeRoundId) {
-          setActiveRoundId(data.activeRoundId);
-        }
-
-        await requestStateSync(`join_attempt_${attempt}`);
-        console.log('[GamePlay] game:join succeeded', { sessionId, attempt });
-      } catch (err: any) {
-        console.warn('[GamePlay] game:join failed, will retry if attempts remain', {
-          sessionId,
-          attempt,
-          error: err?.message || err,
-        });
-      }
-    };
-
-    retryDelaysMs.forEach((delay, idx) => {
-      const id = window.setTimeout(() => {
-        void attemptJoin(idx + 1);
-      }, delay);
-      timers.push(id);
-    });
-
-    return () => {
-      cancelled = true;
-      timers.forEach((t) => window.clearTimeout(t));
-    };
-  }, [
-    gamesSocket.isConnected,
+  useParticipantProfileRealtimeSync({
+    eventId: eventId || undefined,
+    participantId,
+    refetchParticipants,
+    eventsSocket,
     gamesSocket,
+    setOwnProfile: setProfile,
+    logPrefix: 'GamePlay',
+  });
+
+  const { disconnectedBadgeCount } = useParticipantPresenceSync({
+    eventId: eventId || undefined,
+    sessionId,
+    eventsSocket,
+    gamesSocket,
+    refetchParticipants,
+  });
+
+  useGameStateSync({
+    gamesSocket,
+    sessionId,
     hasJoined,
     participantId,
-    requestStateSync,
-    sessionId,
     setActiveRoundId,
-    setGameData,
     setInitialSnapshot,
-  ]);
-
-  // Reconnect backfill for games: when games socket reconnects, always issue game:state_sync
-  const wasGamesConnectedRef = useRef(false);
-  useEffect(() => {
-    if (gamesSocket.status === 'connected') {
-      if (!wasGamesConnectedRef.current) {
-        wasGamesConnectedRef.current = true;
-        if (sessionId) {
-          void requestStateSync('socket_reconnected');
-        }
-      }
-    } else {
-      wasGamesConnectedRef.current = false;
-    }
-  }, [gamesSocket.status, sessionId, gamesSocket, requestStateSync]);
-
-  // Watchdog fallback: if no authoritative game update arrives for a while during
-  // an active session, request one state sync. This is a safety net only.
-  useEffect(() => {
-    if (!gamesSocket.isConnected || !sessionId) return;
-    const id = window.setInterval(() => {
-      const staleForMs = Date.now() - lastServerGameUpdateAtRef.current;
-      if (staleForMs > 9000) {
-        void requestStateSync('watchdog_stale_state');
-      }
-    }, 2500);
-    return () => window.clearInterval(id);
-  }, [gamesSocket.isConnected, sessionId, requestStateSync]);
+    setGameData,
+    setIsGameAdmin,
+  });
 
   // ─── Typing state ──────────────────────────────────────────────────────────
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -982,6 +607,11 @@ function GamePlayWithoutBoundary() {
         <EventChat
           eventId={eventId || ''}
           messages={allMessages}
+          participantProfiles={participants.map((p) => ({
+            participantId: p.id,
+            displayName: p.name,
+            avatarUrl: p.avatarUrl ? getSafeImageUrl(p.avatarUrl) || p.avatarUrl : null,
+          }))}
           onSendMessage={handleSendMessage}
           onTyping={handleTyping}
           currentUserId={currentUserId}

@@ -41,6 +41,7 @@ import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useApiError } from '@/hooks/useApiError';
+import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
 import { eventsApi } from '@/features/app/api/events';
 import { LanguageSelector } from '@/components/common';
 
@@ -231,6 +232,15 @@ export default function EventLobby() {
     !(identity.participantId && participants.some((p: any) => p.id === identity.participantId));
   const hostParticipantId = participants.find((p: any) => p.is_host)?.id as string | undefined;
   const isHostSelf = !!(identity.participantId && participants.some((p: any) => p.id === identity.participantId && p.is_host));
+
+  useParticipantProfileRealtimeSync({
+    eventId: id || undefined,
+    participantId: identity.participantId || null,
+    refetchParticipants,
+    eventsSocket,
+    setOwnProfile: setProfile,
+    logPrefix: 'EventLobby',
+  });
 
   // Chat state: initial history from API + live messages from WebSocket
   const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
@@ -840,6 +850,11 @@ export default function EventLobby() {
                   <EventChat
                     eventId={id || ''}
                     messages={allMessages}
+                    participantProfiles={participants.map((p: any) => ({
+                      participantId: String(p.id),
+                      displayName: typeof p.name === 'string' ? p.name : null,
+                      avatarUrl: typeof p.avatar === 'string' ? (getSafeImageUrl(p.avatar) || p.avatar) : null,
+                    }))}
                     onSendMessage={handleSendMessage}
                     onTyping={handleTyping}
                     currentUserId={currentUserId}
