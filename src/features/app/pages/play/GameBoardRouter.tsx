@@ -213,7 +213,9 @@ export function GameBoardRouter({
 
       const ack = await gamesSocket.emit('game:action', {
         sessionId: sid,
-        roundId: activeRoundId || undefined,
+        // Coffee Roulette reducer does not rely on a specific round id.
+        // Passing a stale `activeRoundId` can cause "Round not found in this session" socket errors.
+        roundId: actionType.startsWith('coffee:') ? undefined : (activeRoundId || undefined),
         actionType,
         payload: isRecord(payload) ? payload : {},
       });

@@ -202,7 +202,18 @@ export default function EventLobby() {
 
   // 2. Auto-trigger join when profile is ready and form is dismissed (first-time joiners)
   useEffect(() => {
-    if (!isIdentityLoading && profile && !showProfileForm && !hasJoined && !isJoining && !joinError) {
+    // Important: avoid calling `joinAsGuest` again on refresh.
+    // If `identity.participantId` exists, the guest is already in the lobby and
+    // `joinAsGuest` would try to recreate a new participant -> NAME_TAKEN.
+    if (
+      !isIdentityLoading &&
+      profile &&
+      !showProfileForm &&
+      !hasJoined &&
+      !identity.participantId &&
+      !isJoining &&
+      !joinError
+    ) {
       console.log('[EventLobby] auto-joining after profile ready', {
         eventId: id,
         hasJoined,
@@ -211,7 +222,7 @@ export default function EventLobby() {
       });
       handleJoin();
     }
-  }, [profile, showProfileForm, hasJoined, isJoining, joinError, handleJoin]);
+  }, [profile, showProfileForm, hasJoined, isJoining, joinError, handleJoin, identity.participantId, isIdentityLoading, id]);
 
   const joinLink = `${window.location.origin}/join/${id}${gameParam ? `?game=${gameParam}` : ''}`;
   const participants = (participantsData as any)?.data ?? [];

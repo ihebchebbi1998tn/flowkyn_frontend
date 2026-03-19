@@ -273,7 +273,10 @@ function GamePlayWithoutBoundary() {
   const gamesSocket = useGamesSocket({
     // Use eventId so guests can authenticate with their per-event guest token
     eventId: eventId || undefined,
-    onError: (e) => showError(e, t('gamePlay.errors.socket', { defaultValue: 'Game connection error' })),
+    onError: (e) => {
+      const msg = (e as any)?.message;
+      showError(e, msg || t('gamePlay.errors.socket', { defaultValue: 'Game connection error' }));
+    },
   });
 
   // 3. Ensure socket connects when joined

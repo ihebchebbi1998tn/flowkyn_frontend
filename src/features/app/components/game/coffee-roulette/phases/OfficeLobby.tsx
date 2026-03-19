@@ -94,7 +94,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                     border: '1px solid var(--color-primary-light)',
                   }}
                 >
-                  <p className="text-xs font-medium" style={{ color: 'var(--color-text-light)' }}>
+                  <p className="text-xs font-medium" style={{ color: 'var(--color-text)' }}>
                     {t('gamePlay.coffeeRoulette.lobby.participants')}
                   </p>
                   <p className="text-xl font-bold" style={{ color: 'var(--color-text)' }}>
@@ -109,7 +109,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                     border: '1px solid var(--color-accent-light)',
                   }}
                 >
-                  <p className="text-xs font-medium" style={{ color: 'var(--color-text-light)' }}>
+                  <p className="text-xs font-medium" style={{ color: 'var(--color-text)' }}>
                     {t('gamePlay.coffeeRoulette.lobby.pairs')}
                   </p>
                   <p className="text-xl font-bold" style={{ color: 'var(--color-text)' }}>
@@ -131,7 +131,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
               transition={{ duration: 0.4 }}
               className="mb-4"
             >
-              <p className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
+              <p className="text-base font-semibold mb-3 tracking-tight" style={{ color: 'var(--color-text)' }}>
                 {t('gamePlay.coffeeRoulette.lobby.participants')} ({participantCount})
               </p>
               <div
