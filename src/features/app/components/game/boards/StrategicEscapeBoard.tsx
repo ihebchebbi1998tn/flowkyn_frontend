@@ -336,7 +336,7 @@ export function StrategicEscapeBoard({
     } catch (err) {
       console.error('[StrategicEscapeBoard] strategic:start_discussion error', err);
     }
-  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction, t]);
+  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction]);
 
   const handleEndDiscussion = useCallback(async () => {
     if (!isHost || !sessionId) return;

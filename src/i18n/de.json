@@ -1602,6 +1602,7 @@
     "coffeeRoulette": {
       "title": "Kaffee-Roulette",
       "subtitle": "Zufällige 1:1-Paare für bedeutungsvolle Verbindungen",
+      "countdownFinal": "MATCH!",
       "readyToConnect": "Bereit zum Vernetzen?",
       "description": "Wir paaren alle zufällig für einen 30-minütigen virtuellen Kaffee-Chat. Kameras an, keine Agenda — einfach verbinden!",
       "minutes": "30 Minuten",
@@ -1805,6 +1806,19 @@
       "contributions": "{{count}} Beiträge",
       "ongoing": "Laufend — jederzeit teilen",
       "closed": "Geschlossen",
+      "timeAgo": {
+        "justNow": "Gerade eben",
+        "minutes": "vor {{count}} Min.",
+        "hours": "vor {{count}} Std.",
+        "yesterday": "Gestern",
+        "days": "vor {{count}} Tagen"
+      },
+      "endTime": {
+        "ended": "Beendet",
+        "minutesLeft": "{{count}} Min. übrig",
+        "hoursMinutesLeft": "{{hours}} Std. {{minutes}} Min. übrig",
+        "daysLeft": "{{count}} Tage übrig"
+      },
       "endsAt": "Endet: {{time}}",
       "endedAt": "Beendet: {{time}}",
       "shareYourWin": "Teilen Sie Ihren Erfolg...",

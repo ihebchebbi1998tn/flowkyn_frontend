@@ -998,6 +998,7 @@
     "coffeeRoulette": {
       "title": "Coffee Roulette",
       "subtitle": "Random 1:1 pairings for meaningful connections",
+      "countdownFinal": "MATCH!",
       "readyToConnect": "Ready to Connect?",
       "description": "We'll randomly pair everyone for a 30-minute virtual coffee chat. Cameras on, no agenda — just connect!",
       "minutes": "30 minutes",
@@ -1223,6 +1224,19 @@
       "contributions": "{{count}} contributions",
       "ongoing": "Ongoing — share anytime",
       "closed": "Closed",
+      "timeAgo": {
+        "justNow": "Just now",
+        "minutes": "{{count}}m ago",
+        "hours": "{{count}}h ago",
+        "yesterday": "Yesterday",
+        "days": "{{count}}d ago"
+      },
+      "endTime": {
+        "ended": "Ended",
+        "minutesLeft": "{{count}}m left",
+        "hoursMinutesLeft": "{{hours}}h {{minutes}}m left",
+        "daysLeft": "{{count}}d left"
+      },
       "endsAt": "Ends: {{time}}",
       "endedAt": "Ended: {{time}}",
       "shareYourWin": "Share your win...",

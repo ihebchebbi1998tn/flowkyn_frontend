@@ -23,7 +23,12 @@ const REACTION_ICONS: Record<string, typeof Heart> = {
  * Format timestamp into a human-readable, localized string
  * Examples: "Just now", "2 minutes ago", "Yesterday", "Mar 18, 2026"
  */
-function formatTimeAgo(timestamp: string | Date): string {
+function formatTimeAgo(args: {
+  timestamp: string | Date;
+  t: (key: string, opts?: Record<string, unknown>) => unknown;
+  locale: string;
+}): string {
+  const { timestamp, t, locale } = args;
   const now = new Date();
   const postDate = new Date(timestamp);
   const diff = now.getTime() - postDate.getTime();
@@ -32,54 +37,63 @@ function formatTimeAgo(timestamp: string | Date): string {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days}d ago`;
+  if (minutes < 1) return String(t('gamePlay.winsOfWeek.timeAgo.justNow', { defaultValue: 'Just now' }));
+  if (minutes < 60) return String(t('gamePlay.winsOfWeek.timeAgo.minutes', { defaultValue: '{{count}}m ago', count: minutes }));
+  if (hours < 24) return String(t('gamePlay.winsOfWeek.timeAgo.hours', { defaultValue: '{{count}}h ago', count: hours }));
+  if (days === 1) return String(t('gamePlay.winsOfWeek.timeAgo.yesterday', { defaultValue: 'Yesterday' }));
+  if (days < 7) return String(t('gamePlay.winsOfWeek.timeAgo.days', { defaultValue: '{{count}}d ago', count: days }));
 
   // For older posts, show formatted date (e.g., "Mar 18, 2026 at 2:30 PM")
-  return postDate.toLocaleDateString('en-US', {
+  return new Intl.DateTimeFormat(locale, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-    hour12: true,
-  });
+  }).format(postDate);
 }
 
 /**
  * Format absolute end time for display
  * Examples: "Ends in 2h 45m", "Ends today at 5:00 PM", "Ended Mar 18"
  */
-function formatEndTime(endsAt: string, isClosed: boolean): string {
+function formatEndTime(args: {
+  endsAt: string;
+  isClosed: boolean;
+  t: (key: string, opts?: Record<string, unknown>) => unknown;
+  locale: string;
+}): string {
+  const { endsAt, isClosed, t, locale } = args;
   const now = new Date();
   const endDate = new Date(endsAt);
   const diff = endDate.getTime() - now.getTime();
 
   if (isClosed) {
-    return endDate.toLocaleDateString('en-US', {
+    return new Intl.DateTimeFormat(locale, {
       month: 'short',
       day: 'numeric',
-    });
+    }).format(endDate);
   }
 
-  if (diff < 0) return 'Ended';
+  if (diff < 0) return String(t('gamePlay.winsOfWeek.endTime.ended', { defaultValue: 'Ended' }));
 
   const minutes = Math.floor((diff / 1000) % 60);
   const hours = Math.floor((diff / 1000 / 60) % 60);
   const totalHours = Math.floor(diff / 3600000);
 
   if (totalHours === 0) {
-    return `${minutes}m left`;
+    return String(t('gamePlay.winsOfWeek.endTime.minutesLeft', { defaultValue: '{{count}}m left', count: minutes }));
   }
   if (totalHours < 24) {
-    return `${hours}h ${minutes}m left`;
+    return String(t('gamePlay.winsOfWeek.endTime.hoursMinutesLeft', {
+      defaultValue: '{{hours}}h {{minutes}}m left',
+      hours,
+      minutes,
+    }));
   }
 
   const days = Math.floor(diff / 86400000);
-  return `${days}d left`;
+  return String(t('gamePlay.winsOfWeek.endTime.daysLeft', { defaultValue: '{{count}}d left', count: days }));
 }
 
 export interface WinsOfTheWeekBoardProps {
@@ -119,7 +133,7 @@ export function WinsOfTheWeekBoard({
   onPost,
   onToggleReaction,
 }: WinsOfTheWeekBoardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [howOpen, setHowOpen] = useState(false);
   const displayPrompt = prompt || t('gamePlay.winsOfWeek.defaultPrompt', { defaultValue: 'Share your win from this week — work or personal, big or small!' });
   const [newPost, setNewPost] = useState('');
@@ -138,12 +152,12 @@ export function WinsOfTheWeekBoard({
   useEffect(() => {
     if (!endsAt) return;
     const updateEndTime = () => {
-      setLiveEndTime(formatEndTime(endsAt, postingClosed));
+      setLiveEndTime(formatEndTime({ endsAt, isClosed: postingClosed, t, locale: i18n.language }));
     };
     updateEndTime();
     const interval = setInterval(updateEndTime, 60000);
     return () => clearInterval(interval);
-  }, [endsAt, postingClosed]);
+  }, [endsAt, postingClosed, i18n.language, t]);
 
   const handlePost = async () => {
     if (!newPost.trim()) return;
@@ -262,7 +276,7 @@ export function WinsOfTheWeekBoard({
             {endsAt && (
               <span className="flex items-center gap-1 px-2 py-1 rounded-md bg-muted/30">
                 <Calendar className="h-3 w-3" />
-                {liveEndTime || formatEndTime(endsAt, postingClosed)}
+                {liveEndTime || formatEndTime({ endsAt, isClosed: postingClosed, t, locale: i18n.language })}
               </span>
             )}
           </div>
@@ -421,7 +435,7 @@ export function WinsOfTheWeekBoard({
                     <div>
                       <p className="text-[13px] font-medium text-foreground">{post.authorName}</p>
                       <time className="text-[10px] text-muted-foreground" dateTime={post.timestamp} title={new Date(post.timestamp).toLocaleString()}>
-                        {formatTimeAgo(post.timestamp)}
+                        {formatTimeAgo({ timestamp: post.timestamp, t, locale: i18n.language })}
                       </time>
                     </div>
                   </div>

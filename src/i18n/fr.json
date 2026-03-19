@@ -1618,6 +1618,7 @@
     "coffeeRoulette": {
       "title": "Café Roulette",
       "subtitle": "Paires aléatoires 1:1 pour des connexions significatives",
+      "countdownFinal": "MATCH !",
       "readyToConnect": "Prêt à se connecter ?",
       "description": "Nous allons associer tout le monde pour un café virtuel de 30 minutes. Caméras allumées, pas d'ordre du jour — juste se connecter !",
       "minutes": "30 minutes",
@@ -1821,6 +1822,19 @@
       "contributions": "{{count}} contributions",
       "ongoing": "En cours — partagez à tout moment",
       "closed": "Fermé",
+      "timeAgo": {
+        "justNow": "À l’instant",
+        "minutes": "il y a {{count}} min",
+        "hours": "il y a {{count}} h",
+        "yesterday": "Hier",
+        "days": "il y a {{count}} j"
+      },
+      "endTime": {
+        "ended": "Terminé",
+        "minutesLeft": "{{count}} min restantes",
+        "hoursMinutesLeft": "{{hours}} h {{minutes}} min restantes",
+        "daysLeft": "{{count}} j restants"
+      },
       "endsAt": "Se termine : {{time}}",
       "endedAt": "Terminé : {{time}}",
       "shareYourWin": "Partagez votre victoire...",

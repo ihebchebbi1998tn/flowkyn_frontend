@@ -251,7 +251,12 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
 
   return (
     <div className="space-y-4">
-      <CountdownOverlay active={showCountdown} onComplete={handleCountdownDone} accentColor="info" finalText="MATCH!" />
+      <CountdownOverlay
+        active={showCountdown}
+        onComplete={handleCountdownDone}
+        accentColor="info"
+        finalText={t('gamePlay.coffeeRoulette.countdownFinal', { defaultValue: 'MATCH!' })}
+      />
       <HowItWorksModal open={howOpen} onOpenChange={setHowOpen} baseKey="gameHowItWorks.coffeeRoulette" />
       <Dialog open={showDecisionModal} onOpenChange={setShowDecisionModal}>
         <DialogContent className="max-w-lg">
