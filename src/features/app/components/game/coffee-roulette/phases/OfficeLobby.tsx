@@ -56,7 +56,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
   return (
     <div style={themeVars as React.CSSProperties}>
       <div
-        className="min-h-[520px] flex flex-col"
+          className="min-h-[500px] flex flex-col"
         style={{
           background: `linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%)`,
         }}
@@ -122,186 +122,237 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4 py-3 overflow-y-auto">
-          <div className="w-full max-w-6xl">
-            {/* All Participants - Compact Grid (works up to ~60) */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mb-4"
-            >
-              <p className="text-base font-semibold mb-3 tracking-tight" style={{ color: 'var(--color-text)' }}>
-                {t('gamePlay.coffeeRoulette.lobby.participants')} ({participantCount})
-              </p>
-              <div
-                className="rounded-xl border border-border/60 bg-white/60 p-3"
-                style={{ maxHeight: 205, overflowY: 'auto' }}
-              >
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(56px, 1fr))',
-                    gap: 12,
-                  }}
-                >
-                  {participants.map((participant, idx) => (
-                    <motion.div
-                      key={participant.participantId}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.25, delay: idx * 0.01 }}
-                      title={participant.name}
-                      className="flex items-center justify-center"
-                    >
-                      <Avatar
-                        className="w-9 h-9 ring-1"
-                        style={{
-                          outlineWidth: '1px',
-                          outlineColor: 'var(--color-primary)',
-                          outlineOffset: '2px',
-                        }}
-                      >
-                        <AvatarImage
-                          src={getSafeImageUrl(participant.avatarUrl)}
-                          alt={participant.name}
-                        />
-                        <AvatarFallback
-                          style={{
-                            backgroundColor: 'var(--color-primary)',
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                          }}
-                        >
-                          {participant.avatar}
-                        </AvatarFallback>
-                      </Avatar>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Possible Pairs - Beautiful Room-like Cards */}
-            {possiblePairCombos.length > 0 && (
+        <div className="flex-1 px-4 py-4 overflow-y-auto">
+          <div className="w-full max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+              {/* Participants */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
+                transition={{ duration: 0.4 }}
+                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm"
+                style={{ padding: 16 }}
               >
-                <p className="text-base font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
-                  {t('gamePlay.coffeeRoulette.lobby.pairs')} ({possiblePairs})
-                </p>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+                    <p className="text-base font-semibold" style={{ color: 'var(--color-text)' }}>
+                      {t('gamePlay.coffeeRoulette.lobby.participants')}
+                    </p>
+                  </div>
+                  <p className="text-base font-bold" style={{ color: 'var(--color-primary)' }}>
+                    {participantCount}
+                  </p>
+                </div>
 
-                <div style={{ maxHeight: 235, overflowY: 'auto', paddingRight: 6 }}>
-                  <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(230px, 1fr))` }}>
-                    {possiblePairCombos.map((pair, idx) => (
+                <div style={{ maxHeight: 240, overflowY: 'auto', paddingRight: 6 }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(56px, 1fr))',
+                      gap: 12,
+                    }}
+                  >
+                    {participants.map((participant, idx) => (
                       <motion.div
-                        key={`pair-${idx}`}
-                        initial={{ opacity: 0, scale: 0.98 }}
+                        key={participant.participantId}
+                        initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.25, delay: 0.05 + idx * 0.01 }}
-                        onMouseEnter={() => setHoveredPairIndex(idx)}
-                        onMouseLeave={() => setHoveredPairIndex(null)}
-                        className="transition-all duration-200"
+                        transition={{ duration: 0.25, delay: idx * 0.01 }}
+                        title={participant.name}
+                        className="flex items-center justify-center"
                       >
-                        <div
-                          className={cn(
-                            'p-3 rounded-xl flex items-center justify-between transition-all',
-                            hoveredPairIndex === idx ? 'shadow-md scale-105' : 'shadow-sm'
-                          )}
+                        <Avatar
+                          className="w-9 h-9 ring-1"
                           style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                            border: `2px solid ${
-                              hoveredPairIndex === idx
-                                ? 'var(--color-primary)'
-                                : 'var(--color-primary-light)'
-                            }`,
+                            outlineWidth: '1px',
+                            outlineColor: 'var(--color-primary)',
+                            outlineOffset: '2px',
                           }}
                         >
-                        {/* Person 1 */}
-                        <div className="flex items-center gap-2 flex-1">
-                          <Avatar className="w-10 h-10 ring-1" style={{ outlineWidth: '1px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
-                            <AvatarImage
-                              src={getSafeImageUrl(pair.person1.avatarUrl)}
-                              alt={pair.person1.name}
-                            />
-                            <AvatarFallback
-                              style={{
-                                backgroundColor: 'var(--color-primary)',
-                                color: 'white',
-                                fontSize: '11px',
-                                fontWeight: '700',
-                              }}
-                            >
-                              {pair.person1.avatar}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold truncate" style={{ color: 'var(--color-text)' }}>
-                              {pair.person1.name}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Arrow */}
-                        <motion.div
-                          animate={hoveredPairIndex === idx ? { x: [0, 3, 0] } : {}}
-                          transition={hoveredPairIndex === idx ? { duration: 1, repeat: Infinity } : {}}
-                          className="px-2"
-                        >
-                          <ArrowRight className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
-                        </motion.div>
-
-                        {/* Person 2 */}
-                        <div className="flex items-center gap-2 flex-1 justify-end">
-                          <div className="flex-1 min-w-0 text-right">
-                            <p className="text-xs font-semibold truncate" style={{ color: 'var(--color-text)' }}>
-                              {pair.person2.name}
-                            </p>
-                          </div>
-                          <Avatar className="w-10 h-10 ring-1" style={{ outlineWidth: '1px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
-                            <AvatarImage
-                              src={getSafeImageUrl(pair.person2.avatarUrl)}
-                              alt={pair.person2.name}
-                            />
-                            <AvatarFallback
-                              style={{
-                                backgroundColor: 'var(--color-primary)',
-                                color: 'white',
-                                fontSize: '11px',
-                                fontWeight: '700',
-                              }}
-                            >
-                              {pair.person2.avatar}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                        </div>
+                          <AvatarImage
+                            src={getSafeImageUrl(participant.avatarUrl)}
+                            alt={participant.name}
+                          />
+                          <AvatarFallback
+                            style={{
+                              backgroundColor: 'var(--color-primary)',
+                              color: 'white',
+                              fontSize: '12px',
+                              fontWeight: '700',
+                            }}
+                          >
+                            {participant.avatar}
+                          </AvatarFallback>
+                        </Avatar>
                       </motion.div>
                     ))}
                   </div>
                 </div>
               </motion.div>
-            )}
 
-            {/* Status Message */}
-            {!canStart && (
+              {/* Possible pairs */}
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-8 p-4 rounded-lg text-center"
-                style={{
-                  backgroundColor: 'var(--color-surface-light)',
-                  border: `1px solid var(--color-primary-light)`,
-                }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.08 }}
+                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm"
+                style={{ padding: 16 }}
               >
-                <p className="text-sm" style={{ color: 'var(--color-text)' }}>
-                  {t('gamePlay.coffeeRoulette.lobby.needMore', { count: missingParticipantsToStart })}
-                </p>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Coffee className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
+                    <p className="text-base font-semibold" style={{ color: 'var(--color-text)' }}>
+                      {t('gamePlay.coffeeRoulette.lobby.pairs')}
+                    </p>
+                  </div>
+                  <p className="text-base font-bold" style={{ color: 'var(--color-accent)' }}>
+                    {possiblePairs}
+                  </p>
+                </div>
+
+                {possiblePairCombos.length === 0 ? (
+                  <p className="text-sm" style={{ color: 'var(--color-text-light)' }}>
+                    {t('gamePlay.coffeeRoulette.lobby.waitingFor')}
+                  </p>
+                ) : (
+                  <div style={{ maxHeight: 240, overflowY: 'auto', paddingRight: 6 }}>
+                    <div
+                      className="grid gap-3"
+                      style={{ gridTemplateColumns: `repeat(auto-fit, minmax(230px, 1fr))` }}
+                    >
+                      {possiblePairCombos.map((pair, idx) => (
+                        <motion.div
+                          key={`pair-${idx}`}
+                          initial={{ opacity: 0, scale: 0.98 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.25, delay: 0.02 + idx * 0.01 }}
+                          onMouseEnter={() => setHoveredPairIndex(idx)}
+                          onMouseLeave={() => setHoveredPairIndex(null)}
+                          className="transition-all duration-200"
+                        >
+                          <div
+                            className={cn(
+                              'p-3 rounded-xl flex items-center justify-between transition-all',
+                              hoveredPairIndex === idx ? 'shadow-md scale-105' : 'shadow-sm'
+                            )}
+                            style={{
+                              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                              border: `2px solid ${
+                                hoveredPairIndex === idx ? 'var(--color-primary)' : 'var(--color-primary-light)'
+                              }`,
+                            }}
+                          >
+                            <div className="flex items-center gap-2 flex-1">
+                              <Avatar
+                                className="w-10 h-10 ring-1"
+                                style={{
+                                  outlineWidth: '1px',
+                                  outlineColor: 'var(--color-primary)',
+                                  outlineOffset: '2px',
+                                }}
+                              >
+                                <AvatarImage
+                                  src={getSafeImageUrl(pair.person1.avatarUrl)}
+                                  alt={pair.person1.name}
+                                />
+                                <AvatarFallback
+                                  style={{
+                                    backgroundColor: 'var(--color-primary)',
+                                    color: 'white',
+                                    fontSize: '11px',
+                                    fontWeight: '700',
+                                  }}
+                                >
+                                  {pair.person1.avatar}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-semibold truncate" style={{ color: 'var(--color-text)' }}>
+                                  {pair.person1.name}
+                                </p>
+                              </div>
+                            </div>
+
+                            <motion.div
+                              animate={hoveredPairIndex === idx ? { x: [0, 3, 0] } : {}}
+                              transition={hoveredPairIndex === idx ? { duration: 1, repeat: Infinity } : {}}
+                              className="px-2"
+                            >
+                              <ArrowRight className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
+                            </motion.div>
+
+                            <div className="flex items-center gap-2 flex-1 justify-end">
+                              <div className="flex-1 min-w-0 text-right">
+                                <p className="text-xs font-semibold truncate" style={{ color: 'var(--color-text)' }}>
+                                  {pair.person2.name}
+                                </p>
+                              </div>
+                              <Avatar
+                                className="w-10 h-10 ring-1"
+                                style={{
+                                  outlineWidth: '1px',
+                                  outlineColor: 'var(--color-primary)',
+                                  outlineOffset: '2px',
+                                }}
+                              >
+                                <AvatarImage
+                                  src={getSafeImageUrl(pair.person2.avatarUrl)}
+                                  alt={pair.person2.name}
+                                />
+                                <AvatarFallback
+                                  style={{
+                                    backgroundColor: 'var(--color-primary)',
+                                    color: 'white',
+                                    fontSize: '11px',
+                                    fontWeight: '700',
+                                  }}
+                                >
+                                  {pair.person2.avatar}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </motion.div>
-            )}
+
+              {/* Status */}
+              <div className="lg:col-span-2">
+                {!canStart ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-2 p-4 rounded-2xl text-center"
+                    style={{
+                      backgroundColor: 'var(--color-surface-light)',
+                      border: `1px solid var(--color-primary-light)`,
+                    }}
+                  >
+                    <p className="text-sm" style={{ color: 'var(--color-text)' }}>
+                      {t('gamePlay.coffeeRoulette.lobby.needMore', { count: missingParticipantsToStart })}
+                    </p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-2 p-4 rounded-2xl text-center"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.65)',
+                      border: `1px solid var(--color-primary-light)`,
+                    }}
+                  >
+                    <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+                      {t('gamePlay.coffeeRoulette.lobby.ready')}
+                    </p>
+                  </motion.div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 

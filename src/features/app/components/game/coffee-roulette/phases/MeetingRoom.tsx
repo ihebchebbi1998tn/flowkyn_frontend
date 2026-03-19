@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useRoomTheme, useThemeVariables } from '../theme/RoomThemeContext';
 import { useCoffeeVoiceCall } from '../hooks/useCoffeeVoiceCall';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Person {
   participantId: string;
@@ -78,6 +79,7 @@ export function MeetingRoom({
     startVoice,
     stopVoice,
     toggleMute,
+    showEnableVoicePrompt,
   } = useCoffeeVoiceCall({
     sessionId: sessionId || '',
     pairId,
@@ -136,6 +138,39 @@ export function MeetingRoom({
 
   return (
     <div style={themeVars as React.CSSProperties}>
+      <Dialog
+        open={showEnableVoicePrompt && voiceStatus === 'idle'}
+        onOpenChange={(open) => {
+          if (!open) void stopVoice({ emitHangup: false });
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('gamePlay.coffeeRoulette.voice.prompt.title')}</DialogTitle>
+            <DialogDescription>{t('gamePlay.coffeeRoulette.voice.prompt.body')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              onClick={() => {
+                void startVoice();
+              }}
+              className="h-10"
+            >
+              {t('gamePlay.coffeeRoulette.voice.enable')}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                void stopVoice({ emitHangup: false });
+              }}
+              className="h-10"
+            >
+              {t('gamePlay.coffeeRoulette.voice.prompt.notNow')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <audio ref={audioRef} className="hidden" autoPlay />
       <div
         className="w-full py-4 px-6 flex flex-col gap-4"

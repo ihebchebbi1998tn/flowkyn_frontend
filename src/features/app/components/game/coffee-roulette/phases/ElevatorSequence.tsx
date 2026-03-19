@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useRoomTheme, useThemeVariables } from '../theme/RoomThemeContext';
 import {
   useCompleteElevatorSequence,
@@ -25,6 +26,7 @@ interface ElevatorSequenceProps {
 export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }: ElevatorSequenceProps) {
   const { theme } = useRoomTheme();
   const themeVars = useThemeVariables();
+  const { t } = useTranslation();
   const { stage, startAnimation, isComplete } = useCompleteElevatorSequence();
   const [currentFloor, setCurrentFloor] = useState(1);
 
@@ -86,9 +88,6 @@ export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }:
             transition={{ duration: 0.3 }}
             className="absolute -top-20 left-0 right-0 text-center z-20"
           >
-            <p className="text-sm font-semibold" style={{ color: 'var(--color-text-light)' }}>
-              Floor
-            </p>
             <motion.p
               key={currentFloor}
               initial={{ y: -10, opacity: 0 }}
@@ -97,7 +96,7 @@ export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }:
               className="text-3xl font-bold"
               style={{ color: 'var(--color-primary)' }}
             >
-              {currentFloor}/10
+              {t('gamePlay.coffeeRoulette.matching.floorCounter', { floor: currentFloor })}
             </motion.p>
           </motion.div>
 
@@ -150,7 +149,7 @@ export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }:
                   animate={stage === 'animating' ? { y: -10 } : {}}
                   transition={{ duration: 0.3 }}
                 >
-                  Floor {currentFloor}
+                  {t('gamePlay.coffeeRoulette.matching.floorCounter', { floor: currentFloor })}
                 </motion.p>
               </div>
 
@@ -239,10 +238,12 @@ export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }:
             className="absolute -bottom-24 left-0 right-0 text-center"
           >
             <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
-              Pair {pairNumber} of {totalPairs}
+              {t('gamePlay.coffeeRoulette.matching.pairProgress', { current: pairNumber, total: totalPairs })}
             </p>
             <p className="text-xs" style={{ color: 'var(--color-text-light)' }}>
-              Finding your match...
+              {isComplete
+                ? t('gamePlay.coffeeRoulette.matching.doorsOpening')
+                : t('gamePlay.coffeeRoulette.matching.matching')}
             </p>
           </motion.div>
         </div>

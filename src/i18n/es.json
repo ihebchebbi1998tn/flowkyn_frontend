@@ -1328,7 +1328,9 @@
         "floorCounter": "Planta {{floor}}",
         "matching": "Buscando tu pareja...",
         "doors": "Puertas del ascensor",
-        "progress": "Progreso"
+        "progress": "Progreso",
+        "pairProgress": "Par {{current}} de {{total}}",
+        "doorsOpening": "Abriendo puertas del café…"
       },
       "chatting": {
         "title": "Sala de reunión",
@@ -1361,7 +1363,12 @@
         "error": "Error de voz",
         "mute": "Silenciar",
         "unmute": "Activar sonido",
-        "leave": "Salir de la voz"
+        "leave": "Salir de la voz",
+        "prompt": {
+          "title": "Tu compañero quiere hablar",
+          "body": "Activa el audio para responder y conectarse.",
+          "notNow": "Ahora no"
+        }
       },
       "complete": {
         "title": "¡Gran conexión! ☕",

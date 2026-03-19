@@ -48,12 +48,14 @@ export function useCoffeeVoiceCall(params: {
   const localUnsubscribersRef = useRef<Array<() => void>>([]);
   const offerReceivedRef = useRef(false);
   const offerRequestTimersRef = useRef<number[]>([]);
+  const pendingOfferSdpRef = useRef<string | null>(null);
 
   const [status, setStatus] = useState<VoiceStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [iceServersCache, setIceServersCache] = useState<IceServersResponse['iceServers'] | null>(null);
+  const [showEnableVoicePrompt, setShowEnableVoicePrompt] = useState(false);
 
   const iceServers = useMemo(() => {
     return iceServersCache ?? [{ urls: ['stun:stun.l.google.com:19302'] }];
@@ -71,6 +73,8 @@ export function useCoffeeVoiceCall(params: {
       for (const t of offerRequestTimersRef.current) clearTimeout(t);
       offerRequestTimersRef.current = [];
       offerReceivedRef.current = false;
+      pendingOfferSdpRef.current = null;
+      setShowEnableVoicePrompt(false);
 
       try {
         if (emitHangup && gamesSocket?.isConnected) {
@@ -141,6 +145,7 @@ export function useCoffeeVoiceCall(params: {
 
     setStatus('requesting_microphone');
     setError(null);
+    setShowEnableVoicePrompt(false);
 
     try {
       if (!iceServersCache && eventId) {
@@ -291,34 +296,57 @@ export function useCoffeeVoiceCall(params: {
             sdp: offer.sdp || pc.localDescription?.sdp,
           });
         } catch (e) {
-          console.error('[useCoffeeVoiceCall] voice_offer emit failed', e);
-          throw e;
+          const msg = e instanceof Error ? e.message : String(e);
+          // If partner isn't connected yet, backend caches the offer.
+          // We should keep peer alive and wait for the answer later.
+          if (msg.includes('PARTNER_NOT_CONNECTED')) {
+            console.warn('[useCoffeeVoiceCall] partner not connected yet; waiting for offer answer');
+          } else {
+            console.error('[useCoffeeVoiceCall] voice_offer emit failed', e);
+            throw e;
+          }
         }
       }
 
       // If we are the answerer and the offer may have already been emitted
       // (e.g. we enabled voice late), request the most recent offer from backend.
       if (!isOfferer) {
-        const requestOffer = () => {
-          if (!gamesSocket?.isConnected) return;
-          if (offerReceivedRef.current) return;
-          void gamesSocket
-            .emit('coffee:voice_request_offer', { sessionId, pairId })
-            .catch((err) => {
-              // OFFER_NOT_READY is expected sometimes; keep retrying.
-              console.warn('[useCoffeeVoiceCall] voice_request_offer failed', err);
-            });
-        };
-
-        // First request immediately, then retry a few times.
-        requestOffer();
-        const timers = [1200, 2600, 4200];
-        for (const delay of timers) {
-          const id = window.setTimeout(() => {
+        const existingOfferSdp = pendingOfferSdpRef.current;
+        if (existingOfferSdp) {
+          // Consume the pending offer and immediately create an answer.
+          pendingOfferSdpRef.current = null;
+          offerReceivedRef.current = true;
+          setStatus('connecting');
+          await pc.setRemoteDescription({ type: 'offer', sdp: existingOfferSdp });
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          await gamesSocket.emit('coffee:voice_answer', {
+            sessionId,
+            pairId,
+            sdp: answer.sdp || pc.localDescription?.sdp,
+          });
+        } else {
+          const requestOffer = () => {
+            if (!gamesSocket?.isConnected) return;
             if (offerReceivedRef.current) return;
-            requestOffer();
-          }, delay);
-          offerRequestTimersRef.current.push(id);
+            void gamesSocket
+              .emit('coffee:voice_request_offer', { sessionId, pairId })
+              .catch((err) => {
+                // OFFER_NOT_READY is expected sometimes; keep retrying.
+                console.warn('[useCoffeeVoiceCall] voice_request_offer failed', err);
+              });
+          };
+
+          // First request immediately, then retry a few times.
+          requestOffer();
+          const timers = [1200, 2600, 4200];
+          for (const delay of timers) {
+            const id = window.setTimeout(() => {
+              if (offerReceivedRef.current) return;
+              requestOffer();
+            }, delay);
+            offerRequestTimersRef.current.push(id);
+          }
         }
       }
 
@@ -341,6 +369,54 @@ export function useCoffeeVoiceCall(params: {
     stopVoice,
   ]);
 
+  // ─── Answerer: prompt the user when a voice offer is waiting ─────────────────
+  // If the offerer clicked "Enable voice" before we started voice, the backend
+  // caches the offer. We poll for it while idle and show a modal prompt.
+  useEffect(() => {
+    if (!gamesSocket?.on) return;
+    if (isOfferer) return;
+
+    const unsubOffer = gamesSocket.on('coffee:voice_offer', (msg: CoffeeVoiceSdpMessage) => {
+      if (msg.sessionId !== sessionId || msg.pairId !== pairId) return;
+      // If voice already started, let `startVoice`'s internal negotiation listeners handle it.
+      if (peerRef.current) return;
+      if (pendingOfferSdpRef.current) return;
+      if (status !== 'idle') return;
+
+      pendingOfferSdpRef.current = msg.sdp;
+      offerReceivedRef.current = true;
+      setShowEnableVoicePrompt(true);
+    });
+
+    return unsubOffer;
+  }, [gamesSocket, isOfferer, pairId, sessionId, status]);
+
+  // Poll for a cached offer while we are idle (answerer role).
+  useEffect(() => {
+    if (isOfferer) return;
+    if (status !== 'idle') return;
+    if (!gamesSocket?.isConnected) return;
+    if (pendingOfferSdpRef.current) return;
+    if (showEnableVoicePrompt) return;
+
+    let cancelled = false;
+    const delays = [400, 1200, 2400, 4200];
+
+    const timers = delays.map((delay) =>
+      window.setTimeout(() => {
+        if (cancelled) return;
+        if (pendingOfferSdpRef.current) return;
+        if (showEnableVoicePrompt) return;
+        void gamesSocket.emit('coffee:voice_request_offer', { sessionId, pairId }).catch(() => {});
+      }, delay)
+    );
+
+    return () => {
+      cancelled = true;
+      timers.forEach((t) => clearTimeout(t));
+    };
+  }, [gamesSocket?.isConnected, isOfferer, pairId, sessionId, status, showEnableVoicePrompt]);
+
   return {
     status,
     error,
@@ -349,6 +425,7 @@ export function useCoffeeVoiceCall(params: {
     startVoice,
     stopVoice,
     toggleMute,
+    showEnableVoicePrompt,
   };
 }
 

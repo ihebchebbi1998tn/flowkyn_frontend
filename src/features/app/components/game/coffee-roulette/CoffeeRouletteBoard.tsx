@@ -190,7 +190,10 @@ export function CoffeeRouletteBoard({
     try {
       setIsLoading(true);
       await Promise.race([
-        onEmitAction('coffee:next_prompt'),
+        onEmitAction('coffee:next_prompt', {
+          // Stale-action guard: server ignores next_prompt if promptsUsed changed.
+          expectedPromptsUsed: promptsUsed,
+        }),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Request timeout')), 5000)
         ),
@@ -200,14 +203,17 @@ export function CoffeeRouletteBoard({
     } finally {
       setIsLoading(false);
     }
-  }, [onEmitAction]);
+  }, [onEmitAction, promptsUsed]);
 
   // Handle continue chatting
   const handleContinue = useCallback(async () => {
     try {
       setIsLoading(true);
       await Promise.race([
-        onEmitAction('coffee:continue'),
+        onEmitAction('coffee:continue', {
+          // Stale-action guard: server ignores continue if promptsUsed changed.
+          expectedPromptsUsed: promptsUsed,
+        }),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Request timeout')), 5000)
         ),
@@ -217,7 +223,7 @@ export function CoffeeRouletteBoard({
     } finally {
       setIsLoading(false);
     }
-  }, [onEmitAction]);
+  }, [onEmitAction, promptsUsed]);
 
   // Handle end session
   const handleEnd = useCallback(async () => {

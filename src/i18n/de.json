@@ -1675,7 +1675,9 @@
         "floorCounter": "Etage {{floor}}",
         "matching": "Suche nach Ihrer Übereinstimmung...",
         "doors": "Aufzugstüren",
-        "progress": "Fortschritt"
+        "progress": "Fortschritt",
+        "pairProgress": "Paar {{current}} von {{total}}",
+        "doorsOpening": "Kaffeetüren öffnen…"
       },
       "chatting": {
         "title": "Besprechungsraum",
@@ -1708,7 +1710,12 @@
         "error": "Stimmfehler",
         "mute": "Stumm",
         "unmute": "Ton an",
-        "leave": "Stimme verlassen"
+        "leave": "Stimme verlassen",
+        "prompt": {
+          "title": "Ihr Partner möchte sprechen",
+          "body": "Aktivieren Sie die Stimme, um zu antworten und sich zu verbinden.",
+          "notNow": "Nicht jetzt"
+        }
       },
       "complete": {
         "title": "Tolle Verbindung! ☕",

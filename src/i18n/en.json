@@ -1103,7 +1103,9 @@
         "floorCounter": "Floor {{floor}}",
         "matching": "Finding your match...",
         "doors": "Elevator Doors",
-        "progress": "Progress"
+        "progress": "Progress",
+        "pairProgress": "Pair {{current}} of {{total}}",
+        "doorsOpening": "Opening coffee doors…"
       },
       "chatting": {
         "title": "Meeting Room",
@@ -1136,7 +1138,12 @@
         "error": "Voice error",
         "mute": "Mute",
         "unmute": "Unmute",
-        "leave": "Leave voice"
+        "leave": "Leave voice",
+        "prompt": {
+          "title": "Your partner wants to talk",
+          "body": "Enable voice to answer and connect.",
+          "notNow": "Not now"
+        }
       },
       "complete": {
         "title": "Great Connection! ☕",
