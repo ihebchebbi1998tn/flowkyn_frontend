@@ -1030,8 +1030,18 @@ export function StrategicEscapeBoard({
                     <div className="relative h-full w-full p-4 flex flex-col justify-between">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-[11px] font-bold text-foreground">
-                          {currentUserAvatar}
+                        <div className="h-8 w-8 overflow-hidden rounded-full bg-muted flex items-center justify-center">
+                          {currentUserAvatarUrl ? (
+                            <img
+                              src={currentUserAvatarUrl}
+                              alt={currentUserName || t('strategic.rolesMeta.playerLabel', { defaultValue: 'You' })}
+                              className="h-full w-full object-cover"
+                              referrerPolicy="no-referrer"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <span className="text-[11px] font-bold text-foreground">{currentUserAvatar}</span>
+                          )}
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[11px] text-muted-foreground">
