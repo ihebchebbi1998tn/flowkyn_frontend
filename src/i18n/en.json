@@ -1096,7 +1096,7 @@
     "label": "Strategic Escape Challenge",
     "phases": {
       "setup": "Setup",
-      "rolesAssignment": "Roles & emails",
+      "rolesAssignment": "Roles",
       "discussion": "Discussion",
       "debrief": "Debrief"
     },
@@ -1107,12 +1107,12 @@
     "howItWorks": {
       "label": "How this works",
       "point1": "Everyone gets a secret role.",
-      "point2": "You’ll get an email + in‑app card with instructions.",
+      "point2": "You’ll get an in‑app role reveal with instructions.",
       "point3": "We’ll debrief what we learned at the end."
     },
     "phaseIntro": {
       "setup": "Right now, the facilitator is configuring the scenario.",
-      "rolesAssignment": "Right now, secret roles are being assigned — check your inbox.",
+      "rolesAssignment": "Right now, secret roles are being assigned — reveal yours in-app.",
       "discussion": "Right now, share perspectives and decisions over time.",
       "debrief": "Right now, turn insights into concrete changes."
     },
@@ -1160,6 +1160,51 @@
       "pendingHint": "Waiting for role assignment…",
       "progress": "{{acknowledged}}/{{total}} roles revealed",
       "close": "Got it"
+    },
+    "afterReveal": {
+      "promptsTitle": "Your focus prompt",
+      "nextPromptIn": "Next in {{seconds}}s",
+      "nextPrompt": "Next prompt",
+      "advancingPrompt": "Updating…",
+      "noPrompts": "No role prompts configured yet.",
+      "readyTitle": "Ready check",
+      "readyHint": "Click ready when you understand your role. The facilitator can start once everyone is ready.",
+      "readyAction": "I’m ready",
+      "readyConfirmed": "Ready",
+      "readyProgress": "{{ready}}/{{total}} ready",
+      "notesTitle": "Private notes",
+      "notesPlaceholder": "Write notes only you can see…",
+      "notesHint": "Notes are saved to your role only and won’t be shared with others.",
+      "notesSaving": "Saving…",
+      "notesSaved": "Saved",
+      "notesNotSaved": "Not saved yet"
+    },
+    "rolePrompts": {
+      "product_lead": {
+        "p1": "Protect the customer experience: what is the smallest coherent scope that still delivers a compelling story?",
+        "p2": "Push for clarity: which feature cuts reduce risk the most without breaking the narrative?",
+        "p3": "Force trade-offs: what will you explicitly NOT ship, and how will you defend that decision?"
+      },
+      "marketing_lead": {
+        "p1": "Guard the story: what can we confidently promise without creating customer distrust?",
+        "p2": "Plan the message: if scope changes, what is the simplest honest narrative for customers and stakeholders?",
+        "p3": "Demand alignment: what decision needs to be made today to avoid last-minute chaos?"
+      },
+      "cfo": {
+        "p1": "Name the burn: where are we spending money or time without measurable impact?",
+        "p2": "Force ROI thinking: which option protects runway while still enabling growth?",
+        "p3": "Make costs explicit: what hidden costs (support, churn, rework) are we ignoring?"
+      },
+      "ops_lead": {
+        "p1": "Reality-check capacity: what can be delivered in 7 days without burning out the team?",
+        "p2": "Expose dependencies: what will break if we change scope or sequence?",
+        "p3": "Stabilize execution: what process change would reduce chaos immediately?"
+      },
+      "customer_success_lead": {
+        "p1": "Protect trust: what will customers experience first, and where will they be disappointed?",
+        "p2": "Prepare the frontline: what talking points and guardrails do we need for support and CS?",
+        "p3": "Minimize surprises: what can we communicate early to reduce escalations?"
+      }
     },
     "industries": {
       "techSaaS": {
@@ -1252,7 +1297,7 @@
     },
     "rolesSection": {
       "title": "Your secret role",
-      "subtitle": "Check your inbox for full instructions. This card is a quick visual summary."
+      "subtitle": "This role is private to you. Keep it secret and use it to guide your decisions."
     },
     "discussion": {
       "title": "Async crisis discussion",

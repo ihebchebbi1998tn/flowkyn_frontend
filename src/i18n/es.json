@@ -1980,7 +1980,7 @@
     "label": "Desafío de escape estratégico",
     "phases": {
       "setup": "Configuración",
-      "rolesAssignment": "Roles y correos",
+      "rolesAssignment": "Roles",
       "discussion": "Discusión",
       "debrief": "Puesta en común"
     },
@@ -1991,12 +1991,12 @@
     "howItWorks": {
       "label": "Cómo funciona",
       "point1": "Cada persona recibe un rol secreto.",
-      "point2": "Recibirás un correo + una tarjeta en la app con instrucciones.",
+      "point2": "Verás tu rol en la app con instrucciones.",
       "point3": "Al final haremos una puesta en común de lo aprendido."
     },
     "phaseIntro": {
       "setup": "Ahora mismo, el facilitador está configurando el escenario.",
-      "rolesAssignment": "Ahora mismo se están asignando roles secretos: revisa tu bandeja de entrada.",
+      "rolesAssignment": "Ahora mismo se están asignando roles secretos: revélalo en la app.",
       "discussion": "Ahora mismo, comparte perspectivas y decisiones a lo largo del tiempo.",
       "debrief": "Ahora mismo, convierte los aprendizajes en cambios concretos."
     },
@@ -2044,6 +2044,51 @@
       "pendingHint": "Esperando la asignación de roles…",
       "progress": "{{acknowledged}}/{{total}} roles revelados",
       "close": "Entendido"
+    },
+    "afterReveal": {
+      "promptsTitle": "Tu prompt de enfoque",
+      "nextPromptIn": "Siguiente en {{seconds}}s",
+      "nextPrompt": "Siguiente prompt",
+      "advancingPrompt": "Actualizando…",
+      "noPrompts": "Aún no hay prompts configurados para este rol.",
+      "readyTitle": "Confirmación de listo",
+      "readyHint": "Marca “listo” cuando entiendas tu rol. El facilitador puede iniciar cuando todos estén listos.",
+      "readyAction": "Estoy listo/a",
+      "readyConfirmed": "Listo/a",
+      "readyProgress": "{{ready}}/{{total}} listos",
+      "notesTitle": "Notas privadas",
+      "notesPlaceholder": "Escribe notas que solo tú puedas ver…",
+      "notesHint": "Las notas se guardan solo para ti y no se comparten con los demás.",
+      "notesSaving": "Guardando…",
+      "notesSaved": "Guardado",
+      "notesNotSaved": "Aún no guardado"
+    },
+    "rolePrompts": {
+      "product_lead": {
+        "p1": "Protege la experiencia del cliente: ¿cuál es el alcance mínimo coherente que sigue contando una historia convincente?",
+        "p2": "Impulsa claridad: ¿qué recortes reducen más el riesgo sin romper el relato?",
+        "p3": "Forza concesiones: ¿qué NO vas a lanzar explícitamente y cómo defenderás esa decisión?"
+      },
+      "marketing_lead": {
+        "p1": "Protege la narrativa: ¿qué podemos prometer con confianza sin generar desconfianza?",
+        "p2": "Prepara el mensaje: si cambia el alcance, ¿cuál es el relato más simple y honesto para clientes y stakeholders?",
+        "p3": "Exige alineamiento: ¿qué decisión hay que tomar hoy para evitar el caos de última hora?"
+      },
+      "cfo": {
+        "p1": "Nombra el gasto: ¿dónde estamos quemando dinero o tiempo sin impacto medible?",
+        "p2": "Piensa en ROI: ¿qué opción protege la liquidez y a la vez permite crecer?",
+        "p3": "Haz explícitos los costes ocultos: ¿qué costes (soporte, churn, retrabajo) estamos ignorando?"
+      },
+      "ops_lead": {
+        "p1": "Realismo de capacidad: ¿qué se puede entregar en 7 días sin quemar al equipo?",
+        "p2": "Saca a la luz dependencias: ¿qué se rompe si cambiamos alcance o secuencia?",
+        "p3": "Estabiliza la ejecución: ¿qué cambio de proceso reduciría el caos hoy mismo?"
+      },
+      "customer_success_lead": {
+        "p1": "Protege la confianza: ¿qué vivirán primero los clientes y dónde se decepcionarán?",
+        "p2": "Prepara la primera línea: ¿qué puntos y límites necesitan soporte y CS?",
+        "p3": "Minimiza sorpresas: ¿qué podemos comunicar pronto para reducir escaladas?"
+      }
     },
     "industries": {
       "techSaaS": {
@@ -2136,7 +2181,7 @@
     },
     "rolesSection": {
       "title": "Tu rol secreto",
-      "subtitle": "Revisa tu bandeja de entrada para ver instrucciones completas. Esta tarjeta es un resumen visual rápido."
+      "subtitle": "Este rol es privado para ti. Mantén el secreto y úsalo para guiar tus decisiones."
     },
     "discussion": {
       "title": "Discusión asíncrona de crisis",

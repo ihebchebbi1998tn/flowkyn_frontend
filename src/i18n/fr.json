@@ -1068,6 +1068,78 @@
       "progress": "{{acknowledged}}/{{total}} rôles révélés",
       "close": "J’ai compris"
     },
+    "afterReveal": {
+      "promptsTitle": "Votre question de focus",
+      "nextPromptIn": "Suivant dans {{seconds}}s",
+      "nextPrompt": "Question suivante",
+      "advancingPrompt": "Mise à jour…",
+      "noPrompts": "Aucune question de rôle configurée pour le moment.",
+      "readyTitle": "Prêt ?",
+      "readyHint": "Cliquez sur “Je suis prêt” quand vous comprenez votre rôle. Le facilitateur peut démarrer une fois tout le monde prêt.",
+      "readyAction": "Je suis prêt",
+      "readyConfirmed": "Prêt",
+      "readyProgress": "{{ready}}/{{total}} prêts",
+      "notesTitle": "Notes privées",
+      "notesPlaceholder": "Écrivez des notes visibles uniquement par vous…",
+      "notesHint": "Les notes sont enregistrées uniquement pour vous et ne seront pas partagées.",
+      "notesSaving": "Enregistrement…",
+      "notesSaved": "Enregistré",
+      "notesNotSaved": "Pas encore enregistré"
+    },
+    "rolePrompts": {
+      "product_lead": {
+        "p1": "Protégez l’expérience client : quel est le périmètre minimal cohérent qui raconte encore une histoire forte ?",
+        "p2": "Cherchez la clarté : quelles coupes réduisent le risque sans casser la narration ?",
+        "p3": "Forcez les arbitrages : qu’allez-vous décider de NE PAS livrer, et comment le défendre ?"
+      },
+      "marketing_lead": {
+        "p1": "Protégez le récit : que pouvons-nous promettre avec confiance sans créer de défiance ?",
+        "p2": "Préparez le message : si le périmètre change, quel récit simple et honnête pour clients et parties prenantes ?",
+        "p3": "Exigez l’alignement : quelle décision doit être prise aujourd’hui pour éviter le chaos de dernière minute ?"
+      },
+      "cfo": {
+        "p1": "Nommez la dépense : où brûlons-nous de l’argent ou du temps sans impact mesurable ?",
+        "p2": "Pensez ROI : quelle option protège la trésorerie tout en permettant la croissance ?",
+        "p3": "Rendez les coûts explicites : quels coûts cachés (support, churn, rework) ignorons-nous ?"
+      },
+      "ops_lead": {
+        "p1": "Test de réalité capacité : que peut-on livrer en 7 jours sans épuiser l’équipe ?",
+        "p2": "Exposez les dépendances : qu’est-ce qui casse si l’on change périmètre ou séquence ?",
+        "p3": "Stabilisez l’exécution : quel changement de process réduirait le chaos immédiatement ?"
+      },
+      "customer_success_lead": {
+        "p1": "Protégez la confiance : que verront d’abord les clients, et où seront-ils déçus ?",
+        "p2": "Préparez le frontline : quels éléments et garde-fous pour le support et le CS ?",
+        "p3": "Réduisez les surprises : que pouvons-nous communiquer tôt pour limiter les escalades ?"
+      }
+    },
+    "roles": {
+      "product_lead": {
+        "name": "Responsable Produit",
+        "brief": "Pilote les résultats produit, les arbitrages de roadmap, et ce qui sort quand.",
+        "secret": "Vous êtes sous pression pour montrer des progrès. Vous voulez conserver un maximum du périmètre de lancement — mais vous savez que la qualité et la confiance sont en jeu. Poussez pour une petite tranche cohérente qui raconte une histoire forte."
+      },
+      "marketing_lead": {
+        "name": "Responsable Marketing",
+        "brief": "Pilote la narration, la préparation du lancement et la génération de demande.",
+        "secret": "Des campagnes sont déjà prévues et les parties prenantes observent. Vous avez besoin d’un lancement que vous pouvez assumer — même si cela signifie réduire le périmètre — et d’un message clair pour les clients si les choses changent."
+      },
+      "cfo": {
+        "name": "CFO / Finance",
+        "brief": "Pilote les garde-fous budgétaires, la trésorerie et les objectifs de croissance.",
+        "secret": "Vous vous souciez de la trésorerie, du CAC et de la prévisibilité des revenus. Vous n’êtes pas là pour dire “non” — vous êtes là pour rendre les arbitrages explicites et signaler où l’argent est brûlé en silence."
+      },
+      "ops_lead": {
+        "name": "Responsable Opérations",
+        "brief": "Pilote la transformation des plans en exécution réelle entre équipes.",
+        "secret": "Vous voyez la capacité, les dépendances et les frictions de process. Votre rôle est de montrer ce qui est réaliste dans les 7 prochains jours — et ce qui doit changer pour tenir le plan sans épuiser l’équipe."
+      },
+      "customer_success_lead": {
+        "name": "Responsable Customer Success",
+        "brief": "Pilote l’impact client en première ligne et la confiance.",
+        "secret": "Vous portez la relation avec les clients existants. Vous entendrez les plaintes en premier. Poussez des décisions qui protègent la confiance, réduisent les surprises et vous donnent des arguments honnêtes."
+      }
+    },
     "phaseIntro": {
       "setup": "Pour l’instant, le facilitateur configure le scénario.",
       "rolesAssignment": "Pour l’instant, les rôles secrets sont attribués.",

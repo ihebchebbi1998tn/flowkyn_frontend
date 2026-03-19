@@ -1052,6 +1052,78 @@
       "progress": "{{acknowledged}}/{{total}} Rollen enthüllt",
       "close": "Verstanden"
     },
+    "afterReveal": {
+      "promptsTitle": "Ihr Fokus‑Prompt",
+      "nextPromptIn": "Nächster in {{seconds}}s",
+      "nextPrompt": "Nächster Prompt",
+      "advancingPrompt": "Wird aktualisiert…",
+      "noPrompts": "Noch keine Rollen‑Prompts konfiguriert.",
+      "readyTitle": "Ready‑Check",
+      "readyHint": "Klicken Sie auf „Ich bin bereit“, wenn Sie Ihre Rolle verstanden haben. Der Facilitator kann starten, sobald alle bereit sind.",
+      "readyAction": "Ich bin bereit",
+      "readyConfirmed": "Bereit",
+      "readyProgress": "{{ready}}/{{total}} bereit",
+      "notesTitle": "Private Notizen",
+      "notesPlaceholder": "Schreiben Sie Notizen, die nur Sie sehen…",
+      "notesHint": "Notizen werden nur für Sie gespeichert und nicht mit anderen geteilt.",
+      "notesSaving": "Speichern…",
+      "notesSaved": "Gespeichert",
+      "notesNotSaved": "Noch nicht gespeichert"
+    },
+    "rolePrompts": {
+      "product_lead": {
+        "p1": "Schützen Sie das Kundenerlebnis: Was ist der kleinste stimmige Scope, der trotzdem eine starke Story liefert?",
+        "p2": "Schaffen Sie Klarheit: Welche Cuts reduzieren Risiko am meisten, ohne die Narrative zu brechen?",
+        "p3": "Erzwingen Sie Trade‑offs: Was werden Sie explizit NICHT shippen – und wie verteidigen Sie das?"
+      },
+      "marketing_lead": {
+        "p1": "Schützen Sie die Story: Was können wir sicher versprechen, ohne Vertrauen zu zerstören?",
+        "p2": "Planen Sie die Botschaft: Wenn sich der Scope ändert, was ist die einfachste ehrliche Narrative für Kund:innen und Stakeholder?",
+        "p3": "Fordern Sie Alignment: Welche Entscheidung muss heute fallen, um Last‑Minute‑Chaos zu vermeiden?"
+      },
+      "cfo": {
+        "p1": "Bennen Sie den Burn: Wo verbrennen wir Geld oder Zeit ohne messbaren Impact?",
+        "p2": "Denken Sie in ROI: Welche Option schützt Runway und ermöglicht trotzdem Wachstum?",
+        "p3": "Machen Sie Kosten explizit: Welche versteckten Kosten (Support, Churn, Rework) ignorieren wir?"
+      },
+      "ops_lead": {
+        "p1": "Realitätscheck Kapazität: Was ist in 7 Tagen lieferbar, ohne das Team auszubrennen?",
+        "p2": "Zeigen Sie Abhängigkeiten: Was bricht, wenn wir Scope oder Reihenfolge ändern?",
+        "p3": "Stabilisieren Sie die Ausführung: Welche Prozessänderung würde Chaos sofort reduzieren?"
+      },
+      "customer_success_lead": {
+        "p1": "Schützen Sie Vertrauen: Was erleben Kund:innen zuerst – und wo werden sie enttäuscht?",
+        "p2": "Bereiten Sie die Frontline vor: Welche Talking Points und Guardrails brauchen Support und CS?",
+        "p3": "Minimieren Sie Überraschungen: Was können wir früh kommunizieren, um Eskalationen zu reduzieren?"
+      }
+    },
+    "roles": {
+      "product_lead": {
+        "name": "Product Lead",
+        "brief": "Verantwortet Produkt‑Outcomes, Roadmap‑Trade‑offs und was wann shipped.",
+        "secret": "Sie stehen unter Druck, Fortschritt zu zeigen. Sie wollen möglichst viel Scope behalten — aber Qualität und Vertrauen stehen auf dem Spiel. Drängen Sie auf einen kleinen, stimmigen Slice, der trotzdem eine starke Story erzählt."
+      },
+      "marketing_lead": {
+        "name": "Marketing Lead",
+        "brief": "Verantwortet Narrative, Launch‑Readiness und Demand Generation.",
+        "secret": "Kampagnen sind gebucht und Stakeholder schauen zu. Sie brauchen einen Launch, den Sie vertreten können — selbst wenn Scope schrumpft — und eine klare Story für Kund:innen, wenn sich Dinge ändern."
+      },
+      "cfo": {
+        "name": "CFO / Finance Lead",
+        "brief": "Verantwortet Budget‑Leitplanken, Runway und Wachstumsziele.",
+        "secret": "Sie achten auf Runway, CAC und Umsatz‑Planbarkeit. Sie sind nicht da, um „nein“ zu sagen — sondern um Trade‑offs sichtbar zu machen und stillen Geld‑Burn aufzudecken."
+      },
+      "ops_lead": {
+        "name": "Operations Lead",
+        "brief": "Verantwortet, wie Pläne in echte Lieferung über Teams hinweg werden.",
+        "secret": "Sie sehen Kapazität, Abhängigkeiten und Prozess‑Reibung. Ihre Rolle ist zu zeigen, was in den nächsten 7 Tagen realistisch ist — und was sich ändern muss, um den Plan zu schaffen, ohne Menschen auszubrennen."
+      },
+      "customer_success_lead": {
+        "name": "Customer Success Lead",
+        "brief": "Verantwortet Frontline‑Kundenimpact und Vertrauen.",
+        "secret": "Sie tragen die Beziehung zu Bestandskund:innen. Sie hören Beschwerden zuerst. Drängen Sie auf Entscheidungen, die Vertrauen schützen, Überraschungen reduzieren und Ihnen ehrliche Talking Points geben."
+      }
+    },
     "phaseIntro": {
       "setup": "Gerade richtet der Facilitator das Szenario ein.",
       "rolesAssignment": "Gerade werden geheime Rollen vergeben.",

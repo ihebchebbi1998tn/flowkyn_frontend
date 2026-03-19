@@ -53,7 +53,11 @@ export const gamesApi = {
    */
   /** Get active session for event for a specific game type, or the latest active overall if gameKey is omitted */
   getActiveSession: (eventId: string, gameKey?: string) =>
-    api.get<any | null>(`/events/${eventId}/game-sessions/active`, gameKey ? { game_key: gameKey } : undefined, eventId),
+    api.get<GameSession | null>(
+      `/events/${eventId}/game-sessions/active`,
+      gameKey ? { game_key: gameKey } : undefined,
+      eventId
+    ),
 
   /** Start the next round in a game session */
   startRound: (sessionId: string) =>
@@ -73,7 +77,7 @@ export const gamesApi = {
    * Supports both authenticated members and guests.
    */
   getMyStrategicRole: (sessionId: string, eventId?: string) =>
-    api.get<{ roleKey: string } | null>(
+    api.get<{ roleKey: string; readyAt?: string | null; revealedAt?: string | null } | null>(
       `/strategic-sessions/${sessionId}/roles/me`,
       undefined,
       eventId
@@ -92,6 +96,50 @@ export const gamesApi = {
     api.get<{ total: number; acknowledged: number; allAcknowledged: boolean }>(
       `/strategic-sessions/${sessionId}/roles/reveal-status`,
       undefined,
+      eventId
+    ),
+
+  /** Strategic Escape Challenge — mark current participant as ready */
+  readyMyStrategicRole: (sessionId: string, eventId?: string) =>
+    api.post<void>(`/strategic-sessions/${sessionId}/roles/me/ready`, {}, eventId),
+
+  /** Strategic Escape Challenge — aggregate ready status (counts only) */
+  getStrategicRoleReadyStatus: (sessionId: string, eventId?: string) =>
+    api.get<{ total: number; ready: number; allReady: boolean }>(
+      `/strategic-sessions/${sessionId}/roles/ready-status`,
+      undefined,
+      eventId
+    ),
+
+  /** Strategic Escape Challenge — get current participant prompt state */
+  getMyStrategicRolePromptState: (sessionId: string, eventId?: string) =>
+    api.get<{ promptIndex: number; promptUpdatedAt: string | null }>(
+      `/strategic-sessions/${sessionId}/roles/me/prompts`,
+      undefined,
+      eventId
+    ),
+
+  /** Strategic Escape Challenge — advance to next prompt */
+  advanceMyStrategicRolePrompt: (sessionId: string, eventId?: string) =>
+    api.post<{ promptIndex: number; promptUpdatedAt: string | null }>(
+      `/strategic-sessions/${sessionId}/roles/me/prompts/next`,
+      {},
+      eventId
+    ),
+
+  /** Strategic Escape Challenge — get current participant private notes */
+  getMyStrategicNotes: (sessionId: string, eventId?: string) =>
+    api.get<{ content: string; updatedAt: string | null }>(
+      `/strategic-sessions/${sessionId}/roles/me/notes`,
+      undefined,
+      eventId
+    ),
+
+  /** Strategic Escape Challenge — update current participant private notes */
+  updateMyStrategicNotes: (sessionId: string, content: string, eventId?: string) =>
+    api.put<{ content: string; updatedAt: string | null }>(
+      `/strategic-sessions/${sessionId}/roles/me/notes`,
+      { content },
       eventId
     ),
 
@@ -170,7 +218,7 @@ export const gamesApi = {
       snapshot: {
         kind: string;
         phase: 'debrief';
-        debrief_results: any;
+        debrief_results: unknown;
         debrief_started_at: string;
       };
     }>(`/strategic-sessions/${sessionId}/start-debrief`, {}),

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, AlertTriangle, Flag, Clock, Shuffle, Settings2 } from 'lucide-react';
@@ -39,10 +39,15 @@ export interface StrategicEscapeBoardProps {
   currentUserAvatarUrl?: string | null;
   eventId: string;
   sessionId: string | null;
-  initialSnapshot?: any;
-  gameData?: any;
+  initialSnapshot?: unknown;
+  gameData?: unknown;
   onSessionCreated: (sessionId: string) => void;
-  onEmitSocketAction: (actionType: string, payload?: any) => Promise<void>;
+  onEmitSocketAction: (actionType: string, payload?: unknown) => Promise<void>;
+}
+
+function isStrategicEscapeSnapshot(value: unknown): value is StrategicEscapeSnapshot {
+  if (!value || typeof value !== 'object') return false;
+  return (value as Record<string, unknown>).kind === 'strategic-escape';
 }
 
 const INDUSTRY_OPTIONS = [
@@ -94,23 +99,29 @@ export function StrategicEscapeBoard({
   const [swapWindowSeconds, setSwapWindowSeconds] = useState<number | null>(null);
   const [discussionTimeLeft, setDiscussionTimeLeft] = useState<number>(0);
   const [revealStatus, setRevealStatus] = useState<{ total: number; acknowledged: number; allAcknowledged: boolean } | null>(null);
+  const [readyStatus, setReadyStatus] = useState<{ total: number; ready: number; allReady: boolean } | null>(null);
+  const [myReady, setMyReady] = useState(false);
+  const [promptState, setPromptState] = useState<{ promptIndex: number; promptUpdatedAt: string | null } | null>(null);
+  const [isAdvancingPrompt, setIsAdvancingPrompt] = useState(false);
+  const [promptNextIn, setPromptNextIn] = useState<number | null>(null);
+  const [notes, setNotes] = useState('');
+  const [notesSaving, setNotesSaving] = useState(false);
+  const [notesSavedAt, setNotesSavedAt] = useState<string | null>(null);
+  const lastSavedNotesRef = useRef<string>('');
 
-  const snapshot: StrategicEscapeSnapshot | null =
-    gameData?.kind === 'strategic-escape'
-      ? gameData
-      : initialSnapshot?.kind === 'strategic-escape'
-        ? initialSnapshot
-        : null;
+  const snapshot: StrategicEscapeSnapshot | null = isStrategicEscapeSnapshot(gameData)
+    ? gameData
+    : isStrategicEscapeSnapshot(initialSnapshot)
+      ? initialSnapshot
+      : null;
 
   const phase: StrategicPhase = (snapshot?.phase || 'setup') as StrategicPhase;
-  const selectedIndustryLabel =
-    (snapshot as any)?.industryLabel || (snapshot as any)?.industry || null;
-  const selectedCrisisLabel =
-    (snapshot as any)?.crisisLabel || (snapshot as any)?.crisisType || null;
-  const selectedDifficulty =
-    ((snapshot as any)?.difficultyKey ||
-      (snapshot as any)?.difficulty ||
-      'medium') as 'easy' | 'medium' | 'hard';
+  const snap = (snapshot || {}) as StrategicEscapeSnapshot & Record<string, unknown>;
+  const selectedIndustryLabel = (snap.industryLabel || (snap.industry as string | null) || null) as string | null;
+  const selectedCrisisLabel = (snap.crisisLabel || (snap.crisisType as string | null) || null) as string | null;
+  const selectedDifficulty = ((snap.difficultyKey ||
+    (snap.difficulty as string | null) ||
+    'medium') as 'easy' | 'medium' | 'hard');
   const rolesAssigned = !!snapshot?.rolesAssigned;
   const discussionEndsAt = snapshot?.discussionEndsAt || null;
 
@@ -254,20 +265,34 @@ export function StrategicEscapeBoard({
           gameName: t('activities.strategicEscape.name', { defaultValue: 'Strategic Escape Challenge' }),
         })
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[StrategicEscapeBoard] createStrategicSession error', err);
-      const message =
-        err?.response?.data?.message ||
-        err?.message ||
-        t(
-          'strategic.errors.createFailed',
-          { defaultValue: 'Failed to create strategic session. Please check your permissions and try again.' }
+      if (ApiError.is(err)) {
+        setCreateError(t(`apiErrors.${err.code}`, { defaultValue: err.message }));
+      } else if (err instanceof Error) {
+        setCreateError(err.message);
+      } else {
+        setCreateError(
+          t('strategic.errors.createFailed', {
+            defaultValue: 'Failed to create strategic session. Please check your permissions and try again.',
+          })
         );
-      setCreateError(message);
+      }
     } finally {
       setIsCreating(false);
     }
-  }, [isHost, eventId, sessionId, isConfigured, localIndustry, localCrisis, localDifficulty, onSessionCreated]);
+  }, [
+    isHost,
+    eventId,
+    sessionId,
+    isConfigured,
+    localIndustry,
+    localCrisis,
+    localDifficulty,
+    onSessionCreated,
+    onEmitSocketAction,
+    t,
+  ]);
 
   const handleAssignRoles = useCallback(async () => {
     if (!isHost || !sessionId || rolesAssigned) return;
@@ -280,20 +305,23 @@ export function StrategicEscapeBoard({
     try {
       await gamesApi.assignStrategicRoles(sessionId);
       await onEmitSocketAction('strategic:assign_roles');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[StrategicEscapeBoard] assignStrategicRoles error', err);
-      const message =
-        err?.response?.data?.message ||
-        err?.message ||
-        t(
-          'strategic.errors.assignFailed',
-          { defaultValue: 'Failed to assign roles. Make sure participants have joined and you are the facilitator.' }
+      if (ApiError.is(err)) {
+        setAssignError(t(`apiErrors.${err.code}`, { defaultValue: err.message }));
+      } else if (err instanceof Error) {
+        setAssignError(err.message);
+      } else {
+        setAssignError(
+          t('strategic.errors.assignFailed', {
+            defaultValue: 'Failed to assign roles. Make sure participants have joined and you are the facilitator.',
+          })
         );
-      setAssignError(message);
+      }
     } finally {
       setIsAssigningRoles(false);
     }
-  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction]);
+  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction, t]);
 
   const handleStartDiscussion = useCallback(async () => {
     if (!isHost || !sessionId || !rolesAssigned) return;
@@ -307,7 +335,7 @@ export function StrategicEscapeBoard({
     } catch (err) {
       console.error('[StrategicEscapeBoard] strategic:start_discussion error', err);
     }
-  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction]);
+  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction, t]);
 
   const handleEndDiscussion = useCallback(async () => {
     if (!isHost || !sessionId) return;
@@ -351,6 +379,85 @@ export function StrategicEscapeBoard({
   const myRoleBrief = myRoleKey ? t(`strategic.roles.${myRoleKey}.brief`) : '';
   const myRoleSecret = myRoleKey ? t(`strategic.roles.${myRoleKey}.secret`) : '';
 
+  const rolePrompts = useMemo(() => {
+    if (!myRoleKey) return [];
+    const a = t(`strategic.rolePrompts.${myRoleKey}.p1`, { defaultValue: '' });
+    const b = t(`strategic.rolePrompts.${myRoleKey}.p2`, { defaultValue: '' });
+    const c = t(`strategic.rolePrompts.${myRoleKey}.p3`, { defaultValue: '' });
+    return [a, b, c].filter(Boolean);
+  }, [myRoleKey, t]);
+
+  const currentPrompt = useMemo(() => {
+    if (!rolePrompts.length) return null;
+    const idx = Math.max(0, promptState?.promptIndex ?? 0) % rolePrompts.length;
+    return rolePrompts[idx] || null;
+  }, [rolePrompts, promptState?.promptIndex]);
+
+  // Timer-based prompt rotation (per participant, persisted via backend prompt_index).
+  useEffect(() => {
+    if (!sessionId) return;
+    if (!eventId) return;
+    if (!myRoleKey) return;
+    if (!currentPrompt) return;
+    if (!(phase === 'roles_assignment' || phase === 'discussion')) return;
+
+    // Reset to 90s whenever prompt changes.
+    setPromptNextIn(90);
+
+    let cancelled = false;
+    const interval = setInterval(() => {
+      setPromptNextIn((prev) => {
+        if (prev === null) return prev;
+        const next = prev - 1;
+        if (next > 0) return next;
+        if (cancelled) return null;
+
+        // Auto-advance when countdown hits 0
+        setIsAdvancingPrompt(true);
+        gamesApi
+          .advanceMyStrategicRolePrompt(sessionId, eventId)
+          .then((ps) => {
+            setPromptState(ps);
+          })
+          .catch((err) => {
+            console.warn('[StrategicEscapeBoard] auto advance prompt failed', err);
+          })
+          .finally(() => setIsAdvancingPrompt(false));
+
+        return 90;
+      });
+    }, 1000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [sessionId, eventId, myRoleKey, currentPrompt, phase]);
+
+  // Debounced autosave for private notes (per participant).
+  useEffect(() => {
+    if (!sessionId) return;
+    if (!eventId) return;
+    if (!myRoleKey) return;
+    if (notes === lastSavedNotesRef.current) return;
+
+    const timeout = setTimeout(() => {
+      setNotesSaving(true);
+      gamesApi
+        .updateMyStrategicNotes(sessionId, notes, eventId)
+        .then((res) => {
+          lastSavedNotesRef.current = res.content || '';
+          setNotesSavedAt(res.updatedAt || new Date().toISOString());
+        })
+        .catch((err) => {
+          console.warn('[StrategicEscapeBoard] updateMyStrategicNotes failed', err);
+        })
+        .finally(() => setNotesSaving(false));
+    }, 800);
+
+    return () => clearTimeout(timeout);
+  }, [notes, sessionId, eventId, myRoleKey]);
+
   useEffect(() => {
     // When roles are assigned and this participant has a role, reveal it once via a modal.
     if (phase !== 'roles_assignment') return;
@@ -359,6 +466,39 @@ export function StrategicEscapeBoard({
     setRoleRevealOpen(true);
     setRoleRevealShown(true);
   }, [phase, myRoleKey, roleRevealShown]);
+
+  // Fetch per-participant strategic helpers once we have a role (prompt state + notes + persisted ready flag).
+  useEffect(() => {
+    if (!sessionId) return;
+    if (!eventId) return;
+    if (!myRoleKey) return;
+    let cancelled = false;
+
+    const run = async () => {
+      try {
+        const [role, ps, n] = await Promise.all([
+          gamesApi.getMyStrategicRole(sessionId, eventId),
+          gamesApi.getMyStrategicRolePromptState(sessionId, eventId).catch(() => null),
+          gamesApi.getMyStrategicNotes(sessionId, eventId).catch(() => null),
+        ]);
+        if (cancelled) return;
+        if (role?.readyAt) setMyReady(true);
+        if (ps) setPromptState(ps);
+        if (n) {
+          setNotes(n.content || '');
+          lastSavedNotesRef.current = n.content || '';
+          setNotesSavedAt(n.updatedAt || null);
+        }
+      } catch (err) {
+        console.warn('[StrategicEscapeBoard] failed to load strategic helpers', err);
+      }
+    };
+
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId, eventId, myRoleKey]);
 
   // Host-only: poll reveal acknowledgement status once roles are assigned.
   useEffect(() => {
@@ -373,6 +513,30 @@ export function StrategicEscapeBoard({
         if (!cancelled) setRevealStatus(s);
       } catch (err) {
         console.warn('[StrategicEscapeBoard] getStrategicRoleRevealStatus failed', err);
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 2000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [isHost, sessionId, eventId, rolesAssigned]);
+
+  // Host-only: poll "ready" status once roles are assigned.
+  useEffect(() => {
+    if (!isHost) return;
+    if (!sessionId) return;
+    if (!rolesAssigned) return;
+
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const s = await gamesApi.getStrategicRoleReadyStatus(sessionId, eventId);
+        if (!cancelled) setReadyStatus(s);
+      } catch (err) {
+        console.warn('[StrategicEscapeBoard] getStrategicRoleReadyStatus failed', err);
       }
     };
 
@@ -918,6 +1082,124 @@ export function StrategicEscapeBoard({
                   {t('strategic.rolesMeta.refreshing', { defaultValue: 'Refreshing your role…' })}
                 </p>
               )}
+
+              {myRoleKey && (
+                <div className="mt-3 space-y-3">
+                  {/* Role-specific private prompt */}
+                  <div className="rounded-xl border border-border bg-muted/20 p-3 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {t('strategic.afterReveal.promptsTitle', { defaultValue: 'Your focus prompt' })}
+                      </p>
+                      {typeof promptNextIn === 'number' && (
+                        <span className="text-[10px] text-muted-foreground tabular-nums">
+                          {t('strategic.afterReveal.nextPromptIn', {
+                            defaultValue: 'Next in {{seconds}}s',
+                            seconds: promptNextIn,
+                          })}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[12px] text-foreground whitespace-pre-wrap">
+                      {currentPrompt ||
+                        t('strategic.afterReveal.noPrompts', {
+                          defaultValue: 'No role prompts configured yet.',
+                        })}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 text-[11px]"
+                      disabled={!sessionId || isAdvancingPrompt || !currentPrompt}
+                      onClick={() => {
+                        if (!sessionId) return;
+                        setIsAdvancingPrompt(true);
+                        gamesApi
+                          .advanceMyStrategicRolePrompt(sessionId, eventId)
+                          .then((ps) => setPromptState(ps))
+                          .catch((err) => {
+                            console.warn('[StrategicEscapeBoard] advanceMyStrategicRolePrompt failed', err);
+                          })
+                          .finally(() => setIsAdvancingPrompt(false));
+                      }}
+                    >
+                      {isAdvancingPrompt
+                        ? t('strategic.afterReveal.advancingPrompt', { defaultValue: 'Updating…' })
+                        : t('strategic.afterReveal.nextPrompt', { defaultValue: 'Next prompt' })}
+                    </Button>
+                  </div>
+
+                  {/* Ready button */}
+                  <div className="rounded-xl border border-border bg-card p-3 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {t('strategic.afterReveal.readyTitle', { defaultValue: 'Ready check' })}
+                      </p>
+                      {myReady && (
+                        <span className="text-[10px] font-medium text-success">
+                          {t('strategic.afterReveal.readyConfirmed', { defaultValue: 'Ready' })}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      {t('strategic.afterReveal.readyHint', {
+                        defaultValue: 'Click ready when you understand your role. The facilitator can start once everyone is ready.',
+                      })}
+                    </p>
+                    <Button
+                      className="h-9 text-[12px]"
+                      disabled={!sessionId || myReady}
+                      onClick={() => {
+                        if (!sessionId) return;
+                        gamesApi
+                          .readyMyStrategicRole(sessionId, eventId)
+                          .then(() => setMyReady(true))
+                          .catch((err) => {
+                            console.warn('[StrategicEscapeBoard] readyMyStrategicRole failed', err);
+                            if (ApiError.is(err)) {
+                              toast.error(t(`apiErrors.${err.code}`, { defaultValue: err.message }));
+                            } else {
+                              toast.error(t('apiErrors.UNKNOWN'));
+                            }
+                          });
+                      }}
+                    >
+                      {myReady
+                        ? t('strategic.afterReveal.readyConfirmed', { defaultValue: 'Ready' })
+                        : t('strategic.afterReveal.readyAction', { defaultValue: 'I’m ready' })}
+                    </Button>
+                  </div>
+
+                  {/* Private notes */}
+                  <div className="rounded-xl border border-border bg-card p-3 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {t('strategic.afterReveal.notesTitle', { defaultValue: 'Private notes' })}
+                      </p>
+                      <span className="text-[10px] text-muted-foreground">
+                        {notesSaving
+                          ? t('strategic.afterReveal.notesSaving', { defaultValue: 'Saving…' })
+                          : notesSavedAt
+                            ? t('strategic.afterReveal.notesSaved', { defaultValue: 'Saved' })
+                            : t('strategic.afterReveal.notesNotSaved', { defaultValue: 'Not saved yet' })}
+                      </span>
+                    </div>
+                    <textarea
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder={t('strategic.afterReveal.notesPlaceholder', {
+                        defaultValue: 'Write notes only you can see…',
+                      })}
+                      className="min-h-[92px] w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-[12px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      {t('strategic.afterReveal.notesHint', {
+                        defaultValue: 'Notes are saved to your role only and won’t be shared with others.',
+                      })}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -979,15 +1261,29 @@ export function StrategicEscapeBoard({
                   )}
                   <Button
                     className="w-full h-9 text-[12px]"
-                    disabled={!sessionId || !rolesAssigned}
+                    disabled={!sessionId || !rolesAssigned || !(readyStatus?.allReady ?? false)}
                     onClick={handleStartDiscussion}
                   >
                     {t('strategic.actions.startDiscussion', { defaultValue: 'Start async discussion' })}
                   </Button>
+                  {isHost && rolesAssigned && readyStatus && !readyStatus.allReady && (
+                    <div className="inline-flex items-center justify-between gap-2 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
+                      <span>
+                        {t('strategic.afterReveal.readyProgress', {
+                          defaultValue: '{{ready}}/{{total}} ready',
+                          ready: readyStatus.ready,
+                          total: readyStatus.total,
+                        })}
+                      </span>
+                      <span className="font-medium tabular-nums text-foreground">
+                        {readyStatus.ready}/{readyStatus.total}
+                      </span>
+                    </div>
+                  )}
                   <p className="text-[10px] text-muted-foreground">
                     {t(
                       'strategic.actions.assignHelp',
-                      'First, assign roles so everyone receives their email. Then start the async discussion when you are ready.'
+                      'First, assign roles so everyone can reveal their in-app role. Then start the async discussion once everyone is ready.'
                     )}
                   </p>
                 </div>
