@@ -30,6 +30,12 @@ function getDataArray(v: unknown): unknown[] {
   return [];
 }
 
+function parseRevisionTime(value: unknown): number {
+  if (typeof value !== 'string') return 0;
+  const ts = Date.parse(value);
+  return Number.isFinite(ts) ? ts : 0;
+}
+
 // ─── Profile helpers (same keys as EventLobby) ────────────────────────────────
 const profileKey = (eventId: string) => `event_profile_${eventId}`;
 
@@ -216,11 +222,19 @@ function GamePlayWithoutBoundary() {
       return true;
     })
     .map((p) => ({
+      // API payloads vary by endpoint/socket shape; normalize avatar from known fields.
+      avatarUrl:
+        typeof (p as any).avatarUrl === 'string' ? (p as any).avatarUrl :
+        typeof (p as any).avatar_url === 'string' ? (p as any).avatar_url :
+        typeof (p as any).avatar === 'string' ? (p as any).avatar :
+        typeof (p as any).user_avatar === 'string' ? (p as any).user_avatar :
+        typeof (p as any).custom_avatar_url === 'string' ? (p as any).custom_avatar_url :
+        typeof (p as any).guest_avatar === 'string' ? (p as any).guest_avatar :
+        null,
       id: String((p as any).id),
       name: typeof (p as any).name === 'string' && (p as any).name ? (p as any).name : t('common.unknown', { defaultValue: 'Unknown' }),
       email: typeof (p as any).email === 'string' ? (p as any).email : null,
       avatar: (typeof (p as any).name === 'string' && (p as any).name ? (p as any).name : '??').slice(0, 2).toUpperCase(),
-      avatarUrl: typeof (p as any).avatar === 'string' ? (p as any).avatar : null,
       status: 'joined' as const,
       joinedAt: typeof (p as any).joined_at === 'string' ? (p as any).joined_at : null,
       score: 0,
@@ -264,6 +278,11 @@ function GamePlayWithoutBoundary() {
   const [initialSnapshot, setInitialSnapshot] = useState<unknown>(null);
   const [gameData, setGameData] = useState<unknown>(null);
   const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
+  const lastServerGameUpdateAtRef = useRef<number>(Date.now());
+  const lastSnapshotRevisionIdRef = useRef<string | null>(null);
+  const lastSnapshotRevisionTimeRef = useRef<number>(0);
+  const stateSyncInFlightRef = useRef(false);
+  const lastStateSyncStartedAtRef = useRef(0);
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
@@ -329,6 +348,13 @@ function GamePlayWithoutBoundary() {
           if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
           setIsGameAdmin(!!data?.isAdmin);
           if (data?.snapshot) {
+            const incomingRevisionTime = parseRevisionTime(data?.snapshotCreatedAt);
+            if (incomingRevisionTime > 0) {
+              lastSnapshotRevisionTimeRef.current = incomingRevisionTime;
+              lastSnapshotRevisionIdRef.current =
+                typeof data?.snapshotRevisionId === 'string' ? data.snapshotRevisionId : null;
+            }
+            lastServerGameUpdateAtRef.current = Date.now();
             setInitialSnapshot(data.snapshot);
             setGameData(data.snapshot);
           }
@@ -339,6 +365,29 @@ function GamePlayWithoutBoundary() {
         });
     }
   }, [gamesSocket.isConnected, hasJoined, participantId, sessionId]);
+
+  const requestStateSync = useCallback(async (reason: string) => {
+    if (!gamesSocket.isConnected || !sessionId) return;
+    const now = Date.now();
+    if (stateSyncInFlightRef.current) return;
+    // Small cooldown prevents sync storms if multiple effects/events fire together.
+    if (now - lastStateSyncStartedAtRef.current < 600) return;
+
+    stateSyncInFlightRef.current = true;
+    lastStateSyncStartedAtRef.current = now;
+    try {
+      console.log('[GamePlay][sync] requesting game:state_sync', { sessionId, reason });
+      await gamesSocket.emit('game:state_sync', { sessionId });
+    } catch (err: any) {
+      console.warn('[GamePlay][sync] game:state_sync failed', {
+        sessionId,
+        reason,
+        error: err?.message || err,
+      });
+    } finally {
+      stateSyncInFlightRef.current = false;
+    }
+  }, [gamesSocket, gamesSocket.isConnected, sessionId]);
 
   // Initial joins
   useEffect(() => {
@@ -367,11 +416,11 @@ function GamePlayWithoutBoundary() {
     const onConnect = () => {
       console.log('[GamePlay] Games socket reconnected, re-joining room...');
       joinGameRoom();
-      if (sessionId) gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+      if (sessionId) void requestStateSync('socket_connect_listener');
     };
     gamesSocket.socket.on('connect', onConnect);
     return () => { gamesSocket.socket?.off('connect', onConnect); };
-  }, [gamesSocket.socket, sessionId, joinGameRoom]);
+  }, [gamesSocket.socket, sessionId, joinGameRoom, requestStateSync]);
 
   // Listen for incoming chat messages
   const liveMessagesRef = useRef(liveMessages);
@@ -541,17 +590,55 @@ function GamePlayWithoutBoundary() {
     const unsubState = gamesSocket.on('game:state', (payload: any) => {
       const snap = payload?.state?.snapshot;
       const ar = payload?.state?.activeRoundId;
+      const incomingRevisionId =
+        typeof payload?.state?.snapshotRevisionId === 'string' ? payload.state.snapshotRevisionId : null;
+      const incomingRevisionTime = parseRevisionTime(payload?.state?.snapshotCreatedAt);
       console.log('[GamePlay] Received game:state event:', { hasSnapshot: !!snap, hasActiveRound: !!ar });
       if (ar) setActiveRoundId(ar);
       if (snap) {
-        console.log('[GamePlay] Updating game state from game:state event:', snap.kind);
+        const currentRevisionTime = lastSnapshotRevisionTimeRef.current;
+        const isNewer = incomingRevisionTime > 0 ? incomingRevisionTime >= currentRevisionTime : true;
+        if (!isNewer) {
+          console.log('[GamePlay][sync] Ignoring stale game:state snapshot', {
+            incomingRevisionId,
+            incomingRevisionTime,
+            currentRevisionTime,
+          });
+          return;
+        }
+        lastSnapshotRevisionTimeRef.current = incomingRevisionTime || currentRevisionTime;
+        lastSnapshotRevisionIdRef.current = incomingRevisionId;
+        lastServerGameUpdateAtRef.current = Date.now();
+        console.log('[GamePlay] Updating game state from game:state event:', snap.kind, {
+          incomingRevisionId,
+          incomingRevisionTime,
+        });
         setInitialSnapshot(snap);
         setGameData(snap);
       }
     });
     const unsubData = gamesSocket.on('game:data', (payload: any) => {
       if (payload?.gameData) {
-        console.log('[GamePlay] Received game:data event:', payload.gameData.kind);
+        const incomingRevisionId =
+          typeof payload?.snapshotRevisionId === 'string' ? payload.snapshotRevisionId : null;
+        const incomingRevisionTime = parseRevisionTime(payload?.snapshotCreatedAt);
+        const currentRevisionTime = lastSnapshotRevisionTimeRef.current;
+        const isNewer = incomingRevisionTime > 0 ? incomingRevisionTime >= currentRevisionTime : true;
+        if (!isNewer) {
+          console.log('[GamePlay][sync] Ignoring stale game:data snapshot', {
+            incomingRevisionId,
+            incomingRevisionTime,
+            currentRevisionTime,
+          });
+          return;
+        }
+        lastSnapshotRevisionTimeRef.current = incomingRevisionTime || currentRevisionTime;
+        lastSnapshotRevisionIdRef.current = incomingRevisionId;
+        lastServerGameUpdateAtRef.current = Date.now();
+        console.log('[GamePlay] Received game:data event:', payload.gameData.kind, {
+          incomingRevisionId,
+          incomingRevisionTime,
+        });
         setGameData(payload.gameData);
       }
     });
@@ -560,38 +647,26 @@ function GamePlayWithoutBoundary() {
     const unsubStarted = gamesSocket.on('game:started', () => {
       console.log('[GamePlay] Received game:started event, syncing state...');
       if (sessionId) {
-        gamesSocket.emit('game:state_sync', { sessionId })
-          .catch((err: any) => {
-            console.error('[GamePlay] game:state_sync failed on game:started:', err?.message || err);
-          });
+        void requestStateSync('event:game_started');
       }
     });
     const unsubRoundStarted = gamesSocket.on('game:round_started', (payload: any) => {
       console.log('[GamePlay] Received game:round_started event');
       if (payload?.roundId) setActiveRoundId(payload.roundId);
       if (sessionId) {
-        gamesSocket.emit('game:state_sync', { sessionId })
-          .catch((err: any) => {
-            console.error('[GamePlay] game:state_sync failed on game:round_started:', err?.message || err);
-          });
+        void requestStateSync('event:round_started');
       }
     });
     const unsubRoundEnded = gamesSocket.on('game:round_ended', () => {
       console.log('[GamePlay] Received game:round_ended event, syncing state...');
       if (sessionId) {
-        gamesSocket.emit('game:state_sync', { sessionId })
-          .catch((err: any) => {
-            console.error('[GamePlay] game:state_sync failed on game:round_ended:', err?.message || err);
-          });
+        void requestStateSync('event:round_ended');
       }
     });
     const unsubEnded = gamesSocket.on('game:ended', () => {
       console.log('[GamePlay] Received game:ended event, syncing state...');
       if (sessionId) {
-        gamesSocket.emit('game:state_sync', { sessionId })
-          .catch((err: any) => {
-            console.error('[GamePlay] game:state_sync failed on game:ended:', err?.message || err);
-          });
+        void requestStateSync('event:game_ended');
       }
     });
 
@@ -603,7 +678,7 @@ function GamePlayWithoutBoundary() {
       unsubRoundEnded?.();
       unsubEnded?.();
     };
-  }, [gamesSocket.isConnected, sessionId, gamesSocket]);
+  }, [gamesSocket.isConnected, sessionId, gamesSocket, requestStateSync]);
 
   // Reconnect backfill: when events socket reconnects, refetch messages/participants/posts
   const wasEventsConnectedRef = useRef(false);
@@ -743,7 +818,7 @@ function GamePlayWithoutBoundary() {
           setActiveRoundId(data.activeRoundId);
         }
 
-        await gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+        await requestStateSync(`join_attempt_${attempt}`);
         console.log('[GamePlay] game:join succeeded', { sessionId, attempt });
       } catch (err: any) {
         console.warn('[GamePlay] game:join failed, will retry if attempts remain', {
@@ -770,6 +845,7 @@ function GamePlayWithoutBoundary() {
     gamesSocket,
     hasJoined,
     participantId,
+    requestStateSync,
     sessionId,
     setActiveRoundId,
     setGameData,
@@ -783,13 +859,26 @@ function GamePlayWithoutBoundary() {
       if (!wasGamesConnectedRef.current) {
         wasGamesConnectedRef.current = true;
         if (sessionId) {
-          gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+          void requestStateSync('socket_reconnected');
         }
       }
     } else {
       wasGamesConnectedRef.current = false;
     }
-  }, [gamesSocket.status, sessionId, gamesSocket]);
+  }, [gamesSocket.status, sessionId, gamesSocket, requestStateSync]);
+
+  // Watchdog fallback: if no authoritative game update arrives for a while during
+  // an active session, request one state sync. This is a safety net only.
+  useEffect(() => {
+    if (!gamesSocket.isConnected || !sessionId) return;
+    const id = window.setInterval(() => {
+      const staleForMs = Date.now() - lastServerGameUpdateAtRef.current;
+      if (staleForMs > 9000) {
+        void requestStateSync('watchdog_stale_state');
+      }
+    }, 2500);
+    return () => window.clearInterval(id);
+  }, [gamesSocket.isConnected, sessionId, requestStateSync]);
 
   // ─── Typing state ──────────────────────────────────────────────────────────
   const [typingUsers, setTypingUsers] = useState<string[]>([]);

@@ -20,10 +20,10 @@
 
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
 import { RoomThemeProvider } from './theme/RoomThemeContext';
 import { OfficeLobby } from './phases/OfficeLobby';
-import { ElevatorSequence } from './phases/ElevatorSequence';
 import { MeetingRoom } from './phases/MeetingRoom';
 import { OfficeExitAnimation } from './phases/OfficeExitAnimation';
 import { getThemeForPair } from './theme/roomThemes';
@@ -99,6 +99,7 @@ export function CoffeeRouletteBoard({
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const capturedElapsedRef = useRef(0);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const matchingAutoStartKeyRef = useRef<string | null>(null);
 
   // Listen for real-time socket events from other players
   useEffect(() => {
@@ -192,6 +193,17 @@ export function CoffeeRouletteBoard({
       setIsLoading(false);
     }
   }, [currentUserId, onEmitAction, pairs]);
+
+  // Matching phase should auto-advance without custom animations.
+  // Keep one authoritative starter (pair[0].person1) and fire once per pairing set.
+  useEffect(() => {
+    if (phase !== 'matching') return;
+    const firstPairId = pairs[0]?.id;
+    if (!firstPairId) return;
+    if (matchingAutoStartKeyRef.current === firstPairId) return;
+    matchingAutoStartKeyRef.current = firstPairId;
+    void handleMatchingComplete();
+  }, [phase, pairs, handleMatchingComplete]);
 
   // Handle next prompt
   const handleNextPrompt = useCallback(async () => {
@@ -304,16 +316,23 @@ export function CoffeeRouletteBoard({
     );
   }
 
-  // PHASE: Matching - Elevator Animation
+  // PHASE: Matching - Simple smooth transition (no custom animation)
   if (phase === 'matching') {
     return (
       <RoomThemeProvider themeName={themeName}>
-        <ElevatorSequence
-          key={pairs.map((p) => p.id).join('|')}
-          pairNumber={currentPairIndex}
-          totalPairs={Math.max(1, pairs.length)}
-          onSequenceComplete={handleMatchingComplete}
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25 }}
+          className="flex items-center justify-center min-h-[420px]"
+        >
+          <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-white/80 px-4 py-3 shadow-sm">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <p className="text-sm font-medium text-foreground">
+              {t('gamePlay.coffeeRoulette.matching.matching', { defaultValue: 'Connecting you to your match...' })}
+            </p>
+          </div>
+        </motion.div>
       </RoomThemeProvider>
     );
   }

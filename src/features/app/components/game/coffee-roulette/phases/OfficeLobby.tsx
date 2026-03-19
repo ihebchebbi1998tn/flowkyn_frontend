@@ -7,7 +7,7 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Coffee, Users, ArrowRight } from 'lucide-react';
+import { Coffee, Users, ArrowRight, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -52,6 +52,15 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
     }
     return pairs;
   }, [participants, participantCount]);
+
+  const avatarFallback = (
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
+    >
+      <User className="w-4 h-4" />
+    </div>
+  );
 
   return (
     <div style={themeVars as React.CSSProperties}>
@@ -182,7 +191,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                               fontWeight: '700',
                             }}
                           >
-                            {participant.avatar}
+                            {avatarFallback}
                           </AvatarFallback>
                         </Avatar>
                       </motion.div>
@@ -264,7 +273,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                                     fontWeight: '700',
                                   }}
                                 >
-                                  {pair.person1.avatar}
+                                  {avatarFallback}
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex-1 min-w-0">
@@ -308,7 +317,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                                     fontWeight: '700',
                                   }}
                                 >
-                                  {pair.person2.avatar}
+                                  {avatarFallback}
                                 </AvatarFallback>
                               </Avatar>
                             </div>
