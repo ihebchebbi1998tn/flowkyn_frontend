@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { HowItWorksModal } from '../shared/HowItWorksModal';
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -39,19 +40,35 @@ type CoffeeSnapshot = {
 };
 
 export interface CoffeeRouletteBoardProps {
-  participants: any[];
+  participants: Array<{ id: string; name?: string; avatar?: string; avatarUrl?: string | null }>;
   currentUserId: string;
-  initialSnapshot?: any;
-  gameData?: any;
-  onEmitAction: (actionType: string, payload?: any) => Promise<void>;
-  gamesSocket?: any; // Socket for listening to real-time updates
+  initialSnapshot?: unknown;
+  gameData?: unknown;
+  onEmitAction: (actionType: string, payload?: unknown) => Promise<void>;
+  gamesSocket?: unknown; // Socket for listening to real-time updates
+}
+
+function isCoffeeSnapshot(value: unknown): value is CoffeeSnapshot {
+  if (!value || typeof value !== 'object') return false;
+  return (value as Record<string, unknown>).kind === GAME_TYPES.COFFEE_ROULETTE;
+}
+
+function hasOn(obj: unknown): obj is { on: (event: string, cb: (payload: unknown) => void) => (() => void) | void } {
+  return (
+    !!obj &&
+    typeof obj === 'object' &&
+    typeof (obj as Record<string, unknown>).on === 'function'
+  );
 }
 
 export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapshot, gameData, onEmitAction, gamesSocket }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
-  const snapshot: CoffeeSnapshot | null = (gameData?.kind === GAME_TYPES.COFFEE_ROULETTE
+  const [howOpen, setHowOpen] = useState(false);
+  const snapshot: CoffeeSnapshot | null = isCoffeeSnapshot(gameData)
     ? gameData
-    : (initialSnapshot?.kind === GAME_TYPES.COFFEE_ROULETTE ? initialSnapshot : null)) as any;
+    : isCoffeeSnapshot(initialSnapshot)
+      ? initialSnapshot
+      : null;
 
   // Add logging for state changes
   useEffect(() => {
@@ -103,11 +120,11 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
 
   // Listen for real-time socket events from other players
   useEffect(() => {
-    if (!gamesSocket?.on) return;
+    if (!hasOn(gamesSocket)) return;
 
-    const unsubShuffle = gamesSocket.on('game:state', (payload: any) => {
-      const snap = payload?.state?.snapshot;
-      if (snap?.kind === GAME_TYPES.COFFEE_ROULETTE) {
+    const unsubShuffle = gamesSocket.on('game:state', (payload: unknown) => {
+      const snap = (payload as { state?: { snapshot?: unknown } } | null | undefined)?.state?.snapshot;
+      if (isCoffeeSnapshot(snap)) {
         console.log('[CoffeeRouletteBoard] Received game:state update:', {
           phase: snap.phase,
           pairsCount: snap.pairs?.length,
@@ -115,11 +132,12 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
       }
     });
 
-    const unsubData = gamesSocket.on('game:data', (payload: any) => {
-      if (payload?.gameData?.kind === GAME_TYPES.COFFEE_ROULETTE) {
+    const unsubData = gamesSocket.on('game:data', (payload: unknown) => {
+      const gd = (payload as { gameData?: unknown } | null | undefined)?.gameData;
+      if (isCoffeeSnapshot(gd)) {
         console.log('[CoffeeRouletteBoard] Received game:data update:', {
-          phase: payload.gameData.phase,
-          pairsCount: payload.gameData.pairs?.length,
+          phase: gd.phase,
+          pairsCount: gd.pairs?.length,
         });
       }
     });
@@ -234,6 +252,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
   return (
     <div className="space-y-4">
       <CountdownOverlay active={showCountdown} onComplete={handleCountdownDone} accentColor="info" finalText="MATCH!" />
+      <HowItWorksModal open={howOpen} onOpenChange={setHowOpen} baseKey="gameHowItWorks.coffeeRoulette" />
       <Dialog open={showDecisionModal} onOpenChange={setShowDecisionModal}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -279,7 +298,7 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
       {/* Phase header */}
       <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="p-4 sm:p-5">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info/10">
                 <Coffee className="h-5 w-5 text-info" />
@@ -293,7 +312,17 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 </p>
               </div>
             </div>
-            <PhaseBadge phase={phase} />
+            <div className="flex items-center gap-2">
+              <PhaseBadge phase={phase} />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-[11px]"
+                onClick={() => setHowOpen(true)}
+              >
+                {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

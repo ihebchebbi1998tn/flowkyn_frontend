@@ -54,6 +54,216 @@
     "postFailed": "Beitrag konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
     "reactionFailed": "Reaktion fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
+  "gameHowItWorks": {
+    "common": {
+      "title": "So funktioniert’s",
+      "goalTitle": "Ziel",
+      "timeTitle": "Dauer",
+      "howTitle": "Ablauf",
+      "rulesTitle": "Regeln",
+      "tipsTitle": "Tipps",
+      "hostTitle": "Host‑Steuerung",
+      "privacyTitle": "Datenschutz"
+    },
+    "strategicEscape": {
+      "title": "Strategic Escape Challenge",
+      "goal": "Entscheidungen unter Druck trainieren, indem dieselbe Krise aus unterschiedlichen Rollen betrachtet wird.",
+      "time": {
+        "title": "Dauer",
+        "body": "Asynchrone Aktivität. Zuerst werden Rollen enthüllt, danach startet der Facilitator die Diskussion, sobald alle bereit sind."
+      },
+      "how": {
+        "title": "Ablauf",
+        "steps": [
+          "Der Facilitator konfiguriert das Szenario (Branche, Krise, Schwierigkeit) und erstellt die Session.",
+          "Rollen werden den Teilnehmenden zugewiesen.",
+          "Jede Person enthüllt ihre geheime Rolle in der App.",
+          "Nach der Enthüllung können Sie „Ich bin bereit“ markieren, rollenbasierte Prompts sehen und private Notizen schreiben.",
+          "Der Facilitator startet die asynchrone Diskussion, sobald alle bereit sind.",
+          "Zum Schluss debriefen Sie gemeinsam und leiten konkrete Maßnahmen ab."
+        ]
+      },
+      "rules": {
+        "title": "Regeln",
+        "items": [
+          "Ihre Rolle ist privat. Teilen Sie sie nicht direkt, außer der Facilitator bittet darum.",
+          "Argumentieren Sie aus Ihrer Rollenperspektive und machen Sie Trade‑offs sichtbar.",
+          "Seien Sie konkret: benennen Sie Risiken, Owner, Zeitpläne und was Sie streichen."
+        ]
+      },
+      "tips": {
+        "title": "Tipps",
+        "items": [
+          "Nutzen Sie private Notizen, um Risiken festzuhalten, die nur Ihre Rolle sieht.",
+          "Nutzen Sie Prompts, um nicht immer dieselben Argumente zu wiederholen.",
+          "Bei Uneinigkeit: schlagen Sie eine Alternative mit klaren Kosten vor."
+        ]
+      },
+      "host": {
+        "title": "Host‑Steuerung",
+        "items": [
+          "Weisen Sie Rollen zu, sobald Teilnehmende beigetreten sind.",
+          "Verfolgen Sie Fortschritt (Rollen enthüllt + Ready‑Status), bevor Sie starten.",
+          "Starten Sie die Diskussion erst, wenn das Team bereit ist, und beenden Sie sie, wenn genug Input vorliegt."
+        ]
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "body": "Private Notizen werden pro Session gespeichert und sind nur für Sie sichtbar. Der Facilitator sieht nur aggregierten Fortschritt (Zählwerte), nicht wer bereit ist oder welche Rolle jemand hat."
+      }
+    },
+    "coffeeRoulette": {
+      "title": "Coffee Roulette",
+      "goal": "Schnelle 1:1‑Verbindungen durch zufällige Paarungen mit einem Gesprächsthema.",
+      "time": {
+        "title": "Dauer",
+        "body": "Live‑Aktivität. Der Chat‑Timer startet, sobald Paare erstellt wurden."
+      },
+      "how": {
+        "title": "Ablauf",
+        "steps": [
+          "Warten Sie, bis mindestens 2 Teilnehmende beitreten.",
+          "Starten Sie den Shuffle, um 1:1‑Paare zu erzeugen.",
+          "Alle wechseln in einen zeitlich begrenzten Chat mit einem gemeinsamen Thema.",
+          "Nutzen Sie „Nächstes Thema“‑Prompts während des Chats.",
+          "Nach einigen Prompts können Sie weitermachen oder den Chat beenden.",
+          "Beenden schließt die Session für alle."
+        ]
+      },
+      "rules": {
+        "title": "Regeln",
+        "items": [
+          "Seien Sie respektvoll und inklusiv — das Ziel ist Verbindung.",
+          "Bleiben Sie bei einem Thema, damit beide teilnehmen können.",
+          "Wenn Sie beenden, endet die Session."
+        ]
+      },
+      "tips": {
+        "title": "Tipps",
+        "items": [
+          "Wenn möglich: Kamera an — das stärkt die Verbindung.",
+          "Stellen Sie Rückfragen; wechseln Sie nicht zu schnell das Thema.",
+          "Für neue Paarungen: beenden und neu shufflen."
+        ]
+      },
+      "host": {
+        "title": "Host‑Steuerung",
+        "items": [
+          "Starten Sie den Shuffle, sobald genügend Teilnehmende da sind.",
+          "Sie können die Session beenden (oder Teilnehmenden das Beenden erlauben, je nach Event‑Einstellungen)."
+        ]
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "body": "Paarungen und Themen sind innerhalb der Session sichtbar. Es gibt keine geheimen Rollen oder privaten Inhalte."
+      }
+    },
+    "twoTruths": {
+      "title": "Zwei Wahrheiten und eine Lüge",
+      "goal": "Eis brechen, indem Sie erraten, welche Aussage die Lüge ist.",
+      "time": {
+        "title": "Dauer",
+        "body": "Live‑Runden: einreichen → abstimmen → auflösen, wiederholt über mehrere Runden."
+      },
+      "how": {
+        "title": "Ablauf",
+        "steps": [
+          "Eine Person ist Presenter der Runde.",
+          "Der Presenter gibt drei Aussagen ein und wählt, welche die Lüge ist.",
+          "Alle stimmen ab, welche Aussage die Lüge ist.",
+          "Die Auflösung zeigt die richtige Antwort und aktualisiert die Punkte.",
+          "Weiter zur nächsten Runde, bis das Spiel endet."
+        ]
+      },
+      "rules": {
+        "title": "Regeln",
+        "items": [
+          "Zwei Aussagen müssen wahr sein, eine falsch.",
+          "Halten Sie Aussagen kurz und verständlich.",
+          "Stimmen Sie vor Ablauf des Timers ab."
+        ]
+      },
+      "tips": {
+        "title": "Tipps",
+        "items": [
+          "Machen Sie Wahrheiten überraschend und die Lüge glaubwürdig.",
+          "Als Voter: achten Sie auf Details, die nicht passen.",
+          "Nutzen Sie die Auflösung, um etwas Neues über Kolleg:innen zu lernen."
+        ]
+      },
+      "host": {
+        "title": "Host‑Steuerung",
+        "items": [
+          "Starten Sie das Spiel und gehen Sie bei Bedarf zur nächsten Runde.",
+          "Legen Sie die Rundenzahl für die Session fest."
+        ]
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "body": "Alle Aussagen und Votes sind für Teilnehmende der Session sichtbar."
+      }
+    },
+    "winsOfWeek": {
+      "title": "Erfolge der Woche",
+      "goal": "Momentum aufbauen, indem Sie einen Erfolg teilen und andere feiern.",
+      "time": {
+        "title": "Dauer",
+        "body": "Asynchrone Aktivität. Beiträge bleiben offen, bis die Aktivität endet."
+      },
+      "how": {
+        "title": "Ablauf",
+        "steps": [
+          "Lesen Sie den Prompt dieser Woche oben im Feed.",
+          "Posten Sie Ihren Erfolg (beruflich oder privat).",
+          "Reagieren Sie auf Erfolge anderer mit schnellen Reactions.",
+          "Antworten Sie, um zu fragen oder zu feiern.",
+          "Wenn die Aktivität endet, sind neue Beiträge deaktiviert (nur lesen)."
+        ]
+      },
+      "rules": {
+        "title": "Regeln",
+        "items": [
+          "Bleiben Sie unterstützend und respektvoll.",
+          "Teilen Sie nur, was Sie mit der Gruppe teilen möchten."
+        ]
+      },
+      "tips": {
+        "title": "Tipps",
+        "items": [
+          "Seien Sie konkret: was hat sich verändert und warum ist es wichtig?",
+          "Feiern Sie andere — Reactions machen den Thread lebendig.",
+          "Wenn Sie unsicher sind: teilen Sie einen kleinen Erfolg (Lernen, Helfen, Fortschritt)."
+        ]
+      },
+      "host": {
+        "title": "Host‑Steuerung",
+        "items": [
+          "Setzen Sie Prompt und Dauer für die Aktivität.",
+          "Schließen Sie Beiträge, sobald das Zeitfenster endet."
+        ]
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "body": "Posts und Reactions sind für Teilnehmende des Events sichtbar."
+      }
+    },
+    "comingSoon": {
+      "title": "Demnächst",
+      "goal": "Diese Aktivität wird gerade für den Release finalisiert.",
+      "how": {
+        "title": "Was Sie erwartet",
+        "steps": [
+          "Wir polieren Ablauf und UI.",
+          "Wir testen die Erfahrung mit Early Testern.",
+          "Sobald sie live ist, erscheint sie hier."
+        ]
+      },
+      "privacy": {
+        "title": "Datenschutz",
+        "body": "Für diese Aktivität werden noch keine Daten erfasst, da sie nicht aktiviert ist."
+      }
+    }
+  },
   "landing": {
     "nav": {
       "features": "Funktionen",

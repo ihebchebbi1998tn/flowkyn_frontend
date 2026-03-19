@@ -63,6 +63,216 @@
     "postFailed": "Échec de la publication. Veuillez réessayer.",
     "reactionFailed": "Échec de la réaction. Veuillez réessayer."
   },
+  "gameHowItWorks": {
+    "common": {
+      "title": "Comment ça marche",
+      "goalTitle": "Objectif",
+      "timeTitle": "Durée",
+      "howTitle": "Comment ça marche",
+      "rulesTitle": "Règles",
+      "tipsTitle": "Conseils",
+      "hostTitle": "Contrôles du facilitateur",
+      "privacyTitle": "Confidentialité"
+    },
+    "strategicEscape": {
+      "title": "Défi d'évasion stratégique",
+      "goal": "S’entraîner à décider sous pression en explorant la même crise depuis des rôles différents.",
+      "time": {
+        "title": "Durée",
+        "body": "Activité asynchrone. Les rôles sont révélés d’abord, puis le facilitateur lance la discussion quand tout le monde est prêt."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Le facilitateur configure le scénario (industrie, crise, difficulté) et crée la session.",
+          "Les rôles sont attribués aux participants.",
+          "Chaque participant révèle son rôle secret dans l’app.",
+          "Après la révélation, vous pouvez indiquer “Je suis prêt”, voir des prompts par rôle et écrire des notes privées.",
+          "Le facilitateur démarre la discussion asynchrone une fois tout le monde prêt.",
+          "À la fin, faites un débrief et définissez des actions concrètes."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Votre rôle est privé. Ne le partagez pas directement sauf demande du facilitateur.",
+          "Argumentez depuis votre rôle et rendez les arbitrages explicites.",
+          "Soyez concret : nommez risques, responsables, délais et ce que vous coupez."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Utilisez vos notes privées pour suivre les risques visibles uniquement par votre rôle.",
+          "Utilisez les prompts pour éviter de répéter les mêmes arguments.",
+          "En cas de désaccord, proposez une alternative avec des coûts clairs."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Attribuez les rôles une fois que les participants ont rejoint.",
+          "Suivez la progression (rôles révélés et statut prêt) avant de lancer la discussion.",
+          "Lancez la discussion quand l’équipe est prête et terminez-la quand vous avez assez d’inputs."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Vos notes privées sont enregistrées par session et visibles uniquement par vous. Le facilitateur ne voit que la progression agrégée (comptes), pas qui est prêt ni quel rôle il a."
+      }
+    },
+    "coffeeRoulette": {
+      "title": "Coffee Roulette",
+      "goal": "Créer des connexions 1:1 rapides en appariant des coéquipiers avec un sujet de conversation.",
+      "time": {
+        "title": "Durée",
+        "body": "Activité en direct. Le timer démarre lorsque les paires sont créées."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Attendez qu’au moins 2 participants rejoignent.",
+          "Lancez le shuffle pour générer des paires 1:1.",
+          "Tout le monde passe dans un chat chronométré avec un sujet partagé.",
+          "Utilisez les prompts “Sujet suivant” pendant le chat.",
+          "Après quelques prompts, vous pouvez continuer ou terminer le chat.",
+          "Terminez pour clôturer la session pour tous."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Soyez respectueux et inclusif : l’objectif est la connexion.",
+          "Restez sur un sujet à la fois pour que chacun participe.",
+          "Si vous terminez le chat, cela met fin à la session."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Activez la caméra si possible : cela renforce la connexion.",
+          "Posez des questions de relance ; ne passez pas trop vite au sujet suivant.",
+          "Si vous voulez un nouvel appariement, terminez puis relancez un shuffle."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Lancez le shuffle une fois assez de participants présents.",
+          "Vous pouvez terminer la session (ou laisser un participant terminer selon les réglages de l’événement)."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Les paires et sujets sont partagés dans la session. Aucun rôle secret ou donnée privée n’est généré."
+      }
+    },
+    "twoTruths": {
+      "title": "Deux vérités et un mensonge",
+      "goal": "Briser la glace en devinant quelle affirmation est le mensonge.",
+      "time": {
+        "title": "Durée",
+        "body": "Manches en direct : soumission → vote → révélation, répété sur plusieurs manches."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Un joueur est le présentateur de la manche.",
+          "Le présentateur soumet trois affirmations et choisit laquelle est le mensonge.",
+          "Tout le monde vote pour l’affirmation qu’il pense être le mensonge.",
+          "La révélation affiche la bonne réponse et les scores se mettent à jour.",
+          "Passez à la manche suivante jusqu’à la fin du jeu."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Deux affirmations doivent être vraies, une doit être fausse.",
+          "Gardez les affirmations courtes et compréhensibles.",
+          "Votez avant la fin du timer."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Rendez les vérités surprenantes et le mensonge crédible.",
+          "En tant que votant, cherchez les détails qui ne collent pas.",
+          "Profitez de la révélation pour apprendre quelque chose de nouveau sur l’équipe."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Démarrez le jeu et avancez les manches si nécessaire.",
+          "Choisissez le nombre de manches de la session."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Toutes les affirmations et votes sont visibles par les participants de la session."
+      }
+    },
+    "winsOfWeek": {
+      "title": "Victoires de la semaine",
+      "goal": "Créer une dynamique en partageant une victoire et en célébrant celles des autres.",
+      "time": {
+        "title": "Durée",
+        "body": "Activité asynchrone. Les publications restent ouvertes jusqu’à la fin de l’activité."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Lisez le prompt de la semaine en haut du fil.",
+          "Publiez votre victoire (pro ou perso).",
+          "Réagissez aux victoires des autres avec des réactions rapides.",
+          "Répondez aux posts pour poser des questions ou féliciter.",
+          "Quand l’activité se termine, les nouvelles publications sont désactivées (lecture seule)."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Gardez un ton bienveillant et respectueux.",
+          "Partagez uniquement ce que vous êtes à l’aise de partager avec le groupe."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Soyez précis sur ce qui a changé et pourquoi c’est important.",
+          "Célébrez les autres : les réactions rendent le fil vivant.",
+          "Si vous hésitez, partagez une petite victoire (apprentissage, aide, progrès)."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Définissez le prompt et la durée de l’activité.",
+          "Fermez les publications une fois la fenêtre de temps terminée."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Les posts et réactions sont visibles par les participants de l’événement."
+      }
+    },
+    "comingSoon": {
+      "title": "Bientôt disponible",
+      "goal": "Cette activité est en cours de finalisation.",
+      "how": {
+        "title": "À quoi s’attendre",
+        "steps": [
+          "Nous peaufinons le déroulé et l’interface.",
+          "Nous validons l’expérience avec des testeurs.",
+          "Elle apparaîtra ici dès sa sortie."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Aucune donnée n’est collectée pour cette activité tant qu’elle n’est pas activée."
+      }
+    }
+  },
   "landing": {
     "nav": {
       "features": "Fonctionnalités",

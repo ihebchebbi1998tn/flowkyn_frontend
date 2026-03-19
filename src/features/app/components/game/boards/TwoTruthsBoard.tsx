@@ -11,6 +11,8 @@ import {
 } from './TwoTruthsSections';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
 import { useGamePhaseTimer } from '@/hooks/useGamePhaseTimer';
+import { Button } from '@/components/ui/button';
+import { HowItWorksModal } from '../shared/HowItWorksModal';
 
 type TwoTruthsSnapshot = {
   kind: typeof GAME_TYPES.TWO_TRUTHS;
@@ -28,16 +30,21 @@ type TwoTruthsSnapshot = {
 
 export interface TwoTruthsBoardProps {
   onRoundComplete?: (roundNumber: number) => void;
-  participants: any[];
+  participants: Array<{ id: string; name?: string; avatar?: string }>;
   currentUserId: string;
   currentUserName: string;
   currentUserAvatar: string;
   sessionId: string | null;
   activeRoundId: string | null;
-  initialSnapshot?: any;
-  onEmitAction: (actionType: string, payload?: any) => Promise<void>;
-  gameData?: any;
+  initialSnapshot?: unknown;
+  onEmitAction: (actionType: string, payload?: unknown) => Promise<void>;
+  gameData?: unknown;
   isAdmin?: boolean;
+}
+
+function isTwoTruthsSnapshot(value: unknown): value is TwoTruthsSnapshot {
+  if (!value || typeof value !== 'object') return false;
+  return (value as Record<string, unknown>).kind === GAME_TYPES.TWO_TRUTHS;
 }
 
 export function TwoTruthsBoard({
@@ -54,11 +61,14 @@ export function TwoTruthsBoard({
   isAdmin = false,
 }: TwoTruthsBoardProps) {
   const { t } = useTranslation();
-  const snapshot: TwoTruthsSnapshot | null = (gameData?.kind === GAME_TYPES.TWO_TRUTHS
+  const [howOpen, setHowOpen] = useState(false);
+  const snapshot: TwoTruthsSnapshot | null = isTwoTruthsSnapshot(gameData)
     ? gameData
-    : (initialSnapshot?.kind === GAME_TYPES.TWO_TRUTHS ? initialSnapshot : null)) as any;
+    : isTwoTruthsSnapshot(initialSnapshot)
+      ? initialSnapshot
+      : null;
 
-  const phase: GamePhase = (snapshot?.phase || 'waiting') as any;
+  const phase: GamePhase = (snapshot?.phase || 'waiting') as GamePhase;
   const round = snapshot?.round || 1;
   const totalRounds = snapshot?.totalRounds || 4;
   const presenterId = snapshot?.presenterParticipantId || null;
@@ -120,7 +130,7 @@ export function TwoTruthsBoard({
   // useEffect(() => { ... }) - REMOVED, replaced by useGamePhaseTimer
 
   const presenterName =
-    participants.find((p: any) => p.id === presenterId)?.name || currentUserName;
+    participants.find((p) => p.id === presenterId)?.name || currentUserName;
 
   const targetStatements = (statements || [
     { id: 's0' as const, text: t('gamePlay.twoTruths.defaultStatement1', { defaultValue: 'Statement 1' }) },
@@ -138,16 +148,17 @@ export function TwoTruthsBoard({
   }));
 
   const results = participants
-    .map((p: any) => ({
+    .map((p) => ({
       name: p.name,
       score: scores[p.id] || 0,
       avatar: p.avatar,
     }))
-    .sort((a: any, b: any) => b.score - a.score)
-    .map((r: any, i: number) => ({ ...r, rank: i + 1 }));
+    .sort((a, b) => b.score - a.score)
+    .map((r, i) => ({ ...r, rank: i + 1 }));
 
   return (
     <div className="space-y-4">
+      <HowItWorksModal open={howOpen} onOpenChange={setHowOpen} baseKey="gameHowItWorks.twoTruths" />
       <CountdownOverlay active={showCountdown} onComplete={handleCountdownDone} />
       
       <TwoTruthsHeader
@@ -157,6 +168,17 @@ export function TwoTruthsBoard({
         timeLeft={timeLeft}
         maxTime={maxTime}
       />
+
+      <div className="flex justify-end">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 text-[11px]"
+          onClick={() => setHowOpen(true)}
+        >
+          {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
+        </Button>
+      </div>
 
       {/* WAITING */}
       {phase === 'waiting' && (
@@ -198,7 +220,10 @@ export function TwoTruthsBoard({
           targetStatements={targetStatements}
           selectedVote={selectedVote}
           voted={voted}
-          onSelect={(id) => !voted && setSelectedVote(id as any)}
+          onSelect={(id) => {
+            if (voted) return;
+            if (id === 's0' || id === 's1' || id === 's2') setSelectedVote(id);
+          }}
           onSubmitVote={submitVote}
           disableSubmit={!selectedVote || voted}
           isPresenter={isPresenter}

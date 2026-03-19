@@ -72,6 +72,216 @@
     "postFailed": "No se pudo publicar. Inténtalo de nuevo.",
     "reactionFailed": "No se pudo registrar la reacción. Inténtalo de nuevo."
   },
+  "gameHowItWorks": {
+    "common": {
+      "title": "Cómo funciona",
+      "goalTitle": "Objetivo",
+      "timeTitle": "Tiempo",
+      "howTitle": "Cómo funciona",
+      "rulesTitle": "Reglas",
+      "tipsTitle": "Consejos",
+      "hostTitle": "Controles del facilitador",
+      "privacyTitle": "Privacidad"
+    },
+    "strategicEscape": {
+      "title": "Desafío de escape estratégico",
+      "goal": "Practicar la toma de decisiones bajo presión explorando la misma crisis desde roles distintos.",
+      "time": {
+        "title": "Tiempo",
+        "body": "Actividad asíncrona. Primero se revelan los roles y luego el facilitador inicia la discusión cuando todos estén listos."
+      },
+      "how": {
+        "title": "Cómo funciona",
+        "steps": [
+          "El facilitador configura el escenario (industria, crisis, dificultad) y crea la sesión.",
+          "Se asignan roles a los participantes.",
+          "Cada participante revela su rol secreto en la app.",
+          "Después de revelar, puedes marcar “Estoy listo/a”, ver prompts por rol y escribir notas privadas.",
+          "El facilitador inicia la discusión asíncrona cuando todos estén listos.",
+          "Al finalizar, haced una puesta en común y definid acciones concretas."
+        ]
+      },
+      "rules": {
+        "title": "Reglas",
+        "items": [
+          "Tu rol es privado. No lo compartas directamente salvo que el facilitador lo pida.",
+          "Argumenta desde la perspectiva de tu rol y haz explícitas las concesiones.",
+          "Sé concreto: nombra riesgos, responsables, plazos y qué vas a recortar."
+        ]
+      },
+      "tips": {
+        "title": "Consejos",
+        "items": [
+          "Usa tus notas privadas para registrar riesgos que solo tu rol ve.",
+          "Usa los prompts para no repetir siempre los mismos argumentos.",
+          "Si no estás de acuerdo, propone una alternativa con costes claros."
+        ]
+      },
+      "host": {
+        "title": "Controles del facilitador",
+        "items": [
+          "Asigna roles cuando los participantes se hayan unido.",
+          "Sigue el progreso (roles revelados y estado de listo) antes de iniciar la discusión.",
+          "Inicia la discusión cuando el equipo esté listo y ciérrala cuando haya suficiente input."
+        ]
+      },
+      "privacy": {
+        "title": "Privacidad",
+        "body": "Tus notas privadas se guardan por sesión y solo tú puedes verlas. El facilitador solo ve progreso agregado (conteos), no quién está listo ni qué rol tiene."
+      }
+    },
+    "coffeeRoulette": {
+      "title": "Coffee Roulette",
+      "goal": "Crear conexiones 1:1 rápidas emparejando a compañeros con un tema de conversación.",
+      "time": {
+        "title": "Tiempo",
+        "body": "Actividad en vivo. El temporizador empieza cuando se crean las parejas."
+      },
+      "how": {
+        "title": "Cómo funciona",
+        "steps": [
+          "Espera a que se unan al menos 2 participantes.",
+          "Inicia el shuffle para generar parejas 1:1.",
+          "Todos pasan a un chat cronometrado con un tema compartido.",
+          "Usa los prompts de “Siguiente tema” durante el chat.",
+          "Tras varios prompts, podéis continuar o terminar el chat.",
+          "Finaliza para cerrar la sesión para todos."
+        ]
+      },
+      "rules": {
+        "title": "Reglas",
+        "items": [
+          "Sé respetuoso/a e inclusivo/a: el objetivo es conectar.",
+          "Manteneos en un tema a la vez para que ambos participen.",
+          "Si terminas el chat, termina la sesión."
+        ]
+      },
+      "tips": {
+        "title": "Consejos",
+        "items": [
+          "Si puedes, usa cámara: mejora la conexión.",
+          "Haz preguntas de seguimiento; no corras al siguiente tema.",
+          "Si quieres nuevas parejas, finaliza y vuelve a hacer shuffle."
+        ]
+      },
+      "host": {
+        "title": "Controles del facilitador",
+        "items": [
+          "Inicia el shuffle cuando haya suficientes participantes.",
+          "Puedes terminar la sesión (o permitir que un participante finalice, según ajustes del evento)."
+        ]
+      },
+      "privacy": {
+        "title": "Privacidad",
+        "body": "Las parejas y los temas se comparten dentro de la sesión. No se generan roles privados ni datos secretos."
+      }
+    },
+    "twoTruths": {
+      "title": "Dos verdades y una mentira",
+      "goal": "Romper el hielo adivinando cuál afirmación es la mentira.",
+      "time": {
+        "title": "Tiempo",
+        "body": "Rondas en vivo: enviar → votar → revelar, repetido durante varias rondas."
+      },
+      "how": {
+        "title": "Cómo funciona",
+        "steps": [
+          "Una persona es el/la presentador/a de la ronda.",
+          "El/la presentador/a envía tres afirmaciones y elige cuál es la mentira.",
+          "Todos votan cuál creen que es la mentira.",
+          "Se revela la respuesta correcta y se actualizan las puntuaciones.",
+          "Pasad a la siguiente ronda hasta que termine el juego."
+        ]
+      },
+      "rules": {
+        "title": "Reglas",
+        "items": [
+          "Dos afirmaciones deben ser verdaderas y una falsa.",
+          "Mantén las afirmaciones cortas y claras.",
+          "Vota antes de que termine el tiempo."
+        ]
+      },
+      "tips": {
+        "title": "Consejos",
+        "items": [
+          "Haz que las verdades sorprendan y que la mentira sea creíble.",
+          "Al votar, busca detalles que no encajen.",
+          "Aprovecha la revelación para aprender algo nuevo del equipo."
+        ]
+      },
+      "host": {
+        "title": "Controles del facilitador",
+        "items": [
+          "Inicia el juego y avanza rondas cuando sea necesario.",
+          "Elige cuántas rondas tendrá la sesión."
+        ]
+      },
+      "privacy": {
+        "title": "Privacidad",
+        "body": "Todas las afirmaciones y votos son visibles para los participantes de la sesión."
+      }
+    },
+    "winsOfWeek": {
+      "title": "Logros de la semana",
+      "goal": "Crear impulso compartiendo un logro y celebrando los de los demás.",
+      "time": {
+        "title": "Tiempo",
+        "body": "Actividad asíncrona. Las publicaciones están abiertas hasta que finaliza la actividad."
+      },
+      "how": {
+        "title": "Cómo funciona",
+        "steps": [
+          "Lee el prompt de esta semana al inicio del feed.",
+          "Publica tu logro (laboral o personal).",
+          "Reacciona a los logros del equipo con reacciones rápidas.",
+          "Responde a posts para preguntar o celebrar.",
+          "Cuando se cierre la actividad, se deshabilitan nuevas publicaciones (solo lectura)."
+        ]
+      },
+      "rules": {
+        "title": "Reglas",
+        "items": [
+          "Mantén un tono de apoyo y respeto.",
+          "Comparte solo lo que te resulte cómodo compartir con el grupo."
+        ]
+      },
+      "tips": {
+        "title": "Consejos",
+        "items": [
+          "Sé específico/a sobre qué cambió y por qué importa.",
+          "Celebra a otros: las reacciones hacen que el hilo se sienta vivo.",
+          "Si no sabes qué poner, comparte un logro pequeño (aprendizaje, ayuda, avance)."
+        ]
+      },
+      "host": {
+        "title": "Controles del facilitador",
+        "items": [
+          "Define el prompt y la duración de la actividad.",
+          "Cierra publicaciones cuando termine la ventana de tiempo."
+        ]
+      },
+      "privacy": {
+        "title": "Privacidad",
+        "body": "Las publicaciones y reacciones son visibles para los participantes del evento."
+      }
+    },
+    "comingSoon": {
+      "title": "Próximamente",
+      "goal": "Esta actividad está en preparación para su lanzamiento.",
+      "how": {
+        "title": "Qué esperar",
+        "steps": [
+          "Estamos puliendo el flujo y la interfaz.",
+          "Estamos validando la experiencia con testers iniciales.",
+          "Aparecerá aquí en cuanto esté lista."
+        ]
+      },
+      "privacy": {
+        "title": "Privacidad",
+        "body": "Aún no se recopilan datos para esta actividad porque no está habilitada."
+      }
+    }
+  },
   "landing": {
     "nav": {
       "features": "Funcionalidades",

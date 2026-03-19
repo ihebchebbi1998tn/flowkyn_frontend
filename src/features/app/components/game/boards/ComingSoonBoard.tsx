@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Rocket, Clock, MessageSquare } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { HowItWorksModal } from '../shared/HowItWorksModal';
 
 interface ComingSoonBoardProps {
   gameName: string;
@@ -9,9 +11,11 @@ interface ComingSoonBoardProps {
 
 export function ComingSoonBoard({ gameName, onBack }: ComingSoonBoardProps) {
   const { t } = useTranslation();
+  const [howOpen, setHowOpen] = React.useState(false);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center bg-white/50 backdrop-blur-sm rounded-2xl border border-white/20 shadow-xl">
+      <HowItWorksModal open={howOpen} onOpenChange={setHowOpen} baseKey="gameHowItWorks.comingSoon" />
       <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-pulse">
         <Rocket className="w-10 h-10 text-primary" />
       </div>
@@ -23,6 +27,10 @@ export function ComingSoonBoard({ gameName, onBack }: ComingSoonBoardProps) {
       <p className="text-gray-600 max-w-md mb-8">
         {t('games.comingSoonDescription', 'We are currently polishing this activity to ensure the best experience for your team. Stay tuned!')}
       </p>
+
+      <Button variant="ghost" size="sm" className="h-8 text-[11px] mb-6" onClick={() => setHowOpen(true)}>
+        {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
+      </Button>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-2xl mb-10">
         <div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -55,12 +63,9 @@ export function ComingSoonBoard({ gameName, onBack }: ComingSoonBoardProps) {
       </div>
 
       {onBack && (
-        <button
-          onClick={onBack}
-          className="px-6 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
-        >
+        <Button onClick={onBack} className="px-6 py-2 rounded-lg font-medium">
           {t('common.backToEvents', 'Back to Events')}
-        </button>
+        </Button>
       )}
     </div>
   );

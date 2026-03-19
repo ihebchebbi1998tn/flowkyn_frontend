@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWinsFeed } from '@/hooks/useWinsFeed';
+import { HowItWorksModal } from '../shared/HowItWorksModal';
 
 const REACTION_ICONS: Record<string, typeof Heart> = {
   heart: Heart,
@@ -119,6 +120,7 @@ export function WinsOfTheWeekBoard({
   onToggleReaction,
 }: WinsOfTheWeekBoardProps) {
   const { t } = useTranslation();
+  const [howOpen, setHowOpen] = useState(false);
   const displayPrompt = prompt || t('gamePlay.winsOfWeek.defaultPrompt', { defaultValue: 'Share your win from this week — work or personal, big or small!' });
   const [newPost, setNewPost] = useState('');
   const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
@@ -211,11 +213,12 @@ export function WinsOfTheWeekBoard({
 
   return (
     <div className="space-y-4">
+      <HowItWorksModal open={howOpen} onOpenChange={setHowOpen} baseKey="gameHowItWorks.winsOfWeek" />
       {/* Prompt card */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <div className="h-1 w-full bg-gradient-to-r from-warning/60 to-warning" />
         <div className="p-5">
-          <div className="flex items-start gap-3 mb-4">
+          <div className="flex items-start justify-between gap-3 mb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning/10 shrink-0">
               <Star className="h-5 w-5 text-warning" />
             </div>
@@ -223,6 +226,14 @@ export function WinsOfTheWeekBoard({
               <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.winsOfWeek.thisWeeksPrompt', { defaultValue: "This week's prompt" })}</h3>
               <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">{displayPrompt}</p>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 text-[11px] shrink-0"
+              onClick={() => setHowOpen(true)}
+            >
+              {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
+            </Button>
           </div>
           
           {/* Status bar with detailed info */}

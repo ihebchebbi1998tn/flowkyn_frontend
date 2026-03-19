@@ -10,6 +10,7 @@ import { gamesApi } from '@/features/app/api/games';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { ApiError } from '@/lib/apiError';
+import { HowItWorksModal } from '../shared/HowItWorksModal';
 
 type StrategicPhase = 'setup' | 'roles_assignment' | 'discussion' | 'debrief';
 
@@ -593,6 +594,12 @@ export function StrategicEscapeBoard({
         </DialogContent>
       </Dialog>
 
+      <HowItWorksModal
+        open={isHowItWorksOpen}
+        onOpenChange={setIsHowItWorksOpen}
+        baseKey="gameHowItWorks.strategicEscape"
+      />
+
       {/* Header with phase + scenario chips */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
@@ -668,23 +675,12 @@ export function StrategicEscapeBoard({
             variant="ghost"
             size="sm"
             className="h-8 text-[11px]"
-            onClick={() => setIsHowItWorksOpen(v => !v)}
+            onClick={() => setIsHowItWorksOpen(true)}
           >
-            {t('strategic.howItWorks.label', { defaultValue: 'How this works' })}
+            {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
           </Button>
         </div>
       </div>
-
-      {/* How it works */}
-      {isHowItWorksOpen && (
-        <div className="rounded-2xl border border-border bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground">
-          <ul className="list-disc pl-4 space-y-1">
-            <li>{t('strategic.howItWorks.point1', { defaultValue: 'Everyone gets a secret role.' })}</li>
-            <li>{t('strategic.howItWorks.point2', { defaultValue: 'You’ll get an email + in‑app card with instructions.' })}</li>
-            <li>{t('strategic.howItWorks.point3', { defaultValue: 'We’ll debrief what we learned at the end.' })}</li>
-          </ul>
-        </div>
-      )}
 
       {/* Phase intro */}
       <div className="rounded-2xl border border-border bg-card px-4 py-3">

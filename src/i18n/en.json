@@ -72,6 +72,216 @@
     "postFailed": "Failed to post. Please try again.",
     "reactionFailed": "Failed to react. Please try again."
   },
+  "gameHowItWorks": {
+    "common": {
+      "title": "How this works",
+      "goalTitle": "Goal",
+      "timeTitle": "Timing",
+      "howTitle": "How it works",
+      "rulesTitle": "Rules",
+      "tipsTitle": "Tips",
+      "hostTitle": "Host controls",
+      "privacyTitle": "Privacy"
+    },
+    "strategicEscape": {
+      "title": "Strategic Escape Challenge",
+      "goal": "Practice decision-making under pressure by exploring the same crisis through different roles.",
+      "time": {
+        "title": "Timing",
+        "body": "Async activity. Roles are revealed first, then the facilitator starts the discussion when everyone is ready."
+      },
+      "how": {
+        "title": "How it works",
+        "steps": [
+          "The facilitator configures the scenario (industry, crisis, difficulty) and creates the session.",
+          "Roles are assigned to participants.",
+          "Each participant reveals their secret role in-app.",
+          "After revealing, you can mark “I’m ready”, see role-specific prompts, and write private notes.",
+          "The facilitator starts the async discussion once everyone is ready.",
+          "When the discussion ends, debrief together and capture concrete actions."
+        ]
+      },
+      "rules": {
+        "title": "Rules",
+        "items": [
+          "Your role is private. Don’t share it directly unless the facilitator asks.",
+          "Argue from your role’s perspective and make trade-offs explicit.",
+          "Be specific: name risks, owners, timelines, and what you will cut."
+        ]
+      },
+      "tips": {
+        "title": "Tips",
+        "items": [
+          "Use your private notes to track the risks only your role sees.",
+          "Use prompts to avoid repeating the same arguments.",
+          "If you disagree, propose an alternative with clear costs."
+        ]
+      },
+      "host": {
+        "title": "Host controls",
+        "items": [
+          "Assign roles once participants have joined.",
+          "Track progress (roles revealed + ready status) before starting discussion.",
+          "Start discussion only when the team is ready, then end it when you have enough input."
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "body": "Your private notes are stored per session and visible only to you. The facilitator only sees aggregate progress (counts), not who is ready or which role they have."
+      }
+    },
+    "coffeeRoulette": {
+      "title": "Coffee Roulette",
+      "goal": "Create quick 1:1 connections by pairing teammates with a conversation starter.",
+      "time": {
+        "title": "Timing",
+        "body": "Live activity. The chat timer starts when pairs are created."
+      },
+      "how": {
+        "title": "How it works",
+        "steps": [
+          "Wait for at least 2 participants to join.",
+          "Start the shuffle to generate 1:1 pairs.",
+          "Everyone is moved into a timed chat with a shared topic.",
+          "Use “Next topic” prompts during the chat.",
+          "After a few prompts, you can choose to continue or end the chat.",
+          "Finish to end the session for everyone."
+        ]
+      },
+      "rules": {
+        "title": "Rules",
+        "items": [
+          "Be respectful and inclusive — the goal is connection.",
+          "Stay on one topic at a time so both people can participate.",
+          "If you end the chat, it ends for the session."
+        ]
+      },
+      "tips": {
+        "title": "Tips",
+        "items": [
+          "Use your camera if you can — it boosts connection.",
+          "Ask follow-up questions; don’t rush to the next topic.",
+          "If you want a new pairing, finish and reshuffle."
+        ]
+      },
+      "host": {
+        "title": "Host controls",
+        "items": [
+          "Start the shuffle once enough participants have joined.",
+          "You can end the session (or let any participant finish, depending on event settings)."
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "body": "Pairings and topics are shared within the session. No private role or secret data is generated."
+      }
+    },
+    "twoTruths": {
+      "title": "Two Truths & a Lie",
+      "goal": "Break the ice by guessing which statement is the lie.",
+      "time": {
+        "title": "Timing",
+        "body": "Live rounds: submit → vote → reveal, repeated for multiple rounds."
+      },
+      "how": {
+        "title": "How it works",
+        "steps": [
+          "One player is the presenter for the round.",
+          "The presenter submits three statements and picks which one is the lie.",
+          "Everyone votes on which statement they think is the lie.",
+          "Reveal shows the correct answer and scores update.",
+          "Proceed to the next round until the game ends."
+        ]
+      },
+      "rules": {
+        "title": "Rules",
+        "items": [
+          "Two statements must be true; one must be false.",
+          "Keep statements short and understandable.",
+          "Vote before the timer ends."
+        ]
+      },
+      "tips": {
+        "title": "Tips",
+        "items": [
+          "Make truths surprising and the lie believable.",
+          "As a voter, look for details that don’t fit.",
+          "Use the reveal to learn something new about teammates."
+        ]
+      },
+      "host": {
+        "title": "Host controls",
+        "items": [
+          "Start the game and advance rounds when needed.",
+          "Choose the number of rounds for the session."
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "body": "All statements and votes are visible to participants in the session."
+      }
+    },
+    "winsOfWeek": {
+      "title": "Wins of the Week",
+      "goal": "Build momentum by sharing one win and celebrating others.",
+      "time": {
+        "title": "Timing",
+        "body": "Async activity. Posting stays open until the activity ends."
+      },
+      "how": {
+        "title": "How it works",
+        "steps": [
+          "Read this week’s prompt at the top of the feed.",
+          "Post your win (work or personal).",
+          "React to teammates’ wins with quick reactions.",
+          "Reply to posts to ask questions or celebrate.",
+          "When the activity closes, posting stops (read-only)."
+        ]
+      },
+      "rules": {
+        "title": "Rules",
+        "items": [
+          "Keep it supportive and respectful.",
+          "Share only what you’re comfortable sharing with the group."
+        ]
+      },
+      "tips": {
+        "title": "Tips",
+        "items": [
+          "Be specific about what changed and why it matters.",
+          "Celebrate others — reactions make the thread feel alive.",
+          "If you’re stuck, share a small win (learning, helping, progress)."
+        ]
+      },
+      "host": {
+        "title": "Host controls",
+        "items": [
+          "Set the prompt and duration for the activity.",
+          "Close posting when the time window ends."
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "body": "Posts and reactions are visible to participants in the event."
+      }
+    },
+    "comingSoon": {
+      "title": "Coming soon",
+      "goal": "This activity is being finalized for release.",
+      "how": {
+        "title": "What to expect",
+        "steps": [
+          "We’re polishing the activity flow and UI.",
+          "We’re validating the experience with early testers.",
+          "You’ll see it appear here as soon as it ships."
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "body": "No data is collected for this activity yet because it is not enabled."
+      }
+    }
+  },
   "landing": {
     "nav": {
       "features": "Features",
