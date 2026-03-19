@@ -115,20 +115,6 @@ export default function ComingSoon() {
               <p className="text-sm sm:text-[15px] text-muted-foreground font-medium max-w-[420px] mx-auto leading-relaxed">
                 Flowkyn helps distributed teams run structured connection rituals that are measurable, repeatable, and easy to facilitate.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-[11px] sm:text-[12px] text-muted-foreground/90 w-full max-w-[460px] mx-auto">
-                <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-left">
-                  <p className="font-semibold text-foreground text-[11px] sm:text-[12px]">Team rituals, productized</p>
-                  <p className="mt-1 leading-snug">Curated formats instead of ad‑hoc icebreakers.</p>
-                </div>
-                <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-left">
-                  <p className="font-semibold text-foreground text-[11px] sm:text-[12px]">Measurable engagement</p>
-                  <p className="mt-1 leading-snug">Track participation and sentiment over time.</p>
-                </div>
-                <div className="rounded-lg border border-border/60 bg-background/40 px-3 py-2 text-left">
-                  <p className="font-semibold text-foreground text-[11px] sm:text-[12px]">Built for remote teams</p>
-                  <p className="mt-1 leading-snug">Works across time zones and team sizes.</p>
-                </div>
-              </div>
             </div>
 
             {/* Early access form / success state */}
