@@ -25,6 +25,7 @@ export default function ActivityDetail() {
 
   const Icon = activity.icon;
   const gradient = categoryGradient[activity.category] || 'from-primary/60 to-primary';
+  const isComingSoon = !!activity.comingSoon;
 
   const infoItems = [
     {
@@ -156,13 +157,22 @@ export default function ActivityDetail() {
 
           {/* CTA */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5">
-            <Button onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))} className="h-10 px-6 text-[13px] gap-2 shadow-sm">
-              <Play className="h-4 w-4" /> {t('games.detail.launchActivity')}
+            <Button
+              onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))}
+              className="h-10 px-6 text-[13px] gap-2 shadow-sm"
+              disabled={isComingSoon}
+            >
+              <Play className="h-4 w-4" /> {isComingSoon ? t('games.comingSoon.title', { defaultValue: 'Coming soon' }) : t('games.detail.launchActivity')}
             </Button>
             <Button variant="outline" className="h-10 px-5 text-[13px]">
               <BookOpen className="h-4 w-4 mr-2" /> {t('games.detail.saveToLibrary')}
             </Button>
           </div>
+          {isComingSoon && (
+            <p className="text-[12px] text-muted-foreground mt-2">
+              {t('games.comingSoonDescription', { defaultValue: 'This activity is coming soon.' })}
+            </p>
+          )}
         </div>
       </div>
 
@@ -236,8 +246,12 @@ export default function ActivityDetail() {
             {t('games.detail.readySubtitle')}
           </p>
         </div>
-        <Button onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))} className="h-9 sm:h-10 px-5 sm:px-6 text-[12px] sm:text-[13px] gap-2 shadow-sm shrink-0">
-          {t('games.detail.launchNow')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+        <Button
+          onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))}
+          className="h-9 sm:h-10 px-5 sm:px-6 text-[12px] sm:text-[13px] gap-2 shadow-sm shrink-0"
+          disabled={isComingSoon}
+        >
+          {isComingSoon ? t('games.comingSoon.title', { defaultValue: 'Coming soon' }) : t('games.detail.launchNow')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </Button>
       </div>
     </div>

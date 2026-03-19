@@ -1,4 +1,4 @@
-import { MessageSquare, Coffee, Trophy, Target } from 'lucide-react';
+import { MessageSquare, Coffee, Trophy, Target, Users, Lightbulb } from 'lucide-react';
 
 export type ActivityCategory = 'icebreaker' | 'connection' | 'wellness' | 'competition';
 export type ActivityType = 'sync' | 'async';
@@ -30,6 +30,7 @@ export interface Activity {
   during: string[];
   after: string[];
   tips: string[];
+  comingSoon?: boolean;
 }
 
 export const ACTIVITIES: Activity[] = [
@@ -221,6 +222,92 @@ export const ACTIVITIES: Activity[] = [
       'Time‑box the async window so it stays focused and energetic.',
       'Don’t water down tension — disagreement is where the best learning happens.',
     ],
+  },
+  {
+    id: '7',
+    name: 'Decision Jam',
+    i18nKey: 'activities.decisionJam',
+    icon: Users,
+    category: 'connection',
+    type: 'sync',
+    description:
+      'A structured 40-minute alignment ritual for distributed teams: surface blockers, debate options quickly, and leave with clear owners and next actions.',
+    duration: '40 min',
+    durationTag: 'medium',
+    teamSize: '4–10 people',
+    teamSizeTag: 'medium',
+    minPlayers: 4,
+    maxPlayers: 10,
+    difficulty: 'intermediate',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10',
+    materials: 'Video call + shared board',
+    whyItWorks:
+      'Remote teams often lose time in unclear decisions. Decision Jam creates predictable decision hygiene, faster alignment, and stronger accountability.',
+    before: [
+      'Collect 2–3 decision topics with clear context from async docs.',
+      'Assign one facilitator and one note owner.',
+      'Set a strict agenda with timeboxes per decision.',
+    ],
+    during: [
+      'Clarify decision scope and constraints first.',
+      'Use a short round-robin so every function is heard.',
+      'Converge to one decision, owner, and deadline per topic.',
+    ],
+    after: [
+      'Publish a concise decision log to your team channel.',
+      'Track action owners with due dates.',
+      'Review outcomes in the next weekly sync.',
+    ],
+    tips: [
+      'Keep discussions evidence-based, not opinion-only.',
+      'Timebox debate; don’t timebox decision quality.',
+      'Always capture owner + due date before closing a topic.',
+    ],
+    comingSoon: true,
+  },
+  {
+    id: '8',
+    name: 'Culture Snapshot',
+    i18nKey: 'activities.cultureSnapshot',
+    icon: Lightbulb,
+    category: 'wellness',
+    type: 'async',
+    description:
+      'An async team pulse that turns weekly sentiment, blockers, and small wins into one shared culture map with practical follow-up actions.',
+    duration: 'Weekly async',
+    durationTag: 'ongoing',
+    teamSize: 'Any size',
+    teamSizeTag: 'any',
+    minPlayers: 3,
+    maxPlayers: 999,
+    difficulty: 'beginner',
+    color: 'text-warning',
+    bgColor: 'bg-warning/10',
+    materials: 'Slack/Teams + survey prompts',
+    whyItWorks:
+      'Fully remote teams need lightweight rhythm to detect friction early. Culture Snapshot gives visibility without meeting overload and keeps morale actionable.',
+    before: [
+      'Pick a consistent weekly window for submissions.',
+      'Prepare 3 short prompts: sentiment, blocker, win.',
+      'Set expectation: concise and honest responses.',
+    ],
+    during: [
+      'Collect responses asynchronously across time zones.',
+      'Cluster themes and highlight recurring blockers.',
+      'Share one visual summary with top actions.',
+    ],
+    after: [
+      'Assign 1–2 concrete improvements for the next week.',
+      'Close the loop publicly on previous actions.',
+      'Track trend lines over time.',
+    ],
+    tips: [
+      'Keep prompts stable for trend quality.',
+      'Protect anonymity when needed.',
+      'Focus on small improvements with visible follow-through.',
+    ],
+    comingSoon: true,
   },
 ];
 

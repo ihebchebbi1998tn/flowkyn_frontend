@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Users, Clock, Timer, Copy, Share2,
   CheckCircle, Link2, Radio, Pencil,
-  Bug,
+  Bug, WifiOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -46,12 +46,15 @@ interface GamePlayShellProps {
   organizationName?: string;
   /** Hide the back button if the user has already joined the game */
   hideBackButton?: boolean;
+  /** Temporary real-time disconnect indicator */
+  disconnectedBadgeCount?: number;
 }
 
 export function GamePlayShell({
   title, subtitle, gameType, eventId, participants, children, sidebar, onEnd,
   currentUserId, currentUserName, currentUserAvatarUrl, onEditProfile,
   organizationLogo, organizationName, hideBackButton,
+  disconnectedBadgeCount = 0,
 }: GamePlayShellProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -196,6 +199,16 @@ export function GamePlayShell({
                       ? (<><div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" /> {t('gamePlay.shell.liveSession', 'Live session')}</>)
                       : (<><Radio className="h-2.5 w-2.5" /> {t('gamePlay.shell.asyncSession', 'Async session')}</>)}
                   </Badge>
+                  {disconnectedBadgeCount > 0 && (
+                    <Badge className="text-[10px] shrink-0 gap-1 bg-destructive/15 text-destructive border-destructive/25">
+                      <WifiOff className="h-2.5 w-2.5" />
+                      {t('gamePlay.shell.userDisconnectedBadge', {
+                        count: disconnectedBadgeCount,
+                        defaultValue_one: '{{count}} user disconnected',
+                        defaultValue_other: '{{count}} users disconnected',
+                      })}
+                    </Badge>
+                  )}
                   <Button
                     type="button"
                     variant="ghost"

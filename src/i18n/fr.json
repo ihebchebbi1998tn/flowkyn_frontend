@@ -1415,6 +1415,18 @@
       "description": "Une simulation stratégique asynchrone où votre équipe gère une crise réaliste depuis différents rôles et perspectives.",
       "duration": "45–60 min (async)",
       "teamSize": "4–12 personnes"
+    },
+    "decisionJam": {
+      "name": "Decision Jam",
+      "description": "Un rituel d’alignement structuré de 40 minutes pour équipes distribuées : faire émerger les blocages, débattre vite et sortir avec des responsables et prochaines actions claires.",
+      "duration": "40 min",
+      "teamSize": "4–10 personnes"
+    },
+    "cultureSnapshot": {
+      "name": "Culture Snapshot",
+      "description": "Un pulse d’équipe asynchrone qui transforme le ressenti hebdomadaire, les blocages et les petites victoires en une carte de culture partagée avec des actions concrètes.",
+      "duration": "Asynchrone hebdomadaire",
+      "teamSize": "Toute taille"
     }
   },
   "chat": {
@@ -1727,6 +1739,12 @@
         "mute": "Couper le son",
         "unmute": "Rétablir le son",
         "leave": "Quitter la voix",
+        "micLevelLabel": "Niveau du micro",
+        "micTooQuiet": "Micro trop faible",
+        "micTooLoud": "Micro trop fort",
+        "volumeLabel": "Volume : {{percent}}%",
+        "volumeDecrease": "Baisser le volume",
+        "volumeIncrease": "Augmenter le volume",
         "errors": {
           "unknown": "L'appel vocal a échoué. Veuillez réessayer.",
           "SOCKET_DISCONNECTED": "Le socket vocal est déconnecté. Rechargez et réessayez.",
@@ -1934,7 +1952,9 @@
       "scores": "Scores",
       "statusWaiting": "En attente de votre équipe",
       "statusLive": "Session d'équipe en direct",
-      "statusAsync": "Session de check‑in asynchrone"
+      "statusAsync": "Session de check‑in asynchrone",
+      "userDisconnectedBadge_one": "{{count}} utilisateur déconnecté",
+      "userDisconnectedBadge_other": "{{count}} utilisateurs déconnectés"
     },
     "phases": {
       "waiting": "En attente",

@@ -301,6 +301,7 @@ export function CoffeeRouletteBoard({
     return (
       <RoomThemeProvider themeName={themeName}>
         <ElevatorSequence
+          key={pairs.map((p) => p.id).join('|')}
           pairNumber={currentPairIndex}
           totalPairs={Math.ceil(participants.length / 2)}
           onSequenceComplete={handleMatchingComplete}

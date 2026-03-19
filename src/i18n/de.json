@@ -1379,6 +1379,18 @@
       "duration": "45–60 Min. (async)",
       "teamSize": "4–12 Personen"
     },
+    "decisionJam": {
+      "name": "Decision Jam",
+      "description": "Ein strukturiertes 40‑Minuten-Alignment für verteilte Teams: Blocker sichtbar machen, Optionen schnell diskutieren und mit klaren Verantwortlichen und nächsten Schritten enden.",
+      "duration": "40 Min.",
+      "teamSize": "4–10 Personen"
+    },
+    "cultureSnapshot": {
+      "name": "Culture Snapshot",
+      "description": "Ein asynchroner Team-Pulse, der wöchentliches Stimmungsbild, Blocker und kleine Erfolge in eine gemeinsame Kulturübersicht mit konkreten Folgeaktionen verwandelt.",
+      "duration": "Wöchentlich asynchron",
+      "teamSize": "Beliebige Größe"
+    },
     "launch": {
       "defaultEventTitle": "{{activityName}} — Team-Event",
       "fields": {
@@ -1711,6 +1723,12 @@
         "mute": "Stumm",
         "unmute": "Ton an",
         "leave": "Stimme verlassen",
+        "micLevelLabel": "Mikrofonpegel",
+        "micTooQuiet": "Mikrofon zu leise",
+        "micTooLoud": "Mikrofon zu laut",
+        "volumeLabel": "Lautstärke: {{percent}}%",
+        "volumeDecrease": "Lautstärke verringern",
+        "volumeIncrease": "Lautstärke erhöhen",
         "errors": {
           "unknown": "Die Sprachverbindung ist fehlgeschlagen. Bitte erneut versuchen.",
           "SOCKET_DISCONNECTED": "Der Sprach-Socket ist getrennt. Seite neu laden und erneut versuchen.",
@@ -1918,7 +1936,9 @@
       "scores": "Punkte",
       "statusWaiting": "Warten auf Ihr Team",
       "statusLive": "Live-Team-Session",
-      "statusAsync": "Asynchrone Check‑in‑Session"
+      "statusAsync": "Asynchrone Check‑in‑Session",
+      "userDisconnectedBadge_one": "{{count}} Nutzer getrennt",
+      "userDisconnectedBadge_other": "{{count}} Nutzer getrennt"
     },
     "phases": {
       "waiting": "Warten",

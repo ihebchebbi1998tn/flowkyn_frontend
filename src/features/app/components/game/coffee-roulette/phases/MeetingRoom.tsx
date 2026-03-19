@@ -7,7 +7,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { MessageCircle, Clock, Lightbulb, RotateCcw, LogOut, Mic, MicOff, PhoneOff } from 'lucide-react';
+import { MessageCircle, Clock, Lightbulb, RotateCcw, LogOut, Mic, MicOff, PhoneOff, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -70,12 +70,15 @@ export function MeetingRoom({
   const [isWarning, setIsWarning] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [remoteVolume, setRemoteVolume] = useState(0.8);
 
   const {
     status: voiceStatus,
     error: voiceError,
     remoteStream,
     isMuted,
+    micLevel,
+    micComfort,
     startVoice,
     stopVoice,
     toggleMute,
@@ -103,8 +106,15 @@ export function MeetingRoom({
     if (!remoteStream) return;
     // @ts-expect-error - srcObject exists in modern browsers.
     audioRef.current.srcObject = remoteStream;
+    audioRef.current.volume = remoteVolume;
     void audioRef.current.play().catch(() => {});
   }, [remoteStream]);
+
+  // Keep the audio output volume synced with the UI slider.
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.volume = remoteVolume;
+  }, [remoteVolume]);
 
   useEffect(() => {
     setDisplayTime(formatTime(timeRemaining));
@@ -428,6 +438,38 @@ export function MeetingRoom({
               {voiceStatusText}
             </div>
 
+            <div className="flex flex-col">
+              <span className="text-[11px] text-muted-foreground">
+                {t('gamePlay.coffeeRoulette.voice.micLevelLabel')}
+              </span>
+              <div
+                className="w-[110px] h-2 rounded-full bg-muted overflow-hidden"
+                aria-label={t('gamePlay.coffeeRoulette.voice.micLevelLabel')}
+              >
+                <div
+                  className="h-full transition-all"
+                  style={{
+                    width: `${Math.round(micLevel * 100)}%`,
+                    backgroundColor: 'var(--color-primary)',
+                  }}
+                />
+              </div>
+
+              {voiceStatus === 'connected' && micComfort !== 'ok' && (
+                <span
+                  className="text-[11px] font-semibold"
+                  style={{
+                    color: micComfort === 'quiet' ? '#f59e0b' : '#ef4444',
+                    marginTop: 4,
+                  }}
+                >
+                  {micComfort === 'quiet'
+                    ? t('gamePlay.coffeeRoulette.voice.micTooQuiet')
+                    : t('gamePlay.coffeeRoulette.voice.micTooLoud')}
+                </span>
+              )}
+            </div>
+
             {(voiceStatus === 'idle' || voiceStatus === 'error') && (
               <Button
                 variant="outline"
@@ -465,6 +507,49 @@ export function MeetingRoom({
                   {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                   {isMuted ? t('gamePlay.coffeeRoulette.voice.unmute') : t('gamePlay.coffeeRoulette.voice.mute')}
                 </Button>
+
+                <div
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                    border: '1px solid #e5e7eb',
+                    color: '#111827',
+                  }}
+                >
+                  {remoteVolume <= 0.01 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  <span className="whitespace-nowrap">
+                    {t('gamePlay.coffeeRoulette.voice.volumeLabel', { percent: Math.round(remoteVolume * 100) })}
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={remoteVolume}
+                    aria-label={t('gamePlay.coffeeRoulette.voice.volumeLabel', {
+                      percent: Math.round(remoteVolume * 100),
+                    })}
+                    onChange={(e) => {
+                      setRemoteVolume(Number(e.target.value));
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="px-1.5 py-1 rounded hover:bg-black/5"
+                    onClick={() => setRemoteVolume((v) => Math.max(0, Math.round((v - 0.05) * 20) / 20))}
+                    aria-label={t('gamePlay.coffeeRoulette.voice.volumeDecrease')}
+                  >
+                    -
+                  </button>
+                  <button
+                    type="button"
+                    className="px-1.5 py-1 rounded hover:bg-black/5"
+                    onClick={() => setRemoteVolume((v) => Math.min(1, Math.round((v + 0.05) * 20) / 20))}
+                    aria-label={t('gamePlay.coffeeRoulette.voice.volumeIncrease')}
+                  >
+                    +
+                  </button>
+                </div>
 
                 <Button
                   variant="destructive"

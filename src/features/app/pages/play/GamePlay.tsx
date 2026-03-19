@@ -230,6 +230,8 @@ function GamePlayWithoutBoundary() {
   // ─── Chat messages (persistent API load + live WebSocket) ─────────────────
   const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
   const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
+  const [disconnectedBadgeCount, setDisconnectedBadgeCount] = useState(0);
+  const disconnectedBadgeTimerRef = useRef<number | null>(null);
 
   const rawMessages = getDataArray(messagesData);
   const initialMessages: ChatMessage[] = rawMessages
@@ -676,14 +678,37 @@ function GamePlayWithoutBoundary() {
 
   useEffect(() => {
     if (!gamesSocket.isConnected || !sessionId) return;
-    const triggerRefetch = () => {
-      console.log('[GamePlay] Player joined/left game, refetching participants...');
+    const triggerRefetchOnJoin = () => {
+      console.log('[GamePlay] Player joined game, refetching participants...');
       refetchParticipants();
     };
-    const unsubJoin = gamesSocket.on('game:player_joined', triggerRefetch);
-    const unsubLeave = gamesSocket.on('game:player_left', triggerRefetch);
+
+    const triggerRefetchOnLeave = () => {
+      console.log('[GamePlay] Player left game, refetching participants...');
+      refetchParticipants();
+
+      // Show a temporary "user disconnected" badge in the game shell.
+      setDisconnectedBadgeCount((prev) => prev + 1);
+      if (disconnectedBadgeTimerRef.current) {
+        window.clearTimeout(disconnectedBadgeTimerRef.current);
+      }
+      disconnectedBadgeTimerRef.current = window.setTimeout(() => {
+        setDisconnectedBadgeCount(0);
+      }, 9000);
+    };
+
+    const unsubJoin = gamesSocket.on('game:player_joined', triggerRefetchOnJoin);
+    const unsubLeave = gamesSocket.on('game:player_left', triggerRefetchOnLeave);
     return () => { unsubJoin?.(); unsubLeave?.(); };
   }, [gamesSocket.isConnected, sessionId, refetchParticipants]);
+
+  useEffect(() => {
+    return () => {
+      if (disconnectedBadgeTimerRef.current) {
+        window.clearTimeout(disconnectedBadgeTimerRef.current);
+      }
+    };
+  }, []);
 
   // If we learn about a session while connected, proactively join its game room.
   useEffect(() => {
@@ -840,6 +865,7 @@ function GamePlayWithoutBoundary() {
         organizationLogo={eventPublicObj?.organization_logo}
         organizationName={eventPublicObj?.organization_name}
         hideBackButton={true}
+        disconnectedBadgeCount={disconnectedBadgeCount}
       >
         <GameBoardRouter
           config={activeConfig}

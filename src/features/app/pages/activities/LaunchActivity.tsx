@@ -29,6 +29,8 @@ const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; col
   '4': { name: 'Strategic Escape Challenge', icon: Target, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'async', duration: '45' },
   '5': { name: 'Team Scavenger Hunt', icon: Crosshair, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'sync', duration: '45' },
   '6': { name: 'Gratitude Circle', icon: Flame, color: 'text-destructive', bgColor: 'bg-destructive/10', type: 'async', duration: '0' },
+  '7': { name: 'Decision Jam', icon: Users, color: 'text-primary', bgColor: 'bg-primary/10', type: 'sync', duration: '40' },
+  '8': { name: 'Culture Snapshot', icon: Lightbulb, color: 'text-warning', bgColor: 'bg-warning/10', type: 'async', duration: '0' },
 };
 
 // Mapping from activity ID to backend game_types.key
@@ -49,6 +51,7 @@ export default function LaunchActivity() {
   const navigate = useNavigate();
   const activity = ACTIVITIES[id || '1'];
   const catalogActivity = useMemo(() => CATALOG_ACTIVITIES.find(a => a.id === (id || '1')), [id]);
+  const isComingSoon = !!catalogActivity?.comingSoon;
   const activityName = catalogActivity?.i18nKey
     ? t(`${catalogActivity.i18nKey}.name`, { defaultValue: activity?.name })
     : (activity?.name || '');
@@ -95,7 +98,36 @@ export default function LaunchActivity() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.organization_id]);
 
-  if (!activity) { navigate('/games'); return null; }
+  if (!activity) { navigate(ROUTES.GAMES); return null; }
+  if (isComingSoon) {
+    return (
+      <div className="space-y-3 sm:space-y-4 w-full">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(ROUTES.GAMES)}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">
+              {activityName}
+            </h1>
+            <p className="text-[12px] sm:text-[13px] text-muted-foreground mt-0.5">
+              {t('games.comingSoon.title', { defaultValue: 'Coming soon' })}
+            </p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+          <p className="text-[13px] text-muted-foreground">
+            {t('games.comingSoonDescription', { defaultValue: 'This activity is coming soon.' })}
+          </p>
+          <div className="mt-3">
+            <Button variant="outline" onClick={() => navigate(ROUTES.GAMES)}>
+              {t('common.back', { defaultValue: 'Back' })}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const Icon = activity.icon;
 

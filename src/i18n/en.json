@@ -1139,6 +1139,12 @@
         "mute": "Mute",
         "unmute": "Unmute",
         "leave": "Leave voice",
+        "micLevelLabel": "Mic level",
+        "micTooQuiet": "Mic too quiet",
+        "micTooLoud": "Mic too loud",
+        "volumeLabel": "Volume: {{percent}}%",
+        "volumeDecrease": "Decrease volume",
+        "volumeIncrease": "Increase volume",
         "errors": {
           "unknown": "Voice call failed. Please try again.",
           "SOCKET_DISCONNECTED": "Voice socket disconnected. Please reload and try again.",
@@ -1370,6 +1376,8 @@
       "chatLabel": "Chat",
       "scoresLabel": "Scores",
       "userJoinedToast": "{{name}} joined",
+      "userDisconnectedBadge_one": "{{count}} user disconnected",
+      "userDisconnectedBadge_other": "{{count}} users disconnected",
       "scores": "Scores"
     },
     "phases": {
@@ -1673,6 +1681,18 @@
       "description": "An async strategic simulation where your team navigates a realistic crisis scenario from different roles and perspectives.",
       "duration": "45–60 min (async)",
       "teamSize": "4–12 people"
+    },
+    "decisionJam": {
+      "name": "Decision Jam",
+      "description": "A structured 40-minute alignment ritual for distributed teams: surface blockers, debate options quickly, and leave with clear owners and next actions.",
+      "duration": "40 min",
+      "teamSize": "4–10 people"
+    },
+    "cultureSnapshot": {
+      "name": "Culture Snapshot",
+      "description": "An async team pulse that turns weekly sentiment, blockers, and small wins into one shared culture map with practical follow-up actions.",
+      "duration": "Weekly async",
+      "teamSize": "Any size"
     },
     "launch": {
       "title": "Launch activity",

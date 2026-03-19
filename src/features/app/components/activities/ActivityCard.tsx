@@ -25,11 +25,19 @@ export function ActivityCard({ activity }: ActivityCardProps) {
   const duration = activity.i18nKey ? t(`${activity.i18nKey}.duration`, { defaultValue: activity.duration }) : activity.duration;
   const teamSize = activity.i18nKey ? t(`${activity.i18nKey}.teamSize`, { defaultValue: activity.teamSize }) : activity.teamSize;
   const difficultyLabel = t(`games.filters.${activity.difficulty}`, { defaultValue: activity.difficulty });
+  const isComingSoon = !!activity.comingSoon;
 
   return (
     <button
-      onClick={() => navigate(ROUTES.ACTIVITY_DETAIL(activity.id))}
-      className="group relative rounded-2xl border border-border bg-card text-left overflow-hidden transition-all duration-300 w-full hover:border-primary/25 hover:shadow-xl hover:shadow-primary/[0.06] hover:-translate-y-1"
+      onClick={() => {
+        if (isComingSoon) return;
+        navigate(ROUTES.ACTIVITY_DETAIL(activity.id));
+      }}
+      disabled={isComingSoon}
+      className={cn(
+        "group relative rounded-2xl border border-border bg-card text-left overflow-hidden transition-all duration-300 w-full hover:border-primary/25 hover:shadow-xl hover:shadow-primary/[0.06] hover:-translate-y-1",
+        isComingSoon && "opacity-85 cursor-not-allowed hover:translate-y-0 hover:shadow-none"
+      )}
     >
       {/* Top gradient accent */}
       <div className={cn("h-1 w-full bg-gradient-to-r opacity-30 group-hover:opacity-100 transition-opacity duration-500", gradient)} />
@@ -48,6 +56,11 @@ export function ActivityCard({ activity }: ActivityCardProps) {
               {name}
             </h3>
             <div className="flex items-center gap-1.5 mt-1.5">
+              {isComingSoon && (
+                <Badge variant="outline" className="text-[9px] border h-[18px] px-1.5 font-medium rounded-md border-warning/30 text-warning bg-warning/10">
+                  {t('games.comingSoon.title', { defaultValue: 'Coming soon' })}
+                </Badge>
+              )}
               <Badge variant="outline" className={cn("text-[9px] border h-[18px] px-1.5 font-medium rounded-md", categoryColors[activity.category])}>
                 {t(`games.categories.${activity.category}`)}
               </Badge>
@@ -84,7 +97,12 @@ export function ActivityCard({ activity }: ActivityCardProps) {
             </span>
           </div>
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-transparent group-hover:bg-primary/10 transition-all duration-300">
-            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
+            <ArrowRight
+              className={cn(
+                "h-3.5 w-3.5 text-muted-foreground/20 transition-all duration-300",
+                !isComingSoon && "group-hover:text-primary group-hover:translate-x-0.5"
+              )}
+            />
           </div>
         </div>
       </div>

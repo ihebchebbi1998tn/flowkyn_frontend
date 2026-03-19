@@ -1364,6 +1364,12 @@
         "mute": "Silenciar",
         "unmute": "Activar sonido",
         "leave": "Salir de la voz",
+        "micLevelLabel": "Nivel del micrófono",
+        "micTooQuiet": "Micrófono demasiado bajo",
+        "micTooLoud": "Micrófono demasiado alto",
+        "volumeLabel": "Volumen: {{percent}}%",
+        "volumeDecrease": "Bajar volumen",
+        "volumeIncrease": "Subir volumen",
         "errors": {
           "unknown": "La llamada de voz falló. Inténtalo de nuevo.",
           "SOCKET_DISCONNECTED": "La conexión de voz se desconectó. Vuelve a cargar e inténtalo de nuevo.",
@@ -1595,6 +1601,8 @@
       "chatLabel": "Chat",
       "scoresLabel": "Puntuaciones",
       "userJoinedToast": "{{name}} se ha unido",
+      "userDisconnectedBadge_one": "{{count}} usuario desconectado",
+      "userDisconnectedBadge_other": "{{count}} usuarios desconectados",
       "scores": "Puntuaciones"
     },
     "phases": {
@@ -2190,6 +2198,18 @@
       "description": "Simulación estratégica asíncrona en la que tu equipo navega un escenario de crisis realista desde diferentes roles y perspectivas.",
       "duration": "45–60 min (asíncrono)",
       "teamSize": "4–12 personas"
+    },
+    "decisionJam": {
+      "name": "Decision Jam",
+      "description": "Un ritual estructurado de 40 minutos para equipos distribuidos: sacar bloqueos, debatir opciones rápido y salir con responsables y próximos pasos claros.",
+      "duration": "40 min",
+      "teamSize": "4–10 personas"
+    },
+    "cultureSnapshot": {
+      "name": "Culture Snapshot",
+      "description": "Un pulso asíncrono del equipo que convierte sentimiento semanal, bloqueos y pequeños logros en un mapa cultural compartido con acciones de seguimiento.",
+      "duration": "Asíncrono semanal",
+      "teamSize": "Cualquier tamaño"
     },
     "launch": {
       "title": "Lanzar actividad",

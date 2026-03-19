@@ -55,12 +55,23 @@ export function useCoffeeVoiceCall(params: {
   const iceCandidateQueueRef = useRef<any[]>([]);
   const lastPartnerHangupAtRef = useRef<number | null>(null);
 
+  // Mic level meter (Web Audio analyser)
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const micSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const meterRafRef = useRef<number | null>(null);
+  const meterLastUpdateRef = useRef<number>(0);
+  const micDataRef = useRef<Uint8Array | null>(null);
+
   const [status, setStatus] = useState<VoiceStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [iceServersCache, setIceServersCache] = useState<IceServersResponse['iceServers'] | null>(null);
   const [showEnableVoicePrompt, setShowEnableVoicePrompt] = useState(false);
+  const [micLevel, setMicLevel] = useState(0);
+  const [micComfort, setMicComfort] = useState<'quiet' | 'ok' | 'loud'>('ok');
+  const micComfortRef = useRef<'quiet' | 'ok' | 'loud'>('ok');
 
   const iceServers = useMemo(() => {
     return iceServersCache ?? [{ urls: ['stun:stun.l.google.com:19302'] }];
@@ -121,11 +132,57 @@ export function useCoffeeVoiceCall(params: {
       remoteStreamRef.current = null;
       setRemoteStream(null);
       setIsMuted(false);
+      setMicLevel(0);
+      micQuietSinceRef.current = null;
+      micLoudSinceRef.current = null;
+      setMicComfort('ok');
+      micComfortRef.current = 'ok';
       setStatus('idle');
       setError(null);
     },
     [gamesSocket?.isConnected, pairId, sessionId]
   );
+
+  const stopMicMeter = useCallback(async () => {
+    if (meterRafRef.current) cancelAnimationFrame(meterRafRef.current);
+    meterRafRef.current = null;
+
+    try {
+      micSourceRef.current?.disconnect();
+    } catch {
+      // ignore
+    }
+    micSourceRef.current = null;
+
+    try {
+      analyserRef.current?.disconnect();
+    } catch {
+      // ignore
+    }
+    analyserRef.current = null;
+
+    try {
+      await audioContextRef.current?.close();
+    } catch {
+      // ignore
+    }
+    audioContextRef.current = null;
+    micDataRef.current = null;
+  }, []);
+
+  // Ensure we stop mic meter when voice stops.
+  useEffect(() => {
+    if (status === 'idle') void stopMicMeter();
+  }, [status, stopMicMeter]);
+
+  // Mic auto-detect thresholds (hysteresis)
+  const MIC_QUIET_ENTER = 0.18;
+  const MIC_QUIET_EXIT = 0.24;
+  const MIC_LOUD_ENTER = 0.80;
+  const MIC_LOUD_EXIT = 0.72;
+  const MIC_HOLD_MS = 800;
+  const micQuietSinceRef = useRef<number | null>(null);
+  const micLoudSinceRef = useRef<number | null>(null);
 
   // Keep teardown safe on unmount.
   useEffect(() => {
@@ -174,13 +231,107 @@ export function useCoffeeVoiceCall(params: {
         setIceServersCache(null);
       }
 
+      // Voice quality improvements:
+      // - echo cancellation / noise suppression / auto gain (when supported)
+      // - mono channel to reduce CPU/latency for 1:1 calls
       const localStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          channelCount: 1,
+        },
         video: false,
       });
 
       localStreamRef.current = localStream;
       setIsMuted(false);
+      setMicLevel(0);
+      micQuietSinceRef.current = null;
+      micLoudSinceRef.current = null;
+      setMicComfort('ok');
+      micComfortRef.current = 'ok';
+
+      // Setup mic analyser for the level meter.
+      try {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        const audioContext = new AudioCtx();
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 512;
+        analyser.smoothingTimeConstant = 0.8;
+
+        const micSource = audioContext.createMediaStreamSource(localStream);
+        micSource.connect(analyser);
+
+        audioContextRef.current = audioContext;
+        analyserRef.current = analyser;
+        micSourceRef.current = micSource;
+        micDataRef.current = new Uint8Array(analyser.fftSize);
+
+        const tick = (ts: number) => {
+          const a = analyserRef.current;
+          const data = micDataRef.current;
+          if (!a || !data) return;
+
+          // Throttle UI updates to reduce renders.
+          if (ts - meterLastUpdateRef.current >= 60) {
+            meterLastUpdateRef.current = ts;
+            a.getByteTimeDomainData(data);
+            // Compute RMS from time-domain samples.
+            let sumSq = 0;
+            for (let i = 0; i < data.length; i++) {
+              const v = (data[i] - 128) / 128;
+              sumSq += v * v;
+            }
+            const rms = Math.sqrt(sumSq / data.length);
+            // Normalize: typical speech ~0.05-0.15; map to [0..1].
+            const level = Math.max(0, Math.min(1, rms * 4));
+            setMicLevel(level);
+
+            const currentComfort = micComfortRef.current;
+            if (level < MIC_QUIET_ENTER) {
+              if (micQuietSinceRef.current == null) micQuietSinceRef.current = ts;
+              micLoudSinceRef.current = null;
+              if (ts - micQuietSinceRef.current >= MIC_HOLD_MS && currentComfort !== 'quiet') {
+                micComfortRef.current = 'quiet';
+                setMicComfort('quiet');
+              }
+            } else if (level > MIC_LOUD_ENTER) {
+              if (micLoudSinceRef.current == null) micLoudSinceRef.current = ts;
+              micQuietSinceRef.current = null;
+              const loudSince = micLoudSinceRef.current;
+              if (loudSince != null && ts - loudSince >= MIC_HOLD_MS && currentComfort !== 'loud') {
+                micComfortRef.current = 'loud';
+                setMicComfort('loud');
+              }
+            } else {
+              // Hysteresis release back to OK.
+              if (currentComfort === 'quiet' && level >= MIC_QUIET_EXIT) {
+                micQuietSinceRef.current = null;
+                micComfortRef.current = 'ok';
+                setMicComfort('ok');
+              } else if (currentComfort === 'loud' && level <= MIC_LOUD_EXIT) {
+                micLoudSinceRef.current = null;
+                micComfortRef.current = 'ok';
+                setMicComfort('ok');
+              }
+
+              if (level >= MIC_QUIET_EXIT) micQuietSinceRef.current = null;
+              if (level <= MIC_LOUD_EXIT) micLoudSinceRef.current = null;
+            }
+          }
+          meterRafRef.current = requestAnimationFrame(tick);
+        };
+
+        meterLastUpdateRef.current = 0;
+        meterRafRef.current = requestAnimationFrame(tick);
+      } catch (e) {
+        console.warn('[CoffeeVoice][telemetry] mic_meter_setup_failed', {
+          sessionId,
+          pairId,
+          error: e instanceof Error ? e.message : String(e),
+        });
+      }
 
       const pc = new RTCPeerConnection({ iceServers: iceServers as any });
       peerRef.current = pc;
@@ -226,6 +377,27 @@ export function useCoffeeVoiceCall(params: {
       localStream.getTracks().forEach((track) => {
         pc.addTrack(track, localStream);
       });
+
+      // Apply sender-side bitrate constraints (best-effort, browser support varies).
+      try {
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioTrack) {
+          const sender = pc.getSenders().find((s) => s.track === audioTrack);
+          if (sender) {
+            const params = sender.getParameters();
+            if (!params.encodings) params.encodings = [{}];
+            // 64kbps is a good balance for Opus in real-world networks.
+            params.encodings[0] = { ...params.encodings[0], maxBitrate: 64000 };
+            await sender.setParameters(params);
+          }
+        }
+      } catch (e) {
+        console.warn('[CoffeeVoice][telemetry] sender_setParameters_failed', {
+          sessionId,
+          pairId,
+          error: e instanceof Error ? e.message : String(e),
+        });
+      }
 
       // Socket listeners for negotiation messages.
       // These must be attached before we start sending offers/answers.
@@ -275,11 +447,31 @@ export function useCoffeeVoiceCall(params: {
           }
           const answer = await p.createAnswer();
           await p.setLocalDescription(answer);
-          await gamesSocket.emit('coffee:voice_answer', {
-            sessionId,
-            pairId,
-            sdp: answer.sdp || p.localDescription?.sdp,
-          });
+          // If the partner socket is not connected yet, retry a few times.
+          // This prevents sporadic negotiation failures when voice is enabled late.
+          const sdpToSend = answer.sdp || p.localDescription?.sdp;
+          for (let attempt = 0; attempt < 3; attempt += 1) {
+            try {
+              if (peerRef.current !== p) return; // teardown during retries
+              await gamesSocket.emit('coffee:voice_answer', {
+                sessionId,
+                pairId,
+                sdp: sdpToSend,
+              });
+              break;
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : String(e);
+              const canRetry = msg.includes('PARTNER_NOT_CONNECTED') && attempt < 2;
+              if (!canRetry) throw e;
+              console.warn('[CoffeeVoice][telemetry] answer_emit_retry_partner_offline', {
+                sessionId,
+                pairId,
+                attempt: attempt + 1,
+                reason: msg,
+              });
+              await new Promise((r) => setTimeout(r, 650 * (attempt + 1)));
+            }
+          }
           console.log('[CoffeeVoice][telemetry] answer_emit', {
             sessionId,
             pairId,
@@ -445,11 +637,30 @@ export function useCoffeeVoiceCall(params: {
 
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
-          await gamesSocket.emit('coffee:voice_answer', {
-            sessionId,
-            pairId,
-            sdp: answer.sdp || pc.localDescription?.sdp,
-          });
+          // Same retry logic as in the offer handler.
+          const sdpToSend = answer.sdp || pc.localDescription?.sdp;
+          for (let attempt = 0; attempt < 3; attempt += 1) {
+            try {
+              if (peerRef.current !== pc) return; // teardown during retries
+              await gamesSocket.emit('coffee:voice_answer', {
+                sessionId,
+                pairId,
+                sdp: sdpToSend,
+              });
+              break;
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : String(e);
+              const canRetry = msg.includes('PARTNER_NOT_CONNECTED') && attempt < 2;
+              if (!canRetry) throw e;
+              console.warn('[CoffeeVoice][telemetry] answer_emit_retry_partner_offline', {
+                sessionId,
+                pairId,
+                attempt: attempt + 1,
+                reason: msg,
+              });
+              await new Promise((r) => setTimeout(r, 650 * (attempt + 1)));
+            }
+          }
           console.log('[CoffeeVoice][telemetry] answer_emit', {
             sessionId,
             pairId,
@@ -605,6 +816,8 @@ export function useCoffeeVoiceCall(params: {
     error,
     remoteStream,
     isMuted,
+    micLevel,
+    micComfort,
     startVoice,
     stopVoice,
     toggleMute,
