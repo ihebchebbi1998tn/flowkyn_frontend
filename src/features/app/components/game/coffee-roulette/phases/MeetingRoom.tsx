@@ -102,14 +102,46 @@ export function MeetingRoom({
     setIsWarning(timeRemaining < 300);
   }, [timeRemaining]);
 
+  const voiceStatusText = (() => {
+    switch (voiceStatus) {
+      case 'idle':
+        return t('gamePlay.coffeeRoulette.voice.statusIdle');
+      case 'requesting_microphone':
+        return t('gamePlay.coffeeRoulette.voice.statusRequestingMicrophone');
+      case 'connecting':
+        return t('gamePlay.coffeeRoulette.voice.connecting');
+      case 'connected':
+        return isMuted ? t('gamePlay.coffeeRoulette.voice.statusMuted') : t('gamePlay.coffeeRoulette.voice.statusUnmuted');
+      case 'error':
+        return t('gamePlay.coffeeRoulette.voice.error');
+      default:
+        return '';
+    }
+  })();
+
+  const voiceDotColor = (() => {
+    switch (voiceStatus) {
+      case 'connected':
+        return isMuted ? '#f59e0b' : '#22c55e';
+      case 'connecting':
+      case 'requesting_microphone':
+        return '#8b5cf6';
+      case 'error':
+        return '#ef4444';
+      case 'idle':
+      default:
+        return '#9ca3af';
+    }
+  })();
+
   return (
     <div style={themeVars as React.CSSProperties}>
       <audio ref={audioRef} className="hidden" autoPlay />
       <div
-        className="w-full py-6 px-8 flex flex-col gap-6"
+        className="w-full py-4 px-6 flex flex-col gap-4"
         style={{
           background: `linear-gradient(to bottom, #f5f3ff 0%, #faf8ff 100%)`,
-          minHeight: '460px',
+          minHeight: '360px',
           position: 'relative',
         }}
       >
@@ -125,7 +157,7 @@ export function MeetingRoom({
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex items-center justify-between px-6 py-3 rounded-xl relative z-10"
+          className="flex items-center justify-between px-5 py-2 rounded-xl relative z-10"
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.98)',
             border: `1px solid #e5e7eb`,
@@ -142,7 +174,7 @@ export function MeetingRoom({
               }}
             >
               <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              {t('gamePlay.coffeeRoulette.chatting.liveBadge', { defaultValue: 'LIVE MEETING' })}
+              {t('gamePlay.coffeeRoulette.chatting.liveBadge')}
             </div>
           </div>
 
@@ -164,7 +196,7 @@ export function MeetingRoom({
             </div>
             <div className="h-5 w-px" style={{ backgroundColor: '#e5e7eb' }} />
             <span className="text-sm font-medium" style={{ color: '#6b7280' }}>
-              {t('gamePlay.coffeeRoulette.chatting.topicCounter', { defaultValue: 'Topic {{current}}/{{max}}', current: promptsUsed, max: maxPrompts })}
+              {t('gamePlay.coffeeRoulette.chatting.topicCounter', { current: promptsUsed, max: maxPrompts })}
             </span>
           </div>
 
@@ -177,7 +209,7 @@ export function MeetingRoom({
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex-1 flex gap-8 items-center justify-center relative z-10 px-6"
+          className="flex-1 flex gap-6 items-center justify-center relative z-10 px-4"
         >
           {/* Left Participant */}
           <motion.div
@@ -198,7 +230,7 @@ export function MeetingRoom({
                 }}
               />
               <Avatar 
-                className="w-28 h-28 border-4 relative z-10"
+                className="w-24 h-24 border-4 relative z-10"
                 style={{ 
                   borderColor: 'var(--color-primary)',
                   boxShadow: '0 12px 32px rgba(108, 92, 231, 0.25)',
@@ -222,7 +254,7 @@ export function MeetingRoom({
                 {person1.name}
               </p>
               <p className="text-sm" style={{ color: '#6b7280' }}>
-                {t('gamePlay.coffeeRoulette.chatting.participantLabel', { defaultValue: 'Participant' })}
+                {t('gamePlay.coffeeRoulette.chatting.participantLabel')}
               </p>
             </div>
           </motion.div>
@@ -247,7 +279,7 @@ export function MeetingRoom({
                 <div className="flex items-center gap-2.5 mb-5">
                   <Lightbulb className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
                   <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-primary)' }}>
-                    {t('gamePlay.coffeeRoulette.chatting.topicCardLabel', { defaultValue: "Today's Topic" })}
+                    {t('gamePlay.coffeeRoulette.chatting.topicCardLabel')}
                   </p>
                 </div>
                 <motion.p
@@ -272,7 +304,7 @@ export function MeetingRoom({
                   style={{ borderColor: '#e5e7eb' }}
                 >
                   <p className="text-sm font-bold text-center" style={{ color: 'var(--color-primary)' }}>
-                    ✓ {t('gamePlay.coffeeRoulette.chatting.decisionMessage', { defaultValue: 'Time to decide together!' })}
+                    ✓ {t('gamePlay.coffeeRoulette.chatting.decisionMessage')}
                   </p>
                 </motion.div>
               )}
@@ -298,7 +330,7 @@ export function MeetingRoom({
                 }}
               />
               <Avatar 
-                className="w-28 h-28 border-4 relative z-10"
+                className="w-24 h-24 border-4 relative z-10"
                 style={{ 
                   borderColor: 'var(--color-primary)',
                   boxShadow: '0 12px 32px rgba(108, 92, 231, 0.25)',
@@ -322,7 +354,7 @@ export function MeetingRoom({
                 {person2.name}
               </p>
               <p className="text-sm" style={{ color: '#6b7280' }}>
-                {t('gamePlay.coffeeRoulette.chatting.participantLabel', { defaultValue: 'Participant' })}
+                {t('gamePlay.coffeeRoulette.chatting.participantLabel')}
               </p>
             </div>
           </motion.div>
@@ -336,7 +368,24 @@ export function MeetingRoom({
           className="flex gap-3 justify-center relative z-10 flex-wrap"
         >
           {/* Voice Controls */}
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-3 items-center flex-wrap">
+            <div
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                border: '1px solid #e5e7eb',
+                color: '#111827',
+              }}
+            >
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{
+                  backgroundColor: voiceDotColor,
+                }}
+              />
+              {voiceStatusText}
+            </div>
+
             {(voiceStatus === 'idle' || voiceStatus === 'error') && (
               <Button
                 variant="outline"
@@ -395,7 +444,7 @@ export function MeetingRoom({
               {t('gamePlay.coffeeRoulette.voice.error')}
               {voiceError ? (
                 <div className="mt-1 text-[11px] opacity-80">
-                  {voiceError}
+                  {t('gamePlay.coffeeRoulette.voice.debugDetails')}: {voiceError}
                 </div>
               ) : null}
             </div>
@@ -414,7 +463,7 @@ export function MeetingRoom({
                 }}
               >
                 <MessageCircle className="w-4 h-4" />
-                {t('gamePlay.coffeeRoulette.chatting.nextTopicButton', { defaultValue: 'Next Topic' })}
+                {t('gamePlay.coffeeRoulette.chatting.nextTopicButton')}
               </Button>
             </motion.div>
           )}
@@ -434,7 +483,7 @@ export function MeetingRoom({
                 }}
               >
                 <RotateCcw className="w-4 h-4" />
-                {t('gamePlay.coffeeRoulette.chatting.keepTalkingButton', { defaultValue: 'Keep Talking' })}
+                {t('gamePlay.coffeeRoulette.chatting.keepTalkingButton')}
               </Button>
             </motion.div>
           )}
@@ -455,7 +504,7 @@ export function MeetingRoom({
                 }}
               >
                 <LogOut className="w-4 h-4" />
-                {t('gamePlay.coffeeRoulette.chatting.endMeetingButton', { defaultValue: 'End Meeting' })}
+                {t('gamePlay.coffeeRoulette.chatting.endMeetingButton')}
               </Button>
             </motion.div>
           )}

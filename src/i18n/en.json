@@ -1126,6 +1126,12 @@
       },
       "voice": {
         "enable": "Enable voice",
+        "statusIdle": "Voice off",
+        "statusRequestingMicrophone": "Requesting microphone…",
+        "statusConnected": "Voice connected",
+        "statusMuted": "Microphone muted",
+        "statusUnmuted": "Microphone on",
+        "debugDetails": "Details",
         "connecting": "Connecting voice…",
         "error": "Voice error",
         "mute": "Mute",

@@ -1714,6 +1714,12 @@
       },
       "voice": {
         "enable": "Activer la voix",
+        "statusIdle": "Voix désactivée",
+        "statusRequestingMicrophone": "Demande du micro…",
+        "statusConnected": "Voix connectée",
+        "statusMuted": "Micro coupé",
+        "statusUnmuted": "Micro activé",
+        "debugDetails": "Détails",
         "connecting": "Connexion vocale…",
         "error": "Erreur de voix",
         "mute": "Couper le son",

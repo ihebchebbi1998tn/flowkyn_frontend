@@ -1698,6 +1698,12 @@
       },
       "voice": {
         "enable": "Stimme aktivieren",
+        "statusIdle": "Sprache aus",
+        "statusRequestingMicrophone": "Mikrofon wird angefordert…",
+        "statusConnected": "Sprache verbunden",
+        "statusMuted": "Mikrofon stumm",
+        "statusUnmuted": "Mikrofon an",
+        "debugDetails": "Details",
         "connecting": "Stimme wird verbunden…",
         "error": "Stimmfehler",
         "mute": "Stumm",
