@@ -49,6 +49,7 @@ export function useCoffeeVoiceCall(params: {
   const offerReceivedRef = useRef(false);
   const offerRequestTimersRef = useRef<number[]>([]);
   const pendingOfferSdpRef = useRef<string | null>(null);
+  const lastPartnerHangupAtRef = useRef<number | null>(null);
 
   const [status, setStatus] = useState<VoiceStatus>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -385,6 +386,7 @@ export function useCoffeeVoiceCall(params: {
 
       pendingOfferSdpRef.current = msg.sdp;
       offerReceivedRef.current = true;
+      lastPartnerHangupAtRef.current = null;
       setShowEnableVoicePrompt(true);
     });
 
@@ -398,6 +400,9 @@ export function useCoffeeVoiceCall(params: {
     if (!gamesSocket?.isConnected) return;
     if (pendingOfferSdpRef.current) return;
     if (showEnableVoicePrompt) return;
+
+    // If the partner recently hung up, avoid aggressive polling.
+    if (lastPartnerHangupAtRef.current && Date.now() - lastPartnerHangupAtRef.current < 10000) return;
 
     let cancelled = false;
     const delays = [400, 1200, 2400, 4200];
@@ -416,6 +421,26 @@ export function useCoffeeVoiceCall(params: {
       timers.forEach((t) => clearTimeout(t));
     };
   }, [gamesSocket?.isConnected, isOfferer, pairId, sessionId, status, showEnableVoicePrompt]);
+
+  // ─── Answerer: hide modal when partner hangs up (idle state) ────────────
+  useEffect(() => {
+    if (!gamesSocket?.on) return;
+    if (isOfferer) return;
+
+    const unsubHangup = gamesSocket.on('coffee:voice_hangup', (msg: { sessionId: string; pairId: string }) => {
+      if (msg.sessionId !== sessionId || msg.pairId !== pairId) return;
+      lastPartnerHangupAtRef.current = Date.now();
+
+      pendingOfferSdpRef.current = null;
+      offerReceivedRef.current = false;
+      setShowEnableVoicePrompt(false);
+      // Only clear errors/status if we are still waiting for the offer.
+      setError(null);
+      setStatus('idle');
+    });
+
+    return unsubHangup;
+  }, [gamesSocket, isOfferer, pairId, sessionId]);
 
   return {
     status,
