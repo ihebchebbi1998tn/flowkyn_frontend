@@ -56,7 +56,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
   return (
     <div style={themeVars as React.CSSProperties}>
       <div
-        className="min-h-[560px] flex flex-col"
+        className="min-h-[520px] flex flex-col"
         style={{
           background: `linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%)`,
         }}
@@ -65,7 +65,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="px-5 py-3 border-b"
+          className="px-4 py-2.5 border-b"
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderColor: 'var(--color-primary-light)',
@@ -91,12 +91,13 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                   className="px-4 py-2 rounded-lg text-center"
                   style={{
                     backgroundColor: 'var(--color-primary-light)',
+                    border: '1px solid var(--color-primary-light)',
                   }}
                 >
                   <p className="text-xs font-medium" style={{ color: 'var(--color-text-light)' }}>
                     {t('gamePlay.coffeeRoulette.lobby.participants')}
                   </p>
-                  <p className="text-xl font-bold" style={{ color: 'var(--color-primary)' }}>
+                  <p className="text-xl font-bold" style={{ color: 'var(--color-text)' }}>
                     {participantCount}
                   </p>
                 </div>
@@ -105,12 +106,13 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                   className="px-4 py-2 rounded-lg text-center"
                   style={{
                     backgroundColor: 'var(--color-accent-light)',
+                    border: '1px solid var(--color-accent-light)',
                   }}
                 >
                   <p className="text-xs font-medium" style={{ color: 'var(--color-text-light)' }}>
                     {t('gamePlay.coffeeRoulette.lobby.pairs')}
                   </p>
-                  <p className="text-xl font-bold" style={{ color: 'var(--color-accent)' }}>
+                  <p className="text-xl font-bold" style={{ color: 'var(--color-text)' }}>
                     {possiblePairs}
                   </p>
                 </div>
@@ -120,7 +122,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-5 py-4 overflow-y-auto">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-3 overflow-y-auto">
           <div className="w-full max-w-6xl">
             {/* All Participants - Compact Grid (works up to ~60) */}
             <motion.div
@@ -134,7 +136,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
               </p>
               <div
                 className="rounded-xl border border-border/60 bg-white/60 p-3"
-                style={{ maxHeight: 220, overflowY: 'auto' }}
+                style={{ maxHeight: 205, overflowY: 'auto' }}
               >
                 <div
                   style={{
@@ -188,11 +190,11 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
               >
-                <p className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
-                  {t('gamePlay.coffeeRoulette.lobby.possiblePairs')} ({possiblePairs})
+                <p className="text-base font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
+                  {t('gamePlay.coffeeRoulette.lobby.pairs')} ({possiblePairs})
                 </p>
 
-                <div style={{ maxHeight: 260, overflowY: 'auto', paddingRight: 6 }}>
+                <div style={{ maxHeight: 235, overflowY: 'auto', paddingRight: 6 }}>
                   <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(230px, 1fr))` }}>
                     {possiblePairCombos.map((pair, idx) => (
                       <motion.div
