@@ -648,14 +648,19 @@ export function StrategicEscapeBoard({
                         className={cn(
                           'flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] transition-all',
                           active
-                            ? 'border-primary bg-primary/10 text-primary-foreground'
+                            ? 'border-primary bg-primary/10 text-primary'
                             : 'border-border/60 bg-muted/40 text-muted-foreground hover:border-primary/40',
                           !isHost && 'cursor-default opacity-80'
                         )}
                       >
                         <span>{option.icon}</span>
                         <span className="font-medium">{t(`${labelKey}.label`)}</span>
-                        <span className="hidden sm:inline text-[10px] text-muted-foreground">
+                        <span
+                          className={cn(
+                            'hidden sm:inline text-[10px]',
+                            active ? 'text-primary/80' : 'text-muted-foreground'
+                          )}
+                        >
                           {t(`${labelKey}.hint`)}
                         </span>
                       </button>
@@ -861,33 +866,33 @@ export function StrategicEscapeBoard({
                     <div className="relative h-full w-full p-4 flex flex-col justify-between">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-background/10 flex items-center justify-center text-[11px] font-bold text-primary-foreground">
+                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-[11px] font-bold text-foreground">
                           {currentUserAvatar}
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-[11px] text-primary-foreground/80">
+                          <span className="text-[11px] text-muted-foreground">
                             {t('strategic.rolesMeta.playerLabel', { defaultValue: 'You' })}
                           </span>
-                          <span className="text-[12px] font-semibold text-primary-foreground">
+                          <span className="text-[12px] font-semibold text-foreground">
                             {currentUserName || t('strategic.rolesMeta.unknownPlayer', { defaultValue: 'Participant' })}
                           </span>
                         </div>
                       </div>
-                      <span className="rounded-full bg-background/10 px-2 py-1 text-[10px] font-semibold text-primary-foreground">
+                      <span className="rounded-full bg-muted px-2 py-1 text-[10px] font-semibold text-foreground">
                         {t('strategic.rolesMeta.secret', { defaultValue: 'Secret role' })}
                       </span>
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-[11px] font-medium text-primary-foreground/70">
+                      <p className="text-[11px] font-medium text-muted-foreground">
                         {myRoleKey
                           ? t('strategic.rolesMeta.roleNameLabel', { defaultValue: 'Role' })
                           : t('strategic.rolesMeta.loading', { defaultValue: 'Waiting for your role…' })}
                       </p>
-                      <p className="text-[15px] font-semibold tracking-tight text-primary-foreground">
+                      <p className="text-[15px] font-semibold tracking-tight text-foreground">
                         {myRoleName || t('strategic.rolesMeta.pending', { defaultValue: 'Pending assignment' })}
                       </p>
-                      <p className="text-[11px] text-primary-foreground/85 line-clamp-2">
+                      <p className="text-[11px] text-muted-foreground line-clamp-2">
                         {myRoleBrief ||
                           t(
                             'strategic.rolesMeta.pendingHint',
@@ -896,7 +901,7 @@ export function StrategicEscapeBoard({
                       </p>
                     </div>
 
-                    <p className="text-[10px] text-primary-foreground/70 line-clamp-2">
+                    <p className="text-[10px] text-muted-foreground line-clamp-2">
                       {myRoleSecret ||
                         t(
                           'strategic.rolesMeta.secretHint',
