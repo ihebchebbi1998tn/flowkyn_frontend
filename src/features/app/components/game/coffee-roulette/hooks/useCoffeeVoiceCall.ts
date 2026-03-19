@@ -47,8 +47,12 @@ export function useCoffeeVoiceCall(params: {
 
   const localUnsubscribersRef = useRef<Array<() => void>>([]);
   const offerReceivedRef = useRef(false);
+  const answerAppliedRef = useRef(false);
   const offerRequestTimersRef = useRef<number[]>([]);
   const pendingOfferSdpRef = useRef<string | null>(null);
+  // ICE candidates may arrive before `setRemoteDescription()` finishes.
+  // Buffer them and flush once remote description is set.
+  const iceCandidateQueueRef = useRef<any[]>([]);
   const lastPartnerHangupAtRef = useRef<number | null>(null);
 
   const [status, setStatus] = useState<VoiceStatus>('idle');
@@ -74,7 +78,9 @@ export function useCoffeeVoiceCall(params: {
       for (const t of offerRequestTimersRef.current) clearTimeout(t);
       offerRequestTimersRef.current = [];
       offerReceivedRef.current = false;
+      answerAppliedRef.current = false;
       pendingOfferSdpRef.current = null;
+      iceCandidateQueueRef.current = [];
       setShowEnableVoicePrompt(false);
 
       try {
@@ -128,6 +134,16 @@ export function useCoffeeVoiceCall(params: {
     };
   }, [stopVoice]);
 
+  // ─── Telemetry: modal opened/closed ─────────────────────────────────────────
+  useEffect(() => {
+    console.log('[CoffeeVoice][telemetry] modal', {
+      event: showEnableVoicePrompt ? 'opened' : 'closed',
+      sessionId,
+      pairId,
+      role: isOfferer ? 'offerer' : 'answerer',
+    });
+  }, [showEnableVoicePrompt, isOfferer, sessionId, pairId]);
+
   const toggleMute = useCallback(() => {
     const stream = localStreamRef.current;
     if (!stream) return;
@@ -147,6 +163,7 @@ export function useCoffeeVoiceCall(params: {
     setStatus('requesting_microphone');
     setError(null);
     setShowEnableVoicePrompt(false);
+    answerAppliedRef.current = false;
 
     try {
       if (!iceServersCache && eventId) {
@@ -221,6 +238,8 @@ export function useCoffeeVoiceCall(params: {
         if (isOfferer) return;
         const p = peerRef.current;
         if (!p) return;
+        // Guard against duplicate offers.
+        if (offerReceivedRef.current) return;
 
         void (async () => {
           console.log('[useCoffeeVoiceCall] received offer', {
@@ -232,12 +251,39 @@ export function useCoffeeVoiceCall(params: {
           offerReceivedRef.current = true;
           setStatus('connecting');
           await p.setRemoteDescription({ type: 'offer', sdp: msg.sdp });
+
+          // Flush queued ICE candidates once remote description is set.
+          if (iceCandidateQueueRef.current.length > 0) {
+            const queued = iceCandidateQueueRef.current;
+            iceCandidateQueueRef.current = [];
+            console.log('[CoffeeVoice][telemetry] ice_flush_after_offer', {
+              sessionId,
+              pairId,
+              queuedCount: queued.length,
+            });
+            await Promise.all(
+              queued.map((c) =>
+                p.addIceCandidate(c).catch((e) => {
+                  console.warn('[CoffeeVoice][telemetry] ice_flush_add_failed', {
+                    sessionId,
+                    pairId,
+                    error: e instanceof Error ? e.message : String(e),
+                  });
+                })
+              )
+            );
+          }
           const answer = await p.createAnswer();
           await p.setLocalDescription(answer);
           await gamesSocket.emit('coffee:voice_answer', {
             sessionId,
             pairId,
             sdp: answer.sdp || p.localDescription?.sdp,
+          });
+          console.log('[CoffeeVoice][telemetry] answer_emit', {
+            sessionId,
+            pairId,
+            role: 'answerer',
           });
         })().catch((e) => {
           console.error('[useCoffeeVoiceCall] handle offer failed', e);
@@ -252,6 +298,8 @@ export function useCoffeeVoiceCall(params: {
         if (!isOfferer) return;
         const p = peerRef.current;
         if (!p) return;
+        // Guard against duplicate answers.
+        if (answerAppliedRef.current) return;
 
         void (async () => {
           console.log('[useCoffeeVoiceCall] received answer', {
@@ -260,8 +308,31 @@ export function useCoffeeVoiceCall(params: {
             fromParticipantId: msg.fromParticipantId,
             sdpLength: msg.sdp.length,
           });
+          answerAppliedRef.current = true;
           setStatus('connecting');
           await p.setRemoteDescription({ type: 'answer', sdp: msg.sdp });
+
+          // Flush queued ICE candidates once remote description is set.
+          if (iceCandidateQueueRef.current.length > 0) {
+            const queued = iceCandidateQueueRef.current;
+            iceCandidateQueueRef.current = [];
+            console.log('[CoffeeVoice][telemetry] ice_flush_after_answer', {
+              sessionId,
+              pairId,
+              queuedCount: queued.length,
+            });
+            await Promise.all(
+              queued.map((c) =>
+                p.addIceCandidate(c).catch((e) => {
+                  console.warn('[CoffeeVoice][telemetry] ice_flush_add_failed', {
+                    sessionId,
+                    pairId,
+                    error: e instanceof Error ? e.message : String(e),
+                  });
+                })
+              )
+            );
+          }
         })().catch((e) => {
           console.error('[useCoffeeVoiceCall] handle answer failed', e);
           setStatus('error');
@@ -273,13 +344,32 @@ export function useCoffeeVoiceCall(params: {
         if (msg.sessionId !== sessionId || msg.pairId !== pairId) return;
         const p = peerRef.current;
         if (!p) return;
+        const candidate = msg.candidate as any;
 
-        void p.addIceCandidate(msg.candidate as any).catch(() => {});
+        // Buffer until remote description exists to avoid addIceCandidate races.
+        // This prevents first-attempt failures with `CONNECTION_FAILED`.
+        if (!p.remoteDescription) {
+          iceCandidateQueueRef.current.push(candidate);
+          return;
+        }
+
+        void p.addIceCandidate(candidate).catch((e) => {
+          console.warn('[CoffeeVoice][telemetry] ice_add_failed', {
+            sessionId,
+            pairId,
+            role: isOfferer ? 'offerer' : 'answerer',
+            error: e instanceof Error ? e.message : String(e),
+          });
+        });
       });
 
       const unsubHangup = gamesSocket.on('coffee:voice_hangup', (msg: { sessionId: string; pairId: string }) => {
         if (msg.sessionId !== sessionId || msg.pairId !== pairId) return;
-        console.log('[useCoffeeVoiceCall] remote hangup');
+        console.log('[CoffeeVoice][telemetry] hangup_received', {
+          sessionId,
+          pairId,
+          role: isOfferer ? 'offerer' : 'answerer',
+        });
         void stopVoice({ emitHangup: false }).then(() => onRemoteHangup?.());
       });
 
@@ -291,10 +381,16 @@ export function useCoffeeVoiceCall(params: {
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
         try {
-          await gamesSocket.emit('coffee:voice_offer', {
+          const ackResp = await gamesSocket.emit('coffee:voice_offer', {
             sessionId,
             pairId,
             sdp: offer.sdp || pc.localDescription?.sdp,
+          });
+          console.log('[CoffeeVoice][telemetry] offer_emit', {
+            sessionId,
+            pairId,
+            role: 'offerer',
+            ack: ackResp ?? null,
           });
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
@@ -302,6 +398,12 @@ export function useCoffeeVoiceCall(params: {
           // We should keep peer alive and wait for the answer later.
           if (msg.includes('PARTNER_NOT_CONNECTED')) {
             console.warn('[useCoffeeVoiceCall] partner not connected yet; waiting for offer answer');
+            console.log('[CoffeeVoice][telemetry] offer_emit_partner_offline', {
+              sessionId,
+              pairId,
+              role: 'offerer',
+              error: msg,
+            });
           } else {
             console.error('[useCoffeeVoiceCall] voice_offer emit failed', e);
             throw e;
@@ -319,6 +421,28 @@ export function useCoffeeVoiceCall(params: {
           offerReceivedRef.current = true;
           setStatus('connecting');
           await pc.setRemoteDescription({ type: 'offer', sdp: existingOfferSdp });
+
+          if (iceCandidateQueueRef.current.length > 0) {
+            const queued = iceCandidateQueueRef.current;
+            iceCandidateQueueRef.current = [];
+            console.log('[CoffeeVoice][telemetry] ice_flush_after_offer_late', {
+              sessionId,
+              pairId,
+              queuedCount: queued.length,
+            });
+            await Promise.all(
+              queued.map((c) =>
+                pc.addIceCandidate(c).catch((e) => {
+                  console.warn('[CoffeeVoice][telemetry] ice_flush_add_failed', {
+                    sessionId,
+                    pairId,
+                    error: e instanceof Error ? e.message : String(e),
+                  });
+                })
+              )
+            );
+          }
+
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
           await gamesSocket.emit('coffee:voice_answer', {
@@ -326,25 +450,38 @@ export function useCoffeeVoiceCall(params: {
             pairId,
             sdp: answer.sdp || pc.localDescription?.sdp,
           });
+          console.log('[CoffeeVoice][telemetry] answer_emit', {
+            sessionId,
+            pairId,
+            role: 'answerer',
+          });
         } else {
-          const requestOffer = () => {
+          const requestOffer = async () => {
             if (!gamesSocket?.isConnected) return;
             if (offerReceivedRef.current) return;
-            void gamesSocket
+            const reqResp = await gamesSocket
               .emit('coffee:voice_request_offer', { sessionId, pairId })
               .catch((err) => {
                 // OFFER_NOT_READY is expected sometimes; keep retrying.
                 console.warn('[useCoffeeVoiceCall] voice_request_offer failed', err);
+                return null;
               });
+
+            console.log('[CoffeeVoice][telemetry] offer_requested', {
+              sessionId,
+              pairId,
+              role: 'answerer',
+              response: reqResp ?? null,
+            });
           };
 
           // First request immediately, then retry a few times.
-          requestOffer();
+          void requestOffer();
           const timers = [1200, 2600, 4200];
           for (const delay of timers) {
             const id = window.setTimeout(() => {
               if (offerReceivedRef.current) return;
-              requestOffer();
+              void requestOffer();
             }, delay);
             offerRequestTimersRef.current.push(id);
           }
@@ -387,6 +524,12 @@ export function useCoffeeVoiceCall(params: {
       pendingOfferSdpRef.current = msg.sdp;
       offerReceivedRef.current = true;
       lastPartnerHangupAtRef.current = null;
+      console.log('[CoffeeVoice][telemetry] offer_received_cached', {
+        sessionId,
+        pairId,
+        role: 'answerer',
+        fromParticipantId: msg.fromParticipantId,
+      });
       setShowEnableVoicePrompt(true);
     });
 
@@ -412,7 +555,17 @@ export function useCoffeeVoiceCall(params: {
         if (cancelled) return;
         if (pendingOfferSdpRef.current) return;
         if (showEnableVoicePrompt) return;
-        void gamesSocket.emit('coffee:voice_request_offer', { sessionId, pairId }).catch(() => {});
+        void (async () => {
+          const reqResp = await gamesSocket
+            .emit('coffee:voice_request_offer', { sessionId, pairId })
+            .catch(() => null);
+          console.log('[CoffeeVoice][telemetry] offer_requested', {
+            sessionId,
+            pairId,
+            role: 'answerer',
+            response: reqResp ?? null,
+          });
+        })();
       }, delay)
     );
 
@@ -429,6 +582,11 @@ export function useCoffeeVoiceCall(params: {
 
     const unsubHangup = gamesSocket.on('coffee:voice_hangup', (msg: { sessionId: string; pairId: string }) => {
       if (msg.sessionId !== sessionId || msg.pairId !== pairId) return;
+      console.log('[CoffeeVoice][telemetry] hangup_received', {
+        sessionId,
+        pairId,
+        role: isOfferer ? 'offerer' : 'answerer',
+      });
       lastPartnerHangupAtRef.current = Date.now();
 
       pendingOfferSdpRef.current = null;

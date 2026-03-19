@@ -90,6 +90,13 @@ export function MeetingRoom({
     gamesSocket,
   });
 
+  const voiceErrorText = (() => {
+    if (!voiceError) return null;
+    return t(`gamePlay.coffeeRoulette.voice.errors.${voiceError}`, {
+      defaultValue: t('gamePlay.coffeeRoulette.voice.errors.unknown'),
+    });
+  })();
+
   // Attach remote audio stream to a hidden audio element.
   useEffect(() => {
     if (!audioRef.current) return;
@@ -479,7 +486,7 @@ export function MeetingRoom({
               {t('gamePlay.coffeeRoulette.voice.error')}
               {voiceError ? (
                 <div className="mt-1 text-[11px] opacity-80">
-                  {t('gamePlay.coffeeRoulette.voice.debugDetails')}: {voiceError}
+                  {voiceErrorText}
                 </div>
               ) : null}
             </div>
