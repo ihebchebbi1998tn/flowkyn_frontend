@@ -79,6 +79,22 @@ export const gamesApi = {
       eventId
     ),
 
+  /** Strategic Escape Challenge — mark the current participant as having revealed/closed their role modal */
+  acknowledgeMyStrategicRole: (sessionId: string, eventId?: string) =>
+    api.post<void>(
+      `/strategic-sessions/${sessionId}/roles/me/ack`,
+      {},
+      eventId
+    ),
+
+  /** Strategic Escape Challenge — aggregate role reveal acknowledgement status (counts only) */
+  getStrategicRoleRevealStatus: (sessionId: string, eventId?: string) =>
+    api.get<{ total: number; acknowledged: number; allAcknowledged: boolean }>(
+      `/strategic-sessions/${sessionId}/roles/reveal-status`,
+      undefined,
+      eventId
+    ),
+
   /**
    * Submit a game action (vote, answer, etc.)
    * Participant ownership is verified server-side.

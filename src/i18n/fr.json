@@ -1035,7 +1035,7 @@
     "label": "Défi d'évasion stratégique",
     "phases": {
       "setup": "Configuration",
-      "rolesAssignment": "Rôles & e-mails",
+      "rolesAssignment": "Rôles",
       "discussion": "Discussion",
       "debrief": "Débrief"
     },
@@ -1046,12 +1046,31 @@
     "howItWorks": {
       "label": "Comment ça marche",
       "point1": "Tout le monde reçoit un rôle secret.",
-      "point2": "Vous recevrez un e-mail + une carte dans l’app avec les consignes.",
+      "point2": "Vous verrez votre rôle dans l’app avec les consignes.",
       "point3": "Nous ferons un débrief à la fin."
+    },
+    "errors": {
+      "assignFailed": "Impossible d’attribuer les rôles. Assurez-vous que les participants ont rejoint et que vous êtes le facilitateur."
+    },
+    "actions": {
+      "assignRoles": "Attribuer les rôles",
+      "assigningRoles": "Attribution des rôles…",
+      "assignHelp": "D’abord, attribuez les rôles pour que chacun puisse voir son rôle. Ensuite, démarrez la discussion asynchrone quand vous êtes prêt.",
+      "startDiscussion": "Démarrer la discussion asynchrone"
+    },
+    "rolesSection": {
+      "subtitle": "Ce rôle est privé. Gardez-le secret et utilisez-le pour guider vos décisions."
+    },
+    "roleReveal": {
+      "title": "Votre rôle secret",
+      "pending": "Attribution en attente",
+      "pendingHint": "En attente de l’attribution des rôles…",
+      "progress": "{{acknowledged}}/{{total}} rôles révélés",
+      "close": "J’ai compris"
     },
     "phaseIntro": {
       "setup": "Pour l’instant, le facilitateur configure le scénario.",
-      "rolesAssignment": "Pour l’instant, les rôles secrets sont attribués — vérifiez votre boîte mail.",
+      "rolesAssignment": "Pour l’instant, les rôles secrets sont attribués.",
       "discussion": "Pour l’instant, partagez des perspectives et décisions dans le temps.",
       "debrief": "Pour l’instant, transformez les enseignements en actions concrètes."
     }
@@ -1173,6 +1192,7 @@
     "SESSION_NOT_ACTIVE": "Cette session n'est pas active actuellement.",
     "ROUND_NOT_ACTIVE": "Ce tour n'est pas actif actuellement.",
     "SESSION_ALREADY_FINISHED": "Cette session est déjà terminée.",
+    "STRATEGIC_ROLE_NOT_ASSIGNED": "Votre rôle n’a pas encore été attribué. Veuillez attendre le facilitateur.",
     "CORS_BLOCKED": "Requête bloquée par la politique de sécurité.",
     "TIMEOUT": "La requête a expiré. Veuillez réessayer.",
     "SERVICE_UNAVAILABLE": "Service temporairement indisponible. Veuillez réessayer.",

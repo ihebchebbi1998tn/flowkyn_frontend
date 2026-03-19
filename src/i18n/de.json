@@ -1019,7 +1019,7 @@
     "label": "Strategic Escape Challenge",
     "phases": {
       "setup": "Setup",
-      "rolesAssignment": "Rollen & E-Mails",
+      "rolesAssignment": "Rollen",
       "discussion": "Diskussion",
       "debrief": "Debrief"
     },
@@ -1030,12 +1030,31 @@
     "howItWorks": {
       "label": "So funktioniert’s",
       "point1": "Jede Person erhält eine geheime Rolle.",
-      "point2": "Sie erhalten eine E-Mail + eine In-App-Karte mit Anweisungen.",
+      "point2": "Sie sehen Ihre Rolle in der App mit Anweisungen.",
       "point3": "Am Ende machen wir ein gemeinsames Debrief."
+    },
+    "errors": {
+      "assignFailed": "Rollen konnten nicht zugewiesen werden. Stellen Sie sicher, dass Teilnehmende beigetreten sind und dass Sie der Facilitator sind."
+    },
+    "actions": {
+      "assignRoles": "Rollen zuweisen",
+      "assigningRoles": "Rollen werden zugewiesen…",
+      "assignHelp": "Weisen Sie zuerst Rollen zu, damit alle ihre Rolle sehen können. Starten Sie dann die asynchrone Diskussion, wenn Sie bereit sind.",
+      "startDiscussion": "Asynchrone Diskussion starten"
+    },
+    "rolesSection": {
+      "subtitle": "Diese Rolle ist privat. Halten Sie sie geheim und nutzen Sie sie, um Ihre Entscheidungen zu leiten."
+    },
+    "roleReveal": {
+      "title": "Ihre geheime Rolle",
+      "pending": "Zuweisung ausstehend",
+      "pendingHint": "Warten auf Rollenzuweisung…",
+      "progress": "{{acknowledged}}/{{total}} Rollen enthüllt",
+      "close": "Verstanden"
     },
     "phaseIntro": {
       "setup": "Gerade richtet der Facilitator das Szenario ein.",
-      "rolesAssignment": "Gerade werden geheime Rollen vergeben — prüfen Sie Ihren Posteingang.",
+      "rolesAssignment": "Gerade werden geheime Rollen vergeben.",
       "discussion": "Gerade sollten Sie Perspektiven und Entscheidungen über die Zeit teilen.",
       "debrief": "Gerade verwandeln Sie Erkenntnisse in konkrete Änderungen."
     }
@@ -1157,6 +1176,7 @@
     "SESSION_NOT_ACTIVE": "Diese Sitzung ist derzeit nicht aktiv.",
     "ROUND_NOT_ACTIVE": "Diese Runde ist derzeit nicht aktiv.",
     "SESSION_ALREADY_FINISHED": "Diese Sitzung ist bereits beendet.",
+    "STRATEGIC_ROLE_NOT_ASSIGNED": "Ihre Rolle wurde noch nicht zugewiesen. Bitte warten Sie auf den Facilitator.",
     "CORS_BLOCKED": "Anfrage durch Sicherheitsrichtlinie blockiert.",
     "TIMEOUT": "Die Anfrage hat das Zeitlimit überschritten. Bitte versuchen Sie es erneut.",
     "SERVICE_UNAVAILABLE": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",

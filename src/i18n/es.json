@@ -1631,6 +1631,7 @@
     "SESSION_NOT_ACTIVE": "Esta sesión no está activa actualmente.",
     "ROUND_NOT_ACTIVE": "Esta ronda no está activa actualmente.",
     "SESSION_ALREADY_FINISHED": "Esta sesión ya ha terminado.",
+    "STRATEGIC_ROLE_NOT_ASSIGNED": "Tu rol aún no ha sido asignado. Espera al facilitador.",
     "CORS_BLOCKED": "Solicitud bloqueada por la política de seguridad.",
     "TIMEOUT": "La solicitud ha superado el tiempo de espera. Inténtalo de nuevo.",
     "SERVICE_UNAVAILABLE": "El servicio no está disponible temporalmente. Inténtalo de nuevo más tarde.",
@@ -2008,7 +2009,7 @@
     },
     "preview": {
       "title": "Lo que vivirá tu equipo",
-      "body": "Cada participante recibe un correo privado con su rol secreto e instrucciones. Cuando se una, verá una tarjeta de rol que le recuerda cómo pensar y hablar durante el desafío.",
+      "body": "Cada participante recibe en la app una revelación privada de su rol secreto e instrucciones. Cuando se una, verá una tarjeta de rol que le recuerda cómo pensar y hablar durante el desafío.",
       "hint": "Esta actividad es asíncrona: puedes unirte desde cualquier huso horario, compartir perspectivas a tu ritmo y luego hacer la puesta en común juntos.",
       "hostOnly": "Tu facilitador está configurando el escenario. Verás tu rol secreto aquí en cuanto se lance el desafío.",
       "configureHint": "Usa el botón Configurar para elegir industria, crisis y dificultad antes de lanzarlo.",
@@ -2025,17 +2026,24 @@
     },
     "errors": {
       "createFailed": "No se pudo crear la sesión estratégica. Revisa tus permisos e inténtalo de nuevo.",
-      "assignFailed": "No se pudieron asignar los roles. Asegúrate de que los participantes se hayan unido y de que eres anfitrión o admin."
+      "assignFailed": "No se pudieron asignar los roles. Asegúrate de que los participantes se hayan unido y de que eres el facilitador."
     },
     "actions": {
       "createSession": "Crear sesión estratégica",
       "creating": "Creando sesión…",
-      "createHelp": "Una vez creada, podrás asignar roles, activar correos y comenzar la discusión asíncrona.",
-      "assignRoles": "Asignar roles y enviar correos",
-      "assigningRoles": "Asignando roles y enviando correos…",
-      "assignHelp": "Primero, asigna roles para que todos reciban su correo. Luego inicia la discusión asíncrona cuando estés listo.",
+      "createHelp": "Una vez creada, podrás asignar roles e iniciar la discusión asíncrona.",
+      "assignRoles": "Asignar roles",
+      "assigningRoles": "Asignando roles…",
+      "assignHelp": "Primero, asigna roles para que todos puedan ver su rol. Luego inicia la discusión asíncrona cuando estés listo.",
       "startDiscussion": "Iniciar discusión asíncrona",
       "endDiscussion": "Terminar la discusión y pasar a la puesta en común"
+    },
+    "roleReveal": {
+      "title": "Tu rol secreto",
+      "pending": "Asignación pendiente",
+      "pendingHint": "Esperando la asignación de roles…",
+      "progress": "{{acknowledged}}/{{total}} roles revelados",
+      "close": "Entendido"
     },
     "industries": {
       "techSaaS": {

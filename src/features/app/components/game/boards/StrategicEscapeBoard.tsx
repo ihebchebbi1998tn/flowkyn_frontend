@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { gamesApi } from '@/features/app/api/games';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { ApiError } from '@/lib/apiError';
 
 type StrategicPhase = 'setup' | 'roles_assignment' | 'discussion' | 'debrief';
 
@@ -88,8 +89,11 @@ export function StrategicEscapeBoard({
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
   const [myRoleKey, setMyRoleKey] = useState<string | null>(null);
   const [roleLoading, setRoleLoading] = useState(false);
+  const [roleRevealOpen, setRoleRevealOpen] = useState(false);
+  const [roleRevealShown, setRoleRevealShown] = useState(false);
   const [swapWindowSeconds, setSwapWindowSeconds] = useState<number | null>(null);
   const [discussionTimeLeft, setDiscussionTimeLeft] = useState<number>(0);
+  const [revealStatus, setRevealStatus] = useState<{ total: number; acknowledged: number; allAcknowledged: boolean } | null>(null);
 
   const snapshot: StrategicEscapeSnapshot | null =
     gameData?.kind === 'strategic-escape'
@@ -158,8 +162,8 @@ export function StrategicEscapeBoard({
         console.log('[StrategicEscapeBoard] getMyStrategicRole success', res);
         if (!cancelled) setMyRoleKey(res?.roleKey || null);
       })
-      .catch(() => {
-        console.error('[StrategicEscapeBoard] getMyStrategicRole error');
+      .catch((err) => {
+        console.error('[StrategicEscapeBoard] getMyStrategicRole error', err);
         if (!cancelled) setMyRoleKey(null);
       })
       .finally(() => {
@@ -233,8 +237,15 @@ export function StrategicEscapeBoard({
       onSessionCreated(res.sessionId);
       
       // Immediately emit to ensure game state syncs
-      onEmitSocketAction('strategic:session_created', { sessionId: res.sessionId }).catch(err => {
-        console.warn('[StrategicEscapeBoard] strategic:session_created emit failed:', err);
+      onEmitSocketAction('strategic:configure', {
+        industryKey: localIndustry!,
+        crisisKey: localCrisis!,
+        difficultyKey: localDifficulty,
+        industryLabel,
+        crisisLabel,
+        difficultyLabel,
+      }).catch(err => {
+        console.warn('[StrategicEscapeBoard] strategic:configure emit failed:', err);
       });
       
       toast.success(
@@ -276,7 +287,7 @@ export function StrategicEscapeBoard({
         err?.message ||
         t(
           'strategic.errors.assignFailed',
-          { defaultValue: 'Failed to assign roles. Make sure participants have joined and you are the host or admin.' }
+          { defaultValue: 'Failed to assign roles. Make sure participants have joined and you are the facilitator.' }
         );
       setAssignError(message);
     } finally {
@@ -340,8 +351,84 @@ export function StrategicEscapeBoard({
   const myRoleBrief = myRoleKey ? t(`strategic.roles.${myRoleKey}.brief`) : '';
   const myRoleSecret = myRoleKey ? t(`strategic.roles.${myRoleKey}.secret`) : '';
 
+  useEffect(() => {
+    // When roles are assigned and this participant has a role, reveal it once via a modal.
+    if (phase !== 'roles_assignment') return;
+    if (!myRoleKey) return;
+    if (roleRevealShown) return;
+    setRoleRevealOpen(true);
+    setRoleRevealShown(true);
+  }, [phase, myRoleKey, roleRevealShown]);
+
+  // Host-only: poll reveal acknowledgement status once roles are assigned.
+  useEffect(() => {
+    if (!isHost) return;
+    if (!sessionId) return;
+    if (!rolesAssigned) return;
+
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const s = await gamesApi.getStrategicRoleRevealStatus(sessionId, eventId);
+        if (!cancelled) setRevealStatus(s);
+      } catch (err) {
+        console.warn('[StrategicEscapeBoard] getStrategicRoleRevealStatus failed', err);
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 2000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [isHost, sessionId, eventId, rolesAssigned]);
+
   return (
     <div className="space-y-4 lg:space-y-5">
+      <Dialog open={roleRevealOpen} onOpenChange={setRoleRevealOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {t('strategic.roleReveal.title', { defaultValue: 'Your secret role' })}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="rounded-xl border border-border bg-muted/20 p-3 space-y-1">
+              <p className="text-sm font-semibold text-foreground">
+                {myRoleName || t('strategic.roleReveal.pending', { defaultValue: 'Pending assignment' })}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {myRoleBrief || t('strategic.roleReveal.pendingHint', { defaultValue: 'Waiting for role assignment…' })}
+              </p>
+            </div>
+            {myRoleSecret && (
+              <div className="rounded-xl border border-border bg-card p-3">
+                <p className="text-xs text-muted-foreground whitespace-pre-wrap">{myRoleSecret}</p>
+              </div>
+            )}
+            <Button
+              className="w-full"
+              onClick={() => {
+                setRoleRevealOpen(false);
+                if (sessionId) {
+                  gamesApi.acknowledgeMyStrategicRole(sessionId, eventId).catch((err) => {
+                    console.warn('[StrategicEscapeBoard] acknowledgeMyStrategicRole failed', err);
+                    if (ApiError.is(err)) {
+                      toast.error(t(`apiErrors.${err.code}`, { defaultValue: err.message }));
+                    } else {
+                      toast.error(t('apiErrors.UNKNOWN'));
+                    }
+                  });
+                }
+              }}
+            >
+              {t('strategic.roleReveal.close', { defaultValue: 'Got it' })}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Header with phase + scenario chips */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
@@ -695,12 +782,27 @@ export function StrategicEscapeBoard({
                 <Button
                   className="w-full h-9 text-[12px]"
                   disabled={!sessionId || rolesAssigned || isAssigningRoles || !isConfigured}
+                  style={rolesAssigned && revealStatus?.allAcknowledged ? { display: 'none' } : undefined}
                   onClick={handleAssignRoles}
                 >
                   {isAssigningRoles
-                    ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles and sending emails…' })
-                    : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles & send emails' })}
+                    ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles…' })
+                    : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles' })}
                 </Button>
+                {isHost && rolesAssigned && revealStatus && !revealStatus.allAcknowledged && (
+                  <div className="inline-flex items-center justify-between gap-2 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
+                    <span>
+                      {t('strategic.roleReveal.progress', {
+                        defaultValue: '{{acknowledged}}/{{total}} roles revealed',
+                        acknowledged: revealStatus.acknowledged,
+                        total: revealStatus.total,
+                      })}
+                    </span>
+                    <span className="font-medium tabular-nums text-foreground">
+                      {revealStatus.acknowledged}/{revealStatus.total}
+                    </span>
+                  </div>
+                )}
                 {assignError && (
                   <p className="text-[10px] text-destructive">
                     {assignError}
@@ -725,7 +827,7 @@ export function StrategicEscapeBoard({
                   <p className="text-xs text-muted-foreground">
                     {t(
                       'strategic.rolesSection.subtitle',
-                      'Check your inbox for a detailed email. This card is a quick visual summary.'
+                      'This role is private to you. Keep it secret and use it to guide your decisions.'
                     )}
                   </p>
                 </div>
@@ -858,11 +960,12 @@ export function StrategicEscapeBoard({
                     size="sm"
                     className="w-full h-9 text-[12px]"
                     disabled={!sessionId || rolesAssigned || isAssigningRoles}
+                    style={rolesAssigned && revealStatus?.allAcknowledged ? { display: 'none' } : undefined}
                     onClick={handleAssignRoles}
                   >
                     {isAssigningRoles
-                      ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles and sending emails…' })
-                      : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles & send emails' })}
+                      ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles…' })
+                      : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles' })}
                   </Button>
                   {assignError && (
                     <p className="text-[10px] text-destructive">

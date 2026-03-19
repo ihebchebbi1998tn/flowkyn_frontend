@@ -1125,7 +1125,7 @@
     },
     "preview": {
       "title": "What your team will experience",
-      "body": "Each participant receives a private email with their secret role and instructions. When they join, they see a role card that reminds them how to think and speak during the challenge.",
+      "body": "Each participant receives a private role reveal in-app with their secret role and instructions. When they join, they see a role card that reminds them how to think and speak during the challenge.",
       "hint": "This activity is async: people can join from any time zone, share perspectives in their own time, and then debrief together.",
       "hostOnly": "Your facilitator is configuring the scenario. You will see your secret role here as soon as the challenge is launched.",
       "configureHint": "Use the Configure button to choose industry, crisis, and difficulty before you launch.",
@@ -1142,17 +1142,24 @@
     },
     "errors": {
       "createFailed": "Failed to create strategic session. Please check your permissions and try again.",
-      "assignFailed": "Failed to assign roles. Make sure participants have joined and you are the host or admin."
+      "assignFailed": "Failed to assign roles. Make sure participants have joined and you are the facilitator."
     },
     "actions": {
       "createSession": "Create strategic session",
       "creating": "Creating session…",
-      "createHelp": "Once created, you can assign roles, trigger emails, and start the async discussion.",
-      "assignRoles": "Assign roles & send emails",
-      "assigningRoles": "Assigning roles and sending emails…",
-      "assignHelp": "First, assign roles so everyone receives their email. Then start the async discussion when you are ready.",
+      "createHelp": "Once created, you can assign roles and start the async discussion.",
+      "assignRoles": "Assign roles",
+      "assigningRoles": "Assigning roles…",
+      "assignHelp": "First, assign roles so everyone can see their role. Then start the async discussion when you are ready.",
       "startDiscussion": "Start async discussion",
       "endDiscussion": "End discussion & move to debrief"
+    },
+    "roleReveal": {
+      "title": "Your secret role",
+      "pending": "Pending assignment",
+      "pendingHint": "Waiting for role assignment…",
+      "progress": "{{acknowledged}}/{{total}} roles revealed",
+      "close": "Got it"
     },
     "industries": {
       "techSaaS": {
@@ -1930,6 +1937,7 @@
     "SESSION_NOT_ACTIVE": "This session is not currently active.",
     "ROUND_NOT_ACTIVE": "This round is not currently active.",
     "SESSION_ALREADY_FINISHED": "This session has already ended.",
+    "STRATEGIC_ROLE_NOT_ASSIGNED": "Your role hasn't been assigned yet. Please wait for the facilitator.",
     "CORS_BLOCKED": "Request blocked by security policy.",
     "TIMEOUT": "The request timed out. Please try again.",
     "SERVICE_UNAVAILABLE": "Service is temporarily unavailable. Please try again shortly.",
