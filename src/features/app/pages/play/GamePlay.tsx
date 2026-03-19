@@ -318,6 +318,8 @@ function GamePlayWithoutBoundary() {
   }, [eventsSocket.isConnected, eventId, isGuest, showError]);
 
   const joinGameRoom = useCallback(() => {
+    // Avoid joining too early before participant identity is hydrated.
+    if (!participantId && !hasJoined) return;
     if (gamesSocket.isConnected && sessionId) {
       console.log('[GamePlay] Emitting game:join for', sessionId);
       gamesSocket.emit<any>('game:join', { sessionId })
@@ -332,11 +334,11 @@ function GamePlayWithoutBoundary() {
           }
         })
         .catch((err: any) => {
-          console.error('[GamePlay] Failed to join game room:', err?.message || err);
-          showError(err, t('gamePlay.errors.joinRoomFailed', { defaultValue: 'Failed to join game room' }));
+          // Transient during startup/reconnect; retry logic elsewhere will recover.
+          console.warn('[GamePlay] Failed to join game room (transient):', err?.message || err);
         });
     }
-  }, [gamesSocket.isConnected, sessionId, showError]);
+  }, [gamesSocket.isConnected, hasJoined, participantId, sessionId]);
 
   // Initial joins
   useEffect(() => {
@@ -711,10 +713,68 @@ function GamePlayWithoutBoundary() {
   }, []);
 
   // If we learn about a session while connected, proactively join its game room.
+  // IMPORTANT: this must retry briefly because `game:join` can race with identity
+  // hydration (participant not yet resolvable on first attempt), which would cause
+  // users to miss subsequent real-time game:data updates until a full reload.
   useEffect(() => {
     if (!gamesSocket.isConnected || !sessionId) return;
-    gamesSocket.emit<any>('game:join', { sessionId }).catch(() => {});
-  }, [gamesSocket.isConnected, sessionId]);
+    if (!participantId && !hasJoined) return;
+
+    let cancelled = false;
+    const retryDelaysMs = [0, 700, 1600, 3000];
+    const timers: number[] = [];
+
+    const attemptJoin = async (attempt: number) => {
+      if (cancelled) return;
+      try {
+        const ack = await gamesSocket.emit<any>('game:join', { sessionId });
+        const ok = (ack as any)?.ok;
+        const data = (ack as any)?.data;
+        if (ok === false) {
+          throw new Error((ack as any)?.error || 'JOIN_FAILED');
+        }
+
+        // Sync snapshot immediately on successful room join.
+        if (data?.snapshot) {
+          setInitialSnapshot(data.snapshot);
+          setGameData(data.snapshot);
+        }
+        if (data?.activeRoundId) {
+          setActiveRoundId(data.activeRoundId);
+        }
+
+        await gamesSocket.emit('game:state_sync', { sessionId }).catch(() => {});
+        console.log('[GamePlay] game:join succeeded', { sessionId, attempt });
+      } catch (err: any) {
+        console.warn('[GamePlay] game:join failed, will retry if attempts remain', {
+          sessionId,
+          attempt,
+          error: err?.message || err,
+        });
+      }
+    };
+
+    retryDelaysMs.forEach((delay, idx) => {
+      const id = window.setTimeout(() => {
+        void attemptJoin(idx + 1);
+      }, delay);
+      timers.push(id);
+    });
+
+    return () => {
+      cancelled = true;
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, [
+    gamesSocket.isConnected,
+    gamesSocket,
+    hasJoined,
+    participantId,
+    sessionId,
+    setActiveRoundId,
+    setGameData,
+    setInitialSnapshot,
+  ]);
 
   // Reconnect backfill for games: when games socket reconnects, always issue game:state_sync
   const wasGamesConnectedRef = useRef(false);

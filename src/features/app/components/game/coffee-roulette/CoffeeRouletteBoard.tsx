@@ -175,6 +175,14 @@ export function CoffeeRouletteBoard({
 
   // Handle matching complete → auto-start chat
   const handleMatchingComplete = useCallback(async () => {
+    // Single authoritative emitter to prevent duplicate races:
+    // only person1 of the first pair starts the shared chat phase.
+    const firstPairLeaderId = pairs[0]?.person1?.participantId;
+    const iAmAuthoritativeStarter = !!firstPairLeaderId && firstPairLeaderId === currentUserId;
+    if (!iAmAuthoritativeStarter) {
+      return;
+    }
+
     try {
       setIsLoading(true);
       await onEmitAction('coffee:start_chat');
@@ -183,7 +191,7 @@ export function CoffeeRouletteBoard({
     } finally {
       setIsLoading(false);
     }
-  }, [onEmitAction]);
+  }, [currentUserId, onEmitAction, pairs]);
 
   // Handle next prompt
   const handleNextPrompt = useCallback(async () => {
@@ -303,7 +311,7 @@ export function CoffeeRouletteBoard({
         <ElevatorSequence
           key={pairs.map((p) => p.id).join('|')}
           pairNumber={currentPairIndex}
-          totalPairs={Math.ceil(participants.length / 2)}
+          totalPairs={Math.max(1, pairs.length)}
           onSequenceComplete={handleMatchingComplete}
         />
       </RoomThemeProvider>
