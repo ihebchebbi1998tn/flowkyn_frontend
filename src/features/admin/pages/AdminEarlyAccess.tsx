@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Mail, Building2, User, Calendar, Loader2 } from 'lucide-react';
+import { Mail, User, Calendar, Loader2, Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { PageHeader } from '@/components/common/PageHeader';
 import { TableSkeleton } from '@/components/loading/Skeletons';
 import { adminApi, type EarlyAccessEntry } from '@/api/admin';
@@ -13,6 +17,10 @@ export default function AdminEarlyAccess() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState<EarlyAccessEntry | null>(null);
+  const [message, setMessage] = useState('');
+  const [resetPasswordIfExists, setResetPasswordIfExists] = useState(true);
+  const [sending, setSending] = useState(false);
 
   const fetchEntries = useCallback(async () => {
     setLoading(true);
@@ -41,6 +49,32 @@ export default function AdminEarlyAccess() {
       (e.company_name || '').toLowerCase().includes(q)
     );
   });
+
+  const openProvisionModal = (entry: EarlyAccessEntry) => {
+    setSelected(entry);
+    setResetPasswordIfExists(true);
+    setMessage(
+      `Hi ${entry.first_name},\n\nGreat news — your early access is ready. I created your account and shared your temporary credentials below.\n\nSee you inside Flowkyn!`
+    );
+  };
+
+  const sendCredentials = async () => {
+    if (!selected) return;
+    setSending(true);
+    try {
+      const result = await adminApi.sendEarlyAccessCredentials(selected.id, message, resetPasswordIfExists);
+      const passwordLine = result.data.passwordResetApplied
+        ? `Temporary password: ${result.data.temporaryPassword}`
+        : 'Password kept unchanged for existing account';
+      toast.success(`${result.message}\n${passwordLine}\nLogin URL: ${result.data.loginUrl}`);
+      setSelected(null);
+      setMessage('');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to send credentials email');
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -87,13 +121,14 @@ export default function AdminEarlyAccess() {
                 <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden sm:table-cell">
                   Signed up
                 </th>
+                <th className="text-right font-semibold px-4 py-3 text-muted-foreground">Action</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={4}>
-                    <TableSkeleton rows={5} cols={4} />
+                  <td colSpan={5}>
+                    <TableSkeleton rows={5} cols={5} />
                   </td>
                 </tr>
               ) : (
@@ -135,12 +170,22 @@ export default function AdminEarlyAccess() {
                         {new Date(entry.created_at).toLocaleString()}
                       </div>
                     </td>
+                    <td className="px-4 py-3 text-right">
+                      <Button
+                        size="sm"
+                        className="h-8 text-[11px] gap-1"
+                        onClick={() => openProvisionModal(entry)}
+                      >
+                        <Send className="h-3 w-3" />
+                        Send Access
+                      </Button>
+                    </td>
                   </tr>
                 ))
               )}
               {!loading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center py-8 text-muted-foreground">
+                  <td colSpan={5} className="text-center py-8 text-muted-foreground">
                     No early access signups found
                   </td>
                 </tr>
@@ -149,6 +194,53 @@ export default function AdminEarlyAccess() {
           </table>
         </div>
       </div>
+
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Send Early Access Credentials</DialogTitle>
+          </DialogHeader>
+          {selected && (
+            <div className="space-y-3">
+              <div className="rounded-lg border border-border p-3 bg-muted/20 text-[12px]">
+                <p><strong>Name:</strong> {selected.first_name} {selected.last_name}</p>
+                <p><strong>Email:</strong> {selected.email}</p>
+                <p><strong>Company:</strong> {selected.company_name || '—'}</p>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[12px] font-medium text-muted-foreground">
+                  Personalized message
+                </label>
+                <Textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={7}
+                  placeholder="Write a personalized message..."
+                />
+              </div>
+              <label className="flex items-center gap-2 rounded-lg border border-border p-2 text-[12px]">
+                <Checkbox
+                  checked={resetPasswordIfExists}
+                  onCheckedChange={(checked) => setResetPasswordIfExists(checked !== false)}
+                />
+                <span>Reset password if account already exists</span>
+              </label>
+              <p className="text-[11px] text-muted-foreground">
+                This will create (or update) the account and email login details. Password reset is controlled by the checkbox above.
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setSelected(null)} disabled={sending}>
+              Cancel
+            </Button>
+            <Button size="sm" onClick={sendCredentials} disabled={sending || !selected}>
+              {sending ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : null}
+              Send Credentials
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

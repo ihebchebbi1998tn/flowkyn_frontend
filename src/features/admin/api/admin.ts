@@ -61,6 +61,16 @@ export interface EarlyAccessEntry {
   created_at: string;
 }
 
+export interface EarlyAccessProvisionResult {
+  requestId: string;
+  userId: string;
+  email: string;
+  createdNewAccount: boolean;
+  passwordResetApplied: boolean;
+  temporaryPassword: string | null;
+  loginUrl: string;
+}
+
 export interface BugReportEntry {
   id: string;
   user_id: string;
@@ -203,6 +213,12 @@ export const adminApi = {
       page: String(page),
       limit: String(limit),
     }),
+
+  sendEarlyAccessCredentials: (id: string, personalizedMessage: string, resetPasswordIfExists = true) =>
+    adminClient.post<{ message: string; data: EarlyAccessProvisionResult }>(
+      `/admin/early-access/${id}/send-credentials`,
+      { personalizedMessage, resetPasswordIfExists }
+    ),
 
   // Bug Reports / Ticket System
   listBugReports: (page = 1, limit = 20, filters?: { status?: string; priority?: string; type?: string; search?: string }) =>
