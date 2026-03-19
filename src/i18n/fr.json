@@ -1712,6 +1712,14 @@
         "keepTalkingButton": "Continuer à discuter",
         "endMeetingButton": "Terminer la réunion"
       },
+      "voice": {
+        "enable": "Activer la voix",
+        "connecting": "Connexion vocale…",
+        "error": "Erreur de voix",
+        "mute": "Couper le son",
+        "unmute": "Rétablir le son",
+        "leave": "Quitter la voix"
+      },
       "complete": {
         "title": "Belle connexion ! ☕",
         "duration": "Durée",

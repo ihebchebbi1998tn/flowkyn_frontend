@@ -255,6 +255,8 @@ export function GameBoardRouter({
         <CoffeeRouletteBoard
           participants={participants}
           currentUserId={participantId || ''}
+          sessionId={sessionId}
+          eventId={eventId}
           initialSnapshot={initialSnapshot}
           gameData={gameData}
           onEmitAction={onEmitAction}

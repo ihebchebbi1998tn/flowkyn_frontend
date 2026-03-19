@@ -1124,6 +1124,14 @@
         "keepTalkingButton": "Keep Talking",
         "endMeetingButton": "End Meeting"
       },
+      "voice": {
+        "enable": "Enable voice",
+        "connecting": "Connecting voice…",
+        "error": "Voice error",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "leave": "Leave voice"
+      },
       "complete": {
         "title": "Great Connection! ☕",
         "duration": "Duration",

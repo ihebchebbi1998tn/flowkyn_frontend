@@ -48,6 +48,8 @@ interface CoffeeSnapshot {
 interface CoffeeRouletteBoardProps {
   participants: any[];
   currentUserId: string;
+  sessionId?: string | null;
+  eventId?: string;
   initialSnapshot?: any;
   gameData?: any;
   onEmitAction: (actionType: string, payload?: any) => Promise<void>;
@@ -57,6 +59,8 @@ interface CoffeeRouletteBoardProps {
 export function CoffeeRouletteBoard({
   participants,
   currentUserId,
+  sessionId,
+  eventId,
   initialSnapshot,
   gameData,
   onEmitAction,
@@ -305,6 +309,10 @@ export function CoffeeRouletteBoard({
     const person1 = isMyPerson1 ? myPair.person1 : myPair.person2;
     const person2 = isMyPerson1 ? myPair.person2 : myPair.person1;
 
+    const pairId = myPair.id;
+    const isOfferer = isMyPerson1; // person1 in snapshot creates the offer
+    const partnerParticipantId = isOfferer ? myPair.person2.participantId : myPair.person1.participantId;
+
     return (
       <RoomThemeProvider themeName={themeName}>
         <MeetingRoom
@@ -315,6 +323,13 @@ export function CoffeeRouletteBoard({
           promptsUsed={promptsUsed}
           maxPrompts={6}
           decisionRequired={decisionRequired}
+          sessionId={sessionId || undefined}
+          eventId={eventId}
+          pairId={pairId}
+          myParticipantId={currentUserId}
+          partnerParticipantId={partnerParticipantId}
+          isOfferer={isOfferer}
+          gamesSocket={gamesSocket}
           onNextPrompt={handleNextPrompt}
           onContinue={handleContinue}
           onEnd={handleEnd}

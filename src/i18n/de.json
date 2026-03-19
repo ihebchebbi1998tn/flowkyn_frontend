@@ -1696,6 +1696,14 @@
         "keepTalkingButton": "Weiterchatten",
         "endMeetingButton": "Besprechung beenden"
       },
+      "voice": {
+        "enable": "Stimme aktivieren",
+        "connecting": "Stimme wird verbunden…",
+        "error": "Stimmfehler",
+        "mute": "Stumm",
+        "unmute": "Ton an",
+        "leave": "Stimme verlassen"
+      },
       "complete": {
         "title": "Tolle Verbindung! ☕",
         "duration": "Dauer",

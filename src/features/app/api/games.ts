@@ -15,10 +15,18 @@
 import { api } from './client';
 import type { GameType, GameSession } from '@/types';
 
+export type IceServersResponse = {
+  iceServers: Array<{ urls: string | string[]; username?: string; credential?: string }>;
+};
+
 export const gamesApi = {
   /** List all available game types (cached for 30 min client-side) */
   listTypes: () =>
     api.get<GameType[]>('/game-types'),
+
+  /** WebRTC voice helpers: ICE servers (STUN + optional TURN) */
+  getIceServers: (eventId?: string) =>
+    api.get<IceServersResponse>('/voice/ice-servers', undefined, eventId),
 
   /** Start a new game session within an event */
   startSession: (eventId: string, gameTypeId: string, totalRounds?: number) =>

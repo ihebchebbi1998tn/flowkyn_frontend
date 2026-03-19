@@ -4,15 +4,16 @@
  * Takes minimal height, only what's needed
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { MessageCircle, Clock, Lightbulb, RotateCcw, LogOut } from 'lucide-react';
+import { MessageCircle, Clock, Lightbulb, RotateCcw, LogOut, Mic, MicOff, PhoneOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useRoomTheme, useThemeVariables } from '../theme/RoomThemeContext';
+import { useCoffeeVoiceCall } from '../hooks/useCoffeeVoiceCall';
 
 interface Person {
   participantId: string;
@@ -33,6 +34,13 @@ interface MeetingRoomProps {
   onContinue?: () => void;
   onEnd?: () => void;
   isLoading?: boolean;
+  sessionId?: string;
+  eventId?: string;
+  pairId: string;
+  myParticipantId: string;
+  partnerParticipantId: string;
+  isOfferer: boolean;
+  gamesSocket?: any;
 }
 
 export function MeetingRoom({
@@ -47,11 +55,47 @@ export function MeetingRoom({
   onContinue,
   onEnd,
   isLoading = false,
+  sessionId,
+  eventId,
+  pairId,
+  myParticipantId,
+  partnerParticipantId,
+  isOfferer,
+  gamesSocket,
 }: MeetingRoomProps) {
   const { t } = useTranslation();
   const themeVars = useThemeVariables();
   const [displayTime, setDisplayTime] = useState(formatTime(timeRemaining));
   const [isWarning, setIsWarning] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const {
+    status: voiceStatus,
+    error: voiceError,
+    remoteStream,
+    isMuted,
+    startVoice,
+    stopVoice,
+    toggleMute,
+  } = useCoffeeVoiceCall({
+    sessionId: sessionId || '',
+    pairId,
+    myParticipantId,
+    partnerParticipantId,
+    isOfferer,
+    eventId,
+    gamesSocket,
+  });
+
+  // Attach remote audio stream to a hidden audio element.
+  useEffect(() => {
+    if (!audioRef.current) return;
+    if (!remoteStream) return;
+    // @ts-expect-error - srcObject exists in modern browsers.
+    audioRef.current.srcObject = remoteStream;
+    void audioRef.current.play().catch(() => {});
+  }, [remoteStream]);
 
   useEffect(() => {
     setDisplayTime(formatTime(timeRemaining));
@@ -60,6 +104,7 @@ export function MeetingRoom({
 
   return (
     <div style={themeVars as React.CSSProperties}>
+      <audio ref={audioRef} className="hidden" autoPlay />
       <div
         className="w-full py-6 px-8 flex flex-col gap-6"
         style={{
@@ -288,8 +333,74 @@ export function MeetingRoom({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex gap-3 justify-center relative z-10"
+          className="flex gap-3 justify-center relative z-10 flex-wrap"
         >
+          {/* Voice Controls */}
+          <div className="flex gap-2 items-center">
+            {(voiceStatus === 'idle' || voiceStatus === 'error') && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 h-10"
+                disabled={!sessionId}
+                onClick={async () => {
+                  await startVoice();
+                }}
+              >
+                <Mic className="h-4 w-4" />
+                {t('gamePlay.coffeeRoulette.voice.enable')}
+              </Button>
+            )}
+
+            {voiceStatus === 'connecting' || voiceStatus === 'requesting_microphone' ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 h-10"
+                disabled
+              >
+                {t('gamePlay.coffeeRoulette.voice.connecting')}
+              </Button>
+            ) : null}
+
+            {voiceStatus === 'connected' && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 h-10"
+                  onClick={() => toggleMute()}
+                >
+                  {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                  {isMuted ? t('gamePlay.coffeeRoulette.voice.unmute') : t('gamePlay.coffeeRoulette.voice.mute')}
+                </Button>
+
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="gap-2 h-10"
+                  onClick={async () => {
+                    await stopVoice({ emitHangup: true });
+                  }}
+                >
+                  <PhoneOff className="h-4 w-4" />
+                  {t('gamePlay.coffeeRoulette.voice.leave')}
+                </Button>
+              </>
+            )}
+          </div>
+
+          {voiceStatus === 'error' && (
+            <div className="w-full text-center text-caption text-destructive">
+              {t('gamePlay.coffeeRoulette.voice.error')}
+              {voiceError ? (
+                <div className="mt-1 text-[11px] opacity-80">
+                  {voiceError}
+                </div>
+              ) : null}
+            </div>
+          )}
+
           {onNextPrompt && (
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
@@ -331,7 +442,10 @@ export function MeetingRoom({
           {onEnd && (
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
-                onClick={onEnd}
+                onClick={async () => {
+                  await stopVoice({ emitHangup: true });
+                  onEnd();
+                }}
                 disabled={isLoading}
                 className="gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all text-white"
                 style={{
