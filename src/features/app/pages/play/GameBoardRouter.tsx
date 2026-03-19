@@ -10,6 +10,23 @@ import type { GameTypeKey } from './gameTypes';
 import { GAME_TYPES, GAME_CONFIGS, GAME_KEY_TO_CONFIG_ID } from './gameTypes';
 import { toast } from 'sonner';
 
+type GameTypeRow = { id: string; key: GameTypeKey; name?: string };
+type GameSessionRow = { id: string; active_round_id?: string | null };
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return !!v && typeof v === 'object';
+}
+
+function isGameTypeRow(v: unknown): v is GameTypeRow {
+  if (!isRecord(v)) return false;
+  return typeof v.id === 'string' && typeof v.key === 'string';
+}
+
+function isGameSessionRow(v: unknown): v is GameSessionRow {
+  if (!isRecord(v)) return false;
+  return typeof v.id === 'string';
+}
+
 interface GameBoardRouterProps {
   config: {
     gameTypeKey: GameTypeKey;
@@ -24,10 +41,10 @@ interface GameBoardRouterProps {
   setSessionId: (id: string | null) => void;
   activeRoundId: string | null;
   setActiveRoundId: (id: string | null) => void;
-  initialSnapshot: any;
-  setInitialSnapshot: (snap: any) => void;
-  gameData: any;
-  setGameData: (data: any) => void;
+  initialSnapshot: unknown;
+  setInitialSnapshot: (snap: unknown) => void;
+  gameData: unknown;
+  setGameData: (data: unknown) => void;
   isGameAdmin: boolean;
   winsPosts: Array<{
     id: string;
@@ -42,9 +59,9 @@ interface GameBoardRouterProps {
   winsEndTimeIso?: string | null;
   winsPostingClosed?: boolean;
   postParticipantId: string | null;
-  refetchPosts: () => Promise<any>;
+  refetchPosts: () => Promise<unknown>;
   gamesSocket: ReturnType<typeof import('@/hooks/useSocket')['useGamesSocket']>;
-  showError: (err: any, label?: string) => void;
+  showError: (err: unknown, label?: string) => void;
 }
 
 export function GameBoardRouter({
@@ -81,14 +98,14 @@ export function GameBoardRouter({
     currentUserAvatar: (currentUserName || '??').slice(0, 2).toUpperCase(),
     currentUserAvatarUrl,
     // Some boards may display a round number; do not pass roundId UUIDs here.
-    round: typeof gameData?.round === 'number'
+    round: (isRecord(gameData) && typeof gameData.round === 'number')
       ? gameData.round
-      : (typeof initialSnapshot?.round === 'number' ? initialSnapshot.round : 1),
+      : ((isRecord(initialSnapshot) && typeof initialSnapshot.round === 'number') ? initialSnapshot.round : 1),
     onRoundComplete: (r: number) => console.log('[GamePlay] Round complete:', r),
   };
 
   const onEmitAction = useCallback(
-    async (actionType: string, payload?: any) => {
+    async (actionType: string, payload?: unknown) => {
       console.log('[GamePlay] onEmitAction', {
         gameKey: config.gameTypeKey,
         actionType,
@@ -101,22 +118,25 @@ export function GameBoardRouter({
       // Auto-create a game session if one doesn't exist yet (e.g. first "Start Round")
       if (!sid && eventId) {
         try {
-          const types = await gamesApi.listTypes();
-          const typeRow = (types as any[]).find((gt: any) => gt.key === config.gameTypeKey);
+          const typesUnknown = await gamesApi.listTypes();
+          const types = Array.isArray(typesUnknown) ? typesUnknown : [];
+          const typeRow = types.find((gt) => isGameTypeRow(gt) && gt.key === config.gameTypeKey) as GameTypeRow | undefined;
           if (!typeRow) {
             console.error('[GamePlay] Unknown game type key:', config.gameTypeKey);
             return;
           }
           const desiredRounds =
             actionType === 'two_truths:start'
-              ? Number(payload?.totalRounds)
+              ? Number(isRecord(payload) ? payload.totalRounds : undefined)
               : undefined;
           const totalRoundsToSend =
             Number.isFinite(desiredRounds) && Number.isInteger(desiredRounds) && desiredRounds >= 1
               ? desiredRounds
               : undefined;
 
-          const newSession = (await gamesApi.startSession(eventId, typeRow.id, totalRoundsToSend)) as any;
+          const newSessionUnknown = await gamesApi.startSession(eventId, typeRow.id, totalRoundsToSend);
+          if (!isGameSessionRow(newSessionUnknown)) throw new Error('Invalid game session response');
+          const newSession = newSessionUnknown;
           console.log('[GamePlay] Auto-created game session', {
             eventId,
             gameKey: config.gameTypeKey,
@@ -128,10 +148,10 @@ export function GameBoardRouter({
           if (newSession.active_round_id) setActiveRoundId(newSession.active_round_id);
 
           if (gamesSocket.isConnected) {
-            const resp: any = await gamesSocket.emit<any>('game:join', { sessionId: sid });
-            const data = resp?.data || resp;
-            if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
-            if (data?.snapshot) {
+            const respUnknown = await gamesSocket.emit('game:join', { sessionId: sid });
+            const data = isRecord(respUnknown) && isRecord(respUnknown.data) ? respUnknown.data : respUnknown;
+            if (isRecord(data) && typeof data.activeRoundId === 'string') setActiveRoundId(data.activeRoundId);
+            if (isRecord(data) && data.snapshot) {
               setInitialSnapshot(data.snapshot);
               setGameData(data.snapshot);
             }
@@ -143,9 +163,9 @@ export function GameBoardRouter({
               gameName: typeRow.name || config.gameTypeKey,
             })
           );
-        } catch (err: any) {
-          console.error('[GamePlay] Failed to auto-create game session:', err?.message || err);
-          const backendCode = err?.response?.data?.code || err?.code;
+        } catch (err: unknown) {
+          console.error('[GamePlay] Failed to auto-create game session:', (err as any)?.message || err);
+          const backendCode = (err as any)?.response?.data?.code || (err as any)?.code;
           if (backendCode === 'SESSION_NOT_ACTIVE') {
             showError(
               err,
@@ -195,7 +215,7 @@ export function GameBoardRouter({
         sessionId: sid,
         roundId: activeRoundId || undefined,
         actionType,
-        payload: payload || {},
+        payload: isRecord(payload) ? payload : {},
       });
       console.log('[GamePlay] game:action ack', {
         actionType,
@@ -259,8 +279,8 @@ export function GameBoardRouter({
             try {
               await eventsApi.createPost(eventId, postParticipantId, content);
               await refetchPosts();
-            } catch (err: any) {
-              const code = err?.response?.data?.code || err?.code;
+            } catch (err: unknown) {
+              const code = (err as any)?.response?.data?.code || (err as any)?.code;
               if (code === 'EVENT_ENDED') {
                 toast.error(t('errors.eventEnded', { defaultValue: 'This activity has ended. Posting is now closed.' }));
               } else {
@@ -273,8 +293,8 @@ export function GameBoardRouter({
             try {
               await postsApi.react(postId, postParticipantId, reactionType, eventId || undefined);
               await refetchPosts();
-            } catch (err: any) {
-              const code = err?.response?.data?.code || err?.code;
+            } catch (err: unknown) {
+              const code = (err as any)?.response?.data?.code || (err as any)?.code;
               if (code === 'EVENT_ENDED') {
                 toast.error(t('errors.eventEnded', { defaultValue: 'This activity has ended. Posting is now closed.' }));
               } else {

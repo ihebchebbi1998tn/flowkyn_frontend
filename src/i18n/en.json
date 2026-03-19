@@ -2380,6 +2380,22 @@
       "deleted": "Department deleted"
     }
   },
+  "templates": {
+    "avatars": {
+      "title": "Avatars",
+      "description": "{{count}} DiceBear styles available. Sizes, groups, fallbacks, and the AvatarPicker component.",
+      "allStylesLabel": "All {{count}} DiceBear Styles",
+      "sizesLabel": "Sizes",
+      "withImagesLabel": "With Images (Avataaars)",
+      "stackedGroupsLabel": "Stacked Groups",
+      "smallGroupShown": "Small group ({{count}} shown)",
+      "largeGroupShown": "Large group ({{count}} shown)",
+      "fallbackColorsLabel": "Fallback Colors",
+      "statusIndicatorsLabel": "With Status Indicators",
+      "pickerTitle": "Avatar Picker Component",
+      "pickerBadge": "{{styles}} styles · {{avatars}} avatars"
+    }
+  },
   "notificationsPage": {
     "allCaughtUp": "You're all caught up! New notifications will appear here.",
     "subtitle": "Stay up to date with what’s happening in your workspace.",

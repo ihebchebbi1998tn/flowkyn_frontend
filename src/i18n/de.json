@@ -1942,6 +1942,22 @@
       "deleted": "Abteilung gelöscht"
     }
   },
+  "templates": {
+    "avatars": {
+      "title": "Avatare",
+      "description": "{{count}} DiceBear‑Stile verfügbar. Größen, Gruppen, Fallbacks und die AvatarPicker‑Komponente.",
+      "allStylesLabel": "Alle {{count}} DiceBear‑Stile",
+      "sizesLabel": "Größen",
+      "withImagesLabel": "Mit Bildern (Avataaars)",
+      "stackedGroupsLabel": "Gestapelte Gruppen",
+      "smallGroupShown": "Kleine Gruppe ({{count}} angezeigt)",
+      "largeGroupShown": "Große Gruppe ({{count}} angezeigt)",
+      "fallbackColorsLabel": "Fallback‑Farben",
+      "statusIndicatorsLabel": "Mit Statusindikatoren",
+      "pickerTitle": "Avatar‑Picker‑Komponente",
+      "pickerBadge": "{{styles}} Stile · {{avatars}} Avatare"
+    }
+  },
   "notificationsPage": {
     "allCaughtUp": "Alles aktuell! Neue Benachrichtigungen erscheinen hier.",
     "total": "Alle Benachrichtigungen",

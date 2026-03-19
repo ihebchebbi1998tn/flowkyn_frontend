@@ -14,6 +14,11 @@ import { useCreateEvent, useUpdateEvent, useEvent, useOrgDepartments } from '@/h
 import { organizationsApi } from '@/features/app/api/organizations';
 import { JoinAfterCreateModal } from '@/features/app/components/events/JoinAfterCreateModal';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
+import type { Department } from '@/types';
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return !!v && typeof v === 'object';
+}
 
 export default function EventForm() {
   const { t } = useTranslation();
@@ -109,6 +114,10 @@ export default function EventForm() {
   // Populate form when editing
   useEffect(() => {
     if (existingEvent && isEditing) {
+      const allowGameControl =
+        isRecord(existingEvent) && typeof (existingEvent as any).allow_participant_game_control === 'boolean'
+          ? (existingEvent as any).allow_participant_game_control
+          : true;
       setForm({
         title: existingEvent.title || '',
         description: existingEvent.description || '',
@@ -122,7 +131,7 @@ export default function EventForm() {
         allow_chat: existingEvent.allow_chat ?? true,
         auto_start_games: existingEvent.auto_start_games ?? false,
         max_rounds: existingEvent.max_rounds ?? 5,
-        allow_participant_game_control: (existingEvent as any).allow_participant_game_control ?? true,
+        allow_participant_game_control: allowGameControl,
       });
     }
   }, [existingEvent, isEditing]);
@@ -138,12 +147,14 @@ export default function EventForm() {
         const invites = await organizationsApi.listInvitations(orgId);
 
         const all = [
-          ...members.map((m: any) => ({ email: m.email, name: m.name, status: 'active' })),
+          ...members
+            .filter((m: any) => m && typeof m.email === 'string')
+            .map((m: any) => ({ email: String(m.email), name: typeof m.name === 'string' ? m.name : undefined, status: 'active' })),
           ...invites
             // Include all non-accepted invitations so organizers see everyone
             // they have tried to invite, including onboarding invites.
-            .filter((i: any) => i.status !== 'accepted')
-            .map((i: any) => ({ email: i.email, status: 'invited' })),
+            .filter((i: any) => i && typeof i.email === 'string' && i.status !== 'accepted')
+            .map((i: any) => ({ email: String(i.email), status: 'invited' })),
         ];
         // Deduplicate emails
         const uniqueTeamMembers = Array.from(
@@ -171,7 +182,7 @@ export default function EventForm() {
     if (isEditing) return;
     if (departmentsLoading) return;
     if (!departments || departments.length === 0) return;
-    setSelectedDepartmentIds((prev) => (prev.length > 0 ? prev : departments.map((d: any) => d.id)));
+    setSelectedDepartmentIds((prev) => (prev.length > 0 ? prev : (departments as Department[]).map((d) => d.id)));
   }, [departments, departmentsLoading, isEditing]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -212,9 +223,7 @@ export default function EventForm() {
         onSuccess: () => navigate(`/events/${editId}`),
       });
     } else {
-      const createPayload: any = {
-        ...payload,
-      };
+      const createPayload: Record<string, unknown> = { ...payload };
 
       if (selectedDepartmentIds.length > 0) {
         createPayload.invite_department_ids = selectedDepartmentIds;
@@ -226,7 +235,7 @@ export default function EventForm() {
         createPayload,
         { 
           onSuccess: (data: any) => {
-            setCreatedEventId(data.id);
+            setCreatedEventId(String(data.id));
             setShowJoinModal(true);
           } 
         }
@@ -311,7 +320,10 @@ export default function EventForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.mode')}</Label>
-              <Select value={form.event_mode} onValueChange={v => setForm(f => ({ ...f, event_mode: v as any }))}>
+              <Select
+                value={form.event_mode}
+                onValueChange={(v) => setForm((f) => ({ ...f, event_mode: v === 'async' ? 'async' : 'sync' }))}
+              >
                 <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="sync">{t('events.liveSync')}</SelectItem>
@@ -321,7 +333,10 @@ export default function EventForm() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.visibility')}</Label>
-              <Select value={form.visibility} onValueChange={v => setForm(f => ({ ...f, visibility: v as any }))}>
+              <Select
+                value={form.visibility}
+                onValueChange={(v) => setForm((f) => ({ ...f, visibility: v === 'public' ? 'public' : 'private' }))}
+              >
                 <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="public">{t('events.visibilities.public')}</SelectItem>
@@ -453,7 +468,7 @@ export default function EventForm() {
             <Label className="text-[13px]">{t('events.selectDepartments', { defaultValue: 'Select departments' })}</Label>
 
             <div className="flex flex-wrap gap-2">
-              {(departments || []).map((dept: any) => (
+              {(departments as Department[] | undefined || []).map((dept) => (
                 <label key={dept.id} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
                   <input
                     type="checkbox"

@@ -21,6 +21,15 @@ import { gamesApi } from '@/features/app/api/games';
 import { GameBoardRouter } from './GameBoardRouter';
 import { GAME_CONFIGS } from './gameTypes';
 
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return !!v && typeof v === 'object';
+}
+
+function getDataArray(v: unknown): unknown[] {
+  if (isRecord(v) && Array.isArray(v.data)) return v.data as unknown[];
+  return [];
+}
+
 // ─── Profile helpers (same keys as EventLobby) ────────────────────────────────
 const profileKey = (eventId: string) => `event_profile_${eventId}`;
 
@@ -119,8 +128,9 @@ function GamePlayWithoutBoundary() {
           await acceptInvitation.mutateAsync({ eventId, token: inviteToken });
         } else {
           const result = await joinEvent.mutateAsync(eventId);
-          if ((result as any)?.participant_id) {
-            localStorage.setItem(`member_participant_id_${eventId}`, (result as any).participant_id);
+          const pid = isRecord(result) ? result.participant_id : null;
+          if (typeof pid === 'string') {
+            localStorage.setItem(`member_participant_id_${eventId}`, pid);
           }
         }
       } else {
@@ -142,13 +152,13 @@ function GamePlayWithoutBoundary() {
       }
       console.log('[GamePlay] handleJoin success', { eventId, mode: isAuthenticated ? 'member' : 'guest' });
       setHasJoined(true);
-    } catch (err: any) {
-      if (err?.status === 409 || err?.response?.status === 409) {
+    } catch (err: unknown) {
+      if ((err as any)?.status === 409 || (err as any)?.response?.status === 409) {
         console.warn('[GamePlay] handleJoin already participant (409)', { eventId, error: err });
         setHasJoined(true);
       } else {
         console.error('[GamePlay] handleJoin error', err);
-        setJoinError(err?.message || t('event.joinFailed', { defaultValue: 'Failed to join event' }));
+        setJoinError((err as any)?.message || t('event.joinFailed', { defaultValue: 'Failed to join event' }));
       }
     } finally {
       setIsJoining(false);
@@ -186,7 +196,7 @@ function GamePlayWithoutBoundary() {
   const { data: messagesData, refetch: refetchMessages } = useEventMessages(eventId || '', 1, 50, canFetchParticipantData);
   const { data: postsData, refetch: refetchPosts } = useEventPosts(eventId || '', 1, 50, canFetchParticipantData);
 
-  const eventPublicObj = eventData as any;
+  const eventPublicObj: Record<string, unknown> | null = isRecord(eventData) ? (eventData as Record<string, unknown>) : null;
   console.log('[GamePlay] data load', {
     eventId,
     canFetchParticipantData,
@@ -196,45 +206,48 @@ function GamePlayWithoutBoundary() {
   });
 
   // Map API participants to GameParticipant shape (dedupe by id to avoid any duplicates)
-  const rawParticipants = (participantsData as any)?.data || [];
+  const rawParticipants = getDataArray(participantsData);
   const seenParticipantIds = new Set<string>();
   const participants: GameParticipant[] = rawParticipants
-    .filter((p: any) => {
-      if (!p?.id || seenParticipantIds.has(p.id)) return false;
+    .filter((p) => {
+      if (!isRecord(p) || typeof p.id !== 'string') return false;
+      if (seenParticipantIds.has(p.id)) return false;
       seenParticipantIds.add(p.id);
       return true;
     })
-    .map((p: any) => ({
-    id: p.id,
-    name: p.name || t('common.unknown', { defaultValue: 'Unknown' }),
-    email: p.email || null,
-    avatar: (p.name || '??').slice(0, 2).toUpperCase(),
-    avatarUrl: p.avatar || null,
-    status: 'joined' as const,
-    joinedAt: p.joined_at || null,
-    score: 0,
-    isHost: !!p.is_host,
-  }));
+    .map((p) => ({
+      id: String((p as any).id),
+      name: typeof (p as any).name === 'string' && (p as any).name ? (p as any).name : t('common.unknown', { defaultValue: 'Unknown' }),
+      email: typeof (p as any).email === 'string' ? (p as any).email : null,
+      avatar: (typeof (p as any).name === 'string' && (p as any).name ? (p as any).name : '??').slice(0, 2).toUpperCase(),
+      avatarUrl: typeof (p as any).avatar === 'string' ? (p as any).avatar : null,
+      status: 'joined' as const,
+      joinedAt: typeof (p as any).joined_at === 'string' ? (p as any).joined_at : null,
+      score: 0,
+      isHost: !!(p as any).is_host,
+    }));
 
   // ─── Chat messages (persistent API load + live WebSocket) ─────────────────
   const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
   const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
 
-  const rawMessages = (messagesData as any)?.data || [];
-  const initialMessages: ChatMessage[] = rawMessages.map((m: any) => ({
-    id: m.id,
+  const rawMessages = getDataArray(messagesData);
+  const initialMessages: ChatMessage[] = rawMessages
+    .filter((m) => isRecord(m) && typeof m.id === 'string' && typeof m.message === 'string')
+    .map((m) => ({
+    id: String((m as any).id),
     // For authenticated users: server stores user_id (real user ID). For guests: no user_id.
-    userId: m.user_id || m.participant_id,
-    participantId: m.participant_id,
-    senderName: m.user_name || m.guest_name || t('common.unknown', { defaultValue: 'Unknown' }),
-    senderAvatar: (m.user_name || m.guest_name || '??').slice(0, 2).toUpperCase(),
-    senderAvatarUrl: m.avatar_url || null,
-    message: m.message,
-    timestamp: m.created_at,
+    userId: (m as any).user_id || (m as any).participant_id,
+    participantId: (m as any).participant_id,
+    senderName: (m as any).user_name || (m as any).guest_name || t('common.unknown', { defaultValue: 'Unknown' }),
+    senderAvatar: String((m as any).user_name || (m as any).guest_name || '??').slice(0, 2).toUpperCase(),
+    senderAvatarUrl: (m as any).avatar_url || null,
+    message: String((m as any).message),
+    timestamp: String((m as any).created_at),
     // isOwn: compare against user.id for auth users, guest participant ID for guests
     isOwn: isGuest
-      ? m.participant_id === guestParticipantId
-      : !!(m.user_id && m.user_id === user?.id),
+      ? (m as any).participant_id === guestParticipantId
+      : !!((m as any).user_id && (m as any).user_id === user?.id),
   }));
 
   // Merge pinned (if any) + initial (from API) + live (from WebSocket) — deduplicate by id
@@ -246,8 +259,8 @@ function GamePlayWithoutBoundary() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isResolvingSession, setIsResolvingSession] = useState(false);
   const [activeRoundId, setActiveRoundId] = useState<string | null>(null);
-  const [initialSnapshot, setInitialSnapshot] = useState<any>(null);
-  const [gameData, setGameData] = useState<any>(null);
+  const [initialSnapshot, setInitialSnapshot] = useState<unknown>(null);
+  const [gameData, setGameData] = useState<unknown>(null);
   const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────

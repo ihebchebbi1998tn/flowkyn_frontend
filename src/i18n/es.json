@@ -2029,6 +2029,22 @@
       "deleted": "Departamento eliminado"
     }
   },
+  "templates": {
+    "avatars": {
+      "title": "Avatares",
+      "description": "{{count}} estilos de DiceBear disponibles. Tamaños, grupos, fallbacks y el componente AvatarPicker.",
+      "allStylesLabel": "Los {{count}} estilos de DiceBear",
+      "sizesLabel": "Tamaños",
+      "withImagesLabel": "Con imágenes (Avataaars)",
+      "stackedGroupsLabel": "Grupos apilados",
+      "smallGroupShown": "Grupo pequeño ({{count}} mostrados)",
+      "largeGroupShown": "Grupo grande ({{count}} mostrados)",
+      "fallbackColorsLabel": "Colores de respaldo",
+      "statusIndicatorsLabel": "Con indicadores de estado",
+      "pickerTitle": "Componente Avatar Picker",
+      "pickerBadge": "{{styles}} estilos · {{avatars}} avatares"
+    }
+  },
   "notificationsPage": {
     "allCaughtUp": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",
     "subtitle": "Mantente al tanto de lo que ocurre en tu espacio de trabajo.",

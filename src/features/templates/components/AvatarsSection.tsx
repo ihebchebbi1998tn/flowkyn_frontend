@@ -3,6 +3,7 @@
  */
 
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createAvatar } from '@dicebear/core';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { AvatarPicker, AVATAR_STYLES } from '@/components/common/AvatarPicker';
@@ -45,19 +46,24 @@ function StylePreview({ name, style }: { name: string; style: any }) {
 
 export function AvatarsSection() {
   const [pickerAvatar, setPickerAvatar] = useState<string>('');
+  const { t } = useTranslation();
 
   return (
-    <Section id="avatars" title="Avatars" description={`${AVATAR_STYLES.length} DiceBear styles available. Sizes, groups, fallbacks, and the AvatarPicker component.`}>
+    <Section
+      id="avatars"
+      title={t('templates.avatars.title')}
+      description={t('templates.avatars.description', { count: AVATAR_STYLES.length })}
+    >
 
       {/* All DiceBear styles */}
-      <ShowcaseGrid label={`All ${AVATAR_STYLES.length} DiceBear Styles`} cols={4}>
+      <ShowcaseGrid label={t('templates.avatars.allStylesLabel', { count: AVATAR_STYLES.length })} cols={4}>
         {AVATAR_STYLES.map(s => (
           <StylePreview key={s.name} name={s.name} style={s.style} />
         ))}
       </ShowcaseGrid>
 
       {/* Sizes */}
-      <ShowcaseRow label="Sizes">
+      <ShowcaseRow label={t('templates.avatars.sizesLabel')}>
         {[6, 8, 10, 12, 16].map((size, i) => (
           <Avatar key={size} style={{ height: size * 4, width: size * 4 }}>
             <AvatarFallback className={cn('text-label font-semibold', SAMPLE_USERS[i].color)}>
@@ -68,7 +74,7 @@ export function AvatarsSection() {
       </ShowcaseRow>
 
       {/* With Images */}
-      <ShowcaseRow label="With Images (Avataaars)">
+      <ShowcaseRow label={t('templates.avatars.withImagesLabel')}>
         {SAMPLE_USERS.slice(0, 6).map(user => (
           <Avatar key={user.name} className="h-10 w-10">
             <AvatarImage src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${user.name}`} alt={user.name} />
@@ -78,7 +84,7 @@ export function AvatarsSection() {
       </ShowcaseRow>
 
       {/* Stacked Groups */}
-      <ShowcaseRow label="Stacked Groups">
+      <ShowcaseRow label={t('templates.avatars.stackedGroupsLabel')}>
         <div className="space-y-4 w-full">
           {/* Small group */}
           <div className="flex items-center gap-3">
@@ -93,7 +99,7 @@ export function AvatarsSection() {
                 +3
               </div>
             </div>
-            <span className="text-body-sm text-muted-foreground">Small group (4 shown)</span>
+            <span className="text-body-sm text-muted-foreground">{t('templates.avatars.smallGroupShown', { count: 4 })}</span>
           </div>
 
           {/* Large group */}
@@ -109,13 +115,13 @@ export function AvatarsSection() {
                 +12
               </div>
             </div>
-            <span className="text-body-sm text-muted-foreground">Large group (8 shown)</span>
+            <span className="text-body-sm text-muted-foreground">{t('templates.avatars.largeGroupShown', { count: 8 })}</span>
           </div>
         </div>
       </ShowcaseRow>
 
       {/* Fallback Colors */}
-      <ShowcaseRow label="Fallback Colors">
+      <ShowcaseRow label={t('templates.avatars.fallbackColorsLabel')}>
         {SAMPLE_USERS.map(user => (
           <div key={user.name} className="flex items-center gap-2">
             <Avatar className="h-9 w-9">
@@ -127,7 +133,7 @@ export function AvatarsSection() {
       </ShowcaseRow>
 
       {/* Status Indicators */}
-      <ShowcaseRow label="With Status Indicators">
+      <ShowcaseRow label={t('templates.avatars.statusIndicatorsLabel')}>
         {[
           { user: SAMPLE_USERS[0], status: 'online', color: 'bg-success' },
           { user: SAMPLE_USERS[1], status: 'away', color: 'bg-warning' },
@@ -153,8 +159,8 @@ export function AvatarsSection() {
       {/* AvatarPicker Component */}
       <div className="rounded-lg border border-border bg-card p-5">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-label uppercase text-muted-foreground">Avatar Picker Component</p>
-          <Badge variant="outline" className="text-label">{AVATAR_STYLES.length} styles · 36 avatars</Badge>
+          <p className="text-label uppercase text-muted-foreground">{t('templates.avatars.pickerTitle')}</p>
+          <Badge variant="outline" className="text-label">{t('templates.avatars.pickerBadge', { styles: AVATAR_STYLES.length, avatars: 36 })}</Badge>
         </div>
         <div className="max-w-lg">
           <AvatarPicker
