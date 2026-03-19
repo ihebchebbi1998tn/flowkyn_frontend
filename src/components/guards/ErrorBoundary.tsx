@@ -30,6 +30,39 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('[ErrorBoundary] Uncaught error:', error, errorInfo);
+
+    // Auto-recover from known "stale chunk" deploy issues.
+    // When a user has an old UI bundle loaded and the corresponding dynamic import chunk
+    // was removed by the next deployment, we can auto-reload to fetch the fresh chunk graph.
+    const msg = String(error?.message || error);
+    const isChunkFetchFailure =
+      /Failed to fetch dynamically imported module/i.test(msg) ||
+      /Loading chunk/i.test(msg) ||
+      /ChunkLoadError/i.test(msg);
+
+    if (!isChunkFetchFailure) return;
+
+    // Prevent infinite reload loops for the same failing navigation.
+    const cacheKey = 'flowkyn_auto_recover_chunk_fetch_failed';
+    const alreadyRecovered = sessionStorage.getItem(cacheKey) === '1';
+    if (alreadyRecovered) return;
+
+    try {
+      sessionStorage.setItem(cacheKey, '1');
+    } catch {
+      // ignore
+    }
+
+    try {
+      if (navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage('CLEAN_CACHE');
+      }
+    } catch {
+      // ignore
+    }
+
+    // Small delay so the cache-clearing message is processed.
+    setTimeout(() => window.location.reload(), 250);
   }
 
   handleReset = () => {

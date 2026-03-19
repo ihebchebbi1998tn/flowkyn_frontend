@@ -35,6 +35,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
 
   const participantCount = participants.length;
   const canStart = participantCount >= 2;
+  const missingParticipantsToStart = Math.max(0, 2 - participantCount);
   const possiblePairs = Math.floor(participantCount / 2);
 
   // Generate possible pair combinations for visualization
@@ -55,7 +56,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
   return (
     <div style={themeVars as React.CSSProperties}>
       <div
-        className="min-h-screen flex flex-col"
+        className="min-h-[560px] flex flex-col"
         style={{
           background: `linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%)`,
         }}
@@ -64,7 +65,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="px-6 py-4 border-b"
+          className="px-5 py-3 border-b"
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderColor: 'var(--color-primary-light)',
@@ -77,12 +78,10 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 <Coffee className="w-6 h-6" style={{ color: 'var(--color-primary)' }} />
                 <div>
                   <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-                    {t('gamePlay.coffeeRoulette.lobby.title', { defaultValue: 'Coffee Roulette' })}
+                    {t('gamePlay.coffeeRoulette.lobby.title')}
                   </h1>
                   <p className="text-xs" style={{ color: 'var(--color-text-light)' }}>
-                    {t('gamePlay.coffeeRoulette.lobby.subtitle', {
-                      defaultValue: 'Random 1-on-1 coffee chats',
-                    })}
+                    {t('gamePlay.coffeeRoulette.lobby.subtitle')}
                   </p>
                 </div>
               </div>
@@ -95,7 +94,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                   }}
                 >
                   <p className="text-xs font-medium" style={{ color: 'var(--color-text-light)' }}>
-                    {t('gamePlay.coffeeRoulette.lobby.participants', { defaultValue: 'Participants' })}
+                    {t('gamePlay.coffeeRoulette.lobby.participants')}
                   </p>
                   <p className="text-xl font-bold" style={{ color: 'var(--color-primary)' }}>
                     {participantCount}
@@ -109,7 +108,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                   }}
                 >
                   <p className="text-xs font-medium" style={{ color: 'var(--color-text-light)' }}>
-                    {t('gamePlay.coffeeRoulette.lobby.pairs', { defaultValue: 'Pairs' })}
+                    {t('gamePlay.coffeeRoulette.lobby.pairs')}
                   </p>
                   <p className="text-xl font-bold" style={{ color: 'var(--color-accent)' }}>
                     {possiblePairs}
@@ -121,29 +120,46 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-6 overflow-y-auto">
+        <div className="flex-1 flex flex-col items-center justify-center px-5 py-4 overflow-y-auto">
           <div className="w-full max-w-6xl">
-            {/* All Participants - Horizontal Scroll */}
+            {/* All Participants - Compact Grid (works up to ~60) */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              className="mb-8"
+              className="mb-4"
             >
               <p className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
-                {t('gamePlay.coffeeRoulette.lobby.participants', { defaultValue: 'Participants' })} ({participantCount})
+                {t('gamePlay.coffeeRoulette.lobby.participants')} ({participantCount})
               </p>
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {participants.map((participant, idx) => (
-                  <motion.div
-                    key={participant.participantId}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: idx * 0.05 }}
-                    className="flex-shrink-0"
-                  >
-                    <div className="flex flex-col items-center gap-2">
-                      <Avatar className="w-14 h-14 ring-2" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
+              <div
+                className="rounded-xl border border-border/60 bg-white/60 p-3"
+                style={{ maxHeight: 220, overflowY: 'auto' }}
+              >
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(56px, 1fr))',
+                    gap: 12,
+                  }}
+                >
+                  {participants.map((participant, idx) => (
+                    <motion.div
+                      key={participant.participantId}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.25, delay: idx * 0.01 }}
+                      title={participant.name}
+                      className="flex items-center justify-center"
+                    >
+                      <Avatar
+                        className="w-9 h-9 ring-1"
+                        style={{
+                          outlineWidth: '1px',
+                          outlineColor: 'var(--color-primary)',
+                          outlineOffset: '2px',
+                        }}
+                      >
                         <AvatarImage
                           src={getSafeImageUrl(participant.avatarUrl)}
                           alt={participant.name}
@@ -152,19 +168,16 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                           style={{
                             backgroundColor: 'var(--color-primary)',
                             color: 'white',
-                            fontSize: '14px',
+                            fontSize: '12px',
                             fontWeight: '700',
                           }}
                         >
                           {participant.avatar}
                         </AvatarFallback>
                       </Avatar>
-                      <p className="text-xs font-medium text-center max-w-[60px] truncate" style={{ color: 'var(--color-text)' }}>
-                        {participant.name}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </motion.div>
 
@@ -176,39 +189,38 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 transition={{ duration: 0.4, delay: 0.1 }}
               >
                 <p className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
-                  {t('gamePlay.coffeeRoulette.lobby.possiblePairs', { defaultValue: 'Possible Pairings' })} ({possiblePairs})
+                  {t('gamePlay.coffeeRoulette.lobby.possiblePairs')} ({possiblePairs})
                 </p>
 
-                <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(280px, 1fr))` }}>
-                  {possiblePairCombos.map((pair, idx) => (
-                    <motion.div
-                      key={`pair-${idx}`}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: 0.1 + idx * 0.05 }}
-                      onMouseEnter={() => setHoveredPairIndex(idx)}
-                      onMouseLeave={() => setHoveredPairIndex(null)}
-                      className="transition-all duration-200"
-                    >
-                      <div
-                        className={cn(
-                          'p-4 rounded-xl flex items-center justify-between transition-all',
-                          hoveredPairIndex === idx
-                            ? 'shadow-lg scale-105'
-                            : 'shadow-md'
-                        )}
-                        style={{
-                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                          border: `2px solid ${
-                            hoveredPairIndex === idx
-                              ? 'var(--color-primary)'
-                              : 'var(--color-primary-light)'
-                          }`,
-                        }}
+                <div style={{ maxHeight: 260, overflowY: 'auto', paddingRight: 6 }}>
+                  <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(230px, 1fr))` }}>
+                    {possiblePairCombos.map((pair, idx) => (
+                      <motion.div
+                        key={`pair-${idx}`}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.25, delay: 0.05 + idx * 0.01 }}
+                        onMouseEnter={() => setHoveredPairIndex(idx)}
+                        onMouseLeave={() => setHoveredPairIndex(null)}
+                        className="transition-all duration-200"
                       >
+                        <div
+                          className={cn(
+                            'p-3 rounded-xl flex items-center justify-between transition-all',
+                            hoveredPairIndex === idx ? 'shadow-md scale-105' : 'shadow-sm'
+                          )}
+                          style={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            border: `2px solid ${
+                              hoveredPairIndex === idx
+                                ? 'var(--color-primary)'
+                                : 'var(--color-primary-light)'
+                            }`,
+                          }}
+                        >
                         {/* Person 1 */}
                         <div className="flex items-center gap-2 flex-1">
-                          <Avatar className="w-12 h-12 ring-2" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
+                          <Avatar className="w-10 h-10 ring-1" style={{ outlineWidth: '1px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
                             <AvatarImage
                               src={getSafeImageUrl(pair.person1.avatarUrl)}
                               alt={pair.person1.name}
@@ -217,7 +229,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                               style={{
                                 backgroundColor: 'var(--color-primary)',
                                 color: 'white',
-                                fontSize: '12px',
+                                fontSize: '11px',
                                 fontWeight: '700',
                               }}
                             >
@@ -247,7 +259,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                               {pair.person2.name}
                             </p>
                           </div>
-                          <Avatar className="w-12 h-12 ring-2" style={{ outlineWidth: '2px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
+                          <Avatar className="w-10 h-10 ring-1" style={{ outlineWidth: '1px', outlineColor: 'var(--color-primary)', outlineOffset: '2px' }}>
                             <AvatarImage
                               src={getSafeImageUrl(pair.person2.avatarUrl)}
                               alt={pair.person2.name}
@@ -256,7 +268,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                               style={{
                                 backgroundColor: 'var(--color-primary)',
                                 color: 'white',
-                                fontSize: '12px',
+                                fontSize: '11px',
                                 fontWeight: '700',
                               }}
                             >
@@ -264,9 +276,10 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                             </AvatarFallback>
                           </Avatar>
                         </div>
-                      </div>
-                    </motion.div>
-                  ))}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -283,9 +296,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 }}
               >
                 <p className="text-sm" style={{ color: 'var(--color-text)' }}>
-                  {t('gamePlay.coffeeRoulette.lobby.needMore', {
-                    defaultValue: `Waiting for ${2 - participantCount} more participant${2 - participantCount !== 1 ? 's' : ''}...`,
-                  })}
+                  {t('gamePlay.coffeeRoulette.lobby.needMore', { count: missingParticipantsToStart })}
                 </p>
               </motion.div>
             )}
@@ -297,7 +308,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="px-6 py-4 border-t"
+          className="px-5 py-3 border-t"
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderColor: 'var(--color-primary-light)',
@@ -309,7 +320,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
               onClick={onStartMatching}
               disabled={!canStart || isLoading}
               size="lg"
-              className="px-8 py-3 text-base font-semibold rounded-lg"
+              className="px-6 py-2.5 text-sm font-semibold rounded-lg"
               style={{
                 backgroundColor: canStart ? 'var(--color-primary)' : 'var(--color-surface)',
                 color: 'white',
@@ -318,14 +329,12 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  {t('gamePlay.coffeeRoulette.lobby.starting', { defaultValue: 'Starting...' })}
+                  {t('gamePlay.coffeeRoulette.lobby.starting')}
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Coffee className="w-4 h-4" />
-                  {t('gamePlay.coffeeRoulette.lobby.start', {
-                    defaultValue: 'Start Coffee Roulette',
-                  })}
+                  {t('gamePlay.coffeeRoulette.lobby.start')}
                 </div>
               )}
             </Button>

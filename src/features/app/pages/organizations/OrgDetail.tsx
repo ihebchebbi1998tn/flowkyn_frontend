@@ -63,6 +63,10 @@ export default function OrgDetail() {
   const membersList = [...members, ...invitations];
   const owner = membersList.find(m => (m as OrgMember).role_name === 'owner');
 
+  const getDepartmentId = (dept: Partial<Department> & { department_id?: string; departmentId?: string }): string | null => {
+    return dept.id ?? dept.departmentId ?? dept.department_id ?? null;
+  };
+
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !orgId) return;
@@ -350,7 +354,8 @@ export default function OrgDetail() {
       sortable: true,
       render: (row) => {
         const dept = row as Department;
-        const isEditing = editingDepartmentId === dept.id;
+        const departmentId = getDepartmentId(dept as Department & { department_id?: string; departmentId?: string });
+        const isEditing = editingDepartmentId !== null && editingDepartmentId === departmentId;
         if (isEditing) {
           return (
             <Input
@@ -362,8 +367,12 @@ export default function OrgDetail() {
                 if (e.key === 'Enter') {
                   const name = editingDepartmentName.trim();
                   if (!name || !orgId) return;
+                  if (!departmentId) {
+                    toast.error(t('apiErrors.INTERNAL_ERROR'));
+                    return;
+                  }
                   updateDepartment.mutate(
-                    { orgId, departmentId: dept.id, name },
+                    { orgId, departmentId, name },
                     {
                       onSuccess: () => {
                         setEditingDepartmentId(null);
@@ -403,7 +412,8 @@ export default function OrgDetail() {
             className="h-8 text-muted-foreground"
             onClick={() => {
               const dept = row as Department;
-              setEditingDepartmentId(dept.id);
+              const departmentId = getDepartmentId(dept as Department & { department_id?: string; departmentId?: string });
+              if (departmentId) setEditingDepartmentId(departmentId);
               setEditingDepartmentName(dept.name);
             }}
           >
@@ -416,8 +426,13 @@ export default function OrgDetail() {
             disabled={deleteDepartment.isPending}
             onClick={() => {
               if (!orgId) return;
+              const departmentId = getDepartmentId(row as Department & { department_id?: string; departmentId?: string });
+              if (!departmentId) {
+                toast.error(t('apiErrors.INTERNAL_ERROR'));
+                return;
+              }
               deleteDepartment.mutate(
-                { orgId, departmentId: (row as Department).id },
+                { orgId, departmentId },
                 {
                   onSuccess: () => setDepartmentName(''),
                   onError: (err) => showError(err, t('apiErrors.INTERNAL_ERROR')),
