@@ -670,6 +670,19 @@
     "inviteEmail": "Adresse e-mail",
     "inviteRole": "Rôle",
     "inviteSent": "Invitation envoyée avec succès",
+    "pendingInvites": "Invitations en attente",
+    "noPendingInvites": "Ajoutez des emails ci-dessus pour inviter des personnes.",
+    "invitesSomeFailed": "Certaines invitations ont échoué ({{count}}).",
+    "toast": {
+      "created": "Espace de travail créé",
+      "updated": "Espace de travail mis à jour",
+      "invitationAccepted": "Invitation acceptée",
+      "memberRemoved": "Membre retiré",
+      "logoUpdated": "Logo mis à jour",
+      "invitationsSent": "Invitations envoyées",
+      "invitationsPartial": "{{success}} invité(s), {{failed}} échec(s)",
+      "invitationsNone": "Aucune invitation n’a été envoyée"
+    },
     "removeMember": "Retirer le membre",
     "removeConfirm": "Êtes-vous sûr de vouloir retirer ce membre ?",
     "changeRole": "Changer le rôle",
@@ -1938,7 +1951,12 @@
   "departments": {
     "title": "Départements",
     "name": "Département",
-    "placeholder": "ex. : Ingénierie"
+    "placeholder": "ex. : Ingénierie",
+    "importHint": "Astuce : collez ou importez au format « email, département ». Le département par défaut est Général.",
+    "toast": {
+      "created": "Département créé",
+      "deleted": "Département supprimé"
+    }
   },
   "notificationsPage": {
     "allCaughtUp": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici.",

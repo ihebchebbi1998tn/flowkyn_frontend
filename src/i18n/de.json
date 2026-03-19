@@ -654,6 +654,19 @@
     "inviteEmail": "E-Mail-Adresse",
     "inviteRole": "Rolle",
     "inviteSent": "Einladung erfolgreich gesendet",
+    "pendingInvites": "Ausstehende Einladungen",
+    "noPendingInvites": "Fügen Sie oben E-Mails hinzu, um Personen einzuladen.",
+    "invitesSomeFailed": "Einige Einladungen sind fehlgeschlagen ({{count}}).",
+    "toast": {
+      "created": "Arbeitsbereich erstellt",
+      "updated": "Arbeitsbereich aktualisiert",
+      "invitationAccepted": "Einladung angenommen",
+      "memberRemoved": "Mitglied entfernt",
+      "logoUpdated": "Logo aktualisiert",
+      "invitationsSent": "Einladungen gesendet",
+      "invitationsPartial": "{{success}} eingeladen, {{failed}} fehlgeschlagen",
+      "invitationsNone": "Es wurden keine Einladungen gesendet"
+    },
     "removeMember": "Mitglied entfernen",
     "removeConfirm": "Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten?",
     "changeRole": "Rolle ändern",
@@ -1922,7 +1935,12 @@
   "departments": {
     "title": "Abteilungen",
     "name": "Abteilung",
-    "placeholder": "z.B. Engineering"
+    "placeholder": "z.B. Engineering",
+    "importHint": "Tipp: einfügen oder importieren als „E-Mail, Abteilung“. Standard ist „General“.",
+    "toast": {
+      "created": "Abteilung erstellt",
+      "deleted": "Abteilung gelöscht"
+    }
   },
   "notificationsPage": {
     "allCaughtUp": "Alles aktuell! Neue Benachrichtigungen erscheinen hier.",

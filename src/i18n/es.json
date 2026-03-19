@@ -705,6 +705,19 @@
     "inviteEmailPlaceholder": "compañero@empresa.com",
     "inviteRole": "Rol",
     "inviteSent": "Invitación enviada correctamente",
+    "pendingInvites": "Invitaciones pendientes",
+    "noPendingInvites": "Añade correos arriba para invitar a personas.",
+    "invitesSomeFailed": "Algunas invitaciones han fallado ({{count}}).",
+    "toast": {
+      "created": "Espacio de trabajo creado",
+      "updated": "Espacio de trabajo actualizado",
+      "invitationAccepted": "Invitación aceptada",
+      "memberRemoved": "Miembro eliminado",
+      "logoUpdated": "Logo actualizado",
+      "invitationsSent": "Invitaciones enviadas",
+      "invitationsPartial": "{{success}} invitado(s), {{failed}} fallo(s)",
+      "invitationsNone": "No se envió ninguna invitación"
+    },
     "invitedMember": "Invitado",
     "invitedPending": "Pendiente",
     "removeMember": "Eliminar miembro",
@@ -2009,7 +2022,12 @@
   "departments": {
     "title": "Departamentos",
     "name": "Departamento",
-    "placeholder": "p. ej., Ingeniería"
+    "placeholder": "p. ej., Ingeniería",
+    "importHint": "Consejo: pega o importa como «email, departamento». El departamento por defecto es General.",
+    "toast": {
+      "created": "Departamento creado",
+      "deleted": "Departamento eliminado"
+    }
   },
   "notificationsPage": {
     "allCaughtUp": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",

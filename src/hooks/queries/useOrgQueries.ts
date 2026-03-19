@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { organizationsApi } from '@/features/app/api/organizations';
+import { usersApi } from '@/features/app/api/users';
 import { useApiError } from '@/hooks/useApiError';
 import { toast } from 'sonner';
 
@@ -53,13 +55,14 @@ export function useOrgDepartments(orgId: string) {
 export function useCreateOrg() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (data: { name: string; description?: string; industry?: string; company_size?: string; goals?: string[] }) =>
       organizationsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: orgKeys.all });
-      toast.success('Organization created');
+      toast.success(t('organizations.toast.created'));
     },
     onError: (err) => showError(err),
   });
@@ -68,13 +71,14 @@ export function useCreateOrg() {
 export function useUpdateOrg() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ orgId, data }: { orgId: string; data: { name?: string } }) =>
       organizationsApi.update(orgId, data),
     onSuccess: (_, { orgId }) => {
       queryClient.invalidateQueries({ queryKey: orgKeys.detail(orgId) });
-      toast.success('Organization updated');
+      toast.success(t('organizations.toast.updated'));
     },
     onError: (err) => showError(err),
   });
@@ -83,6 +87,7 @@ export function useUpdateOrg() {
 export function useInviteOrgMember() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ orgId, email, roleId, lang }: { orgId: string; email: string; roleId: string; lang?: string }) =>
@@ -90,7 +95,29 @@ export function useInviteOrgMember() {
     onSuccess: (_, { orgId }) => {
       queryClient.invalidateQueries({ queryKey: orgKeys.members(orgId) });
       queryClient.invalidateQueries({ queryKey: orgKeys.people(orgId) });
-      toast.success('Invitation sent');
+      toast.success(t('organizations.inviteSent'));
+    },
+    onError: (err) => showError(err),
+  });
+}
+
+export function useSendOrgInvites() {
+  const queryClient = useQueryClient();
+  const { showError } = useApiError();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: ({ orgId, invites, lang }: { orgId: string; invites: Array<{ email: string; department?: string }>; lang?: string }) =>
+      usersApi.sendOnboardingInvites(orgId, invites, lang),
+    onSuccess: (res, { orgId }) => {
+      queryClient.invalidateQueries({ queryKey: orgKeys.members(orgId) });
+      queryClient.invalidateQueries({ queryKey: orgKeys.people(orgId) });
+
+      const success = res?.success?.length ?? 0;
+      const failed = res?.failed?.length ?? 0;
+      if (success > 0 && failed === 0) toast.success(t('organizations.toast.invitationsSent'));
+      else if (success > 0 && failed > 0) toast.success(t('organizations.toast.invitationsPartial', { success, failed }));
+      else toast.error(t('organizations.toast.invitationsNone'));
     },
     onError: (err) => showError(err),
   });
@@ -99,12 +126,13 @@ export function useInviteOrgMember() {
 export function useAcceptOrgInvitation() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (token: string) => organizationsApi.acceptInvitation(token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: orgKeys.all });
-      toast.success('Invitation accepted');
+      toast.success(t('organizations.toast.invitationAccepted'));
     },
     onError: (err) => showError(err),
   });
@@ -113,6 +141,7 @@ export function useAcceptOrgInvitation() {
 export function useRemoveOrgMember() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ orgId, memberId }: { orgId: string; memberId: string }) =>
@@ -120,7 +149,7 @@ export function useRemoveOrgMember() {
     onSuccess: (_, { orgId }) => {
       queryClient.invalidateQueries({ queryKey: orgKeys.members(orgId) });
       queryClient.invalidateQueries({ queryKey: orgKeys.people(orgId) });
-      toast.success('Member removed');
+      toast.success(t('organizations.toast.memberRemoved'));
     },
     onError: (err) => showError(err),
   });
@@ -129,13 +158,14 @@ export function useRemoveOrgMember() {
 export function useCreateDepartment() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ orgId, name }: { orgId: string; name: string }) =>
       organizationsApi.createDepartment(orgId, name),
     onSuccess: (_, { orgId }) => {
       queryClient.invalidateQueries({ queryKey: orgKeys.departments(orgId) });
-      toast.success('Department created');
+      toast.success(t('departments.toast.created'));
     },
     onError: (err) => showError(err),
   });
@@ -144,13 +174,14 @@ export function useCreateDepartment() {
 export function useDeleteDepartment() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ orgId, departmentId }: { orgId: string; departmentId: string }) =>
       organizationsApi.deleteDepartment(orgId, departmentId),
     onSuccess: (_, { orgId }) => {
       queryClient.invalidateQueries({ queryKey: orgKeys.departments(orgId) });
-      toast.success('Department deleted');
+      toast.success(t('departments.toast.deleted'));
     },
     onError: (err) => showError(err),
   });
@@ -159,6 +190,7 @@ export function useDeleteDepartment() {
 export function useUploadOrgLogo() {
   const queryClient = useQueryClient();
   const { showError } = useApiError();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ orgId, file }: { orgId: string; file: File }) =>
@@ -168,7 +200,7 @@ export function useUploadOrgLogo() {
       // so invalidate both keys to ensure logo_url updates everywhere immediately.
       queryClient.invalidateQueries({ queryKey: orgKeys.detail(orgId) });
       queryClient.invalidateQueries({ queryKey: orgKeys.detail('current') });
-      toast.success('Logo updated');
+      toast.success(t('organizations.toast.logoUpdated'));
     },
     onError: (err) => showError(err),
   });

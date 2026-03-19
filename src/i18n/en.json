@@ -645,6 +645,19 @@
     "inviteEmailPlaceholder": "colleague@company.com",
     "inviteRole": "Role",
     "inviteSent": "Invitation sent successfully",
+    "pendingInvites": "Pending invites",
+    "noPendingInvites": "Add emails above to invite people.",
+    "invitesSomeFailed": "Some invites failed ({{count}}).",
+    "toast": {
+      "created": "Workspace created",
+      "updated": "Workspace updated",
+      "invitationAccepted": "Invitation accepted",
+      "memberRemoved": "Member removed",
+      "logoUpdated": "Logo updated",
+      "invitationsSent": "Invitations sent",
+      "invitationsPartial": "Invited {{success}}, failed {{failed}}",
+      "invitationsNone": "No invitations were sent"
+    },
     "invitedMember": "Invited",
     "invitedPending": "Pending",
     "removeMember": "Remove Member",
@@ -2360,7 +2373,12 @@
   "departments": {
     "title": "Departments",
     "name": "Department",
-    "placeholder": "e.g., Engineering"
+    "placeholder": "e.g., Engineering",
+    "importHint": "Tip: paste or import as \"email, department\". Department defaults to General.",
+    "toast": {
+      "created": "Department created",
+      "deleted": "Department deleted"
+    }
   },
   "notificationsPage": {
     "allCaughtUp": "You're all caught up! New notifications will appear here.",
