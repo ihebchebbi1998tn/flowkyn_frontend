@@ -59,6 +59,10 @@ export interface EarlyAccessEntry {
   company_name?: string | null;
   ip_address?: string | null;
   created_at: string;
+  provisioned_user_id?: string | null;
+  account_provisioned_at?: string | null;
+  credentials_email_sent_at?: string | null;
+  last_email_error?: string | null;
 }
 
 export interface EarlyAccessProvisionResult {
@@ -66,9 +70,21 @@ export interface EarlyAccessProvisionResult {
   userId: string;
   email: string;
   createdNewAccount: boolean;
+  accountProvisioned: boolean;
+  emailSent: boolean;
+  alreadyProcessed: boolean;
   passwordResetApplied: boolean;
   temporaryPassword: string | null;
   loginUrl: string;
+}
+
+export interface EarlyAccessSendCredentialsResponse {
+  message: string;
+  partialSuccess: boolean;
+  accountProvisioned: boolean;
+  emailSent: boolean;
+  alreadyProcessed: boolean;
+  data: EarlyAccessProvisionResult;
 }
 
 export interface BugReportEntry {
@@ -215,7 +231,7 @@ export const adminApi = {
     }),
 
   sendEarlyAccessCredentials: (id: string, personalizedMessage: string, resetPasswordIfExists = true) =>
-    adminClient.post<{ message: string; data: EarlyAccessProvisionResult }>(
+    adminClient.post<EarlyAccessSendCredentialsResponse>(
       `/admin/early-access/${id}/send-credentials`,
       { personalizedMessage, resetPasswordIfExists }
     ),

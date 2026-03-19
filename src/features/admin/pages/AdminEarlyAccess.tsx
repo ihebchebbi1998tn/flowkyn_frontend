@@ -51,6 +51,10 @@ export default function AdminEarlyAccess() {
   });
 
   const openProvisionModal = (entry: EarlyAccessEntry) => {
+    if (entry.credentials_email_sent_at) {
+      toast.info('Credentials were already sent for this request.');
+      return;
+    }
     setSelected(entry);
     setResetPasswordIfExists(true);
     setMessage(
@@ -66,9 +70,16 @@ export default function AdminEarlyAccess() {
       const passwordLine = result.data.passwordResetApplied
         ? `Temporary password: ${result.data.temporaryPassword}`
         : 'Password kept unchanged for existing account';
-      toast.success(`${result.message}\n${passwordLine}\nLogin URL: ${result.data.loginUrl}`);
+      if (result.alreadyProcessed) {
+        toast.info(`${result.message}\nLogin URL: ${result.data.loginUrl}`);
+      } else if (result.partialSuccess || !result.emailSent) {
+        toast.warning(`${result.message}\nAccount provisioned: yes\nEmail sent: no`);
+      } else {
+        toast.success(`${result.message}\n${passwordLine}\nLogin URL: ${result.data.loginUrl}`);
+      }
       setSelected(null);
       setMessage('');
+      await fetchEntries();
     } catch (err: any) {
       toast.error(err?.message || 'Failed to send credentials email');
     } finally {
@@ -121,14 +132,17 @@ export default function AdminEarlyAccess() {
                 <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden sm:table-cell">
                   Signed up
                 </th>
+                <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden lg:table-cell">
+                  Status
+                </th>
                 <th className="text-right font-semibold px-4 py-3 text-muted-foreground">Action</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5}>
-                    <TableSkeleton rows={5} cols={5} />
+                  <td colSpan={6}>
+                    <TableSkeleton rows={5} cols={6} />
                   </td>
                 </tr>
               ) : (
@@ -170,14 +184,24 @@ export default function AdminEarlyAccess() {
                         {new Date(entry.created_at).toLocaleString()}
                       </div>
                     </td>
+                    <td className="px-4 py-3 hidden lg:table-cell">
+                      {entry.credentials_email_sent_at ? (
+                        <Badge variant="default" className="text-[10px]">Account created + email sent</Badge>
+                      ) : entry.account_provisioned_at ? (
+                        <Badge variant="secondary" className="text-[10px]">Account created, email pending</Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[10px]">Not processed</Badge>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <Button
                         size="sm"
                         className="h-8 text-[11px] gap-1"
                         onClick={() => openProvisionModal(entry)}
+                        disabled={!!entry.credentials_email_sent_at}
                       >
                         <Send className="h-3 w-3" />
-                        Send Access
+                        {entry.credentials_email_sent_at ? 'Sent' : 'Send Access'}
                       </Button>
                     </td>
                   </tr>
@@ -185,7 +209,7 @@ export default function AdminEarlyAccess() {
               )}
               {!loading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <td colSpan={6} className="text-center py-8 text-muted-foreground">
                     No early access signups found
                   </td>
                 </tr>
