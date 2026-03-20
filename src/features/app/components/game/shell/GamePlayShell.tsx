@@ -48,6 +48,8 @@ interface GamePlayShellProps {
   hideBackButton?: boolean;
   /** Temporary real-time disconnect indicator */
   disconnectedBadgeCount?: number;
+  /** Hide the in-shell header (used when FocusedLayout renders a unified header). */
+  hideHeader?: boolean;
 }
 
 export function GamePlayShell({
@@ -55,6 +57,7 @@ export function GamePlayShell({
   currentUserId, currentUserName, currentUserAvatarUrl, onEditProfile,
   organizationLogo, organizationName, hideBackButton,
   disconnectedBadgeCount = 0,
+  hideHeader = false,
 }: GamePlayShellProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -80,12 +83,13 @@ export function GamePlayShell({
       : t('gamePlay.shell.statusAsync', { defaultValue: 'Async check‑in session' });
 
   useEffect(() => {
+    if (hideHeader) return;
     const timer = setInterval(() => setElapsed(e => e + 1), 1000);
     return () => {
       clearInterval(timer);
       if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
     };
-  }, []);
+  }, [hideHeader]);
 
   // Track previously joined participants to show toasts
   const prevJoinedIds = useRef<Set<string>>(new Set());
@@ -150,9 +154,10 @@ export function GamePlayShell({
 
   return (
     <div className="space-y-5 w-full max-w-[1400px] mx-auto animate-fade-in">
-      <ReportIssueModal open={isReportOpen} onOpenChange={setIsReportOpen} />
+      {!hideHeader && <ReportIssueModal open={isReportOpen} onOpenChange={setIsReportOpen} />}
       {/* ─── Header ─── */}
-      <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
+      {!hideHeader && (
+        <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/5" />
 
         {/* Animated Background Orbs */}
@@ -355,7 +360,8 @@ export function GamePlayShell({
             </p>
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* ─── Content ─── */}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,0.9fr)] items-start">

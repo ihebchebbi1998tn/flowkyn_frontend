@@ -24,6 +24,7 @@ import { eventsApi } from '@/features/app/api/events';
 import { gamesApi } from '@/features/app/api/games';
 import { GameBoardRouter } from './GameBoardRouter';
 import { GAME_CONFIGS } from './gameTypes';
+import { useSetGameHeader } from '@/features/app/layouts/FocusedLayout';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
@@ -58,6 +59,7 @@ function GamePlayWithoutBoundary() {
   const { user } = useAuth();
   const { t } = useTranslation();
   const { showError } = useApiError();
+  const setGameHeader = useSetGameHeader();
 
   const gameTypeId = searchParams.get('game') || '1';
   const urlConfig = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
@@ -104,6 +106,58 @@ function GamePlayWithoutBoundary() {
 
   const currentUserName = profile?.displayName || displayName;
   const currentUserAvatarUrl = profile?.avatarUrl || avatarUrl;
+
+  // Set unified top bar header in FocusedLayout.
+  useEffect(() => {
+    if (!eventId) return;
+    const eventTitle =
+      eventPublicObj && typeof eventPublicObj.title === 'string'
+        ? (eventPublicObj.title as string)
+        : t(activeConfig.titleKey);
+    const eventSubtitle =
+      eventPublicObj && typeof eventPublicObj.description === 'string'
+        ? (eventPublicObj.description as string)
+        : t(activeConfig.subtitleKey);
+    const lobbyModeRaw =
+      eventPublicObj && typeof (eventPublicObj as any).event_mode === 'string'
+        ? String((eventPublicObj as any).event_mode)
+        : null;
+    const lobbyGameType: 'sync' | 'async' =
+      lobbyModeRaw === 'sync' ? 'sync' : 'async';
+    setGameHeader({
+      title: eventTitle,
+      subtitle: eventSubtitle,
+      gameType: lobbyGameType,
+      eventId,
+      participants,
+      onEnd: () => navigate(ROUTES.EVENTS),
+      currentUserName,
+      currentUserAvatarUrl,
+      onEditProfile: () => setShowProfileEdit(true),
+      organizationLogo: eventPublicObj?.organization_logo,
+      organizationName: eventPublicObj?.organization_name,
+      disconnectedBadgeCount,
+      hideBackButton: true,
+    });
+    return () => setGameHeader(null);
+  }, [
+    eventId,
+    activeConfig.titleKey,
+    activeConfig.subtitleKey,
+    activeConfig.type,
+    participants,
+    currentUserName,
+    currentUserAvatarUrl,
+    navigate,
+    setGameHeader,
+    eventPublicObj?.organization_logo,
+    eventPublicObj?.organization_name,
+    eventPublicObj?.event_mode,
+    eventPublicObj?.title,
+    eventPublicObj?.description,
+    disconnectedBadgeCount,
+    t,
+  ]);
 
   const handleProfileSave = useCallback((data: ProfileSetupData) => {
     if (!eventId) return;
@@ -673,6 +727,7 @@ function GamePlayWithoutBoundary() {
         organizationName={eventPublicObj?.organization_name}
         hideBackButton={true}
         disconnectedBadgeCount={disconnectedBadgeCount}
+        hideHeader
       >
         <GameBoardRouter
           config={activeConfig}
