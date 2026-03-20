@@ -40,7 +40,7 @@ import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useApiError } from '@/hooks/useApiError';
 import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
-import { setGuestToken } from '@/lib/guestTokenPersistence';
+import { setGuestToken, getOrCreateGuestIdentityKey } from '@/lib/guestTokenPersistence';
 
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
@@ -151,7 +151,13 @@ export default function EventLobby() {
         const safeAvatarUrl = profile.avatarUrl?.startsWith('http') ? profile.avatarUrl : undefined;
         const result = await joinAsGuest.mutateAsync({
           eventId: id,
-          data: { name: profile.displayName, email: guestEmail || undefined, avatar_url: safeAvatarUrl, token: inviteToken || undefined },
+          data: {
+            name: profile.displayName,
+            email: guestEmail || undefined,
+            avatar_url: safeAvatarUrl,
+            token: inviteToken || undefined,
+            guest_identity_key: getOrCreateGuestIdentityKey(id),
+          },
         });
         if (result.guest_token) {
           setGuestToken(id, result.guest_token);

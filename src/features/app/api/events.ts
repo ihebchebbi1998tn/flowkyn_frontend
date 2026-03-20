@@ -75,7 +75,7 @@ export const eventsApi = {
     }>(`/events/${eventId}/validate-token`, { token }),
 
   /** Join as guest — pass eventId so returning guests send their token for idempotent rejoin */
-  joinAsGuest: (eventId: string, data: { name: string; email?: string; avatar_url?: string; token?: string }) =>
+  joinAsGuest: (eventId: string, data: { name: string; email?: string; avatar_url?: string; token?: string; guest_identity_key?: string }) =>
     api.post<{ participant_id: string; guest_name: string; guest_token: string; already_joined?: boolean }>(
       `/events/${eventId}/join-guest`, data, eventId
     ),

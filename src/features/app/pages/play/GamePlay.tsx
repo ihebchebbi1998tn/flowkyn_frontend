@@ -12,7 +12,7 @@ import { ROUTES } from '@/constants/routes';
 import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts, useJoinEvent, useJoinAsGuest, useAcceptEventInvitation } from '@/hooks/queries/useEventQueries';
 import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { hasEventToken } from '@/hooks/queries/useMyEventParticipant';
-import { setGuestToken, getGuestToken } from '@/lib/guestTokenPersistence';
+import { setGuestToken, getGuestToken, getOrCreateGuestIdentityKey, getGuestIdentityKey } from '@/lib/guestTokenPersistence';
 import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
 import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
 import { useGameChatState } from '@/hooks/useGameChatState';
@@ -30,6 +30,7 @@ import { ActivityFeedbackModal } from '@/features/app/components/game/shared/Act
 import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
 import { SocketHealthModal } from '@/features/app/components/game/shared/SocketHealthModal';
 import { IdentityDebugModal } from '@/features/app/components/game/shared/IdentityDebugModal';
+import { Button } from '@/components/ui/button';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
@@ -75,8 +76,6 @@ function GamePlayWithoutBoundary() {
 
   // We start with the URL param config, but will update it if the server tells us a different game is active.
   const [activeConfig, setActiveConfig] = useState(urlConfig);
-
-  console.log('[GamePlay] mount', { eventId, identity, gameTypeId, activeConfig });
 
   const guestParticipantId = isGuest ? participantId : null;
   const memberParticipantId = !isGuest ? participantId : null;
@@ -124,7 +123,6 @@ function GamePlayWithoutBoundary() {
 
   const handleProfileSave = useCallback(async (data: ProfileSetupData) => {
     if (!eventId) return;
-    console.log('[GamePlay] profile save', { eventId, data });
     await upsertProfile.mutateAsync({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
     saveProfile(eventId, data);
     setProfile(data);
@@ -146,13 +144,6 @@ function GamePlayWithoutBoundary() {
   /** Join logic — ensures tokens are obtained and rooms joined */
   const handleJoin = useCallback(async () => {
     if (!eventId || !profile || isJoining || hasJoined) return;
-    console.log('[GamePlay] handleJoin start', {
-      eventId,
-      isAuthenticated,
-      isGuest,
-      hasInviteToken: !!inviteToken,
-      profile,
-    });
     setJoinError('');
     setIsJoining(true);
     try {
@@ -175,6 +166,7 @@ function GamePlayWithoutBoundary() {
             email: guestEmail || undefined,
             avatar_url: safeAvatarUrl,
             token: inviteToken || undefined,
+            guest_identity_key: getOrCreateGuestIdentityKey(eventId),
           },
         });
         if (result.guest_token) {
@@ -183,7 +175,6 @@ function GamePlayWithoutBoundary() {
           localStorage.setItem(`guest_name_${eventId}`, result.guest_name);
         }
       }
-      console.log('[GamePlay] handleJoin success', { eventId, mode: isAuthenticated ? 'member' : 'guest' });
       pushSocketDebug({
         type: 'identity:join_success',
         detail: `mode=${isAuthenticated ? 'member' : 'guest'} eventId=${eventId} participantId=${participantId || 'null'}`,
@@ -207,10 +198,6 @@ function GamePlayWithoutBoundary() {
   // 1. If we already have a participant identity from server, we are "joined"
   useEffect(() => {
     if (participantId && !hasJoined) {
-      console.log('[GamePlay] detected existing participant on server, marking hasJoined=true', {
-        eventId,
-        participantId,
-      });
       setHasJoined(true);
     }
   }, [participantId, hasJoined]);
@@ -221,11 +208,6 @@ function GamePlayWithoutBoundary() {
     if (isIdentityLoading) return; // Wait for server to confirm whether we already have a participant account
     if (participantId) return; // Already have identity — same user reconnecting, do NOT call joinAsGuest again
     if (profile && !showProfileEdit && !hasJoined && !isJoining) {
-      console.log('[GamePlay] auto-joining after profile ready', {
-        eventId,
-        hasJoined,
-        isJoining,
-      });
       handleJoin();
     }
   }, [profile, showProfileEdit, hasJoined, isJoining, participantId, handleJoin, isIdentityLoading]);
@@ -269,13 +251,6 @@ function GamePlayWithoutBoundary() {
   const { data: postsData, refetch: refetchPosts } = useEventPosts(eventId || '', 1, 50, canFetchParticipantData);
 
   const eventPublicObj: Record<string, unknown> | null = isRecord(eventData) ? (eventData as Record<string, unknown>) : null;
-  console.log('[GamePlay] data load', {
-    eventId,
-    canFetchParticipantData,
-    hasMessagesData: !!messagesData,
-    hasPostsData: !!postsData,
-    hasParticipantsData: !!participantsData,
-  });
 
   // Map API participants to GameParticipant shape (dedupe by id to avoid any duplicates)
   const rawParticipants = getDataArray(participantsData);
@@ -330,13 +305,7 @@ function GamePlayWithoutBoundary() {
   const socketDebugEventsRef = useRef<Array<{ ts: number; type: string; detail?: string }>>([]);
   const [socketDebugTick, setSocketDebugTick] = useState(0);
 
-  const [identityDebugOpen, setIdentityDebugOpen] = useState(() => {
-    try {
-      return import.meta.env.DEV || localStorage.getItem('flowkyn_debug_identity') === '1';
-    } catch {
-      return import.meta.env.DEV;
-    }
-  });
+  const [identityDebugOpen, setIdentityDebugOpen] = useState(() => import.meta.env.DEV);
 
   const pushSocketDebug = useCallback((evt: { type: string; detail?: string }) => {
     const ts = Date.now();
@@ -430,14 +399,12 @@ function GamePlayWithoutBoundary() {
     // Otherwise verifyParticipant() can fail and we might never retry while the
     // socket remains connected (leading to "game start not seen" + "chat not received").
     if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
-      console.log('[GamePlay] Emitting event:join for', eventId);
       pushSocketDebug({
         type: 'event:join_emit',
         detail: `eventsSocket=${eventsSocket.status} hasJoined=${String(hasJoined)} participantId=${participantId || 'null'} attempt=${eventJoinAttemptsRef.current + 1}`,
       });
       eventsSocket.emit('event:join', { eventId })
         .then((resp: any) => {
-          console.log('[GamePlay] event:join resp:', resp);
           // Our `useSocket.emit()` resolves with `response.data` for ok acks.
           const resolvedParticipantId = resp?.participantId || resp?.data?.participantId || null;
           if (resolvedParticipantId) {
@@ -509,7 +476,6 @@ function GamePlayWithoutBoundary() {
   useEffect(() => {
     if (!eventsSocket.socket) return;
     const onConnect = () => {
-      console.log('[GamePlay] Events socket reconnected, re-joining room + refetching messages...');
       pushSocketDebug({ type: 'eventsSocket_reconnect', detail: `status=${eventsSocket.status} eventId=${eventId || 'null'}` });
       joinEventRoom();
       // Refetch HTTP messages to recover any missed during the disconnection window
@@ -655,10 +621,6 @@ function GamePlayWithoutBoundary() {
 
     const interval = setInterval(() => {
       if (eventsSocket.status !== 'connected') {
-        console.log('[GamePlay] Polling messages because events socket is not connected', {
-          eventId,
-          socketStatus: eventsSocket.status,
-        });
         refetchMessages();
       }
     }, 5000);
@@ -902,10 +864,8 @@ function GamePlayWithoutBoundary() {
     lastChatSentAtRef.current = now;
 
     if (chatReady && eventsSocket.isConnected && eventId) {
-      console.log('[GamePlay] Sending message to eventId:', eventId, 'message:', message);
       eventsSocket.emit('chat:message', { eventId, message })
         .then(() => {
-          console.log('[GamePlay] chat:message ack received, refetching messages', { eventId });
           refetchMessages();
         })
         .catch(err => {
@@ -1040,6 +1000,17 @@ function GamePlayWithoutBoundary() {
         />
       </GamePlayShell>
 
+      <div className="fixed bottom-4 right-4 z-[60]">
+        <Button
+          type="button"
+          variant="secondary"
+          className="shadow-md"
+          onClick={() => setIdentityDebugOpen(true)}
+        >
+          Debug
+        </Button>
+      </div>
+
       <SocketHealthModal
         open={socketHealthModalOpen}
         onOpenChange={(nextOpen) => {
@@ -1070,6 +1041,9 @@ function GamePlayWithoutBoundary() {
                 </div>
                 <div>
                   tokens: guest_token={eventId ? String(!!getGuestToken(eventId)) : 'n/a'} | access_token={String(!!localStorage.getItem('access_token'))}
+                </div>
+                <div>
+                  guest_identity_key={eventId ? (getGuestIdentityKey(eventId) || 'null') : 'n/a'}
                 </div>
                 <div>event:join attempts={eventJoinAttemptsRef.current}</div>
               </div>
@@ -1113,14 +1087,12 @@ function GamePlayWithoutBoundary() {
       <IdentityDebugModal
         open={identityDebugOpen}
         onOpenChange={(nextOpen) => {
-          setIdentityDebugOpen(nextOpen);
-          if (!nextOpen) {
-            try {
-              localStorage.setItem('flowkyn_debug_identity', '0');
-            } catch {
-              // ignore
-            }
+          // Keep it always visible in dev; it's our primary tool to track identity stability.
+          if (import.meta.env.DEV) {
+            setIdentityDebugOpen(true);
+            return;
           }
+          setIdentityDebugOpen(nextOpen);
         }}
         eventId={eventId || ''}
         isGuest={isGuest}
@@ -1136,6 +1108,16 @@ function GamePlayWithoutBoundary() {
         localGuestTokenExists={!!eventId && !!localStorage.getItem(`guest_token_${eventId}`)}
         guestTokenValue={eventId ? getGuestToken(eventId) : null}
         accessTokenExists={!!localStorage.getItem('access_token')}
+        guestIdentityKey={eventId ? getGuestIdentityKey(eventId) : null}
+        participantCount={participants.length}
+        participants={participants.map((p) => ({
+          id: p.id,
+          name: p.name,
+          avatarUrl: p.avatarUrl,
+          isHost: p.isHost,
+        }))}
+        gameTypeKey={activeConfig.gameTypeKey}
+        gameDataPreview={gameData}
       />
 
       {/* In-game profile edit modal */}

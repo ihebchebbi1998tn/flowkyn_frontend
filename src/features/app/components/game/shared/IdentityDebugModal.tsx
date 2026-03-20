@@ -8,6 +8,7 @@ type DecodedGuest = {
   guestName?: string;
   eventId?: string;
   isGuest?: boolean;
+  guestIdentityKey?: string;
 };
 
 function decodeJwtPayload(token: string): DecodedGuest | null {
@@ -49,6 +50,12 @@ export type IdentityDebugModalProps = {
   localGuestTokenExists: boolean;
   guestTokenValue: string | null;
   accessTokenExists: boolean;
+  guestIdentityKey?: string | null;
+
+  participantCount?: number;
+  participants?: Array<{ id: string; name: string; avatarUrl?: string | null; isHost?: boolean }>;
+  gameTypeKey?: string;
+  gameDataPreview?: unknown;
 };
 
 export function IdentityDebugModal({
@@ -68,6 +75,11 @@ export function IdentityDebugModal({
   localGuestTokenExists,
   guestTokenValue,
   accessTokenExists,
+  guestIdentityKey,
+  participantCount = 0,
+  participants = [],
+  gameTypeKey,
+  gameDataPreview,
 }: IdentityDebugModalProps) {
   const decoded = useMemo(() => {
     if (!guestTokenValue) return null;
@@ -83,10 +95,16 @@ export function IdentityDebugModal({
         identity: { isGuest, userId, participantId, displayName },
         join: { hasJoined, eventRoomJoined },
         game: { sessionId, gameJoinAckReceived },
+        gameContext: { gameTypeKey, hasGameData: !!gameDataPreview },
         sockets: { eventsSocketStatus, gamesSocketStatus },
+        participants: {
+          count: participantCount,
+          ids: participants.map((p) => p.id),
+        },
         tokens: {
           guestTokenLocal: localGuestTokenExists,
-          guestTokenDecoded: decoded ? { participantId: decoded.participantId, guestName: decoded.guestName, eventId: decoded.eventId, isGuest: decoded.isGuest } : null,
+          guestIdentityKey: guestIdentityKey || null,
+          guestTokenDecoded: decoded ? { participantId: decoded.participantId, guestName: decoded.guestName, eventId: decoded.eventId, isGuest: decoded.isGuest, guestIdentityKey: decoded.guestIdentityKey } : null,
           guestTokenCookieBackup: cookieBacked,
           accessTokenLocal: accessTokenExists,
         },
@@ -106,7 +124,12 @@ export function IdentityDebugModal({
     gameJoinAckReceived,
     eventsSocketStatus,
     gamesSocketStatus,
+    gameTypeKey,
+    gameDataPreview,
+    participantCount,
+    participants,
     localGuestTokenExists,
+    guestIdentityKey,
     decoded,
     cookieBacked,
     accessTokenExists,
@@ -139,9 +162,17 @@ export function IdentityDebugModal({
             <div className="text-[12px] text-muted-foreground mt-1 space-y-1">
               <div>hasJoined: {String(hasJoined)} | eventRoomJoined: {String(eventRoomJoined)}</div>
               <div>sessionId: {sessionId || 'null'} | gameJoinAckReceived: {String(gameJoinAckReceived)}</div>
+              <div>gameType: {gameTypeKey || 'unknown'} | hasGameData: {String(!!gameDataPreview)}</div>
               <div>eventsSocket: {eventsSocketStatus}</div>
               <div>gamesSocket: {gamesSocketStatus}</div>
             </div>
+          </div>
+
+          <div className="rounded-lg border border-border bg-muted/20 p-3">
+            <div className="text-sm font-semibold">Event Participants ({participantCount})</div>
+            <pre className="mt-2 text-[11px] leading-4 bg-black/5 rounded-lg p-3 border border-border max-h-40 overflow-y-auto whitespace-pre-wrap">
+              {participants.map((p) => `${p.id} | ${p.name}${p.isHost ? ' | host' : ''}`).join('\n') || 'No participants'}
+            </pre>
           </div>
 
           <div className="rounded-lg border border-border bg-muted/10 p-3">
@@ -149,6 +180,9 @@ export function IdentityDebugModal({
             <div className="text-[12px] text-muted-foreground mt-1">
               local guest token exists: {String(localGuestTokenExists)} (cookie backup: {String(cookieBacked)})
             </div>
+                        <div className="text-[12px] text-muted-foreground">
+                          guest identity key: {guestIdentityKey || 'null'}
+                        </div>
             <div className="text-[12px] text-muted-foreground">
               access token exists: {String(accessTokenExists)}
             </div>

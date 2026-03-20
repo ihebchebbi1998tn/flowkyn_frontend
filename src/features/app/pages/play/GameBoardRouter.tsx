@@ -108,7 +108,7 @@ export function GameBoardRouter({
     round: (isRecord(gameData) && typeof gameData.round === 'number')
       ? gameData.round
       : ((isRecord(initialSnapshot) && typeof initialSnapshot.round === 'number') ? initialSnapshot.round : 1),
-    onRoundComplete: (r: number) => console.log('[GamePlay] Round complete:', r),
+    onRoundComplete: () => {},
   };
 
   const onEmitAction = useCallback(
@@ -117,13 +117,6 @@ export function GameBoardRouter({
       payload?: unknown,
       opts?: { sessionIdOverride?: string },
     ) => {
-      console.log('[GamePlay] onEmitAction', {
-        gameKey: config.gameTypeKey,
-        actionType,
-        hasSession: !!sessionId,
-        activeRoundId,
-      });
-
       const forcedSid = opts?.sessionIdOverride;
       let sid = forcedSid ?? sessionId;
 
@@ -149,12 +142,6 @@ export function GameBoardRouter({
           const newSessionUnknown = await gamesApi.startSession(eventId, typeRow.id, totalRoundsToSend);
           if (!isGameSessionRow(newSessionUnknown)) throw new Error('Invalid game session response');
           const newSession = newSessionUnknown;
-          console.log('[GamePlay] Auto-created game session', {
-            eventId,
-            gameKey: config.gameTypeKey,
-            sessionId: newSession.id,
-            active_round_id: newSession.active_round_id,
-          });
           sid = newSession.id;
           setSessionId(sid);
           if (newSession.active_round_id) setActiveRoundId(newSession.active_round_id);
@@ -282,11 +269,6 @@ export function GameBoardRouter({
         roundId: actionType.startsWith('coffee:') ? undefined : (activeRoundId || undefined),
         actionType,
         payload: isRecord(payload) ? payload : {},
-      });
-      console.log('[GamePlay] game:action ack', {
-        actionType,
-        sessionId: sid,
-        ack,
       });
     },
     [
