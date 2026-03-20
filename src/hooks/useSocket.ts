@@ -4,6 +4,7 @@
  */
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { getGuestToken } from '@/lib/guestTokenPersistence';
 
 // Hard-coded socket base URL to ensure consistent production behavior
 const SOCKET_URL = 'https://api.flowkyn.com';
@@ -40,8 +41,8 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
   onErrorRef.current = onError;
 
   const connect = useCallback(() => {
-    // Support both guest tokens (event-specific) and regular access tokens
-    const guestToken = eventId ? localStorage.getItem(`guest_token_${eventId}`) : localStorage.getItem('guest_token');
+    // Support both guest tokens (event-specific, with cookie backup) and regular access tokens
+    const guestToken = eventId ? getGuestToken(eventId) : localStorage.getItem('guest_token');
     const accessToken = localStorage.getItem('access_token');
     const resolvedToken =
       authMode === 'guest' ? guestToken : authMode === 'access' ? accessToken : guestToken || accessToken;
@@ -73,8 +74,8 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
 
     const socket = io(`${SOCKET_URL}${namespace}`, {
       auth: (cb) => {
-        // Fetch fresh token at the exact moment of connection/reconnection
-        const freshGuest = eventId ? localStorage.getItem(`guest_token_${eventId}`) : localStorage.getItem('guest_token');
+        // Fetch fresh token at the exact moment of connection/reconnection (cookie backup included)
+        const freshGuest = eventId ? getGuestToken(eventId) : localStorage.getItem('guest_token');
         const freshAccess = localStorage.getItem('access_token');
         const resolvedFreshToken =
           authMode === 'guest' ? freshGuest : authMode === 'access' ? freshAccess : freshGuest || freshAccess;

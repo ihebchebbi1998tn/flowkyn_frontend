@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { eventsApi } from '@/features/app/api/events';
+import { getGuestToken } from '@/lib/guestTokenPersistence';
 
 export const eventProfileKey = (eventId: string) => ['events', eventId, 'profile'] as const;
 
@@ -7,7 +8,7 @@ export const eventProfileKey = (eventId: string) => ['events', eventId, 'profile
 function hasToken(eventId?: string): boolean {
   if (localStorage.getItem('access_token')) return true;
   if (localStorage.getItem('guest_token')) return true;
-  if (eventId && localStorage.getItem(`guest_token_${eventId}`)) return true;
+  if (eventId && getGuestToken(eventId)) return true;
   return false;
 }
 

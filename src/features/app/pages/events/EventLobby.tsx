@@ -40,6 +40,7 @@ import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useApiError } from '@/hooks/useApiError';
 import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
+import { setGuestToken } from '@/lib/guestTokenPersistence';
 
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
@@ -153,7 +154,7 @@ export default function EventLobby() {
           data: { name: profile.displayName, email: guestEmail || undefined, avatar_url: safeAvatarUrl, token: inviteToken || undefined },
         });
         if (result.guest_token) {
-          localStorage.setItem(`guest_token_${id}`, result.guest_token);
+          setGuestToken(id, result.guest_token);
           localStorage.setItem(`guest_participant_id_${id}`, result.participant_id);
           localStorage.setItem(`guest_name_${id}`, result.guest_name);
         }

@@ -179,14 +179,10 @@ export function CoffeeRouletteBoard({
   }, [onEmitAction]);
 
   // Handle matching complete → auto-start chat
+  // Any paired participant can emit; backend is idempotent so duplicates are safe.
+  // This ensures the other matched user gets the phase update even if they missed the broadcast.
   const handleMatchingComplete = useCallback(async () => {
-    // Single authoritative emitter to prevent duplicate races:
-    // only person1 of the first pair starts the shared chat phase.
-    const firstPairLeaderId = pairs[0]?.person1?.participantId;
-    const iAmAuthoritativeStarter = !!firstPairLeaderId && firstPairLeaderId === currentUserId;
-    if (!iAmAuthoritativeStarter) {
-      return;
-    }
+    if (!myPair) return;
 
     try {
       setIsLoading(true);
@@ -196,10 +192,10 @@ export function CoffeeRouletteBoard({
     } finally {
       setIsLoading(false);
     }
-  }, [currentUserId, onEmitAction, pairs]);
+  }, [myPair, onEmitAction]);
 
-  // Matching phase should auto-advance without custom animations.
-  // Keep one authoritative starter (pair[0].person1) and fire once per pairing set.
+  // Matching phase should auto-advance: any paired participant can emit coffee:start_chat.
+  // Fire once per pairing set per client (backend is idempotent).
   useEffect(() => {
     if (phase !== 'matching') return;
     const firstPairId = pairs[0]?.id;

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TwoTruthsBoard, WinsOfTheWeekBoard, StrategicEscapeBoard, ComingSoonBoard } from '@/features/app/components/game/boards';
 import { CoffeeRouletteBoard } from '@/features/app/components/game/coffee-roulette';
@@ -94,6 +94,10 @@ export function GameBoardRouter({
 }: GameBoardRouterProps) {
   const { t } = useTranslation();
 
+  // Prevent emitting `game:action` to a session before we ensure `game:join` for it.
+  // This is especially important when using a sessionId override (e.g. REST create -> immediate socket emit).
+  const ensuredJoinForSessionRef = useRef<string | null>(null);
+
   const boardProps = {
     participants,
     currentUserId: participantId || '',
@@ -108,7 +112,11 @@ export function GameBoardRouter({
   };
 
   const onEmitAction = useCallback(
-    async (actionType: string, payload?: unknown) => {
+    async (
+      actionType: string,
+      payload?: unknown,
+      opts?: { sessionIdOverride?: string },
+    ) => {
       console.log('[GamePlay] onEmitAction', {
         gameKey: config.gameTypeKey,
         actionType,
@@ -116,7 +124,8 @@ export function GameBoardRouter({
         activeRoundId,
       });
 
-      let sid = sessionId;
+      const forcedSid = opts?.sessionIdOverride;
+      let sid = forcedSid ?? sessionId;
 
       // Auto-create a game session if one doesn't exist yet (e.g. first "Start Round")
       if (!sid && eventId) {
@@ -152,11 +161,27 @@ export function GameBoardRouter({
 
           if (gamesSocket.isConnected) {
             const respUnknown = await gamesSocket.emit('game:join', { sessionId: sid });
-            const data = isRecord(respUnknown) && isRecord(respUnknown.data) ? respUnknown.data : respUnknown;
+            const respRecord = isRecord(respUnknown) ? (respUnknown as Record<string, unknown>) : null;
+            const respData = respRecord && isRecord(respRecord.data) ? respRecord.data : null;
+            const data = respData ?? respUnknown;
             if (isRecord(data) && typeof data.activeRoundId === 'string') setActiveRoundId(data.activeRoundId);
             if (isRecord(data) && data.snapshot) {
               setInitialSnapshot(data.snapshot);
               setGameData(data.snapshot);
+            }
+
+            // Emit the intended action so the first click both creates and executes (e.g. coffee:shuffle)
+            try {
+              await gamesSocket.emit('game:action', {
+                sessionId: sid,
+                roundId: actionType.startsWith('coffee:') ? undefined : (newSession.active_round_id ?? undefined),
+                actionType,
+                payload: isRecord(payload) ? payload : {},
+              });
+              // game:data broadcast will update state; no manual snapshot update needed
+            } catch (actionErr) {
+              const msg = actionErr instanceof Error ? actionErr.message : String(actionErr);
+              console.warn('[GamePlay] Failed to emit action after session create:', msg);
             }
           }
 
@@ -167,8 +192,12 @@ export function GameBoardRouter({
             })
           );
         } catch (err: unknown) {
-          console.error('[GamePlay] Failed to auto-create game session:', (err as any)?.message || err);
-          const backendCode = (err as any)?.response?.data?.code || (err as any)?.code;
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error('[GamePlay] Failed to auto-create game session:', msg);
+          const errObj = err as { response?: { data?: { code?: unknown } }; code?: unknown };
+          const backendCode =
+            (typeof errObj?.response?.data?.code === 'string' ? errObj.response.data.code : undefined) ||
+            (typeof errObj?.code === 'string' ? errObj.code : undefined);
           if (backendCode === 'SESSION_NOT_ACTIVE') {
             showError(
               err,
@@ -217,6 +246,33 @@ export function GameBoardRouter({
       if (!gamesSocket.isConnected) {
         showError(new Error('Game socket not connected'), 'Game socket not connected');
         return;
+      }
+
+      // If caller provided a forced sessionId (typically right after REST session creation),
+      // we might not have the React `sessionId` state updated + joined yet.
+      // Do a best-effort `game:join` to guarantee the client is in `game:${sid}` room
+      // before we broadcast `game:data` updates.
+      if (forcedSid && ensuredJoinForSessionRef.current !== forcedSid) {
+        try {
+          const respUnknown = await gamesSocket.emit('game:join', { sessionId: forcedSid });
+          const respRecord = isRecord(respUnknown) ? (respUnknown as Record<string, unknown>) : null;
+          const respData = respRecord && isRecord(respRecord.data) ? respRecord.data : null;
+          const data = respData ?? respUnknown;
+
+          if (isRecord(data) && typeof data.activeRoundId === 'string') {
+            setActiveRoundId(data.activeRoundId);
+          }
+          if (isRecord(data) && data.snapshot) {
+            setInitialSnapshot(data.snapshot);
+            setGameData(data.snapshot);
+          }
+
+          ensuredJoinForSessionRef.current = forcedSid;
+        } catch (joinErr) {
+          // Not fatal: state sync periodic refresh will still converge.
+          const msg = joinErr instanceof Error ? joinErr.message : String(joinErr);
+          console.warn('[GamePlay] forced join failed (best-effort):', msg);
+        }
       }
 
       const ack = await gamesSocket.emit('game:action', {

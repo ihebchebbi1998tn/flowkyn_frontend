@@ -43,7 +43,11 @@ export interface StrategicEscapeBoardProps {
   initialSnapshot?: unknown;
   gameData?: unknown;
   onSessionCreated: (sessionId: string) => void;
-  onEmitSocketAction: (actionType: string, payload?: unknown) => Promise<void>;
+  onEmitSocketAction: (
+    actionType: string,
+    payload?: unknown,
+    opts?: { sessionId?: string },
+  ) => Promise<void>;
 }
 
 function isStrategicEscapeSnapshot(value: unknown): value is StrategicEscapeSnapshot {
@@ -249,14 +253,18 @@ export function StrategicEscapeBoard({
       onSessionCreated(res.sessionId);
       
       // Immediately emit to ensure game state syncs
-      onEmitSocketAction('strategic:configure', {
-        industryKey: localIndustry!,
-        crisisKey: localCrisis!,
-        difficultyKey: localDifficulty,
-        industryLabel,
-        crisisLabel,
-        difficultyLabel,
-      }).catch(err => {
+      onEmitSocketAction(
+        'strategic:configure',
+        {
+          industryKey: localIndustry!,
+          crisisKey: localCrisis!,
+          difficultyKey: localDifficulty,
+          industryLabel,
+          crisisLabel,
+          difficultyLabel,
+        },
+        { sessionId: res.sessionId },
+      ).catch(err => {
         console.warn('[StrategicEscapeBoard] strategic:configure emit failed:', err);
       });
       

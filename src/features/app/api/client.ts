@@ -1,9 +1,10 @@
 /**
  * App API client with shared refresh promise to prevent concurrent refresh race conditions.
  * Uses localStorage: access_token, refresh_token for logged-in users;
- * guest_token_${eventId} for guest participants on event-scoped requests.
+ * guest_token_${eventId} (with cookie backup) for guest participants on event-scoped requests.
  */
 import { ApiError } from '@/lib/apiError';
+import { getGuestToken } from '@/lib/guestTokenPersistence';
 
 // Hard-coded API base URL to ensure consistent production behavior
 const API_BASE = 'https://api.flowkyn.com/v1';
@@ -28,7 +29,7 @@ class ApiClient {
     const headers: HeadersInit = { 'Content-Type': 'application/json' };
     let token = authToken || localStorage.getItem('access_token');
     if (!token && eventId) {
-      token = localStorage.getItem(`guest_token_${eventId}`) || localStorage.getItem('guest_token');
+      token = getGuestToken(eventId) || localStorage.getItem('guest_token');
     }
     if (token) headers['Authorization'] = `Bearer ${token}`;
     return headers;
@@ -148,7 +149,7 @@ class ApiClient {
     const headers: HeadersInit = {};
     let token = localStorage.getItem('access_token');
     if (!token && eventId) {
-      token = localStorage.getItem(`guest_token_${eventId}`) || localStorage.getItem('guest_token');
+      token = getGuestToken(eventId) || localStorage.getItem('guest_token');
     }
     if (token) headers['Authorization'] = `Bearer ${token}`;
 

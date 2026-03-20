@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { getGuestToken } from '@/lib/guestTokenPersistence';
 import { activityFeedbacksApi, type ActivityFeedbackCategory, type ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
 
 export interface ActivityFeedbackModalProps {
@@ -83,7 +84,7 @@ export function ActivityFeedbackModal({
       const guestParticipantId = localStorage.getItem(`guest_participant_id_${eventId}`);
       const forceGuestToken =
         guestParticipantId && guestParticipantId === participantId
-          ? (localStorage.getItem(`guest_token_${eventId}`) || localStorage.getItem('guest_token') || undefined)
+          ? (eventId ? getGuestToken(eventId) : localStorage.getItem('guest_token')) || undefined
           : undefined;
 
       await activityFeedbacksApi.create({

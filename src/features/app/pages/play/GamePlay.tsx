@@ -12,6 +12,7 @@ import { ROUTES } from '@/constants/routes';
 import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts, useJoinEvent, useJoinAsGuest, useAcceptEventInvitation } from '@/hooks/queries/useEventQueries';
 import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { hasEventToken } from '@/hooks/queries/useMyEventParticipant';
+import { setGuestToken, getGuestToken } from '@/lib/guestTokenPersistence';
 import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
 import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
 import { useGameChatState } from '@/hooks/useGameChatState';
@@ -176,7 +177,7 @@ function GamePlayWithoutBoundary() {
           },
         });
         if (result.guest_token) {
-          localStorage.setItem(`guest_token_${eventId}`, result.guest_token);
+          setGuestToken(eventId, result.guest_token);
           localStorage.setItem(`guest_participant_id_${eventId}`, result.participant_id);
           localStorage.setItem(`guest_name_${eventId}`, result.guest_name);
         }
@@ -213,9 +214,11 @@ function GamePlayWithoutBoundary() {
     }
   }, [participantId, hasJoined]);
 
-  // 2. Auto-join after profile is confirmed
+  // 2. Auto-join after profile is confirmed (first-time joiners only)
+  // Skip when participantId exists — server already knows us (refresh/reconnect), avoid duplicate join
   useEffect(() => {
     if (isIdentityLoading) return; // Wait for server to confirm whether we already have a participant account
+    if (participantId) return; // Already have identity — same user reconnecting, do NOT call joinAsGuest again
     if (profile && !showProfileEdit && !hasJoined && !isJoining) {
       console.log('[GamePlay] auto-joining after profile ready', {
         eventId,
@@ -224,7 +227,7 @@ function GamePlayWithoutBoundary() {
       });
       handleJoin();
     }
-  }, [profile, showProfileEdit, hasJoined, isJoining, handleJoin, isIdentityLoading]);
+  }, [profile, showProfileEdit, hasJoined, isJoining, participantId, handleJoin, isIdentityLoading]);
 
   // Ensure the server profile is restored from localStorage after reload.
   // Without this, server-backed identity can return avatar/name as empty (e.g. for guests),
@@ -614,7 +617,7 @@ function GamePlayWithoutBoundary() {
       gamesApi.getActiveSession(eventId).then((s: any) => {
         if (s?.id) setSessionId(s.id);
       }).catch(() => {});
-    }, 5000);
+    }, 2000);
     return () => clearInterval(pollId);
   }, [eventId, sessionId]);
 
@@ -1046,7 +1049,7 @@ function GamePlayWithoutBoundary() {
                   sessionId={sessionId || 'null'} | initialSnapshot={initialSnapshot ? 'yes' : 'no'} | gameData={gameData ? 'yes' : 'no'}
                 </div>
                 <div>
-                  tokens: guest_token={eventId ? String(!!localStorage.getItem(`guest_token_${eventId}`)) : 'n/a'} | access_token={String(!!localStorage.getItem('access_token'))}
+                  tokens: guest_token={eventId ? String(!!getGuestToken(eventId)) : 'n/a'} | access_token={String(!!localStorage.getItem('access_token'))}
                 </div>
                 <div>event:join attempts={eventJoinAttemptsRef.current}</div>
               </div>

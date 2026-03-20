@@ -9,9 +9,13 @@ type GamesSocketLike = {
 };
 
 function parseRevisionTime(value: unknown): number {
-  if (typeof value !== 'string') return 0;
-  const ts = Date.parse(value);
-  return Number.isFinite(ts) ? ts : 0;
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === 'string') {
+    const ts = Date.parse(value);
+    return Number.isFinite(ts) ? ts : 0;
+  }
+  return 0;
 }
 
 interface UseGameStateSyncOptions {
@@ -309,7 +313,15 @@ export function useGameStateSync({
             gamePhase: payload?.gameData?.phase,
           });
         }
+        setInitialSnapshot(payload.gameData);
         setGameData(payload.gameData);
+
+        // Coffee Roulette: schedule a follow-up sync when in chatting phase
+        // to catch any topic/state updates that may have been missed
+        const gd = payload.gameData as { kind?: string; phase?: string };
+        if (gd?.kind === 'coffee-roulette' && gd?.phase === 'chatting' && sessionId) {
+          setTimeout(() => void requestStateSync('coffee_chatting_followup'), 1500);
+        }
       }
     });
 
@@ -365,7 +377,7 @@ export function useGameStateSync({
 
     const interval = window.setInterval(() => {
       void requestStateSync('periodic_refresh');
-    }, 8000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [gamesSocket.isConnected, sessionId, participantId, hasJoined, requestStateSync]);
@@ -466,7 +478,7 @@ export function useGameStateSync({
     if (!gamesSocket.isConnected || !sessionId) return;
     const id = window.setInterval(() => {
       const staleForMs = Date.now() - lastServerGameUpdateAtRef.current;
-      if (staleForMs > 9000) {
+      if (staleForMs > 6000) {
         void requestStateSync('watchdog_stale_state');
       }
     }, 2500);
