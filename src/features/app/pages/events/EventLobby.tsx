@@ -24,7 +24,6 @@ import { copyToClipboard } from '@/utils/clipboard';
 import {
   useEventPublicInfo,
   useEventParticipants,
-  useEventMessages,
   useJoinEvent,
   useJoinAsGuest,
   useAcceptEventInvitation,
@@ -34,7 +33,6 @@ import { useUpsertEventProfile } from '@/hooks/queries/useEventProfile';
 import { useEventIdentity } from '@/hooks/useEventIdentity';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
-import { EventChat, type ChatMessage } from '@/features/app/components/chat/EventChat';
 import { useEventsSocket } from '@/hooks/useSocket';
 import logoImg from '@/assets/logo.png';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
@@ -42,8 +40,7 @@ import { toast } from 'sonner';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useApiError } from '@/hooks/useApiError';
 import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
-import { eventsApi } from '@/features/app/api/events';
-import { LanguageSelector } from '@/components/common';
+
 
 // ─── Profile helpers ────────────────────────────────────────────────────────
 
@@ -80,7 +77,6 @@ export default function EventLobby() {
   const { data: event, isLoading: eventLoading } = useEventPublicInfo(id || '');
   const { data: participantsData, refetch: refetchParticipants } = useEventParticipants(id || '');
   const hasToken = hasEventToken(id || undefined);
-  const { data: messagesData, refetch: refetchMessages } = useEventMessages(id || '', 1, 50, hasToken);
   const joinEvent = useJoinEvent();
   const joinAsGuest = useJoinAsGuest();
   const acceptInvitation = useAcceptEventInvitation();
@@ -235,8 +231,6 @@ export default function EventLobby() {
   const shouldShowYouPill =
     !!(hasJoined && profile) &&
     !(identity.participantId && participants.some((p: any) => p.id === identity.participantId));
-  const hostParticipantId = participants.find((p: any) => p.is_host)?.id as string | undefined;
-  const isHostSelf = !!(identity.participantId && participants.some((p: any) => p.id === identity.participantId && p.is_host));
 
   useParticipantProfileRealtimeSync({
     eventId: id || undefined,
@@ -245,34 +239,6 @@ export default function EventLobby() {
     eventsSocket,
     setOwnProfile: setProfile,
     logPrefix: 'EventLobby',
-  });
-
-  // Chat state: initial history from API + live messages from WebSocket
-  const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
-  const [typingUsers, setTypingUsers] = useState<string[]>([]);
-  const lastChatSentAtRef = useRef<number | null>(null);
-  const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
-
-  const rawMessages = (messagesData as any)?.data || [];
-  const initialMessages: ChatMessage[] = rawMessages.map((m: any) => ({
-    id: m.id,
-    userId: m.user_id || m.participant_id,
-    participantId: m.participant_id,
-    senderName: m.user_name || m.guest_name || 'Unknown',
-    senderAvatar: (m.user_name || m.guest_name || '??').slice(0, 2).toUpperCase(),
-    senderAvatarUrl: getSafeImageUrl(m.avatar_url) || null,
-    message: m.message,
-    timestamp: m.created_at,
-    isOwn: isGuest
-      ? m.participant_id === identity.participantId
-      : !!(m.user_id && m.user_id === user?.id),
-  }));
-
-  const seenIds = new Set<string>();
-  const allMessages = [...(pinnedMessage ? [pinnedMessage] : []), ...initialMessages, ...liveMessages].filter(m => {
-    if (seenIds.has(m.id)) return false;
-    seenIds.add(m.id);
-    return true;
   });
 
   const copyLinkTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
@@ -376,7 +342,7 @@ export default function EventLobby() {
     };
   }, [eventsSocket.isConnected, id, refetchParticipants, eventsSocket]);
 
-  // Reconnect backfill: when socket transitions back to connected, refetch messages and participants.
+  // Reconnect backfill: when socket transitions back to connected, refetch participants.
   const wasConnectedRef = useRef(false);
   useEffect(() => {
     if (eventsSocket.status === 'connected') {
@@ -384,7 +350,7 @@ export default function EventLobby() {
         wasConnectedRef.current = true;
         if (id) {
           setIsSyncing(true);
-          Promise.all([refetchParticipants(), refetchMessages()])
+          Promise.all([refetchParticipants()])
             .catch((err) => {
               console.error('[EventLobby] reconnect backfill error', err);
             })
@@ -394,105 +360,18 @@ export default function EventLobby() {
     } else {
       wasConnectedRef.current = false;
     }
-  }, [eventsSocket.status, id, refetchParticipants, refetchMessages]);
+  }, [eventsSocket.status, id, refetchParticipants]);
 
-  // Fallback polling: keep messages and participants fresh even if socket events are missed
+  // Fallback polling: keep participants fresh even if socket events are missed
   useEffect(() => {
     if (!id) return;
 
     const interval = setInterval(() => {
-      refetchMessages();
       refetchParticipants();
     }, 6000);
 
     return () => clearInterval(interval);
-  }, [id, refetchMessages, refetchParticipants]);
-
-  // Fetch pinned message once for lobby display
-  useEffect(() => {
-    if (!id) return;
-    console.log('[EventLobby] fetching pinned message', { eventId: id });
-    eventsApi.getPinnedMessage(id)
-      .then((row: any) => {
-        if (!row) {
-          setPinnedMessage(null);
-          return;
-        }
-        const name = row.user_name || 'Player';
-        setPinnedMessage({
-          id: row.id,
-          userId: row.user_id || row.participant_id,
-          participantId: row.participant_id,
-          senderName: name,
-          senderAvatar: (name || '??').slice(0, 2).toUpperCase(),
-          senderAvatarUrl: getSafeImageUrl(row.avatar_url) || null,
-          message: row.message,
-          timestamp: row.created_at,
-          isOwn: false,
-        });
-      })
-      .catch(() => {
-        console.warn('[EventLobby] getPinnedMessage failed (non-fatal)');
-      });
-  }, [id]);
-
-  // Live chat listeners — use refs for identity so we don't re-register on identity load (prevents missing real-time messages)
-  useEffect(() => {
-    if (!eventsSocket.isConnected || !id) return;
-
-    const handleChatMessage = (data: any) => {
-      console.log('[EventLobby] Socket message received:', data);
-      const idCurrent = identityRef.current;
-      const usr = userRef.current;
-      
-      if (!idCurrent) {
-        console.warn('[EventLobby] Received chat message but identity is not loaded. Defaulting to isOwn=false.');
-      }
-
-      const name = data.senderName || 'Player';
-      const isOwn = idCurrent?.isGuest
-        ? data.participantId === idCurrent.participantId
-        : !!(data.userId && data.userId === usr?.id);
-
-      const msg: ChatMessage = {
-        id: data.id || `ws-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`,
-        userId: data.userId,
-        participantId: data.participantId,
-        senderName: name,
-        senderAvatar: name.slice(0, 2).toUpperCase(),
-        senderAvatarUrl: getSafeImageUrl(data.senderAvatarUrl) || null,
-        message: data.message,
-        timestamp: data.timestamp || new Date().toISOString(),
-        isOwn,
-      };
-      
-      console.log('[EventLobby] Appending to liveMessages:', msg);
-      setLiveMessages(prev => {
-        if (prev.some(m => m.id === msg.id)) return prev;
-        return [...prev, msg];
-      });
-    };
-
-    const handleTyping = (data: { userId: string; userName?: string; isTyping: boolean }) => {
-      const idCurrent = identityRef.current;
-      const uid = idCurrent.userId || idCurrent.participantId;
-      if (data.userId === uid || (idCurrent.isGuest && data.userId === `guest:${uid}`)) return;
-      const displayId = data.userName || data.userId;
-      setTypingUsers(prev => {
-        if (data.isTyping && !prev.includes(displayId)) return [...prev, displayId];
-        if (!data.isTyping) return prev.filter(u => u !== displayId);
-        return prev;
-      });
-    };
-
-    const unsubMessage = eventsSocket.on('chat:message', handleChatMessage);
-    const unsubTyping = eventsSocket.on('chat:typing', handleTyping);
-
-    return () => {
-      unsubMessage?.();
-      unsubTyping?.();
-    };
-  }, [eventsSocket.isConnected, id, eventsSocket]);
+  }, [id, refetchParticipants]);
 
   // Leave event room when lobby unmounts
   useEffect(() => {
@@ -528,41 +407,6 @@ export default function EventLobby() {
     const playPath = ROUTES.PLAY(id) + (gameParam ? `?game=${gameParam}` : '');
     navigate(playPath);
   }, [navigate, id, gameParam]);
-
-  const handleSendMessage = useCallback((message: string) => {
-    if (!id) return;
-
-    const now = Date.now();
-    if (lastChatSentAtRef.current && now - lastChatSentAtRef.current < 1000) {
-      console.warn('[EventLobby] Dropping chat send due to local rate limit');
-      return;
-    }
-    lastChatSentAtRef.current = now;
-
-    // Optimistically refresh HTTP messages after server acks the socket emit,
-    // so users see their message even if they joined the room slightly late.
-    if (eventsSocket.isConnected) {
-      eventsSocket.emit('chat:message', { eventId: id, message })
-        .then(() => {
-          console.log('[EventLobby] chat:message ack received, refetching messages', { eventId: id });
-          refetchMessages();
-        })
-        .catch((err: any) => {
-          console.error('[EventLobby] Failed to send message:', err?.message || err);
-          showError(err, t('chat.errors.sendFailed', { defaultValue: 'Failed to send message' }));
-        });
-    } else {
-      console.warn('[EventLobby] Socket not connected, cannot send message — falling back to HTTP refetch');
-      // Even if socket isn't connected, trigger a refetch so the UI can pick up messages
-      refetchMessages();
-    }
-  }, [eventsSocket.isConnected, id, eventsSocket, refetchMessages, showError]);
-
-  const handleTyping = useCallback((isTyping: boolean) => {
-    if (eventsSocket.isConnected && id) {
-      eventsSocket.emit('chat:typing', { eventId: id, isTyping }).catch(() => {});
-    }
-  }, [eventsSocket.isConnected, id, eventsSocket]);
 
   // ── Loading ──────────────────────────────────────────────────────────────
   if (eventLoading) {
@@ -624,10 +468,7 @@ export default function EventLobby() {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-primary/3" />
               <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
 
-              {/* Language switcher (top-right) */}
-              <div className="absolute top-4 right-4 z-20">
-                <LanguageSelector align="end" />
-              </div>
+              {/* Language switcher removed (not needed in lobby) */}
 
               <div className="relative p-6 sm:p-8 space-y-6">
                 {/* Draft banner */}
@@ -639,7 +480,7 @@ export default function EventLobby() {
                         {t('events.lifecycle.draftBannerTitle', "Your facilitator hasn’t started yet")}
                       </p>
                       <p className="text-[11px] text-muted-foreground">
-                        {t('events.lifecycle.draftBannerBody', 'You can still join the lobby, chat, and get ready while you wait.')}
+                        {t('events.lifecycle.draftBannerBody', 'You can still join the lobby and get ready while you wait.')}
                       </p>
                     </div>
                   </div>
@@ -827,47 +668,7 @@ export default function EventLobby() {
                   </div>
                 </div>
 
-                {/* Live chat in lobby */}
-                <div className="pt-2">
-                  {/* Guidance card */}
-                  <div className="mb-3 rounded-2xl border border-border bg-card px-4 py-3">
-                    <p className="text-[12px] font-semibold text-foreground">
-                      {t('events.guidance.nextTitle', 'What happens next')}
-                    </p>
-                    <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground">
-                      <li>
-                        {t('events.guidance.step1', {
-                          defaultValue: '1) Wait for everyone to join ({{count}} joined so far).',
-                          count: participants.length,
-                        })}
-                      </li>
-                      <li>{t('events.guidance.step2', '2) Your host will start the activity.')}</li>
-                      <li>{t('events.guidance.step3', '3) You’ll automatically see the game when it starts.')}</li>
-                    </ul>
-                    {isHostSelf && (
-                      <p className="mt-2 text-[11px] text-muted-foreground">
-                        {t('events.guidance.hostPinHint', 'Host tip: pin a message with key instructions so everyone sees it.')}
-                      </p>
-                    )}
-                  </div>
-                  <EventChat
-                    eventId={id || ''}
-                    messages={allMessages}
-                    participantProfiles={participants.map((p: any) => ({
-                      participantId: String(p.id),
-                      displayName: typeof p.name === 'string' ? p.name : null,
-                      avatarUrl: typeof p.avatar === 'string' ? (getSafeImageUrl(p.avatar) || p.avatar) : null,
-                    }))}
-                    onSendMessage={handleSendMessage}
-                    onTyping={handleTyping}
-                    currentUserId={currentUserId}
-                    isGuest={isGuest}
-                    currentUserAvatarUrl={avatarUrl}
-                    typingUsers={typingUsers}
-                    isOnline={eventsSocket.status === 'connected'}
-                    hostParticipantId={hostParticipantId}
-                  />
-                </div>
+                {/* Chat removed (users asked to simplify join lobby) */}
 
                 {inviteToken && (
                   <div className="flex items-center gap-2 p-3 rounded-xl bg-success/5 border border-success/20">
