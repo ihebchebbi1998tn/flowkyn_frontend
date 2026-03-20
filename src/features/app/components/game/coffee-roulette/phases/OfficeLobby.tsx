@@ -7,7 +7,7 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Coffee, Users, ArrowRight, User } from 'lucide-react';
+import { Coffee, Users, ArrowRight, User, Clock, Mic } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -63,9 +63,12 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
   );
 
   return (
-    <div style={themeVars as React.CSSProperties}>
+    <div
+      style={themeVars as React.CSSProperties}
+      className="h-full min-h-0 flex flex-col"
+    >
       <div
-          className="h-full flex flex-col min-h-0"
+        className="h-full flex flex-col min-h-0 overflow-hidden"
         style={{
           background: `linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%)`,
         }}
@@ -127,13 +130,43 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 </div>
               </div>
             </div>
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <div
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-white/50"
+                style={{ borderColor: 'var(--color-primary-light)' }}
+              >
+                <Clock className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+                <span className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
+                  {t('gamePlay.coffeeRoulette.minutes', { defaultValue: '30 minutes' })}
+                </span>
+              </div>
+              <div
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-white/50"
+                style={{ borderColor: 'var(--color-accent-light)' }}
+              >
+                <Mic className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
+                <span className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
+                  {t('gamePlay.coffeeRoulette.lobby.voiceEnabled', { defaultValue: 'Voice chat' })}
+                </span>
+              </div>
+              {!canStart && (
+                <div
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-white/50"
+                  style={{ borderColor: 'var(--color-primary-light)' }}
+                >
+                  <span className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
+                    {t('gamePlay.coffeeRoulette.lobby.needMore', { count: missingParticipantsToStart })}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 px-4 py-4 min-h-0">
-          <div className="w-full max-w-6xl mx-auto h-full min-h-0">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch h-full min-h-0">
+        <div className="flex-1 px-4 py-4 min-h-0 overflow-hidden">
+          <div className="w-full max-w-6xl mx-auto h-full min-h-0 overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch h-full min-h-0 overflow-hidden">
               {/* Participants */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -370,7 +403,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="px-5 py-3 border-t"
+          className="px-5 py-3 border-t flex-shrink-0"
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             borderColor: 'var(--color-primary-light)',

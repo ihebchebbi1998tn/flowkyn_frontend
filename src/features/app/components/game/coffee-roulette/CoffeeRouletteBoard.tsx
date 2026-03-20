@@ -347,13 +347,15 @@ export function CoffeeRouletteBoard({
   // PHASE: Waiting - Lobby
   if (phase === 'waiting') {
     return (
-      <RoomThemeProvider themeName={themeName}>
-        <OfficeLobby
-          participants={formattedParticipants}
-          onStartMatching={handleStartMatching}
-          isLoading={isLoading}
-        />
-      </RoomThemeProvider>
+      <div className="h-full min-h-0 flex flex-col">
+        <RoomThemeProvider themeName={themeName}>
+          <OfficeLobby
+            participants={formattedParticipants}
+            onStartMatching={handleStartMatching}
+            isLoading={isLoading}
+          />
+        </RoomThemeProvider>
+      </div>
     );
   }
 
