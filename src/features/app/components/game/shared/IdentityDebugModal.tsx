@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -146,6 +146,55 @@ export function IdentityDebugModal({
     accessTokenExists,
   ]);
 
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(async () => {
+    const fullReport = [
+      '─── Identity debug (copy for support) ───',
+      '',
+      'Stable IDs',
+      `eventId: ${eventId}`,
+      `isGuest: ${String(isGuest)}`,
+      `userId (socket auth): ${userId || 'null'}`,
+      `participantId: ${participantId || 'null'}`,
+      `displayName: ${displayName}`,
+      '',
+      'Join + Game State',
+      `hasJoined: ${String(hasJoined)} | eventRoomJoined: ${String(eventRoomJoined)}`,
+      `sessionId: ${sessionId || 'null'} | gameJoinAckReceived: ${String(gameJoinAckReceived)}`,
+      `gameType: ${gameTypeKey || 'unknown'} | hasGameData: ${String(!!gameDataPreview)}`,
+      `coffeePair: ${coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole}) -> ${coffeePairDebug.partnerParticipantId}` : 'none'}`,
+      `eventsSocket: ${eventsSocketStatus}`,
+      `gamesSocket: ${gamesSocketStatus}`,
+      '',
+      `Event Participants (${participantCount})`,
+      participants.map((p) => `${p.id} | ${p.name}${p.isHost ? ' | host' : ''}`).join('\n') || 'No participants',
+      '',
+      'Tokens',
+      `local guest token exists: ${String(localGuestTokenExists)} (cookie backup: ${String(cookieBacked)})`,
+      `guest identity key: ${guestIdentityKey || 'null'}`,
+      `access token exists: ${String(accessTokenExists)}`,
+      '',
+      '─── Full JSON ───',
+      payloadText,
+    ].join('\n');
+
+    try {
+      await navigator.clipboard.writeText(fullReport);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  }, [
+    eventId, isGuest, userId, participantId, displayName,
+    hasJoined, eventRoomJoined, sessionId, gameJoinAckReceived,
+    gameTypeKey, gameDataPreview, coffeePairDebug,
+    eventsSocketStatus, gamesSocketStatus,
+    participantCount, participants,
+    localGuestTokenExists, cookieBacked, guestIdentityKey, accessTokenExists,
+    payloadText,
+  ]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
@@ -206,6 +255,14 @@ export function IdentityDebugModal({
           </div>
 
           <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={handleCopy}
+            >
+              {copied ? 'Copied!' : 'Copy all'}
+            </Button>
             <Button
               type="button"
               variant="outline"
