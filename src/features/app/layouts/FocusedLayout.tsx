@@ -1,4 +1,4 @@
-﻿import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Clock, Copy, CheckCircle2, Gamepad2, Share2, Users, WifiOff } from 'lucide-react';
@@ -133,29 +133,6 @@ export function FocusedLayout() {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  {(header.currentUserAvatarUrl || header.currentUserName) && (
-                    <button
-                      onClick={header.onEditProfile}
-                      title={t('profile.editTitle', { defaultValue: 'Edit your profile' })}
-                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 hover:bg-muted/60 transition-colors group"
-                    >
-                      {header.currentUserAvatarUrl ? (
-                        <img
-                          src={header.currentUserAvatarUrl}
-                          alt={t('common.you', { defaultValue: 'You' })}
-                          className="h-6 w-6 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="h-6 w-6 rounded-full bg-primary/15 flex items-center justify-center text-[9px] font-bold text-primary">
-                          {(header.currentUserName || t('common.you', { defaultValue: 'You' })).slice(0, 2).toUpperCase()}
-                        </div>
-                      )}
-                      <span className="text-[11px] font-medium text-foreground max-w-[80px] truncate hidden sm:inline">
-                        {header.currentUserName || t('common.you', { defaultValue: 'You' })}
-                      </span>
-                    </button>
-                  )}
-
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl border border-border/50 bg-background/40 backdrop-blur-sm">
                       <Clock className="h-3.5 w-3.5 text-primary" />
@@ -210,6 +187,29 @@ export function FocusedLayout() {
                       <Share2 className="h-3.5 w-3.5" />
                       <span className="hidden sm:inline">{t('gamePlay.shell.invite')}</span>
                     </Button>
+
+                    {(header.currentUserAvatarUrl || header.currentUserName) && (
+                      <button
+                        onClick={header.onEditProfile}
+                        title={t('profile.editTitle', { defaultValue: 'Edit your profile' })}
+                        className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 hover:bg-muted/60 transition-colors group"
+                      >
+                        {header.currentUserAvatarUrl ? (
+                          <img
+                            src={header.currentUserAvatarUrl}
+                            alt={t('common.you', { defaultValue: 'You' })}
+                            className="h-6 w-6 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full bg-primary/15 flex items-center justify-center text-[9px] font-bold text-primary">
+                            {(header.currentUserName || t('common.you', { defaultValue: 'You' })).slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                        <span className="text-[11px] font-medium text-foreground max-w-[80px] truncate hidden sm:inline">
+                          {header.currentUserName || t('common.you', { defaultValue: 'You' })}
+                        </span>
+                      </button>
+                    )}
 
                     <Button
                       variant="destructive"

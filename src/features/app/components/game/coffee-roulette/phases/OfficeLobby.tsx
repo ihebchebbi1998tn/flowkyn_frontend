@@ -131,15 +131,15 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 px-4 py-4 overflow-y-auto min-h-0">
-          <div className="w-full max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <div className="flex-1 px-4 py-4 min-h-0">
+          <div className="w-full max-w-6xl mx-auto h-full min-h-0">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch h-full min-h-0">
               {/* Participants */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0"
+                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0 h-full"
                 style={{ padding: 16 }}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -205,7 +205,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.08 }}
-                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0"
+                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0 h-full"
                 style={{ padding: 16 }}
               >
                 <div className="flex items-center justify-between mb-3">
