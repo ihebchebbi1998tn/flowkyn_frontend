@@ -1,7 +1,7 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+﻿import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Bug, Clock, Copy, CheckCircle2, Gamepad2, Share2, Users, WifiOff } from 'lucide-react';
+import { ArrowLeft, Clock, Copy, CheckCircle2, Gamepad2, Share2, Users, WifiOff } from 'lucide-react';
 import { PageSkeleton } from '@/components/loading/PageSkeleton';
 import { LanguageSelector } from '@/components/common';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
-import { ReportIssueModal } from '@/features/app/pages/support/ReportIssueModal';
 import { copyToClipboard } from '@/utils/clipboard';
 import type { GameParticipant } from '@/features/app/components/game/shell/types';
 import { GameHeaderContext, type GameHeaderState } from './gameHeaderContext';
@@ -24,7 +23,6 @@ import { GameHeaderContext, type GameHeaderState } from './gameHeaderContext';
 export function FocusedLayout() {
   const { t } = useTranslation();
   const [header, setHeader] = useState<GameHeaderState | null>(null);
-  const [isReportOpen, setIsReportOpen] = useState(false);
   const [showLink, setShowLink] = useState(false);
   const [copied, setCopied] = useState(false);
   const copyLinkTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -103,16 +101,6 @@ export function FocusedLayout() {
                       <ArrowLeft className="h-4 w-4" />
                     </Button>
                   )}
-
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 shrink-0 rounded-lg bg-background/40 backdrop-blur-sm border border-border/40 hover:bg-background/70"
-                    onClick={() => setIsReportOpen(true)}
-                    title={t('support.reportBugCta', { defaultValue: 'Report a bug' })}
-                  >
-                    <Bug className="h-3.5 w-3.5" />
-                  </Button>
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -234,7 +222,6 @@ export function FocusedLayout() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-[11px] font-medium uppercase tracking-wider">{t('layout.liveExperience')}</span>
                     <LanguageSelector align="end" />
                   </div>
                 </div>
@@ -271,8 +258,6 @@ export function FocusedLayout() {
             <Outlet />
           </Suspense>
         </main>
-
-        <ReportIssueModal open={isReportOpen} onOpenChange={setIsReportOpen} />
       </div>
     </GameHeaderContext.Provider>
   );

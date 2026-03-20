@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Users, Clock, Timer, Copy, Share2,
   CheckCircle, Link2, Radio, Pencil,
-  Bug, WifiOff,
+  WifiOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,6 @@ import { LeaderboardSidebar } from './LeaderboardSidebar';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import type { GameParticipant } from './types';
 import { motion } from 'framer-motion';
-import { ReportIssueModal } from '@/features/app/pages/support/ReportIssueModal';
 import { playJoinChime } from '../shared';
 
 type MobileTab = 'chat' | 'leaderboard';
@@ -64,7 +63,6 @@ export function GamePlayShell({
   const [elapsed, setElapsed] = useState(0);
   const [copied, setCopied] = useState(false);
   const [showLink, setShowLink] = useState(false);
-  const [isReportOpen, setIsReportOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const gameId = searchParams.get('game');
   const [mobileSheet, setMobileSheet] = useState<MobileTab | null>(null);
@@ -154,7 +152,6 @@ export function GamePlayShell({
 
   return (
     <div className="space-y-5 w-full max-w-[1400px] mx-auto animate-fade-in">
-      {!hideHeader && <ReportIssueModal open={isReportOpen} onOpenChange={setIsReportOpen} />}
       {/* ─── Header ─── */}
       {!hideHeader && (
         <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
@@ -194,16 +191,6 @@ export function GamePlayShell({
 
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsReportOpen(true)}
-                    title={t('support.reportBugCta', { defaultValue: 'Report a bug' })}
-                    className="h-7 w-7 shrink-0 rounded-lg bg-background/40 backdrop-blur-sm border border-border/40 hover:bg-background/70"
-                  >
-                    <Bug className="h-3.5 w-3.5" />
-                  </Button>
                   <h1 className="text-base sm:text-xl font-bold tracking-tight text-foreground truncate">{title}</h1>
                   <Badge className={cn("text-[10px] shrink-0 gap-1",
                     gameType === 'sync' ? 'bg-success/15 text-success border-success/25' : 'bg-info/15 text-info border-info/25'
