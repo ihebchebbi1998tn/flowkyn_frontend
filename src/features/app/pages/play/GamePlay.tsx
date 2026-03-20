@@ -360,10 +360,10 @@ function GamePlayWithoutBoundary() {
         const session = await gamesApi.getActiveSession(eventId);
         if (!cancelled && session) {
           setSessionId(session.id);
-          if (session.game_key) {
+          if (session.game_type_key) {
             import('./gameTypes').then(({ GAME_KEY_TO_CONFIG_ID, GAME_CONFIGS }) => {
               if (!cancelled) {
-                const correctConfigId = GAME_KEY_TO_CONFIG_ID[session.game_key as keyof typeof GAME_KEY_TO_CONFIG_ID];
+                const correctConfigId = GAME_KEY_TO_CONFIG_ID[session.game_type_key as keyof typeof GAME_KEY_TO_CONFIG_ID];
                 if (correctConfigId && GAME_CONFIGS[correctConfigId]) {
                   setActiveConfig(GAME_CONFIGS[correctConfigId]);
                 }
@@ -536,7 +536,7 @@ function GamePlayWithoutBoundary() {
   ]);
 
   const { requestStateSync } = useGameStateSync({
-    gamesSocket,
+    gamesSocket: gamesSocket as any,
     sessionId,
     hasJoined,
     participantId,
@@ -735,8 +735,8 @@ function GamePlayWithoutBoundary() {
         currentUserName={currentUserName}
         currentUserAvatarUrl={currentUserAvatarUrl}
         onEditProfile={() => setShowProfileEdit(true)}
-        organizationLogo={eventPublicObj?.organization_logo}
-        organizationName={eventPublicObj?.organization_name}
+        organizationLogo={typeof (eventPublicObj as any)?.organization_logo === 'string' ? (eventPublicObj as any).organization_logo : undefined}
+        organizationName={typeof (eventPublicObj as any)?.organization_name === 'string' ? (eventPublicObj as any).organization_name : undefined}
         hideBackButton={true}
         disconnectedBadgeCount={disconnectedBadgeCount}
         hideHeader
