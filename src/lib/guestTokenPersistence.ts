@@ -31,6 +31,23 @@ function randomIdentityKey(): string {
   return `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 18)}`;
 }
 
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const payloadPart = parts[1];
+    const base64 = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+    const pad = base64.length % 4 === 0 ? 0 : 4 - (base64.length % 4);
+    const normalized = base64 + '='.repeat(pad);
+    const json = atob(normalized);
+    const parsed = JSON.parse(json) as unknown;
+    if (!parsed || typeof parsed !== 'object') return null;
+    return parsed as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
 /** Set guest token in localStorage and cookie backup */
 export function setGuestToken(eventId: string, token: string): void {
   try {
@@ -125,4 +142,20 @@ export function getOrCreateGuestIdentityKey(eventId: string): string {
   const created = randomIdentityKey();
   setGuestIdentityKey(eventId, created);
   return created;
+}
+
+/**
+ * If local identity key is missing but guest token has one, restore it.
+ * Helps legacy sessions and cross-storage recovery.
+ */
+export function syncGuestIdentityKeyFromToken(eventId: string): string | null {
+  const current = getGuestIdentityKey(eventId);
+  if (current) return current;
+  const token = getGuestToken(eventId);
+  if (!token) return null;
+  const payload = decodeJwtPayload(token);
+  const tokenKey = typeof payload?.guestIdentityKey === 'string' ? payload.guestIdentityKey : null;
+  if (!tokenKey) return null;
+  setGuestIdentityKey(eventId, tokenKey);
+  return tokenKey;
 }

@@ -56,6 +56,14 @@ export type IdentityDebugModalProps = {
   participants?: Array<{ id: string; name: string; avatarUrl?: string | null; isHost?: boolean }>;
   gameTypeKey?: string;
   gameDataPreview?: unknown;
+  coffeePairDebug?: {
+    pairId: string;
+    myRole: 'person1' | 'person2';
+    meParticipantId: string;
+    partnerParticipantId: string;
+    topic: string;
+    phase: string;
+  } | null;
 };
 
 export function IdentityDebugModal({
@@ -80,6 +88,7 @@ export function IdentityDebugModal({
   participants = [],
   gameTypeKey,
   gameDataPreview,
+  coffeePairDebug,
 }: IdentityDebugModalProps) {
   const decoded = useMemo(() => {
     if (!guestTokenValue) return null;
@@ -96,6 +105,7 @@ export function IdentityDebugModal({
         join: { hasJoined, eventRoomJoined },
         game: { sessionId, gameJoinAckReceived },
         gameContext: { gameTypeKey, hasGameData: !!gameDataPreview },
+        coffeePair: coffeePairDebug,
         sockets: { eventsSocketStatus, gamesSocketStatus },
         participants: {
           count: participantCount,
@@ -126,6 +136,7 @@ export function IdentityDebugModal({
     gamesSocketStatus,
     gameTypeKey,
     gameDataPreview,
+    coffeePairDebug,
     participantCount,
     participants,
     localGuestTokenExists,
@@ -163,6 +174,9 @@ export function IdentityDebugModal({
               <div>hasJoined: {String(hasJoined)} | eventRoomJoined: {String(eventRoomJoined)}</div>
               <div>sessionId: {sessionId || 'null'} | gameJoinAckReceived: {String(gameJoinAckReceived)}</div>
               <div>gameType: {gameTypeKey || 'unknown'} | hasGameData: {String(!!gameDataPreview)}</div>
+              <div>
+                coffeePair: {coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole}) -> ${coffeePairDebug.partnerParticipantId}` : 'none'}
+              </div>
               <div>eventsSocket: {eventsSocketStatus}</div>
               <div>gamesSocket: {gamesSocketStatus}</div>
             </div>

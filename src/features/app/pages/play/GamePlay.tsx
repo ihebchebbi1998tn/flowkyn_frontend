@@ -545,6 +545,37 @@ function GamePlayWithoutBoundary() {
     })),
   }));
 
+  const coffeePairDebug = useMemo(() => {
+    if (activeConfig.gameTypeKey !== 'coffee-roulette') return null;
+    if (!participantId) return null;
+    if (!gameData || typeof gameData !== 'object') return null;
+
+    const gd = gameData as {
+      phase?: string;
+      pairs?: Array<{
+        id?: string;
+        topic?: string;
+        person1?: { participantId?: string };
+        person2?: { participantId?: string };
+      }>;
+    };
+    const pairs = Array.isArray(gd.pairs) ? gd.pairs : [];
+    const myPair = pairs.find((p) => p?.person1?.participantId === participantId || p?.person2?.participantId === participantId);
+    if (!myPair || typeof myPair.id !== 'string') return null;
+    const iAmPerson1 = myPair.person1?.participantId === participantId;
+    const partnerParticipantId = iAmPerson1 ? myPair.person2?.participantId : myPair.person1?.participantId;
+    if (typeof partnerParticipantId !== 'string' || !partnerParticipantId) return null;
+
+    return {
+      pairId: myPair.id,
+      myRole: (iAmPerson1 ? 'person1' : 'person2') as 'person1' | 'person2',
+      meParticipantId: participantId,
+      partnerParticipantId,
+      topic: typeof myPair.topic === 'string' ? myPair.topic : '',
+      phase: typeof gd.phase === 'string' ? gd.phase : 'unknown',
+    };
+  }, [activeConfig.gameTypeKey, participantId, gameData]);
+
 
 
   // Resolve active game session on mount + periodically when none (in case we miss game:session_created)
@@ -1118,6 +1149,7 @@ function GamePlayWithoutBoundary() {
         }))}
         gameTypeKey={activeConfig.gameTypeKey}
         gameDataPreview={gameData}
+        coffeePairDebug={coffeePairDebug}
       />
 
       {/* In-game profile edit modal */}

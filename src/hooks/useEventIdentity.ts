@@ -1,7 +1,8 @@
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useMyEventParticipant } from '@/hooks/queries/useMyEventParticipant';
 import { useEventProfile } from '@/hooks/queries/useEventProfile';
-import { getGuestToken } from '@/lib/guestTokenPersistence';
+import { getGuestToken, syncGuestIdentityKeyFromToken } from '@/lib/guestTokenPersistence';
+import { useEffect } from 'react';
 
 export interface EventIdentity {
   isGuest: boolean;
@@ -33,6 +34,12 @@ export function useEventIdentity(eventId: string | undefined): EventIdentity {
   const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const { data: participant, isLoading: isParticipantLoading } = useMyEventParticipant(eventId);
   const { data: profile, isLoading: isProfileLoading } = useEventProfile(eventId);
+
+  useEffect(() => {
+    if (!eventId) return;
+    // Self-heal missing local identity key from guest token payload.
+    syncGuestIdentityKeyFromToken(eventId);
+  }, [eventId]);
 
   // Fallback: if we still haven't resolved `/events/:id/me` but we already have a guest token,
   // decode the token to recover a stable participantId + guestName. This prevents re-joining
