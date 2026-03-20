@@ -63,6 +63,12 @@ export default function OrgDetail() {
   const membersList = [...members, ...invitations];
   const owner = membersList.find(m => (m as OrgMember).role_name === 'owner');
 
+  const departmentNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const d of departments || []) map.set(d.id, d.name);
+    return map;
+  }, [departments]);
+
   const getDepartmentId = (dept: Partial<Department> & { department_id?: string; departmentId?: string }): string | null => {
     return dept.id ?? dept.departmentId ?? dept.department_id ?? null;
   };
@@ -264,11 +270,8 @@ export default function OrgDetail() {
         const isMember = !!member.role_name;
 
         if (!isMember) {
-          return (
-            <Badge variant="outline" className="text-label-xs border bg-amber-50 text-amber-700 border-amber-200">
-              {t('organizations.invitedPending')}
-            </Badge>
-          );
+          // Pending invitations: show "-" instead of a badge
+          return <span className="text-body-sm text-muted-foreground">-</span>;
         }
 
         const s = roleStyle[member.role_name] || roleStyle.member;
@@ -295,7 +298,13 @@ export default function OrgDetail() {
       sortable: true,
       render: (row) => (
         <span className="text-body-sm text-foreground">
-          {((row as any).department || '').trim() || 'General'}
+          {(() => {
+            const r = row as any;
+            const direct = (r.department || '').trim();
+            if (direct) return direct;
+            if (r.department_id && departmentNameById.get(r.department_id)) return departmentNameById.get(r.department_id);
+            return 'General';
+          })()}
         </span>
       ),
     },

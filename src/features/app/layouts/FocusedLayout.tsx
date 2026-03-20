@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Clock, Copy, CheckCircle2, Gamepad2, Share2, Users, WifiOff } from 'lucide-react';
 import { PageSkeleton } from '@/components/loading/PageSkeleton';
@@ -22,6 +22,7 @@ import { GameHeaderContext, type GameHeaderState } from './gameHeaderContext';
 
 export function FocusedLayout() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [header, setHeader] = useState<GameHeaderState | null>(null);
   const [showLink, setShowLink] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -95,7 +96,7 @@ export function FocusedLayout() {
                       variant="ghost"
                       size="icon"
                       className="h-9 w-9 shrink-0 rounded-xl"
-                      onClick={() => window.location.assign(ROUTES.EVENTS)}
+                      onClick={() => navigate(ROUTES.EVENTS)}
                       aria-label={t('gamePlay.shell.back', { defaultValue: 'Back' })}
                     >
                       <ArrowLeft className="h-4 w-4" />

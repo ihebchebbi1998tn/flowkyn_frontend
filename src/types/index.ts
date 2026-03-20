@@ -42,6 +42,8 @@ export interface OrgMember {
   name: string;
   /** Member's organization department (defaults to "General" if not mapped) */
   department?: string;
+  department_id?: string;
+  department_name?: string;
   email: string;
   avatar_url?: string;
   is_subscription_manager: boolean;

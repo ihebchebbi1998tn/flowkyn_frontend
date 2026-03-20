@@ -51,9 +51,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for static assets (JS, CSS, images, fonts)
+  // Static assets:
+  // - JS/CSS: network-first to reduce "stale chunk" deploy mismatches
+  // - Images/fonts: cache-first for performance/offline
   if (isStaticAsset(url.pathname)) {
-    event.respondWith(cacheFirst(request));
+    if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
+      event.respondWith(networkFirst(request));
+    } else {
+      event.respondWith(cacheFirst(request));
+    }
     return;
   }
 

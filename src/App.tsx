@@ -9,7 +9,6 @@ import { NotificationProvider } from '@/features/app/context/NotificationContext
 import { ThemeProvider } from '@/context/ThemeContext';
 import { ErrorBoundary } from '@/components/guards/ErrorBoundary';
 import { AuthPageSkeleton } from '@/components/loading/PageSkeleton';
-import { DeploymentNotificationSystem } from '@/components/deployment/DeploymentNotificationSystem';
 import { landingRoutes, appRoutes, adminRoutes, testRoutes, templatesRoutes } from '@/routes';
 import { detectAppMode, isDevMode } from '@/lib/appMode';
 import '@/i18n';
@@ -84,7 +83,6 @@ const App = () => (
           <Sonner />
           <NotificationProvider>
             <TooltipProvider>
-              <DeploymentNotificationSystem />
               <BrowserRouter>
                 <ErrorBoundary>
                   <AppRoutes />
