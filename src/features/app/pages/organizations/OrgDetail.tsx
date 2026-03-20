@@ -541,17 +541,17 @@ export default function OrgDetail() {
         }>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-body-sm">{t('organizations.inviteEmail')}</Label>
+          <Label className="text-body-sm">{t('organizations.inviteEmail')}</Label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <Input
-                type="email"
+          <Input
+            type="email"
                 className="h-10 text-body-sm sm:col-span-2"
                 value={emailInput}
                 onChange={e => setEmailInput(e.target.value)}
                 placeholder={t('organizations.inviteEmailPlaceholder')}
               />
               <Input
-                className="h-10 text-body-sm"
+            className="h-10 text-body-sm"
                 value={singleDepartment}
                 onChange={(e) => setSingleDepartment(e.target.value)}
                 placeholder={t('departments.placeholder')}
@@ -673,7 +673,7 @@ export default function OrgDetail() {
                 </div>
               </div>
             )}
-          </div>
+        </div>
         </div>
       </FormModal>
 

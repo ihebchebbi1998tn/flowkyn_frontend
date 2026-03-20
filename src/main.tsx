@@ -32,3 +32,47 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
     console.log('🔄 New Service Worker activated');
   });
 }
+
+// ─── Stale bundle TDZ recovery ───────────────────────────────────────────────
+// When users load mismatched bundles after deploy, they can hit a TDZ runtime
+// error like: "Cannot access 'r' before initialization" during module eval.
+// This can happen before React ErrorBoundary mounts, so we recover globally.
+if (import.meta.env.PROD) {
+  window.addEventListener('error', (event) => {
+    const message =
+      (event as any)?.message ||
+      (event as any)?.error?.message ||
+      (event as any)?.error?.toString?.() ||
+      '';
+    const msg = String(message);
+    const isStaleBundleTDZ =
+      /Cannot access '.*' before initialization/i.test(msg) || /before initialization/i.test(msg);
+
+    if (!isStaleBundleTDZ) return;
+
+    const cacheKey = 'flowkyn_auto_recover_stale_bundle_tdz';
+    if (sessionStorage.getItem(cacheKey) === '1') return;
+    sessionStorage.setItem(cacheKey, '1');
+
+    try {
+      if (navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage('CLEAN_CACHE');
+      }
+    } catch {
+      // ignore
+    }
+
+    // Also attempt direct CacheStorage cleanup from the page
+    // (works even if SW is not controlling).
+    void (async () => {
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      } catch {
+        // ignore
+      }
+    })().finally(() => {
+      setTimeout(() => window.location.reload(), 250);
+    });
+  });
+}
