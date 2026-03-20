@@ -27,6 +27,7 @@ import { GAME_CONFIGS } from './gameTypes';
 import { useSetGameHeader } from '@/features/app/layouts/gameHeaderContext';
 import { ActivityFeedbackModal } from '@/features/app/components/game/shared/ActivityFeedbackModal';
 import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
+import { SocketHealthModal } from '@/features/app/components/game/shared/SocketHealthModal';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
@@ -306,21 +307,39 @@ function GamePlayWithoutBoundary() {
   const [gameData, setGameData] = useState<unknown>(null);
   const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
 
+  // ─── Socket health (hardening + debug modal) ──────────────────────────────
+  const [eventRoomJoined, setEventRoomJoined] = useState(false);
+  const [chatSocketError, setChatSocketError] = useState<string | null>(null);
+  const [gamesSocketError, setGamesSocketError] = useState<string | null>(null);
+
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
     // Pass eventId so the socket hook can resolve the correct per-event guest token
     eventId: eventId || undefined,
-    onError: (e) => showError(e, t('chat.errors.generic', { defaultValue: 'Chat error' })),
+    onError: (e) => {
+      const exact = (e as any)?.message || (e as any)?.code || t('chat.errors.generic', { defaultValue: 'Chat error' });
+      setChatSocketError(String(exact));
+      showError(e, String(exact));
+    },
   });
 
   const gamesSocket = useGamesSocket({
     // Use eventId so guests can authenticate with their per-event guest token
     eventId: eventId || undefined,
     onError: (e) => {
-      const msg = (e as any)?.message;
-      showError(e, msg || t('gamePlay.errors.socket', { defaultValue: 'Game connection error' }));
+      const exact = (e as any)?.message || (e as any)?.code || t('gamePlay.errors.socket', { defaultValue: 'Game connection error' });
+      setGamesSocketError(String(exact));
+      showError(e, String(exact));
     },
   });
+
+  useEffect(() => {
+    if (eventsSocket.status === 'connected') setChatSocketError(null);
+  }, [eventsSocket.status]);
+
+  useEffect(() => {
+    if (gamesSocket.status === 'connected') setGamesSocketError(null);
+  }, [gamesSocket.status]);
 
   // 3. Ensure socket connects when joined
   useEffect(() => {
@@ -344,6 +363,16 @@ function GamePlayWithoutBoundary() {
     eventJoinAttemptsRef.current = 0;
   }, [eventId]);
 
+  // If the socket disconnects/reconnects, the server-side room membership is not preserved.
+  // Reset our "joined" guard so we re-join `event:${eventId}` after every reconnect.
+  useEffect(() => {
+    if (eventsSocket.status !== 'connected') {
+      hasJoinedEventRoomRef.current = false;
+      eventJoinAttemptsRef.current = 0;
+      setEventRoomJoined(false);
+    }
+  }, [eventsSocket.status]);
+
   const joinEventRoom = useCallback(() => {
     // IMPORTANT:
     // event-room join must happen only after we are actually a participant.
@@ -356,6 +385,7 @@ function GamePlayWithoutBoundary() {
           console.log('[GamePlay] event:join ack:', ack);
           if (ack?.data?.participantId) {
             hasJoinedEventRoomRef.current = true;
+            setEventRoomJoined(true);
             eventJoinAttemptsRef.current = 0;
             if (isGuest) {
               localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
@@ -363,6 +393,12 @@ function GamePlayWithoutBoundary() {
               localStorage.setItem(`member_participant_id_${eventId}`, ack.data.participantId);
             }
           } else {
+            const exact =
+              ack?.data?.error ||
+              ack?.error ||
+              (typeof ack === 'string' ? ack : null) ||
+              'event:join rejected (no participantId returned)';
+            setChatSocketError(String(exact));
             const nextAttempt = eventJoinAttemptsRef.current + 1;
             eventJoinAttemptsRef.current = nextAttempt;
             if (nextAttempt <= 3) {
@@ -377,6 +413,7 @@ function GamePlayWithoutBoundary() {
         })
         .catch(err => {
           console.error('[GamePlay] Failed to join event room:', err?.message || err);
+          setChatSocketError(String(err?.message || err || 'Failed to join event room'));
           const nextAttempt = eventJoinAttemptsRef.current + 1;
           eventJoinAttemptsRef.current = nextAttempt;
           if (nextAttempt <= 3) {
@@ -555,6 +592,21 @@ function GamePlayWithoutBoundary() {
     return () => clearInterval(interval);
   }, [eventId, eventsSocket.status, refetchMessages]);
 
+  // Extra safety net: when the socket is connected but a room join/event is missed
+  // (can happen during rapid reconnects), periodic refetch keeps chat in sync.
+  useEffect(() => {
+    if (!eventId) return;
+    if (!hasJoined) return;
+    // If websocket is truly offline, the earlier effect already handles it.
+    if (eventsSocket.status !== 'connected') return;
+
+    const interval = setInterval(() => {
+      refetchMessages();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [eventId, hasJoined, eventsSocket.status, refetchMessages]);
+
   // Participants polling: fallback so Coffee Roulette and other games see new joins
   // even if event:user_joined/participant:joined are missed (e.g. late socket connect)
   useEffect(() => {
@@ -675,7 +727,29 @@ function GamePlayWithoutBoundary() {
     setInitialSnapshot,
     setGameData,
     setIsGameAdmin,
+    onGameJoinError: (err) => {
+      const exact = (err as any)?.message || (err as any)?.code || (err as any)?.error || String(err);
+      setGamesSocketError(String(exact));
+      showError(err, String(exact));
+    },
   });
+
+  const chatReady = eventsSocket.status === 'connected' && eventRoomJoined;
+  const gamesReady =
+    gamesSocket.status === 'connected' &&
+    !!sessionId &&
+    // We consider the game "ready" only once we have at least one snapshot.
+    // This catches cases where `game:join` is rejected even though the socket is connected.
+    (initialSnapshot !== null || gameData !== null);
+  const socketHealthModalOpen = (hasJoined && !chatReady) || (!!sessionId && !gamesReady);
+
+  useEffect(() => {
+    if (chatReady) setChatSocketError(null);
+  }, [chatReady]);
+
+  useEffect(() => {
+    if (gamesReady) setGamesSocketError(null);
+  }, [gamesReady]);
 
   // ─── Typing state ──────────────────────────────────────────────────────────
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -708,7 +782,7 @@ function GamePlayWithoutBoundary() {
     }
     lastChatSentAtRef.current = now;
 
-    if (eventsSocket.isConnected && eventId) {
+    if (chatReady && eventsSocket.isConnected && eventId) {
       console.log('[GamePlay] Sending message to eventId:', eventId, 'message:', message);
       eventsSocket.emit('chat:message', { eventId, message })
         .then(() => {
@@ -723,7 +797,7 @@ function GamePlayWithoutBoundary() {
       console.warn('[GamePlay] Socket not connected, cannot send message — falling back to HTTP refetch');
       refetchMessages();
     }
-  }, [eventsSocket.isConnected, eventId, showError, refetchMessages]);
+  }, [eventsSocket.isConnected, eventId, chatReady, showError, refetchMessages]);
 
   const handleTyping = useCallback((isTyping: boolean) => {
     if (eventsSocket.isConnected && eventId) {
@@ -790,7 +864,7 @@ function GamePlayWithoutBoundary() {
           isGuest={isGuest}
           currentUserAvatarUrl={currentUserAvatarUrl}
           typingUsers={typingUsers}
-          isOnline={eventsSocket.status === 'connected'}
+          isOnline={chatReady}
           hostParticipantId={hostParticipantId}
           pinnedMessageId={pinnedMessage?.id}
           onTogglePinMessage={hostParticipantId ? handleTogglePinMessage : undefined}
@@ -846,6 +920,35 @@ function GamePlayWithoutBoundary() {
           onRequestActivityExitWithFeedback={requestActivityExitWithFeedback}
         />
       </GamePlayShell>
+
+      <SocketHealthModal
+        open={socketHealthModalOpen}
+        onOpenChange={(nextOpen) => {
+          // Keep modal controlled by socket state; user dismiss shouldn't hide real issues.
+          void nextOpen;
+        }}
+        chatStatus={eventsSocket.status}
+        gamesStatus={gamesSocket.status}
+        chatReady={chatReady}
+        gamesReady={gamesReady}
+        chatError={chatSocketError}
+        gamesError={gamesSocketError}
+        onRetryChat={() => {
+          setChatSocketError(null);
+          hasJoinedEventRoomRef.current = false;
+          eventJoinAttemptsRef.current = 0;
+          setEventRoomJoined(false);
+          if (!eventsSocket.isConnected) eventsSocket.connect();
+          setTimeout(() => {
+            if (eventsSocket.isConnected && eventId && (hasJoined || participantId)) joinEventRoom();
+          }, 250);
+          void refetchMessages();
+        }}
+        onRetryGames={() => {
+          setGamesSocketError(null);
+          if (!gamesSocket.isConnected) gamesSocket.connect();
+        }}
+      />
 
       {/* In-game profile edit modal */}
       <AnimatePresence>

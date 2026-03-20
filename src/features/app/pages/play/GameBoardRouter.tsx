@@ -214,6 +214,11 @@ export function GameBoardRouter({
         return;
       }
 
+      if (!gamesSocket.isConnected) {
+        showError(new Error('Game socket not connected'), 'Game socket not connected');
+        return;
+      }
+
       const ack = await gamesSocket.emit('game:action', {
         sessionId: sid,
         // Coffee Roulette reducer does not rely on a specific round id.

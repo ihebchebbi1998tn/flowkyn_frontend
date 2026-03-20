@@ -23,6 +23,7 @@ interface UseGameStateSyncOptions {
   setInitialSnapshot: (v: unknown) => void;
   setGameData: (v: unknown) => void;
   setIsGameAdmin: (v: boolean) => void;
+  onGameJoinError?: (err: unknown) => void;
 }
 
 /**
@@ -38,6 +39,7 @@ export function useGameStateSync({
   setInitialSnapshot,
   setGameData,
   setIsGameAdmin,
+  onGameJoinError,
 }: UseGameStateSyncOptions) {
   const lastServerGameUpdateAtRef = useRef<number>(Date.now());
   const lastSnapshotRevisionIdRef = useRef<string | null>(null);
@@ -106,6 +108,7 @@ export function useGameStateSync({
         })
         .catch((err: any) => {
           console.warn('[GamePlay] Failed to join game room (transient):', err?.message || err);
+          onGameJoinError?.(err);
         });
     }
   }, [
@@ -119,6 +122,7 @@ export function useGameStateSync({
     setInitialSnapshot,
     setIsGameAdmin,
     applyJoinSnapshotIfNewer,
+    onGameJoinError,
   ]);
 
   const requestStateSync = useCallback(
@@ -270,6 +274,22 @@ export function useGameStateSync({
     setInitialSnapshot,
   ]);
 
+  // Extra periodic safety refresh:
+  // If a client briefly missed a state update during join/room reconnect,
+  // periodic state_sync helps keep phase timers stable (no "reset on reload")
+  // and ensures all clients converge without requiring a manual reload.
+  useEffect(() => {
+    if (!gamesSocket.isConnected) return;
+    if (!sessionId) return;
+    if (!participantId && !hasJoined) return;
+
+    const interval = window.setInterval(() => {
+      void requestStateSync('periodic_refresh');
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, [gamesSocket.isConnected, sessionId, participantId, hasJoined, requestStateSync]);
+
   useEffect(() => {
     if (!gamesSocket.isConnected || !sessionId) return;
     if (!participantId && !hasJoined) return;
@@ -300,6 +320,7 @@ export function useGameStateSync({
           attempt,
           error: err?.message || err,
         });
+        onGameJoinError?.(err);
       }
     };
 
