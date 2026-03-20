@@ -51,6 +51,7 @@ export default function EventForm() {
   const [teamMembers, setTeamMembers] = useState<{ email: string; name?: string; status: string }[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<string[]>([]);
+  const [inviteMode, setInviteMode] = useState<'departments' | 'users'>('departments');
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [createdEventId, setCreatedEventId] = useState<string | null>(null);
 
@@ -182,8 +183,11 @@ export default function EventForm() {
     if (isEditing) return;
     if (departmentsLoading) return;
     if (!departments || departments.length === 0) return;
-    setSelectedDepartmentIds((prev) => (prev.length > 0 ? prev : (departments as Department[]).map((d) => d.id)));
-  }, [departments, departmentsLoading, isEditing]);
+    setSelectedDepartmentIds((prev) => {
+      if (inviteMode !== 'departments') return prev;
+      return prev.length > 0 ? prev : (departments as Department[]).map((d) => d.id);
+    });
+  }, [departments, departmentsLoading, isEditing, inviteMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,7 +229,7 @@ export default function EventForm() {
     } else {
       const createPayload: Record<string, unknown> = { ...payload };
 
-      if (selectedDepartmentIds.length > 0) {
+      if (inviteMode === 'departments') {
         createPayload.invite_department_ids = selectedDepartmentIds;
       } else {
         createPayload.invites = selectedMembers;
@@ -465,28 +469,68 @@ export default function EventForm() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-[13px]">{t('events.selectDepartments', { defaultValue: 'Select departments' })}</Label>
-
-            <div className="flex flex-wrap gap-2">
-              {(departments as Department[] | undefined || []).map((dept) => (
-                <label key={dept.id} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedDepartmentIds.includes(dept.id)}
-                    onChange={(e) => {
-                      setSelectedDepartmentIds((sel) =>
-                        e.target.checked ? [...sel, dept.id] : sel.filter((id) => id !== dept.id)
-                      );
-                    }}
-                  />
-                  <span className="text-sm">{dept.name}</span>
-                </label>
-              ))}
-              {departmentsLoading && <span className="text-xs text-muted-foreground">{t('common.loading', { defaultValue: 'Loading...' })}</span>}
+            <div className="flex flex-wrap gap-2 items-center">
+              <button
+                type="button"
+                onClick={() => setInviteMode('departments')}
+                className={[
+                  'px-3 py-1.5 rounded-full border text-[11px] transition-colors',
+                  inviteMode === 'departments'
+                    ? 'border-primary text-primary bg-primary/5'
+                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
+                ].join(' ')}
+              >
+                {t('events.inviteByDepartments', 'Invite by departments')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setInviteMode('users')}
+                className={[
+                  'px-3 py-1.5 rounded-full border text-[11px] transition-colors',
+                  inviteMode === 'users'
+                    ? 'border-primary text-primary bg-primary/5'
+                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
+                ].join(' ')}
+              >
+                {t('events.inviteByUsers', 'Invite by users')}
+              </button>
             </div>
-          </div>
 
-          {selectedDepartmentIds.length === 0 && (
+            {inviteMode === 'departments' && (
+              <p className="text-[11px] text-muted-foreground">{t('events.inviteByDepartmentsHelp')}</p>
+            )}
+
+            {inviteMode === 'users' && (
+              <p className="text-[11px] text-muted-foreground">
+                {t('events.inviteByUsersHelp', 'Invitations will be sent to the selected team members.')}
+              </p>
+            )}
+
+            {inviteMode === 'departments' && (
+              <>
+                <Label className="text-[13px]">{t('events.selectDepartments', { defaultValue: 'Select departments' })}</Label>
+
+                <div className="flex flex-wrap gap-2">
+                  {(departments as Department[] | undefined || []).map((dept) => (
+                    <label key={dept.id} className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedDepartmentIds.includes(dept.id)}
+                        onChange={(e) => {
+                          setSelectedDepartmentIds((sel) =>
+                            e.target.checked ? [...sel, dept.id] : sel.filter((id) => id !== dept.id)
+                          );
+                        }}
+                      />
+                      <span className="text-sm">{dept.name}</span>
+                    </label>
+                  ))}
+                  {departmentsLoading && <span className="text-xs text-muted-foreground">{t('common.loading', { defaultValue: 'Loading...' })}</span>}
+                </div>
+              </>
+            )}
+
+          {inviteMode === 'users' && (
             <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.selectTeamMembers')}</Label>
               <div className="flex flex-wrap gap-2">
@@ -511,9 +555,17 @@ export default function EventForm() {
           )}
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
             <Button variant="outline" type="button" className="h-10 text-[13px]" onClick={() => navigate('/events')}>{t('common.cancel')}</Button>
-            <Button type="submit" className="h-10 text-[13px]" disabled={isPending}>
+            <Button
+              type="submit"
+              className="h-10 text-[13px]"
+              disabled={
+                isPending ||
+                (inviteMode === 'departments' ? selectedDepartmentIds.length === 0 : selectedMembers.length === 0)
+              }
+            >
               {isPending ? t('common.loading') : isEditing ? t('common.save') : t('common.create')}
             </Button>
+          </div>
           </div>
         </div>
       </form>

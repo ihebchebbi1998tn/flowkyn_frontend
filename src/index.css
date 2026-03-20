@@ -330,3 +330,17 @@
 .screen-shake-heavy {
   animation: screen-shake-heavy 0.6s ease-out;
 }
+
+/* ─── Motion toggle utility ────────────────────────────────────────────────
+   Wired from Settings → Appearance (Motion & animations).
+   When disabled, we reduce CSS transitions/animations across the app.
+*/
+.reduce-motion,
+.reduce-motion *::before,
+.reduce-motion *::after,
+.reduce-motion * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}

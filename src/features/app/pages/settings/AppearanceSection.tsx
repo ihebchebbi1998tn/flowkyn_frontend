@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Palette, Sun, Moon, Monitor, Check } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
@@ -11,6 +12,26 @@ interface AppearanceSectionProps {
 
 export function AppearanceSection({ theme, setTheme }: AppearanceSectionProps) {
   const { t } = useTranslation();
+
+  // If disabled, we apply a global `reduce-motion` class.
+  // This makes the toggle actually affect UI (many components use CSS transitions).
+  const [motionEnabled, setMotionEnabled] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem('flowkyn-motion-animations');
+      return stored !== 'off';
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('reduce-motion', !motionEnabled);
+    try {
+      localStorage.setItem('flowkyn-motion-animations', motionEnabled ? 'on' : 'off');
+    } catch {
+      // ignore
+    }
+  }, [motionEnabled]);
   const themeOptions = [
     { key: 'light', label: t('theme.light'), icon: Sun, preview: 'bg-white border-border' },
     { key: 'dark', label: t('theme.dark'), icon: Moon, preview: 'bg-[hsl(270,30%,8%)] border-[hsl(270,20%,18%)]' },
@@ -40,11 +61,8 @@ export function AppearanceSection({ theme, setTheme }: AppearanceSectionProps) {
         ))}
       </div>
       <div className="border-t border-border">
-        <SettingRow label={t('settings.compactMode')} desc={t('settings.compactModeDesc')}>
-          <Switch />
-        </SettingRow>
         <SettingRow label={t('settings.motionAnimations')} desc={t('settings.motionAnimationsDesc')} noBorder>
-          <Switch defaultChecked />
+          <Switch checked={motionEnabled} onCheckedChange={setMotionEnabled} />
         </SettingRow>
       </div>
     </Section>
