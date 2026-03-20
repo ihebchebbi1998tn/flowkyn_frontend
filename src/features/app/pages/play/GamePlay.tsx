@@ -321,6 +321,7 @@ function GamePlayWithoutBoundary() {
   const [gamesSocketError, setGamesSocketError] = useState<string | null>(null);
   const [gamesSocketErrorCode, setGamesSocketErrorCode] = useState<string | null>(null);
   const [gamesSocketErrorDetails, setGamesSocketErrorDetails] = useState<unknown>(null);
+  const [gameJoinAckReceived, setGameJoinAckReceived] = useState(false);
   const socketHealthModalOpenRef = useRef(false);
   const socketDebugEventsRef = useRef<Array<{ ts: number; type: string; detail?: string }>>([]);
   const [socketDebugTick, setSocketDebugTick] = useState(0);
@@ -802,15 +803,18 @@ function GamePlayWithoutBoundary() {
         detail: evt.detail || (evt.data ? 'debug event received' : undefined),
       });
     },
+    onGameJoinAck: (data) => {
+      setGameJoinAckReceived(true);
+      pushSocketDebug({
+        type: 'game:join_ack_ok_ui',
+        detail: `ack for sessionId=${String(sessionId)} snapshot=${data?.snapshot ? 'yes' : 'no'} activeRoundId=${data?.activeRoundId || 'null'}`,
+      });
+    },
   });
 
   const chatReady = eventsSocket.status === 'connected' && eventRoomJoined;
   const gamesReady =
-    gamesSocket.status === 'connected' &&
-    !!sessionId &&
-    // We consider the game "ready" only once we have at least one snapshot.
-    // This catches cases where `game:join` is rejected even though the socket is connected.
-    (initialSnapshot !== null || gameData !== null);
+    gamesSocket.status === 'connected' && !!sessionId && gameJoinAckReceived;
   const socketHealthModalOpen =
     !isIdentityLoading &&
     ((hasJoined && !chatReady) || (!!sessionId && !gamesReady));
@@ -818,6 +822,11 @@ function GamePlayWithoutBoundary() {
   useEffect(() => {
     socketHealthModalOpenRef.current = socketHealthModalOpen;
   }, [socketHealthModalOpen]);
+
+  useEffect(() => {
+    // Reset "ready" when session changes.
+    setGameJoinAckReceived(false);
+  }, [sessionId]);
 
   useEffect(() => {
     pushSocketDebug({

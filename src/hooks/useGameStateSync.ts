@@ -25,6 +25,7 @@ interface UseGameStateSyncOptions {
   setIsGameAdmin: (v: boolean) => void;
   onGameJoinError?: (err: unknown) => void;
   onGameDebug?: (evt: { type: string; detail?: string; data?: unknown }) => void;
+  onGameJoinAck?: (payload: any) => void;
 }
 
 /**
@@ -42,12 +43,25 @@ export function useGameStateSync({
   setIsGameAdmin,
   onGameJoinError,
   onGameDebug,
+  onGameJoinAck,
 }: UseGameStateSyncOptions) {
   const lastServerGameUpdateAtRef = useRef<number>(Date.now());
   const lastSnapshotRevisionIdRef = useRef<string | null>(null);
   const lastSnapshotRevisionTimeRef = useRef<number>(0);
   const stateSyncInFlightRef = useRef(false);
   const lastStateSyncStartedAtRef = useRef(0);
+  const joinedGameAckRef = useRef<{ sessionId: string; at: number } | null>(null);
+
+  // Reset join-ack guard when switching sessions or losing connection.
+  useEffect(() => {
+    if (!sessionId) {
+      joinedGameAckRef.current = null;
+      return;
+    }
+    if (gamesSocket.status !== 'connected') {
+      joinedGameAckRef.current = null;
+    }
+  }, [sessionId, gamesSocket.status]);
 
   const applyJoinSnapshotIfNewer = useCallback(
     (data: any) => {
@@ -98,6 +112,8 @@ export function useGameStateSync({
   const joinGameRoom = useCallback(() => {
     if (!participantId && !hasJoined) return;
     if (gamesSocket.isConnected && sessionId) {
+      // Avoid repeated game:join emissions once we already got an ACK for this session.
+      if (joinedGameAckRef.current?.sessionId === sessionId) return;
       console.log('[GamePlay] Emitting game:join for', sessionId);
       onGameDebug?.({
         type: 'game:join_emit',
@@ -106,9 +122,14 @@ export function useGameStateSync({
       });
       gamesSocket
         .emit<any>('game:join', { sessionId })
-        .then((resp: any) => {
-          const data = resp?.data || resp;
+        .then((data: any) => {
           console.log('[GamePlay] game:join resp:', data);
+          // If the ACK resolved, the server accepted the join even if snapshot is null.
+          if (!joinedGameAckRef.current || joinedGameAckRef.current.sessionId !== sessionId) {
+            joinedGameAckRef.current = { sessionId, at: Date.now() };
+          }
+          // Always notify UI that we got a successful game:join ACK.
+          onGameJoinAck?.(data);
           onGameDebug?.({
             type: 'game:join_ack',
             detail: 'game:join ack received',
@@ -149,6 +170,8 @@ export function useGameStateSync({
     applyJoinSnapshotIfNewer,
     onGameJoinError,
     onGameDebug,
+    onGameJoinAck,
+    sessionId,
   ]);
 
   const requestStateSync = useCallback(
@@ -313,12 +336,12 @@ export function useGameStateSync({
     });
 
     return () => {
-      unsubState?.();
-      unsubData?.();
-      unsubStarted?.();
-      unsubRoundStarted?.();
-      unsubRoundEnded?.();
-      unsubEnded?.();
+      if (typeof unsubState === 'function') unsubState();
+      if (typeof unsubData === 'function') unsubData();
+      if (typeof unsubStarted === 'function') unsubStarted();
+      if (typeof unsubRoundStarted === 'function') unsubRoundStarted();
+      if (typeof unsubRoundEnded === 'function') unsubRoundEnded();
+      if (typeof unsubEnded === 'function') unsubEnded();
     };
   }, [
     gamesSocket,
@@ -350,6 +373,8 @@ export function useGameStateSync({
   useEffect(() => {
     if (!gamesSocket.isConnected || !sessionId) return;
     if (!participantId && !hasJoined) return;
+    // Stop retry spam once we already got an ACK for this session.
+    if (joinedGameAckRef.current?.sessionId === sessionId) return;
 
     let cancelled = false;
     const retryDelaysMs = [0, 700, 1600, 3000];
@@ -376,6 +401,10 @@ export function useGameStateSync({
           },
         });
         // Apply snapshot only if it is not older than what we already have.
+        if (!joinedGameAckRef.current || joinedGameAckRef.current.sessionId !== sessionId) {
+          joinedGameAckRef.current = { sessionId, at: Date.now() };
+        }
+        onGameJoinAck?.(data);
         applyJoinSnapshotIfNewer(data);
         if (data?.activeRoundId) {
           setActiveRoundId(data.activeRoundId);
