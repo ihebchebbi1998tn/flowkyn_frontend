@@ -357,11 +357,19 @@ export default function EventLobby() {
       eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
     };
 
+    // participant:joined/left come via event:notification (API join before socket); refetch immediately
+    const handleNotification = (data: { type?: string }) => {
+      if (data?.type === 'participant:joined' || data?.type === 'participant:left') {
+        refetchParticipants();
+      }
+    };
+    const unsubNotification = eventsSocket.on('event:notification', handleNotification);
     const unsubPresence = eventsSocket.on('event:presence', handlePresence);
     const unsubJoined = eventsSocket.on('event:user_joined', handleUserJoined);
     const unsubLeft = eventsSocket.on('event:user_left', handleUserLeft);
 
     return () => {
+      unsubNotification?.();
       unsubPresence?.();
       unsubJoined?.();
       unsubLeft?.();
@@ -388,21 +396,17 @@ export default function EventLobby() {
     }
   }, [eventsSocket.status, id, refetchParticipants, refetchMessages]);
 
-  // Fallback polling: even if sockets misbehave, ensure messages stay fresh in the lobby
-  // by periodically refetching from HTTP while the user is in this screen.
+  // Fallback polling: keep messages and participants fresh even if socket events are missed
   useEffect(() => {
     if (!id) return;
 
     const interval = setInterval(() => {
-      console.log('[EventLobby] Polling messages (interval fallback)', {
-        eventId: id,
-        socketStatus: eventsSocket.status,
-      });
       refetchMessages();
-    }, 5000);
+      refetchParticipants();
+    }, 6000);
 
     return () => clearInterval(interval);
-  }, [id, eventsSocket.status, refetchMessages]);
+  }, [id, refetchMessages, refetchParticipants]);
 
   // Fetch pinned message once for lobby display
   useEffect(() => {

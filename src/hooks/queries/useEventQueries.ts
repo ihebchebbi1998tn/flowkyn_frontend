@@ -181,7 +181,12 @@ export function useJoinAsGuest() {
     onSuccess: (_, { eventId }) => {
       queryClient.invalidateQueries({ queryKey: eventKeys.participants(eventId) });
     },
-    onError: (err) => showError(err),
+    onError: (err) => {
+      // Don't show toast for NAME_TAKEN — EventLobby/GamePlay show it in the banner
+      const code = (err as any)?.code ?? (err as any)?.response?.data?.code;
+      if (code === 'NAME_TAKEN') return;
+      showError(err);
+    },
   });
 }
 

@@ -74,10 +74,10 @@ export const eventsApi = {
       event_status: string; organization_name: string;
     }>(`/events/${eventId}/validate-token`, { token }),
 
-  /** Join as guest — no auth required */
+  /** Join as guest — pass eventId so returning guests send their token for idempotent rejoin */
   joinAsGuest: (eventId: string, data: { name: string; email?: string; avatar_url?: string; token?: string }) =>
-    api.post<{ participant_id: string; guest_name: string; guest_token: string }>(
-      `/events/${eventId}/join-guest`, data
+    api.post<{ participant_id: string; guest_name: string; guest_token: string; already_joined?: boolean }>(
+      `/events/${eventId}/join-guest`, data, eventId
     ),
 
   /** List participants (for lobby) — no auth required */

@@ -380,40 +380,54 @@ function GamePlayWithoutBoundary() {
 
 
 
+  // Resolve active game session on mount + periodically when none (in case we miss game:session_created)
   useEffect(() => {
     if (!eventId) return;
     let cancelled = false;
 
     const resolveSession = async () => {
-      setIsResolvingSession(true);
       try {
-        // Fetch the currently active session regardless of type (omit the specific gameTypeKey parameter).
-        // This ensures that if a user follows a generic join link, they are instantly routed to the active game.
         const session = await gamesApi.getActiveSession(eventId);
-        if (!cancelled) {
-          setSessionId(session ? session.id : null);
-          if (session && session.game_key) {
+        if (!cancelled && session) {
+          setSessionId(session.id);
+          if (session.game_key) {
             import('./gameTypes').then(({ GAME_KEY_TO_CONFIG_ID, GAME_CONFIGS }) => {
-              const correctConfigId = GAME_KEY_TO_CONFIG_ID[session.game_key as keyof typeof GAME_KEY_TO_CONFIG_ID];
-              if (correctConfigId && GAME_CONFIGS[correctConfigId]) {
-                setActiveConfig(GAME_CONFIGS[correctConfigId]);
+              if (!cancelled) {
+                const correctConfigId = GAME_KEY_TO_CONFIG_ID[session.game_key as keyof typeof GAME_KEY_TO_CONFIG_ID];
+                if (correctConfigId && GAME_CONFIGS[correctConfigId]) {
+                  setActiveConfig(GAME_CONFIGS[correctConfigId]);
+                }
               }
             });
           }
+        } else if (!cancelled && !session) {
+          setSessionId(null);
         }
       } catch (err: any) {
         if (!cancelled) {
           console.warn('[GamePlay] Failed to resolve active game session:', err?.message || err);
-          setSessionId(null);
         }
-      } finally {
-        if (!cancelled) setIsResolvingSession(false);
       }
     };
 
-    resolveSession();
+    setIsResolvingSession(true);
+    resolveSession().finally(() => {
+      if (!cancelled) setIsResolvingSession(false);
+    });
+
     return () => { cancelled = true; };
   }, [eventId]);
+
+  // Poll for session when we don't have one (guest may have missed game:session_created via socket)
+  useEffect(() => {
+    if (!eventId || sessionId) return;
+    const pollId = setInterval(() => {
+      gamesApi.getActiveSession(eventId).then((s: any) => {
+        if (s?.id) setSessionId(s.id);
+      }).catch(() => {});
+    }, 5000);
+    return () => clearInterval(pollId);
+  }, [eventId, sessionId]);
 
   // Reconnect backfill: when events socket reconnects, refetch messages/participants/posts
   const wasEventsConnectedRef = useRef(false);
@@ -451,11 +465,25 @@ function GamePlayWithoutBoundary() {
     return () => clearInterval(interval);
   }, [eventId, eventsSocket.status, refetchMessages]);
 
-  // Listen for async post updates (Wins of the Week) via event notifications
+  // Participants polling: fallback so Coffee Roulette and other games see new joins
+  // even if event:user_joined/participant:joined are missed (e.g. late socket connect)
+  useEffect(() => {
+    if (!eventId || !hasJoined) return;
+    const interval = setInterval(() => {
+      refetchParticipants();
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [eventId, hasJoined, refetchParticipants]);
+
+  // Listen for event notifications (participant join, game session, posts)
   useEffect(() => {
     if (!eventsSocket.isConnected || !eventId) return;
 
     const handleEventNotification = (data: { type: string; payload: any }) => {
+      // Participant joined via API (guest or member) — refetch so we see new arrivals immediately
+      if (data.type === 'participant:joined' || data.type === 'participant:left') {
+        refetchParticipants();
+      }
       if (data.type === 'post:created' || data.type === 'post:reacted') {
         refetchPosts();
       }
@@ -474,7 +502,7 @@ function GamePlayWithoutBoundary() {
 
     const unsub = eventsSocket.on('event:notification', handleEventNotification);
     return unsub;
-  }, [eventsSocket.isConnected, eventId, refetchPosts]);
+  }, [eventsSocket.isConnected, eventId, refetchParticipants, refetchPosts]);
 
   useParticipantProfileRealtimeSync({
     eventId: eventId || undefined,
