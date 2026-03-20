@@ -29,6 +29,45 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
+
+    // In production, users can end up with mismatched JS chunks after a deploy (service worker caching).
+    // That can surface as ESM TDZ runtime errors like: "Cannot access 'B' before initialization".
+    // Since this error is caught by the boundary, the global `window.error` handler in `main.tsx`
+    // won't run—so we trigger cache/SW cleanup here as a recovery path.
+    if (import.meta.env.PROD) {
+      const msg = String((error as any)?.message || error);
+      const isStaleBundleTDZ = /Cannot access '.*' before initialization/i.test(msg) || /before initialization/i.test(msg);
+      if (isStaleBundleTDZ) {
+        const cacheKey = 'flowkyn_auto_recover_stale_bundle_tdz';
+        try {
+          const raw = sessionStorage.getItem(cacheKey);
+          const attempts = raw ? Number(raw) || 0 : 0;
+          if (attempts >= 3) return;
+          sessionStorage.setItem(cacheKey, String(attempts + 1));
+        } catch {
+          // ignore
+        }
+
+        try {
+          if (navigator.serviceWorker?.controller) {
+            navigator.serviceWorker.controller.postMessage('CLEAN_CACHE');
+          }
+        } catch {
+          // ignore
+        }
+
+        void (async () => {
+          try {
+            const keys = await caches.keys();
+            await Promise.all(keys.map((k) => caches.delete(k)));
+          } catch {
+            // ignore
+          }
+        })().finally(() => {
+          setTimeout(() => window.location.reload(), 700);
+        });
+      }
+    }
   }
 
   handleReset = () => {
