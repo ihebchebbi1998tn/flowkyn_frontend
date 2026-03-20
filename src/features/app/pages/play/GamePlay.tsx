@@ -423,33 +423,31 @@ function GamePlayWithoutBoundary() {
         detail: `eventsSocket=${eventsSocket.status} hasJoined=${String(hasJoined)} participantId=${participantId || 'null'} attempt=${eventJoinAttemptsRef.current + 1}`,
       });
       eventsSocket.emit('event:join', { eventId })
-        .then((ack: any) => {
-          console.log('[GamePlay] event:join ack:', ack);
-          if (ack?.data?.participantId) {
+        .then((resp: any) => {
+          console.log('[GamePlay] event:join resp:', resp);
+          // Our `useSocket.emit()` resolves with `response.data` for ok acks.
+          const resolvedParticipantId = resp?.participantId || resp?.data?.participantId || null;
+          if (resolvedParticipantId) {
             hasJoinedEventRoomRef.current = true;
             setEventRoomJoined(true);
             eventJoinAttemptsRef.current = 0;
             pushSocketDebug({
               type: 'event:join_ack_ok',
-              detail: `participantId=${String(ack.data.participantId)}`,
+              detail: `participantId=${String(resolvedParticipantId)}`,
             });
             if (isGuest) {
-              localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
+              localStorage.setItem(`guest_participant_id_${eventId}`, resolvedParticipantId);
             } else {
-              localStorage.setItem(`member_participant_id_${eventId}`, ack.data.participantId);
+              localStorage.setItem(`member_participant_id_${eventId}`, resolvedParticipantId);
             }
           } else {
             const fallback = 'event:join rejected (no participantId returned)';
-            const exactFromAck =
-              ack?.data?.error ||
-              ack?.error ||
-              (typeof ack === 'string' ? ack : null) ||
-              fallback;
+            const exactFromAck = resp?.error || resp?.code || fallback;
             // If we already captured a clearer socket error (FORBIDDEN, etc),
             // don't overwrite it with the fallback.
             setChatSocketError((prev) => (prev && prev !== fallback ? prev : String(exactFromAck)));
-            setChatSocketErrorCode((ack?.code ? String(ack.code) : null) || (ack?.data?.code ? String(ack.data.code) : null));
-            setChatSocketErrorDetails((ack?.details ?? null) || (ack?.data?.details ?? null));
+            setChatSocketErrorCode((resp?.code ? String(resp.code) : null) || null);
+            setChatSocketErrorDetails((resp?.details ?? null) || (resp?.data?.details ?? null) || null);
             pushSocketDebug({
               type: 'event:join_ack_rejected',
               detail: `attempt=${eventJoinAttemptsRef.current + 1} reason=${String(exactFromAck)}`,

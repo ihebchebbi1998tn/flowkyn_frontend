@@ -363,17 +363,18 @@ export function useGameStateSync({
           detail: `retry game:join attempt=${attempt} sessionId=${sessionId}`,
           data: { socketStatus: gamesSocket.status },
         });
-        const ack = await gamesSocket.emit<any>('game:join', { sessionId });
-        const ok = (ack as any)?.ok;
-        const data = (ack as any)?.data;
+        // Our `useSocket.emit()` resolves with `response.data` for ok acks.
+        const data = await gamesSocket.emit<any>('game:join', { sessionId });
         onGameDebug?.({
           type: 'game:join_retry_ack',
-          detail: `retry ack attempt=${attempt} ok=${String(ok)}`,
-          data: { hasSnapshot: !!data?.snapshot, activeRoundId: data?.activeRoundId || null },
+          detail: `retry ack attempt=${attempt} receivedData`,
+          data: {
+            hasSnapshot: !!data?.snapshot,
+            activeRoundId: data?.activeRoundId || null,
+            snapshotKind: data?.snapshot?.kind || null,
+            snapshotPhase: data?.snapshot?.phase || null,
+          },
         });
-        if (ok === false) {
-          throw new Error((ack as any)?.error || 'JOIN_FAILED');
-        }
         // Apply snapshot only if it is not older than what we already have.
         applyJoinSnapshotIfNewer(data);
         if (data?.activeRoundId) {
