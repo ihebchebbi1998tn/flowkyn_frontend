@@ -40,7 +40,14 @@ export class ErrorBoundary extends Component<Props, State> {
       /Loading chunk/i.test(msg) ||
       /ChunkLoadError/i.test(msg);
 
-    if (!isChunkFetchFailure) return;
+    // In rare "stale bundle" scenarios, users can hit TDZ errors like:
+    // "Cannot access 'r' before initialization" when the JS module graph
+    // doesn't match what the browser has cached from a previous deploy.
+    const isStaleBundleTDZ =
+      /Cannot access '.*' before initialization/i.test(msg) ||
+      /before initialization/i.test(msg);
+
+    if (!isChunkFetchFailure && !isStaleBundleTDZ) return;
 
     // Prevent infinite reload loops for the same failing navigation.
     const cacheKey = 'flowkyn_auto_recover_chunk_fetch_failed';
