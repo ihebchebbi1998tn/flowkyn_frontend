@@ -71,8 +71,6 @@ export function GamePlayShell({
   const pendingCount = participants.filter(p => p.status === 'pending').length;
   const totalInvited = participants.length;
   const joinLink = `${window.location.origin}/join/${eventId}${gameId ? `?game=${gameId}` : ''}`;
-  const joinPct = totalInvited > 0 ? Math.round((joinedCount / totalInvited) * 100) : 0;
-
   const isLobby = joinedCount < 2;
   const sessionStatusLabel =
     gameType === 'sync'
@@ -222,16 +220,8 @@ export function GamePlayShell({
                 </div>
                 <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5 sm:mt-1">{subtitle}</p>
 
-                {/* Invite + End placed left of the global language switcher to free space */}
+                {/* Single header bar: End/Invite + Duration + who joined */}
                 <div className="mt-2 flex items-center gap-2 flex-wrap">
-                  <div
-                    className="flex items-center gap-2 px-2.5 py-1 rounded-xl border border-border/50 bg-background/40 backdrop-blur-sm"
-                    aria-label={t('gamePlay.shell.duration', { defaultValue: 'Duration' })}
-                    title={t('gamePlay.shell.duration', { defaultValue: 'Duration' })}
-                  >
-                    <Timer className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-[12px] font-bold text-foreground leading-none">{formatTime(elapsed)}</span>
-                  </div>
                   <Button
                     variant="outline"
                     size="sm"
@@ -248,6 +238,63 @@ export function GamePlayShell({
                   >
                     {t('gamePlay.shell.end')}
                   </Button>
+
+                  <div
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-xl border border-border/50 bg-background/40 backdrop-blur-sm"
+                    aria-label={t('gamePlay.shell.duration', { defaultValue: 'Duration' })}
+                    title={t('gamePlay.shell.duration', { defaultValue: 'Duration' })}
+                  >
+                    <Timer className="h-3.5 w-3.5 text-primary" />
+                    <span className="text-[12px] font-bold text-foreground leading-none">{formatTime(elapsed)}</span>
+                  </div>
+
+                  <div
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-xl border border-border/50 bg-background/40 backdrop-blur-sm"
+                    aria-label={t('gamePlay.shell.joined', { defaultValue: 'Joined' })}
+                    title={t('gamePlay.shell.joined', { defaultValue: 'Joined' })}
+                  >
+                    <Users className="h-3.5 w-3.5 text-success" />
+                    <span className="text-[12px] font-bold text-foreground leading-none">
+                      {joinedCount}
+                      <span className="text-muted-foreground text-[11px] font-normal">
+                        {' '}
+                        /{totalInvited}
+                      </span>
+                    </span>
+                  </div>
+
+                  {pendingCount > 0 && (
+                    <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-xl border border-border/50 bg-background/40 backdrop-blur-sm">
+                      <Clock className="h-3.5 w-3.5 text-warning" />
+                      <span className="text-[12px] font-bold text-foreground leading-none">{pendingCount}</span>
+                      <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                        {t('gamePlay.shell.pending')}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex -space-x-2 ml-auto sm:ml-0">
+                    {participants
+                      .filter(p => p.status === 'joined')
+                      .slice(0, 4)
+                      .map((p, i) => (
+                        <Avatar
+                          key={p.id}
+                          className="h-6 w-6 sm:h-7 sm:w-7 ring-2 ring-card"
+                          style={{ zIndex: 5 - i }}
+                        >
+                          {(p as any).avatarUrl && <AvatarImage src={(p as any).avatarUrl} />}
+                          <AvatarFallback className="bg-primary/10 text-primary text-[7px] sm:text-[8px] font-bold">
+                            {p.avatar}
+                          </AvatarFallback>
+                        </Avatar>
+                      ))}
+                    {joinedCount > 4 && (
+                      <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-muted text-[8px] sm:text-[9px] font-bold text-muted-foreground ring-2 ring-card">
+                        +{joinedCount - 4}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -279,40 +326,6 @@ export function GamePlayShell({
             </div>
           </div>
 
-          {/* Stats strip */}
-          <div className="flex items-center gap-3 sm:gap-6 mt-4 sm:mt-5 flex-wrap">
-            <StatItem icon={Users} value={<>{joinedCount}<span className="text-muted-foreground text-[11px] sm:text-[12px] font-normal">/{totalInvited}</span></>} label={t('gamePlay.shell.joined')} color="success" />
-            <div className="h-7 sm:h-8 w-px bg-border hidden sm:block" />
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10">
-                <Clock className="h-4 w-4 text-warning" />
-              </div>
-              <div>
-                <p className="text-[16px] font-bold text-foreground leading-none">{pendingCount}</p>
-                <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">{t('gamePlay.shell.pending')}</p>
-              </div>
-            </div>
-            <div className="h-8 w-px bg-border hidden lg:block" />
-            <div className="flex-1 min-w-[120px] hidden lg:block">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] text-muted-foreground font-medium">{t('gamePlay.shell.participation')}</span>
-                <span className="text-[10px] font-bold text-foreground">{joinPct}%</span>
-              </div>
-            </div>
-            <div className="flex -space-x-2 ml-auto sm:ml-0">
-              {participants.filter(p => p.status === 'joined').slice(0, 4).map((p, i) => (
-                <Avatar key={p.id} className="h-6 w-6 sm:h-7 sm:w-7 ring-2 ring-card" style={{ zIndex: 5 - i }}>
-                  {(p as any).avatarUrl && <AvatarImage src={(p as any).avatarUrl} />}
-                  <AvatarFallback className="bg-primary/10 text-primary text-[7px] sm:text-[8px] font-bold">{p.avatar}</AvatarFallback>
-                </Avatar>
-              ))}
-              {joinedCount > 4 && (
-                <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-muted text-[8px] sm:text-[9px] font-bold text-muted-foreground ring-2 ring-card">
-                  +{joinedCount - 4}
-                </div>
-              )}
-            </div>
-          </div>
         </div>
 
         {showLink && (
@@ -365,22 +378,4 @@ export function GamePlayShell({
   );
 }
 
-/* ─── Stat item helper ─── */
-function StatItem({ icon: Icon, value, label, color }: {
-  icon: typeof Timer;
-  value: React.ReactNode;
-  label: string;
-  color: string;
-}) {
-  return (
-    <div className="flex items-center gap-1.5 sm:gap-2">
-      <div className={cn("flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg", `bg-${color}/10`)}>
-        <Icon className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", `text-${color}`)} />
-      </div>
-      <div>
-        <p className="text-[14px] sm:text-[16px] font-bold text-foreground leading-none">{value}</p>
-        <p className="text-[8px] sm:text-[9px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">{label}</p>
-      </div>
-    </div>
-  );
-}
+// (Stats strip removed; header now contains joined/duration/pending controls.)
