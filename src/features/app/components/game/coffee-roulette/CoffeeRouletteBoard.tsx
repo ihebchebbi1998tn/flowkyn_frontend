@@ -288,6 +288,46 @@ export function CoffeeRouletteBoard({
     [participants]
   );
 
+  /** Merge pair person with latest participant data so avatar/name updates show instantly */
+  const participantMap = useMemo(() => {
+    const m = new Map<string, { name: string; avatarUrl?: string | null }>();
+    for (const p of participants) {
+      if (p?.id) {
+        const avatarUrl =
+          typeof (p as any).avatarUrl === 'string'
+            ? (p as any).avatarUrl
+            : (p as any).avatarUrl === null
+              ? null
+              : typeof (p as any).avatar_url === 'string'
+                ? (p as any).avatar_url
+                : typeof (p as any).avatar === 'string' && (p as any).avatar?.startsWith?.('http')
+                  ? (p as any).avatar
+                  : undefined;
+        m.set(String(p.id), {
+          name: typeof (p as any).name === 'string' ? (p as any).name : 'Unknown',
+          avatarUrl,
+        });
+      }
+    }
+    return m;
+  }, [participants]);
+
+  const mergeWithLatestProfile = useCallback(
+    (pairPerson: { participantId: string; name: string; avatar: string; avatarUrl?: string | null }) => {
+      const latest = participantMap.get(pairPerson.participantId);
+      if (!latest) return pairPerson;
+      const name = latest.name || pairPerson.name;
+      const avatarUrl = latest.avatarUrl !== undefined ? latest.avatarUrl : pairPerson.avatarUrl;
+      return {
+        ...pairPerson,
+        name,
+        avatar: (name || '??').slice(0, 2).toUpperCase(),
+        avatarUrl: avatarUrl !== undefined ? avatarUrl : pairPerson.avatarUrl,
+      };
+    },
+    [participantMap]
+  );
+
   // Get theme for current pair
   const themeName = useMemo(() => {
     if (!myPair) return 'cozy';
@@ -341,8 +381,8 @@ export function CoffeeRouletteBoard({
   // PHASE: Chatting - Meeting Room
   if (phase === 'chatting' && myPair) {
     const isMyPerson1 = myPair.person1.participantId === currentUserId;
-    const person1 = isMyPerson1 ? myPair.person1 : myPair.person2;
-    const person2 = isMyPerson1 ? myPair.person2 : myPair.person1;
+    const person1 = mergeWithLatestProfile(isMyPerson1 ? myPair.person1 : myPair.person2);
+    const person2 = mergeWithLatestProfile(isMyPerson1 ? myPair.person2 : myPair.person1);
 
     const pairId = myPair.id;
     const isOfferer = isMyPerson1; // person1 in snapshot creates the offer
@@ -384,8 +424,8 @@ export function CoffeeRouletteBoard({
   // PHASE: Complete - Exit Animation
   if (phase === 'complete' && myPair) {
     const isMyPerson1 = myPair.person1.participantId === currentUserId;
-    const person1 = isMyPerson1 ? myPair.person1 : myPair.person2;
-    const person2 = isMyPerson1 ? myPair.person2 : myPair.person1;
+    const person1 = mergeWithLatestProfile(isMyPerson1 ? myPair.person1 : myPair.person2);
+    const person2 = mergeWithLatestProfile(isMyPerson1 ? myPair.person2 : myPair.person1);
 
     const elapsedSeconds = capturedElapsedRef.current || (30 * 60 - chatSecondsRemaining);
     const topicText = myPair.topicKey
