@@ -1654,6 +1654,19 @@
         "p7": "Welches Buch oder welcher Film ist Ihnen im Kopf geblieben?",
         "p8": "Welchen Ort würden Sie gern einmal besuchen?"
       },
+      "fallbackTopics": {
+        "t1": "Was ist das Interessanteste, was du in letzter Zeit gelernt hast?",
+        "t2": "Wenn du mit irgendjemandem (lebendig oder verstorben) zu Abend essen könntest, mit wem wäre das?",
+        "t3": "Welche Hobby- oder Skill würdest du gerne lernen?",
+        "t4": "Was war dein erster Job? Was hast du daraus gelernt?",
+        "t5": "Wenn du ein Jahr lang überall auf der Welt leben könntest, wo würdest du hinziehen?",
+        "t6": "Was ist der beste Rat, den du je bekommen hast?",
+        "t7": "Welches Buch oder welchen Film hat deine Perspektive komplett verändert?",
+        "t8": "Wenn du den Rest deines Lebens nur eine einzige Mahlzeit essen müsstest, welche wäre das?",
+        "t9": "Was ist das spontanste, das du je gemacht hast?",
+        "t10": "Welche fiktive Figur entspricht dir am ehesten?",
+        "t11": "Worin bist du überraschend gut?"
+      },
       "spectatorTitle": "Kaffee-Roulette läuft",
       "spectatorMessage": "Die Paare werden gerade erstellt. Sie sehen Ihren Partner gleich.",
       "endChat": "Chat beenden",

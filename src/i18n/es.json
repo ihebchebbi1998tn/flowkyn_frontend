@@ -1295,6 +1295,19 @@
         "p7": "¿Qué libro o película se te ha quedado grabado/a?",
         "p8": "¿Qué lugar te gustaría visitar?"
       },
+      "fallbackTopics": {
+        "t1": "¿Cuál es lo más interesante que has aprendido recientemente?",
+        "t2": "Si pudieras cenar con cualquier persona (viva o fallecida), ¿con quién sería?",
+        "t3": "¿Qué afición o habilidad te gustaría aprender?",
+        "t4": "¿Cuál fue tu primer trabajo? ¿Qué aprendiste de él?",
+        "t5": "Si pudieras vivir en cualquier lugar del mundo durante un año, ¿a dónde irías?",
+        "t6": "¿Cuál es el mejor consejo que te han dado?",
+        "t7": "¿Qué libro o película te cambió por completo la perspectiva?",
+        "t8": "Si tuvieras que comer un solo plato el resto de tu vida, ¿cuál sería?",
+        "t9": "¿Cuál es lo más espontáneo que has hecho?",
+        "t10": "¿Qué personaje ficticio se parece más a ti?",
+        "t11": "¿Qué se te da sorprendentemente bien?"
+      },
       "spectatorTitle": "Coffee Roulette en marcha",
       "spectatorMessage": "Se están creando las parejas. Verás a tu compañero/a en un momento.",
       "endChat": "Terminar chat",

@@ -1685,6 +1685,19 @@
         "p7": "Quel livre ou film vous a marqué récemment ?",
         "p8": "Quel endroit aimeriez-vous visiter ?"
       },
+      "fallbackTopics": {
+        "t1": "Qu’est-ce qui vous a appris de plus intéressant récemment ?",
+        "t2": "Si vous pouviez dîner avec n’importe qui (vivant ou décédé), ce serait qui ?",
+        "t3": "Quelle passion ou compétence aimeriez-vous apprendre ?",
+        "t4": "Quel a été votre premier emploi ? Qu’avez-vous appris ?",
+        "t5": "Si vous pouviez vivre n’importe où dans le monde pendant un an, où iriez-vous ?",
+        "t6": "Quel est le meilleur conseil que vous ayez jamais reçu ?",
+        "t7": "Quel livre ou film a complètement changé votre perspective ?",
+        "t8": "Si vous deviez manger un seul repas pour le reste de votre vie, ce serait quoi ?",
+        "t9": "Quel est le moment le plus spontané que vous ayez jamais vécu ?",
+        "t10": "Quel personnage de fiction vous ressemble le plus ?",
+        "t11": "Qu’est-ce que vous faites étonnamment bien ?"
+      },
       "backToEvents": "Retour aux événements",
       "you": "Vous",
       "lobby": {

@@ -1070,6 +1070,19 @@
         "p7": "What’s a book or movie that stuck with you?",
         "p8": "What’s a place you’d love to visit?"
       },
+      "fallbackTopics": {
+        "t1": "What’s the most interesting thing you’ve learned recently?",
+        "t2": "If you could have dinner with anyone (alive or dead), who would it be?",
+        "t3": "What’s a hobby or skill you’d love to pick up?",
+        "t4": "What was your first job? What did you learn from it?",
+        "t5": "If you could live anywhere in the world for a year, where would you go?",
+        "t6": "What’s the best piece of advice you’ve ever received?",
+        "t7": "What’s a book or movie that completely changed your perspective?",
+        "t8": "If you had to eat one meal for the rest of your life, what would it be?",
+        "t9": "What’s the most spontaneous thing you’ve ever done?",
+        "t10": "Which fictional character do you relate to the most?",
+        "t11": "What’s something you’re surprisingly good at?"
+      },
       "spectatorTitle": "Coffee Roulette in progress",
       "spectatorMessage": "Pairs are being matched. You’ll see your partner shortly.",
       "endChat": "End Chat",

@@ -112,6 +112,11 @@ export default function EventLobby() {
   const upsertProfile = useUpsertEventProfile(id || undefined);
   const { showError } = useApiError();
 
+  const eventsSocket = useEventsSocket({
+    eventId: id || undefined,
+    onError: (e) => showError(e, t('events.joinFailed')),
+  });
+
   // Refs for chat handler to avoid re-registering listener when identity loads (prevents missing real-time messages)
   const identityRef = useRef(identity);
   const userRef = useRef(user);
@@ -288,12 +293,6 @@ export default function EventLobby() {
   useEffect(() => {
     return () => { if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current); };
   }, []);
-
-  const eventsSocket = useEventsSocket({
-    eventId: id || undefined,
-    // We handle the join logic explicitly via useEffect below to avoid race conditions.
-    onError: (e) => showError(e, t('events.joinFailed')),
-  });
 
   // Ensure socket connects when user successfully joins (especially guests who just got their token)
   useEffect(() => {

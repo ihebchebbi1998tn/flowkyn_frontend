@@ -38,6 +38,7 @@ interface CoffeeSnapshot {
     person1: { participantId: string; name: string; avatar: string; avatarUrl?: string | null };
     person2: { participantId: string; name: string; avatar: string; avatarUrl?: string | null };
     topic: string;
+    topicKey?: string;
   }>;
   startedChatAt: string | null;
   chatEndsAt?: string;
@@ -346,13 +347,16 @@ export function CoffeeRouletteBoard({
     const pairId = myPair.id;
     const isOfferer = isMyPerson1; // person1 in snapshot creates the offer
     const partnerParticipantId = isOfferer ? myPair.person2.participantId : myPair.person1.participantId;
+    const topicText = myPair.topicKey
+      ? t(myPair.topicKey, { defaultValue: myPair.topic })
+      : myPair.topic;
 
     return (
       <RoomThemeProvider themeName={themeName}>
         <MeetingRoom
           person1={person1}
           person2={person2}
-          topic={myPair.topic}
+          topic={topicText}
           timeRemaining={chatSecondsRemaining}
           promptsUsed={promptsUsed}
           maxPrompts={6}
@@ -384,13 +388,16 @@ export function CoffeeRouletteBoard({
     const person2 = isMyPerson1 ? myPair.person2 : myPair.person1;
 
     const elapsedSeconds = capturedElapsedRef.current || (30 * 60 - chatSecondsRemaining);
+    const topicText = myPair.topicKey
+      ? t(myPair.topicKey, { defaultValue: myPair.topic })
+      : myPair.topic;
 
     return (
       <RoomThemeProvider themeName={themeName}>
         <OfficeExitAnimation
           person1={person1}
           person2={person2}
-          topic={myPair.topic}
+          topic={topicText}
           duration={elapsedSeconds}
           promptsUsed={promptsUsed}
           onReset={handleReset}
