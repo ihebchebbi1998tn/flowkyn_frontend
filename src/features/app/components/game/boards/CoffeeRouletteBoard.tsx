@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { motion } from 'framer-motion';
-import { PhaseBadge, CountdownOverlay, type GamePhase } from '../shared';
+import { PhaseBadge, CountdownOverlay, type GamePhase, GameActionButton } from '../shared';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { HowItWorksModal } from '../shared/HowItWorksModal';
@@ -308,14 +308,6 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info/10">
                 <Coffee className="h-5 w-5 text-info" />
               </div>
-              <div>
-                <h3 className="text-[14px] font-semibold text-foreground">
-                  {t('gamePlay.coffeeRoulette.title', { defaultValue: 'Coffee Roulette' })}
-                </h3>
-                <p className="text-[11px] text-muted-foreground">
-                  {t('gamePlay.coffeeRoulette.subtitle', { defaultValue: 'Quick 1:1 connections for your team' })}
-                </p>
-              </div>
             </div>
             <div className="flex items-center gap-2">
               <PhaseBadge phase={phase} />
@@ -366,9 +358,9 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {t('gamePlay.coffeeRoulette.minutes', { defaultValue: '30 minutes' })}</span>
                 <span className="flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> {participants.length} {t('analyticsPage.participants')}</span>
               </div>
-              <Button variant="brand" onClick={startMatching} disabled={participants.length < 2} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
+              <GameActionButton variant="brand" onClick={startMatching} disabled={participants.length < 2} size="xl">
                 <Shuffle className="h-5 w-5" /> {participants.length < 2 ? t('gamePlay.coffeeRoulette.waitingForTeam', { defaultValue: 'Waiting for more teammates…' }) : t('gamePlay.coffeeRoulette.shuffleMatch', { defaultValue: 'Shuffle match' })}
-              </Button>
+              </GameActionButton>
             </div>
           </div>
         </div>
@@ -498,9 +490,9 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
           </div>
 
           <div className="flex justify-center pt-2">
-          <Button variant="brand" onClick={startChatting} disabled={!myPair} size="xl" className="px-10 gap-2.5 shadow-lg shadow-primary/20">
+          <GameActionButton variant="brand" onClick={startChatting} disabled={!myPair} size="xl">
               <MessageCircle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.startChatting', { defaultValue: 'Start chatting' })}
-            </Button>
+            </GameActionButton>
           </div>
         </div>
       )}
@@ -605,13 +597,13 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 </p>
               </div>
 
-              <Button onClick={endSession} variant="outline" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+              <GameActionButton onClick={endSession} variant="outline" size="lg">
                 <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat')}
-              </Button>
+              </GameActionButton>
               <div className="pt-3">
-                <Button onClick={endAndFinishSession} variant="destructive" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+                <GameActionButton onClick={endAndFinishSession} variant="destructive" size="lg">
                   <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endAndClose')}
-                </Button>
+                </GameActionButton>
               </div>
             </div>
           </div>
@@ -640,13 +632,13 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 </span>
                 <span className="text-[12px] text-muted-foreground">/ 30:00 remaining</span>
               </div>
-              <Button onClick={endSession} variant="outline" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+              <GameActionButton onClick={endSession} variant="outline" size="lg">
                 <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat')}
-              </Button>
+              </GameActionButton>
               <div className="pt-3">
-                <Button onClick={endAndFinishSession} variant="destructive" className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+                <GameActionButton onClick={endAndFinishSession} variant="destructive" size="lg">
                   <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endAndClose')}
-                </Button>
+                </GameActionButton>
               </div>
             </div>
           </div>
@@ -672,18 +664,17 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
                 </Badge>
               </div>
               <div className="flex items-center justify-center gap-3">
-                <Button variant="outline" size="lg" className="h-11 text-[13px] gap-2 rounded-xl"
+                <GameActionButton variant="outline" size="lg"
                   onClick={() => { onEmitAction('coffee:reset', {}); setChatSecondsRemaining(30 * 60); capturedElapsedRef.current = 0; }}>
                   <Shuffle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.newPairing')}
-                </Button>
-                <Button
+                </GameActionButton>
+                <GameActionButton
                   variant="brand"
                   size="lg"
-                  className="h-11 text-[13px] gap-2"
                   onClick={() => window.history.back()}
                 >
                   <ArrowRight className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.backToEvents')}
-                </Button>
+                </GameActionButton>
               </div>
             </div>
           </div>

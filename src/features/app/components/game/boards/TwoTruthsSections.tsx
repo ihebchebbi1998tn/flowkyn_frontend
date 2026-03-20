@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RoundIndicator, PhaseTimer, PhaseBadge, type GamePhase, ConfettiParticles } from '../shared';
+import { RoundIndicator, PhaseTimer, PhaseBadge, type GamePhase, ConfettiParticles, GameActionButton } from '../shared';
 
 export interface TwoTruthsHeaderProps {
   round: number;
@@ -86,9 +86,6 @@ export function TwoTruthsWaitingSection({
           <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 mx-auto mb-5 ring-4 ring-primary/10">
             <Target className="h-9 w-9 text-primary" />
           </div>
-          <h3 className="text-xl font-bold text-foreground mb-2">
-            {t('gamePlay.twoTruths.title', { defaultValue: 'Two Truths & a Lie' })}
-          </h3>
           <p className="text-[13px] text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
             {t(
               'gamePlay.twoTruths.description',
@@ -276,19 +273,14 @@ export function TwoTruthsSubmitSection({
 
         {/* Submit button */}
         <div className="flex justify-end pt-4">
-          <Button
+          <GameActionButton
             onClick={onSubmit}
             disabled={isSubmitDisabled}
-            className={cn(
-              'h-10 px-6 text-[13px] gap-2 rounded-xl transition-all duration-200',
-              isSubmitDisabled
-                ? 'opacity-60 cursor-not-allowed'
-                : 'hover:scale-105 active:scale-95'
-            )}
+            size="lg"
           >
             <Send className="h-4 w-4" />
             {t('gamePlay.twoTruths.submit', { defaultValue: 'Submit' })}
-          </Button>
+          </GameActionButton>
         </div>
       </div>
     </div>
@@ -434,13 +426,13 @@ export function TwoTruthsVoteSection({
 
         {!isPresenter && !voted && (
           <div className="flex justify-end pt-3">
-            <Button
+            <GameActionButton
               onClick={onSubmitVote}
               disabled={disableSubmit}
-              className="h-10 px-6 text-[13px] gap-2 rounded-xl"
+              size="lg"
             >
               <ThumbsUp className="h-4 w-4" /> {t('gamePlay.twoTruths.lockVote', { defaultValue: 'Lock vote' })}
-            </Button>
+            </GameActionButton>
           </div>
         )}
 
@@ -668,7 +660,7 @@ export function TwoTruthsRevealSection({
           )}
         </div>
         {canAdvance ? (
-          <Button onClick={onNextRound} className="h-10 px-6 text-[13px] gap-2 rounded-xl">
+          <GameActionButton onClick={onNextRound} size="lg">
             {isLastRound ? (
               <>
                 <Trophy className="h-4 w-4" /> {t('gamePlay.twoTruths.viewResults', { defaultValue: 'View results' })}
@@ -678,7 +670,7 @@ export function TwoTruthsRevealSection({
                 <ChevronRight className="h-4 w-4" /> {t('gamePlay.twoTruths.nextRound', { defaultValue: 'Next round' })}
               </>
             )}
-          </Button>
+          </GameActionButton>
         ) : (
           <span className="text-[11px] text-muted-foreground">
             {t('gamePlay.twoTruths.waitForHost', { defaultValue: 'Waiting for the host…' })}

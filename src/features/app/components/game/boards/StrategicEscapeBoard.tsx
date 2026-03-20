@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, AlertTriangle, Flag, Clock, Shuffle, Settings2 } from 'lucide-react';
 import type { GameParticipant } from '../shell';
-import { PhaseBadge, PhaseTimer, type GamePhase } from '../shared';
+import { PhaseBadge, PhaseTimer, GameActionButton, type GamePhase } from '../shared';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { gamesApi } from '@/features/app/api/games';
@@ -605,9 +605,6 @@ export function StrategicEscapeBoard({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('strategic.label', { defaultValue: 'Strategic Escape Challenge' })}
-            </span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <PhaseBadge phase={phase as GamePhase} />
@@ -661,24 +658,24 @@ export function StrategicEscapeBoard({
           )}
 
           {isHost && phase === 'setup' && (
-            <Button
+            <GameActionButton
               variant="outline"
               size="sm"
-              className="h-8 text-[11px] gap-1"
+              className="text-[11px] gap-1"
               onClick={() => setIsConfigModalOpen(true)}
             >
               <Settings2 className="h-3.5 w-3.5" />
               {t('strategic.modal.openLabel', { defaultValue: 'Configure scenario' })}
-            </Button>
+            </GameActionButton>
           )}
-          <Button
+          <GameActionButton
             variant="ghost"
             size="sm"
-            className="h-8 text-[11px]"
+            className="text-[11px]"
             onClick={() => setIsHowItWorksOpen(true)}
           >
             {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
-          </Button>
+          </GameActionButton>
         </div>
       </div>
 
@@ -831,8 +828,9 @@ export function StrategicEscapeBoard({
             </div>
 
             <div className="flex flex-col gap-2 border-t border-border pt-3">
-              <Button
-                className="w-full h-10 text-[13px]"
+              <GameActionButton
+                size="lg"
+                className="w-full text-[13px]"
                 disabled={!isHost || !isConfigured || isCreating}
                 onClick={async () => {
                   await handleCreateSession();
@@ -844,7 +842,7 @@ export function StrategicEscapeBoard({
                   : sessionId 
                     ? t('strategic.actions.sessionCreated', { defaultValue: 'Session already created' })
                     : t('strategic.actions.createSession', { defaultValue: 'Create strategic session' })}
-              </Button>
+              </GameActionButton>
               {createError && (
                 <p className="text-[10px] text-destructive">
                   {createError}
@@ -935,17 +933,19 @@ export function StrategicEscapeBoard({
                   </div>
                 </div>
 
-                <Button
-                  className="w-full h-9 text-[12px] mt-2"
+                <GameActionButton
+                  size="md"
+                  className="w-full text-[12px] mt-2"
                   variant="outline"
                   onClick={() => setIsConfigModalOpen(true)}
                 >
                   <Settings2 className="h-4 w-4 mr-1.5" />
                   {t('strategic.modal.openLabel', { defaultValue: 'Configure scenario' })}
-                </Button>
+                </GameActionButton>
 
-                <Button
-                  className="w-full h-9 text-[12px]"
+                <GameActionButton
+                  size="md"
+                  className="w-full text-[12px]"
                   disabled={!sessionId || rolesAssigned || isAssigningRoles || !isConfigured}
                   style={rolesAssigned && revealStatus?.allAcknowledged ? { display: 'none' } : undefined}
                   onClick={handleAssignRoles}
@@ -953,7 +953,7 @@ export function StrategicEscapeBoard({
                   {isAssigningRoles
                     ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles…' })
                     : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles' })}
-                </Button>
+                </GameActionButton>
                 {isHost && rolesAssigned && revealStatus && !revealStatus.allAcknowledged && (
                   <div className="inline-flex items-center justify-between gap-2 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
                     <span>
@@ -1112,10 +1112,10 @@ export function StrategicEscapeBoard({
                           defaultValue: 'No role prompts configured yet.',
                         })}
                     </p>
-                    <Button
+                    <GameActionButton
                       size="sm"
                       variant="outline"
-                      className="h-8 text-[11px]"
+                      className="text-[11px]"
                       disabled={!sessionId || isAdvancingPrompt || !currentPrompt}
                       onClick={() => {
                         if (!sessionId) return;
@@ -1132,7 +1132,7 @@ export function StrategicEscapeBoard({
                       {isAdvancingPrompt
                         ? t('strategic.afterReveal.advancingPrompt', { defaultValue: 'Updating…' })
                         : t('strategic.afterReveal.nextPrompt', { defaultValue: 'Next prompt' })}
-                    </Button>
+                    </GameActionButton>
                   </div>
 
                   {/* Ready button */}
@@ -1152,8 +1152,9 @@ export function StrategicEscapeBoard({
                         defaultValue: 'Click ready when you understand your role. The facilitator can start once everyone is ready.',
                       })}
                     </p>
-                    <Button
-                      className="h-9 text-[12px]"
+                    <GameActionButton
+                      size="md"
+                      className="text-[12px]"
                       disabled={!sessionId || myReady}
                       onClick={() => {
                         if (!sessionId) return;
@@ -1173,7 +1174,7 @@ export function StrategicEscapeBoard({
                       {myReady
                         ? t('strategic.afterReveal.readyConfirmed', { defaultValue: 'Ready' })
                         : t('strategic.afterReveal.readyAction', { defaultValue: 'I’m ready' })}
-                    </Button>
+                    </GameActionButton>
                   </div>
 
                   {/* Private notes */}
@@ -1248,10 +1249,10 @@ export function StrategicEscapeBoard({
 
               {isHost && (
                 <div className="space-y-2 pt-1">
-                  <Button
+                  <GameActionButton
                     variant="outline"
-                    size="sm"
-                    className="w-full h-9 text-[12px]"
+                    size="md"
+                    className="w-full text-[12px]"
                     disabled={!sessionId || rolesAssigned || isAssigningRoles}
                     style={rolesAssigned && revealStatus?.allAcknowledged ? { display: 'none' } : undefined}
                     onClick={handleAssignRoles}
@@ -1259,19 +1260,20 @@ export function StrategicEscapeBoard({
                     {isAssigningRoles
                       ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles…' })
                       : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles' })}
-                  </Button>
+                  </GameActionButton>
                   {assignError && (
                     <p className="text-[10px] text-destructive">
                       {assignError}
                     </p>
                   )}
-                  <Button
-                    className="w-full h-9 text-[12px]"
+                  <GameActionButton
+                    size="md"
+                    className="w-full text-[12px]"
                     disabled={!sessionId || !rolesAssigned || !(readyStatus?.allReady ?? false)}
                     onClick={handleStartDiscussion}
                   >
                     {t('strategic.actions.startDiscussion', { defaultValue: 'Start async discussion' })}
-                  </Button>
+                  </GameActionButton>
                   {isHost && rolesAssigned && readyStatus && !readyStatus.allReady && (
                     <div className="inline-flex items-center justify-between gap-2 rounded-xl border border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
                       <span>
@@ -1402,13 +1404,14 @@ export function StrategicEscapeBoard({
                     'You can end the async discussion once you feel the team has explored enough perspectives.'
                   )}
                 </p>
-                <Button
+                <GameActionButton
                   variant="destructive"
-                  className="w-full h-9 text-[12px]"
+                  size="md"
+                  className="w-full text-[12px]"
                   onClick={handleEndDiscussion}
                 >
                   {t('strategic.actions.endDiscussion', { defaultValue: 'End discussion & move to debrief' })}
-                </Button>
+                </GameActionButton>
               </div>
             )}
           </div>

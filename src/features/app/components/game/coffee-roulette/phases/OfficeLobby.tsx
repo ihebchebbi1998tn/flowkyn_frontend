@@ -8,12 +8,12 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Coffee, Users, ArrowRight, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useRoomTheme, useThemeVariables } from '../theme/RoomThemeContext';
+import { GameActionButton } from '../../shared';
 
 interface Participant {
   participantId: string;
@@ -378,11 +378,11 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
           }}
         >
           <div className="max-w-7xl mx-auto flex justify-center">
-            <Button
+            <GameActionButton
               onClick={onStartMatching}
               disabled={!canStart || isLoading}
               size="lg"
-              className="px-6 py-2.5 text-sm font-semibold rounded-lg"
+              className="text-sm font-semibold"
               style={{
                 backgroundColor: canStart ? 'var(--color-primary)' : 'var(--color-surface)',
                 color: 'white',
@@ -399,7 +399,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                   {t('gamePlay.coffeeRoulette.lobby.start')}
                 </div>
               )}
-            </Button>
+            </GameActionButton>
           </div>
         </motion.div>
       </div>

@@ -191,6 +191,16 @@ export function GamePlayShell({
 
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsReportOpen(true)}
+                    title={t('support.reportBugCta', { defaultValue: 'Report a bug' })}
+                    className="h-7 w-7 shrink-0 rounded-lg bg-background/40 backdrop-blur-sm border border-border/40 hover:bg-background/70"
+                  >
+                    <Bug className="h-3.5 w-3.5" />
+                  </Button>
                   <h1 className="text-base sm:text-xl font-bold tracking-tight text-foreground truncate">{title}</h1>
                   <Badge className={cn("text-[10px] shrink-0 gap-1",
                     gameType === 'sync' ? 'bg-success/15 text-success border-success/25' : 'bg-info/15 text-info border-info/25'
@@ -209,18 +219,36 @@ export function GamePlayShell({
                       })}
                     </Badge>
                   )}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsReportOpen(true)}
-                    title={t('support.reportBugCta', { defaultValue: 'Report a bug' })}
-                    className="h-7 w-7 shrink-0 rounded-lg bg-background/40 backdrop-blur-sm border border-border/40 hover:bg-background/70"
-                  >
-                    <Bug className="h-3.5 w-3.5" />
-                  </Button>
                 </div>
                 <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5 sm:mt-1">{subtitle}</p>
+
+                {/* Invite + End placed left of the global language switcher to free space */}
+                <div className="mt-2 flex items-center gap-2 flex-wrap">
+                  <div
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-xl border border-border/50 bg-background/40 backdrop-blur-sm"
+                    aria-label={t('gamePlay.shell.duration', { defaultValue: 'Duration' })}
+                    title={t('gamePlay.shell.duration', { defaultValue: 'Duration' })}
+                  >
+                    <Timer className="h-3.5 w-3.5 text-primary" />
+                    <span className="text-[12px] font-bold text-foreground leading-none">{formatTime(elapsed)}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowLink(!showLink)}
+                    className="h-8 sm:h-9 text-[11px] sm:text-[12px] gap-1.5 rounded-xl"
+                  >
+                    <Share2 className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{t('gamePlay.shell.invite')}</span>
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="h-8 sm:h-9 text-[11px] sm:text-[12px] rounded-xl"
+                    onClick={onEnd || (() => navigate(ROUTES.EVENTS))}
+                  >
+                    {t('gamePlay.shell.end')}
+                  </Button>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
@@ -248,19 +276,11 @@ export function GamePlayShell({
                   <Pencil className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </button>
               )}
-              <Button variant="outline" size="sm" onClick={() => setShowLink(!showLink)} className="h-8 sm:h-9 text-[11px] sm:text-[12px] gap-1.5 rounded-xl">
-                <Share2 className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{t('gamePlay.shell.invite')}</span>
-              </Button>
-              <Button variant="destructive" size="sm" className="h-8 sm:h-9 text-[11px] sm:text-[12px] rounded-xl" onClick={onEnd || (() => navigate(ROUTES.EVENTS))}>
-                {t('gamePlay.shell.end')}
-              </Button>
             </div>
           </div>
 
           {/* Stats strip */}
           <div className="flex items-center gap-3 sm:gap-6 mt-4 sm:mt-5 flex-wrap">
-            <StatItem icon={Timer} value={formatTime(elapsed)} label={t('gamePlay.shell.duration')} color="primary" />
-            <div className="h-7 sm:h-8 w-px bg-border" />
             <StatItem icon={Users} value={<>{joinedCount}<span className="text-muted-foreground text-[11px] sm:text-[12px] font-normal">/{totalInvited}</span></>} label={t('gamePlay.shell.joined')} color="success" />
             <div className="h-7 sm:h-8 w-px bg-border hidden sm:block" />
             <div className="hidden sm:flex items-center gap-2">
@@ -277,9 +297,6 @@ export function GamePlayShell({
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] text-muted-foreground font-medium">{t('gamePlay.shell.participation')}</span>
                 <span className="text-[10px] font-bold text-foreground">{joinPct}%</span>
-              </div>
-              <div className="h-2 rounded-full bg-muted overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-primary/80 to-primary transition-all duration-700" style={{ width: `${joinPct}%` }} />
               </div>
             </div>
             <div className="flex -space-x-2 ml-auto sm:ml-0">

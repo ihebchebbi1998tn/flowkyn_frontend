@@ -6,4 +6,5 @@ export { CountdownOverlay } from './CountdownOverlay';
 export { AnimatedScore } from './AnimatedScore';
 export { ConfettiParticles } from './ConfettiParticles';
 export { Podium } from './Podium';
+export { GameActionButton } from './GameActionButton';
 export { playSound, playCountBeep, playGoBeep, playJoinChime, playRevealSound, playDrumroll, playScoreTick } from './audio';

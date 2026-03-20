@@ -45,6 +45,52 @@ export function useGameStateSync({
   const stateSyncInFlightRef = useRef(false);
   const lastStateSyncStartedAtRef = useRef(0);
 
+  const applyJoinSnapshotIfNewer = useCallback(
+    (data: any) => {
+      if (!data?.snapshot) return;
+      const incomingRevisionTime = parseRevisionTime(data?.snapshotCreatedAt);
+      const currentRevisionTime = lastSnapshotRevisionTimeRef.current;
+
+      // If we already have a known revision time, but the join response lacks a usable timestamp,
+      // avoid regressing to an older snapshot.
+      if (incomingRevisionTime <= 0 && currentRevisionTime > 0) return;
+
+      const isNewer =
+        incomingRevisionTime > 0 ? incomingRevisionTime >= currentRevisionTime : true;
+
+      if (!isNewer) {
+        // Prevent a late/queued join ACK from regressing newer game:data state.
+        if (import.meta.env.DEV) {
+          console.log('[GamePlay][TEMP] join ACK rejected as older snapshot', {
+            incomingRevisionTime,
+            currentRevisionTime,
+            incomingRevisionId: typeof data?.snapshotRevisionId === 'string' ? data.snapshotRevisionId : null,
+          });
+        }
+        return;
+      }
+
+      if (incomingRevisionTime > 0) {
+        lastSnapshotRevisionTimeRef.current = incomingRevisionTime;
+      }
+      lastSnapshotRevisionIdRef.current =
+        typeof data?.snapshotRevisionId === 'string' ? data.snapshotRevisionId : lastSnapshotRevisionIdRef.current;
+      lastServerGameUpdateAtRef.current = Date.now();
+
+      setInitialSnapshot(data.snapshot);
+      setGameData(data.snapshot);
+      if (import.meta.env.DEV) {
+        console.log('[GamePlay][TEMP] join ACK applied snapshot', {
+          incomingRevisionTime,
+          snapshotKind: (data.snapshot as any)?.kind,
+          snapshotPhase: (data.snapshot as any)?.phase,
+          incomingRevisionId: typeof data?.snapshotRevisionId === 'string' ? data.snapshotRevisionId : null,
+        });
+      }
+    },
+    [setGameData, setInitialSnapshot]
+  );
+
   const joinGameRoom = useCallback(() => {
     if (!participantId && !hasJoined) return;
     if (gamesSocket.isConnected && sessionId) {
@@ -56,17 +102,7 @@ export function useGameStateSync({
           console.log('[GamePlay] game:join resp:', data);
           if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
           setIsGameAdmin(!!data?.isAdmin);
-          if (data?.snapshot) {
-            const incomingRevisionTime = parseRevisionTime(data?.snapshotCreatedAt);
-            if (incomingRevisionTime > 0) {
-              lastSnapshotRevisionTimeRef.current = incomingRevisionTime;
-              lastSnapshotRevisionIdRef.current =
-                typeof data?.snapshotRevisionId === 'string' ? data.snapshotRevisionId : null;
-            }
-            lastServerGameUpdateAtRef.current = Date.now();
-            setInitialSnapshot(data.snapshot);
-            setGameData(data.snapshot);
-          }
+          applyJoinSnapshotIfNewer(data);
         })
         .catch((err: any) => {
           console.warn('[GamePlay] Failed to join game room (transient):', err?.message || err);
@@ -82,6 +118,7 @@ export function useGameStateSync({
     setGameData,
     setInitialSnapshot,
     setIsGameAdmin,
+    applyJoinSnapshotIfNewer,
   ]);
 
   const requestStateSync = useCallback(
@@ -171,6 +208,15 @@ export function useGameStateSync({
             incomingRevisionTime,
             currentRevisionTime,
           });
+          if (import.meta.env.DEV) {
+            console.log('[GamePlay][TEMP] game:data ignored as older snapshot', {
+              incomingRevisionId,
+              incomingRevisionTime,
+              currentRevisionTime,
+              gameKind: payload?.gameData?.kind,
+              gamePhase: payload?.gameData?.phase,
+            });
+          }
           return;
         }
         lastSnapshotRevisionTimeRef.current = incomingRevisionTime || currentRevisionTime;
@@ -180,6 +226,14 @@ export function useGameStateSync({
           incomingRevisionId,
           incomingRevisionTime,
         });
+        if (import.meta.env.DEV) {
+          console.log('[GamePlay][TEMP] game:data applied snapshot', {
+            incomingRevisionId,
+            incomingRevisionTime,
+            gameKind: payload?.gameData?.kind,
+            gamePhase: payload?.gameData?.phase,
+          });
+        }
         setGameData(payload.gameData);
       }
     });
@@ -233,10 +287,8 @@ export function useGameStateSync({
         if (ok === false) {
           throw new Error((ack as any)?.error || 'JOIN_FAILED');
         }
-        if (data?.snapshot) {
-          setInitialSnapshot(data.snapshot);
-          setGameData(data.snapshot);
-        }
+        // Apply snapshot only if it is not older than what we already have.
+        applyJoinSnapshotIfNewer(data);
         if (data?.activeRoundId) {
           setActiveRoundId(data.activeRoundId);
         }

@@ -8,13 +8,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { MessageCircle, Clock, Lightbulb, RotateCcw, LogOut, Mic, MicOff, PhoneOff, Volume2, VolumeX } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useRoomTheme, useThemeVariables } from '../theme/RoomThemeContext';
 import { useCoffeeVoiceCall } from '../hooks/useCoffeeVoiceCall';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { GameActionButton } from '../../shared';
 
 interface Person {
   participantId: string;
@@ -167,23 +167,23 @@ export function MeetingRoom({
             <DialogDescription>{t('gamePlay.coffeeRoulette.voice.prompt.body')}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button
+            <GameActionButton
               onClick={() => {
                 void startVoice();
               }}
-              className="h-10"
+              size="lg"
             >
               {t('gamePlay.coffeeRoulette.voice.enable')}
-            </Button>
-            <Button
+            </GameActionButton>
+            <GameActionButton
               variant="outline"
               onClick={() => {
                 void stopVoice({ emitHangup: false });
               }}
-              className="h-10"
+              size="lg"
             >
               {t('gamePlay.coffeeRoulette.voice.prompt.notNow')}
-            </Button>
+            </GameActionButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -474,10 +474,10 @@ export function MeetingRoom({
               </div>
 
               {(voiceStatus === 'idle' || voiceStatus === 'error') && (
-                <Button
+                <GameActionButton
                   variant="outline"
-                  size="sm"
-                  className="gap-2 h-9 shrink-0"
+                  size="md"
+                  className="shrink-0"
                   disabled={!sessionId}
                   onClick={async () => {
                     await startVoice();
@@ -485,26 +485,26 @@ export function MeetingRoom({
                 >
                   <Mic className="h-4 w-4" />
                   {t('gamePlay.coffeeRoulette.voice.enable')}
-                </Button>
+                </GameActionButton>
               )}
 
               {(voiceStatus === 'connecting' || voiceStatus === 'requesting_microphone') && (
-                <Button variant="outline" size="sm" className="gap-2 h-9 shrink-0" disabled>
+                <GameActionButton variant="outline" size="md" className="shrink-0" disabled>
                   {t('gamePlay.coffeeRoulette.voice.connecting')}
-                </Button>
+                </GameActionButton>
               )}
 
               {voiceStatus === 'connected' && (
                 <>
-                  <Button
+                  <GameActionButton
                     variant="outline"
-                    size="sm"
-                    className="gap-2 h-9 shrink-0"
+                    size="md"
+                    className="shrink-0"
                     onClick={() => toggleMute()}
                   >
                     {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                     {isMuted ? t('gamePlay.coffeeRoulette.voice.unmute') : t('gamePlay.coffeeRoulette.voice.mute')}
-                  </Button>
+                  </GameActionButton>
 
                   <div className="flex items-center gap-2">
                     {remoteVolume <= 0.01 ? <VolumeX className="h-4 w-4 text-muted-foreground shrink-0" /> : <Volume2 className="h-4 w-4 text-muted-foreground shrink-0" />}
@@ -527,17 +527,17 @@ export function MeetingRoom({
 
             {/* Leave - secondary, corner, less aggressive (no red) */}
             {voiceStatus === 'connected' && (
-              <Button
+              <GameActionButton
                 variant="ghost"
-                size="sm"
-                className="gap-1.5 h-9 text-muted-foreground hover:text-foreground hover:bg-muted/50 shrink-0"
+                  size="md"
+                className="text-muted-foreground hover:text-foreground hover:bg-muted/50 shrink-0"
                 onClick={async () => {
                   await stopVoice({ emitHangup: true });
                 }}
               >
                 <PhoneOff className="h-4 w-4" />
                 <span className="text-xs">{t('gamePlay.coffeeRoulette.voice.leave')}</span>
-              </Button>
+              </GameActionButton>
             )}
           </div>
 
@@ -554,10 +554,10 @@ export function MeetingRoom({
           <div className="flex flex-wrap gap-3 justify-center">
             {onNextPrompt && (
               <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                <Button
+                <GameActionButton
                   onClick={onNextPrompt}
                   size="lg"
-                  className="gap-3 px-10 py-6 rounded-xl text-base font-bold shadow-lg hover:shadow-xl transition-all"
+                  className="gap-3 text-base font-bold shadow-lg hover:shadow-xl transition-all"
                   style={{
                     backgroundColor: 'var(--color-primary)',
                     color: 'white',
@@ -567,17 +567,17 @@ export function MeetingRoom({
                 >
                   <MessageCircle className="h-5 w-5" />
                   {t('gamePlay.coffeeRoulette.chatting.nextTopicButton')}
-                </Button>
+                </GameActionButton>
               </motion.div>
             )}
 
             {onContinue && (
-              <Button
+              <GameActionButton
                 onClick={onContinue}
                 disabled={isLoading}
                 variant="outline"
                 size="lg"
-                className="gap-3 px-8 py-6 rounded-xl font-semibold"
+                className="gap-3 font-semibold"
                 style={{
                   borderColor: '#e5e7eb',
                   borderWidth: '2px',
@@ -586,11 +586,11 @@ export function MeetingRoom({
               >
                 <RotateCcw className="h-5 w-5" />
                 {t('gamePlay.coffeeRoulette.chatting.keepTalkingButton')}
-              </Button>
+              </GameActionButton>
             )}
 
             {onEnd && (
-              <Button
+              <GameActionButton
                 onClick={async () => {
                   await stopVoice({ emitHangup: true });
                   onEnd();
@@ -598,7 +598,7 @@ export function MeetingRoom({
                 disabled={isLoading}
                 variant="outline"
                 size="lg"
-                className="gap-3 px-8 py-6 rounded-xl font-semibold text-muted-foreground hover:text-foreground"
+                className="gap-3 font-semibold text-muted-foreground hover:text-foreground"
                 style={{
                   borderColor: '#e5e7eb',
                   borderWidth: '2px',
@@ -606,7 +606,7 @@ export function MeetingRoom({
               >
                 <LogOut className="h-5 w-5" />
                 {t('gamePlay.coffeeRoulette.chatting.endMeetingButton')}
-              </Button>
+              </GameActionButton>
             )}
           </div>
         </motion.div>

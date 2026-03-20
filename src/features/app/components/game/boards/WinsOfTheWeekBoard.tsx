@@ -4,7 +4,7 @@ import {
   Send, Heart, Star, ThumbsUp, MessageCircle, Award,
   Clock, Calendar, AlertCircle, CheckCircle2, Loader2,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { GameActionButton } from '../shared';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -240,14 +240,14 @@ export function WinsOfTheWeekBoard({
               <h3 className="text-[14px] font-semibold text-foreground">{t('gamePlay.winsOfWeek.thisWeeksPrompt', { defaultValue: "This week's prompt" })}</h3>
               <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">{displayPrompt}</p>
             </div>
-            <Button
+            <GameActionButton
               variant="ghost"
               size="sm"
-              className="h-8 text-[11px] shrink-0"
+              className="text-[11px] shrink-0"
               onClick={() => setHowOpen(true)}
             >
               {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
-            </Button>
+            </GameActionButton>
           </div>
           
           {/* Status bar with detailed info */}
@@ -328,10 +328,11 @@ export function WinsOfTheWeekBoard({
               <motion.div
                 animate={isSubmitting ? { opacity: 0.7 } : { opacity: 1 }}
               >
-                <Button 
-                  onClick={handlePost} 
-                  disabled={!newPost.trim() || !canPost || isSubmitting} 
-                  className="h-9 px-5 text-[12px] gap-2"
+                <GameActionButton
+                  onClick={handlePost}
+                  disabled={!newPost.trim() || !canPost || isSubmitting}
+                  size="md"
+                  className="text-[12px]"
                 >
                   {isSubmitting ? (
                     <>
@@ -344,7 +345,7 @@ export function WinsOfTheWeekBoard({
                       {t('gamePlay.winsOfWeek.share', { defaultValue: 'Share' })}
                     </>
                   )}
-                </Button>
+                </GameActionButton>
               </motion.div>
             </div>
           </div>
@@ -535,18 +536,18 @@ export function WinsOfTheWeekBoard({
                     <motion.div
                       animate={submittingReply === post.id ? { opacity: 0.7 } : { opacity: 1 }}
                     >
-                      <Button
+                      <GameActionButton
                         size="sm"
                         onClick={() => handleReply(post.id, post.authorName)}
                         disabled={!replyInputs[post.id]?.trim() || submittingReply === post.id}
-                        className="h-8 px-3 text-[11px]"
+                        className="text-[11px]"
                       >
                         {submittingReply === post.id ? (
                           <Loader2 className="h-3 w-3 animate-spin" />
                         ) : (
                           <Send className="h-3 w-3" />
                         )}
-                      </Button>
+                      </GameActionButton>
                     </motion.div>
                   </motion.div>
                 )}

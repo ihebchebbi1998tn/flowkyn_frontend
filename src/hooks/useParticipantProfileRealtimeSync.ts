@@ -46,14 +46,27 @@ export function useParticipantProfileRealtimeSync({
       if (!setOwnProfile) return;
       if (!payload || !payload.participantId || !participantId) return;
       if (payload.participantId !== participantId) return;
-      const nextName = typeof payload.displayName === 'string' ? payload.displayName : '';
-      const nextAvatar = typeof payload.avatarUrl === 'string' ? payload.avatarUrl : '';
+      // Important: allow explicit clearing.
+      // If the server sends `displayName: ""` we should update to empty (not keep previous).
+      // If the server sends `avatarUrl: null` we should clear local avatarUrl.
+      const hasDisplayName =
+        typeof payload.displayName === 'string';
+      const hasAvatar =
+        typeof payload.avatarUrl === 'string' || payload.avatarUrl === null;
+
+      const nextName = hasDisplayName ? payload.displayName : undefined;
+      const nextAvatar =
+        typeof payload.avatarUrl === 'string'
+          ? payload.avatarUrl
+          : payload.avatarUrl === null
+            ? ''
+            : undefined;
       setOwnProfile((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
-          displayName: nextName || prev.displayName,
-          avatarUrl: nextAvatar || prev.avatarUrl,
+          displayName: hasDisplayName ? nextName ?? '' : prev.displayName,
+          avatarUrl: hasAvatar ? nextAvatar ?? '' : prev.avatarUrl,
         };
       });
     };

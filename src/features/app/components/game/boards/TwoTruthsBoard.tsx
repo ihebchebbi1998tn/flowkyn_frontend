@@ -88,6 +88,21 @@ export function TwoTruthsBoard({
   const [activeSubmissionPhase, setActiveSubmissionPhase] = useState<'input' | 'review' | null>(null);
   const [animatingReveal, setAnimatingReveal] = useState(false);
 
+  // Presenter doesn't need to "select a lie" again during the vote phase.
+  useEffect(() => {
+    if (phase === 'vote' && isPresenter) {
+      setSelectedVote(null);
+    }
+  }, [phase, isPresenter]);
+
+  // During reveal, make sure the presenter sees the reveal as their own correct answer
+  // (without requiring them to have voted).
+  useEffect(() => {
+    if (phase === 'reveal' && isPresenter && revealedLie && selectedVote === null) {
+      setSelectedVote(revealedLie);
+    }
+  }, [phase, isPresenter, revealedLie, selectedVote]);
+
   // Use the new timer hook instead of manual interval
   const timeLeft = useGamePhaseTimer(
     phase === 'submit' ? submitEndsAt : phase === 'vote' ? voteEndsAt : null,
@@ -221,6 +236,7 @@ export function TwoTruthsBoard({
           selectedVote={selectedVote}
           voted={voted}
           onSelect={(id) => {
+            if (isPresenter) return; // presenter shouldn't vote/select
             if (voted) return;
             if (id === 's0' || id === 's1' || id === 's2') setSelectedVote(id);
           }}
@@ -230,7 +246,7 @@ export function TwoTruthsBoard({
         />
       )}
 
-      {phase === 'vote' && isAdmin && (
+      {phase === 'vote' && (isPresenter || isAdmin) && (
         <div className="flex justify-end">
           <button
             className="text-[11px] text-muted-foreground hover:text-foreground underline"

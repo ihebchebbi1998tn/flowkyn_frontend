@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
+import { GameActionButton } from '../shared';
 
 export interface CoffeeRoulettePair {
   id: string;
@@ -307,13 +308,13 @@ export function CoffeeRouletteChattingView({
             </Button>
           </div>
 
-          <Button
+          <GameActionButton
             onClick={onEndSession}
             variant="outline"
-            className="h-10 px-6 text-[13px] gap-2 rounded-xl"
+            size="lg"
           >
             <CheckCircle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.endChat', { defaultValue: 'End chat' })}
-          </Button>
+          </GameActionButton>
         </div>
       </div>
     </div>
@@ -357,22 +358,20 @@ export function CoffeeRouletteCompleteView({
             </Badge>
           </div>
           <div className="flex items-center justify-center gap-3">
-            <Button
+            <GameActionButton
               variant="outline"
               size="lg"
-              className="h-11 text-[13px] gap-2 rounded-xl"
               onClick={onNewPairing}
             >
               <Shuffle className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.newPairing', { defaultValue: 'New pairing' })}
-            </Button>
-            <Button
+            </GameActionButton>
+            <GameActionButton
               variant="brand"
               size="lg"
-              className="h-11 text-[13px] gap-2"
               onClick={onBackToEvents}
             >
               <ArrowRight className="h-4 w-4" /> {t('gamePlay.coffeeRoulette.backToEvents', { defaultValue: 'Back to events' })}
-            </Button>
+            </GameActionButton>
           </div>
         </div>
       </div>
