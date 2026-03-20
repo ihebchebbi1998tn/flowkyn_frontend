@@ -56,6 +56,7 @@ export type IdentityDebugModalProps = {
   participants?: Array<{ id: string; name: string; avatarUrl?: string | null; isHost?: boolean }>;
   gameTypeKey?: string;
   gameDataPreview?: unknown;
+  gamePhase?: string | null;
   coffeePairDebug?: {
     pairId: string;
     myRole: 'person1' | 'person2';
@@ -88,6 +89,7 @@ export function IdentityDebugModal({
   participants = [],
   gameTypeKey,
   gameDataPreview,
+  gamePhase,
   coffeePairDebug,
 }: IdentityDebugModalProps) {
   const decoded = useMemo(() => {
@@ -104,7 +106,7 @@ export function IdentityDebugModal({
         identity: { isGuest, userId, participantId, displayName },
         join: { hasJoined, eventRoomJoined },
         game: { sessionId, gameJoinAckReceived },
-        gameContext: { gameTypeKey, hasGameData: !!gameDataPreview },
+        gameContext: { gameTypeKey, hasGameData: !!gameDataPreview, phase: gamePhase ?? undefined },
         coffeePair: coffeePairDebug,
         sockets: { eventsSocketStatus, gamesSocketStatus },
         participants: {
@@ -136,6 +138,7 @@ export function IdentityDebugModal({
     gamesSocketStatus,
     gameTypeKey,
     gameDataPreview,
+    gamePhase,
     coffeePairDebug,
     participantCount,
     participants,
@@ -161,7 +164,7 @@ export function IdentityDebugModal({
       'Join + Game State',
       `hasJoined: ${String(hasJoined)} | eventRoomJoined: ${String(eventRoomJoined)}`,
       `sessionId: ${sessionId || 'null'} | gameJoinAckReceived: ${String(gameJoinAckReceived)}`,
-      `gameType: ${gameTypeKey || 'unknown'} | hasGameData: ${String(!!gameDataPreview)}`,
+      `gameType: ${gameTypeKey || 'unknown'} | hasGameData: ${String(!!gameDataPreview)} | phase: ${gamePhase ?? 'unknown'}`,
       `coffeePair: ${coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole}) -> ${coffeePairDebug.partnerParticipantId}` : 'none'}`,
       `eventsSocket: ${eventsSocketStatus}`,
       `gamesSocket: ${gamesSocketStatus}`,
@@ -188,7 +191,7 @@ export function IdentityDebugModal({
   }, [
     eventId, isGuest, userId, participantId, displayName,
     hasJoined, eventRoomJoined, sessionId, gameJoinAckReceived,
-    gameTypeKey, gameDataPreview, coffeePairDebug,
+    gameTypeKey, gameDataPreview, gamePhase, coffeePairDebug,
     eventsSocketStatus, gamesSocketStatus,
     participantCount, participants,
     localGuestTokenExists, cookieBacked, guestIdentityKey, accessTokenExists,
@@ -222,7 +225,7 @@ export function IdentityDebugModal({
             <div className="text-[12px] text-muted-foreground mt-1 space-y-1">
               <div>hasJoined: {String(hasJoined)} | eventRoomJoined: {String(eventRoomJoined)}</div>
               <div>sessionId: {sessionId || 'null'} | gameJoinAckReceived: {String(gameJoinAckReceived)}</div>
-              <div>gameType: {gameTypeKey || 'unknown'} | hasGameData: {String(!!gameDataPreview)}</div>
+              <div>gameType: {gameTypeKey || 'unknown'} | hasGameData: {String(!!gameDataPreview)} | phase: {gamePhase ?? 'unknown'}</div>
               <div>
                 coffeePair: {coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole}) -> ${coffeePairDebug.partnerParticipantId}` : 'none'}
               </div>

@@ -452,14 +452,19 @@ export function CoffeeRouletteBoard({
     );
   }
 
-  // Fallback - if myPair not found
+  // Fallback - myPair not found (either waiting for shuffle, or odd one out)
+  const isUnmatchedInRound = (phase === 'matching' || phase === 'chatting') && pairs.length > 0;
   return (
     <div className="flex items-center justify-center h-full min-h-0">
       <div className="text-center">
         <p className="text-lg font-semibold mb-4">
-          {t('gamePlay.coffeeRoulette.error.notFound', {
-            defaultValue: 'Pair not found',
-          })}
+          {isUnmatchedInRound
+            ? t('gamePlay.coffeeRoulette.unmatched', {
+                defaultValue: "You weren't matched this round. Wait for the host to reshuffle for the next round.",
+              })
+            : t('gamePlay.coffeeRoulette.error.notFound', {
+                defaultValue: 'Pair not found',
+              })}
         </p>
         <p className="text-sm text-gray-600">Phase: {phase}</p>
       </div>

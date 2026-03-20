@@ -1149,6 +1149,7 @@ function GamePlayWithoutBoundary() {
         }))}
         gameTypeKey={activeConfig.gameTypeKey}
         gameDataPreview={gameData}
+        gamePhase={gameData && typeof gameData === 'object' && 'phase' in gameData ? (gameData as { phase?: string }).phase : undefined}
         coffeePairDebug={coffeePairDebug}
       />
 
