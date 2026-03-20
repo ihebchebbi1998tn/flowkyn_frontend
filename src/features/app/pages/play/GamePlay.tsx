@@ -316,7 +316,11 @@ function GamePlayWithoutBoundary() {
   // ─── Socket health (hardening + debug modal) ──────────────────────────────
   const [eventRoomJoined, setEventRoomJoined] = useState(false);
   const [chatSocketError, setChatSocketError] = useState<string | null>(null);
+  const [chatSocketErrorCode, setChatSocketErrorCode] = useState<string | null>(null);
+  const [chatSocketErrorDetails, setChatSocketErrorDetails] = useState<unknown>(null);
   const [gamesSocketError, setGamesSocketError] = useState<string | null>(null);
+  const [gamesSocketErrorCode, setGamesSocketErrorCode] = useState<string | null>(null);
+  const [gamesSocketErrorDetails, setGamesSocketErrorDetails] = useState<unknown>(null);
   const socketHealthModalOpenRef = useRef(false);
   const socketDebugEventsRef = useRef<Array<{ ts: number; type: string; detail?: string }>>([]);
   const [socketDebugTick, setSocketDebugTick] = useState(0);
@@ -339,6 +343,8 @@ function GamePlayWithoutBoundary() {
     onError: (e) => {
       const exact = (e as any)?.message || (e as any)?.code || t('chat.errors.generic', { defaultValue: 'Chat error' });
       setChatSocketError(String(exact));
+      setChatSocketErrorCode((e as any)?.code ? String((e as any).code) : null);
+      setChatSocketErrorDetails((e as any)?.details ?? null);
       showError(e, String(exact));
     },
   });
@@ -351,16 +357,26 @@ function GamePlayWithoutBoundary() {
     onError: (e) => {
       const exact = (e as any)?.message || (e as any)?.code || t('gamePlay.errors.socket', { defaultValue: 'Game connection error' });
       setGamesSocketError(String(exact));
+      setGamesSocketErrorCode((e as any)?.code ? String((e as any).code) : null);
+      setGamesSocketErrorDetails((e as any)?.details ?? null);
       showError(e, String(exact));
     },
   });
 
   useEffect(() => {
-    if (eventsSocket.status === 'connected') setChatSocketError(null);
+    if (eventsSocket.status === 'connected') {
+      setChatSocketError(null);
+      setChatSocketErrorCode(null);
+      setChatSocketErrorDetails(null);
+    }
   }, [eventsSocket.status]);
 
   useEffect(() => {
-    if (gamesSocket.status === 'connected') setGamesSocketError(null);
+    if (gamesSocket.status === 'connected') {
+      setGamesSocketError(null);
+      setGamesSocketErrorCode(null);
+      setGamesSocketErrorDetails(null);
+    }
   }, [gamesSocket.status]);
 
   // 3. Ensure socket connects when joined
@@ -432,6 +448,8 @@ function GamePlayWithoutBoundary() {
             // If we already captured a clearer socket error (FORBIDDEN, etc),
             // don't overwrite it with the fallback.
             setChatSocketError((prev) => (prev && prev !== fallback ? prev : String(exactFromAck)));
+            setChatSocketErrorCode((ack?.code ? String(ack.code) : null) || (ack?.data?.code ? String(ack.data.code) : null));
+            setChatSocketErrorDetails((ack?.details ?? null) || (ack?.data?.details ?? null));
             pushSocketDebug({
               type: 'event:join_ack_rejected',
               detail: `attempt=${eventJoinAttemptsRef.current + 1} reason=${String(exactFromAck)}`,
@@ -451,6 +469,8 @@ function GamePlayWithoutBoundary() {
         .catch(err => {
           console.error('[GamePlay] Failed to join event room:', err?.message || err);
           setChatSocketError(String(err?.message || err || 'Failed to join event room'));
+          setChatSocketErrorCode((err as any)?.code ? String((err as any).code) : null);
+          setChatSocketErrorDetails((err as any)?.details ?? null);
           pushSocketDebug({
             type: 'event:join_emit_failed',
             detail: String(err?.message || err || 'join failed'),
@@ -773,6 +793,8 @@ function GamePlayWithoutBoundary() {
     onGameJoinError: (err) => {
       const exact = (err as any)?.message || (err as any)?.code || (err as any)?.error || String(err);
       setGamesSocketError(String(exact));
+      setGamesSocketErrorCode((err as any)?.code ? String((err as any).code) : null);
+      setGamesSocketErrorDetails((err as any)?.details ?? null);
       showError(err, String(exact));
       pushSocketDebug({ type: 'game:join_error', detail: String(exact) });
     },
@@ -999,7 +1021,11 @@ function GamePlayWithoutBoundary() {
         chatReady={chatReady}
         gamesReady={gamesReady}
         chatError={chatSocketError}
+        chatErrorCode={chatSocketErrorCode}
+        chatErrorDetails={chatSocketErrorDetails}
         gamesError={gamesSocketError}
+        gamesErrorCode={gamesSocketErrorCode}
+        gamesErrorDetails={gamesSocketErrorDetails}
         extraDetails={
           <div className="space-y-2">
             <div className="text-xs font-semibold text-muted-foreground">Debug snapshot</div>
@@ -1035,6 +1061,8 @@ function GamePlayWithoutBoundary() {
         }
         onRetryChat={() => {
           setChatSocketError(null);
+          setChatSocketErrorCode(null);
+          setChatSocketErrorDetails(null);
           hasJoinedEventRoomRef.current = false;
           eventJoinAttemptsRef.current = 0;
           setEventRoomJoined(false);
@@ -1046,6 +1074,8 @@ function GamePlayWithoutBoundary() {
         }}
         onRetryGames={() => {
           setGamesSocketError(null);
+          setGamesSocketErrorCode(null);
+          setGamesSocketErrorDetails(null);
           if (!gamesSocket.isConnected) gamesSocket.connect();
         }}
       />

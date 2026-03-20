@@ -15,7 +15,11 @@ export interface SocketHealthModalProps {
   chatReady: boolean;
   gamesReady: boolean;
   chatError: string | null;
+  chatErrorCode?: string | null;
+  chatErrorDetails?: unknown;
   gamesError: string | null;
+  gamesErrorCode?: string | null;
+  gamesErrorDetails?: unknown;
   extraDetails?: ReactNode;
   onRetryChat: () => void;
   onRetryGames: () => void;
@@ -57,7 +61,11 @@ export function SocketHealthModal({
   chatReady,
   gamesReady,
   chatError,
+  chatErrorCode,
+  chatErrorDetails,
   gamesError,
+  gamesErrorCode,
+  gamesErrorDetails,
   extraDetails,
   onRetryChat,
   onRetryGames,
@@ -96,12 +104,36 @@ export function SocketHealthModal({
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-900">
                     <div className="font-semibold mb-1">Chat socket</div>
                     <div className="break-words">{chatError}</div>
+                    {(chatErrorCode || chatErrorDetails) && (
+                      <div className="mt-2 text-[11px] text-red-900/90">
+                        {chatErrorCode && <div className="font-semibold">code: {chatErrorCode}</div>}
+                        {chatErrorDetails && (
+                          <pre className="mt-1 whitespace-pre-wrap break-words bg-transparent border border-red-100 rounded p-2">
+                            {typeof chatErrorDetails === 'string'
+                              ? chatErrorDetails
+                              : JSON.stringify(chatErrorDetails, null, 2)}
+                          </pre>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
                 {gamesError && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-900">
                     <div className="font-semibold mb-1">Games socket</div>
                     <div className="break-words">{gamesError}</div>
+                    {(gamesErrorCode || gamesErrorDetails) && (
+                      <div className="mt-2 text-[11px] text-red-900/90">
+                        {gamesErrorCode && <div className="font-semibold">code: {gamesErrorCode}</div>}
+                        {gamesErrorDetails && (
+                          <pre className="mt-1 whitespace-pre-wrap break-words bg-transparent border border-red-100 rounded p-2">
+                            {typeof gamesErrorDetails === 'string'
+                              ? gamesErrorDetails
+                              : JSON.stringify(gamesErrorDetails, null, 2)}
+                          </pre>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

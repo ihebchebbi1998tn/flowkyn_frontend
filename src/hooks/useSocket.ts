@@ -162,7 +162,10 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
       }
       socketRef.current.emit(event, data, (response: any) => {
         if (response?.ok === false) {
-          reject(new Error(response.error || 'Socket operation failed'));
+          const err: any = new Error(response.error || 'Socket operation failed');
+          if (response?.code) err.code = response.code;
+          if (response?.details) err.details = response.details;
+          reject(err);
         } else {
           resolve(response?.data ?? response);
         }
