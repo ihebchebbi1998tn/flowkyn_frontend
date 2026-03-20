@@ -49,13 +49,18 @@ export class ErrorBoundary extends Component<Props, State> {
 
     if (!isChunkFetchFailure && !isStaleBundleTDZ) return;
 
-    // Prevent infinite reload loops for the same failing navigation.
-    const cacheKey = 'flowkyn_auto_recover_chunk_fetch_failed';
-    const alreadyRecovered = sessionStorage.getItem(cacheKey) === '1';
-    if (alreadyRecovered) return;
+    const guardKey = isStaleBundleTDZ
+      ? 'flowkyn_auto_recover_stale_bundle_tdz'
+      : 'flowkyn_auto_recover_chunk_fetch_failed';
 
+    // Prevent infinite reload loops for stale bundles.
+    // Allow a few attempts within the same sessionStorage lifecycle.
+    let attempts = 0;
     try {
-      sessionStorage.setItem(cacheKey, '1');
+      const raw = sessionStorage.getItem(guardKey);
+      attempts = raw ? Number(raw) || 0 : 0;
+      if (attempts >= 3) return;
+      sessionStorage.setItem(guardKey, String(attempts + 1));
     } catch {
       // ignore
     }
@@ -68,8 +73,18 @@ export class ErrorBoundary extends Component<Props, State> {
       // ignore
     }
 
-    // Small delay so the cache-clearing message is processed.
-    setTimeout(() => window.location.reload(), 250);
+    // Clear CacheStorage on the page too (works even when SW is not controlling).
+    void (async () => {
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      } catch {
+        // ignore
+      } finally {
+        // Give SW a moment to process CLEAN_CACHE + CacheStorage cleanup.
+        setTimeout(() => window.location.reload(), 700);
+      }
+    })();
   }
 
   handleReset = () => {

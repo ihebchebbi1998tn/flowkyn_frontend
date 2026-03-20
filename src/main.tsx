@@ -51,8 +51,15 @@ if (import.meta.env.PROD) {
     if (!isStaleBundleTDZ) return;
 
     const cacheKey = 'flowkyn_auto_recover_stale_bundle_tdz';
-    if (sessionStorage.getItem(cacheKey) === '1') return;
-    sessionStorage.setItem(cacheKey, '1');
+    let attempts = 0;
+    try {
+      const raw = sessionStorage.getItem(cacheKey);
+      attempts = raw ? Number(raw) || 0 : 0;
+      if (attempts >= 3) return;
+      sessionStorage.setItem(cacheKey, String(attempts + 1));
+    } catch {
+      // ignore
+    }
 
     try {
       if (navigator.serviceWorker?.controller) {
@@ -72,7 +79,7 @@ if (import.meta.env.PROD) {
         // ignore
       }
     })().finally(() => {
-      setTimeout(() => window.location.reload(), 250);
+      setTimeout(() => window.location.reload(), 700);
     });
   });
 }
