@@ -581,7 +581,6 @@ export function MeetingRoom({
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={onNextPrompt}
-                disabled={isLoading}
                 className="gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-all text-white"
                 style={{
                   backgroundColor: 'var(--color-primary)',
