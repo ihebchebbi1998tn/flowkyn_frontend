@@ -364,9 +364,13 @@ export function CoffeeRouletteBoard({
           partnerParticipantId={partnerParticipantId}
           isOfferer={isOfferer}
           gamesSocket={gamesSocket}
-          onNextPrompt={handleNextPrompt}
-          onContinue={handleContinue}
-          onEnd={handleEnd}
+          // Button visibility in MeetingRoom is derived from whether these handlers exist.
+          // Backend uses `decisionRequired` to indicate the "max prompt reached" decision point.
+          // So we only show "Next Topic" while normal prompting is active,
+          // and only show "Continue" when the decision gate is active.
+          onNextPrompt={!decisionRequired ? handleNextPrompt : undefined}
+          onContinue={decisionRequired ? handleContinue : undefined}
+          onEnd={decisionRequired ? handleEnd : undefined}
           isLoading={isLoading}
         />
       </RoomThemeProvider>
