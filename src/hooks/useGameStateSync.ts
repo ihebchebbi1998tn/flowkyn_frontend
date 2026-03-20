@@ -48,7 +48,7 @@ export function useGameStateSync({
   onGameJoinError,
   onGameDebug,
   onGameJoinAck,
-}: UseGameStateSyncOptions) {
+}: UseGameStateSyncOptions): { requestStateSync: (reason: string) => Promise<void> } {
   const lastServerGameUpdateAtRef = useRef<number>(Date.now());
   const lastSnapshotRevisionIdRef = useRef<string | null>(null);
   const lastSnapshotRevisionTimeRef = useRef<number>(0);
@@ -375,12 +375,22 @@ export function useGameStateSync({
     if (!sessionId) return;
     if (!participantId && !hasJoined) return;
 
-    const interval = window.setInterval(() => {
+    const intervalMs = 2000; // More frequent to catch shuffle/state changes from other participants
+    const id = window.setInterval(() => {
       void requestStateSync('periodic_refresh');
-    }, 4000);
+    }, intervalMs);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(id);
   }, [gamesSocket.isConnected, sessionId, participantId, hasJoined, requestStateSync]);
+
+  // When another player joins the game room, sync immediately (shuffle may have just happened)
+  useEffect(() => {
+    if (!gamesSocket.isConnected || !sessionId) return;
+    const unsub = gamesSocket.on('game:player_joined', () => {
+      void requestStateSync('game:player_joined');
+    });
+    return () => { if (typeof unsub === 'function') unsub(); };
+  }, [gamesSocket, gamesSocket.isConnected, sessionId, requestStateSync]);
 
   useEffect(() => {
     if (!gamesSocket.isConnected || !sessionId) return;
@@ -484,5 +494,7 @@ export function useGameStateSync({
     }, 2500);
     return () => window.clearInterval(id);
   }, [gamesSocket.isConnected, requestStateSync, sessionId]);
+
+  return { requestStateSync };
 }
 

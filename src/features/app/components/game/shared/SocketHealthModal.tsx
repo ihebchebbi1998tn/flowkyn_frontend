@@ -23,6 +23,10 @@ export interface SocketHealthModalProps {
   extraDetails?: ReactNode;
   onRetryChat: () => void;
   onRetryGames: () => void;
+  /** Manually trigger game state sync (e.g. when stuck in wrong phase) */
+  onSyncGameState?: () => void;
+  /** Whether sync is available (has session) */
+  canSyncGameState?: boolean;
 }
 
 function StatusRow({
@@ -69,6 +73,8 @@ export function SocketHealthModal({
   extraDetails,
   onRetryChat,
   onRetryGames,
+  onSyncGameState,
+  canSyncGameState,
 }: SocketHealthModalProps) {
   const hasError = !!chatError || !!gamesError;
 
@@ -142,15 +148,21 @@ export function SocketHealthModal({
 
           {extraDetails}
 
-          <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" className="flex-1 gap-2" onClick={onRetryChat} disabled={chatReady}>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" variant="outline" className="flex-1 gap-2 min-w-[120px]" onClick={onRetryChat} disabled={chatReady}>
               <RefreshCw className="h-4 w-4" />
               Retry chat
             </Button>
-            <Button type="button" variant="outline" className="flex-1 gap-2" onClick={onRetryGames} disabled={gamesReady}>
+            <Button type="button" variant="outline" className="flex-1 gap-2 min-w-[120px]" onClick={onRetryGames} disabled={gamesReady}>
               <RefreshCw className="h-4 w-4" />
               Retry games
             </Button>
+            {onSyncGameState && (
+              <Button type="button" variant="outline" className="gap-2" onClick={onSyncGameState} disabled={!canSyncGameState}>
+                <RefreshCw className="h-4 w-4" />
+                Sync game state
+              </Button>
+            )}
           </div>
 
           <div className="text-xs text-muted-foreground">

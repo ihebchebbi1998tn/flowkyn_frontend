@@ -32,6 +32,9 @@ export type IdentityDebugModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   eventId: string;
+  /** Manually trigger game state sync (e.g. when stuck in wrong phase) */
+  onSyncGameState?: () => void;
+  canSyncGameState?: boolean;
 
   isGuest: boolean;
   userId: string;
@@ -71,6 +74,8 @@ export function IdentityDebugModal({
   open,
   onOpenChange,
   eventId,
+  onSyncGameState,
+  canSyncGameState,
   isGuest,
   userId,
   participantId,
@@ -257,19 +262,29 @@ export function IdentityDebugModal({
             </pre>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="flex-1 min-w-[100px]"
               onClick={handleCopy}
             >
               {copied ? 'Copied!' : 'Copy all'}
             </Button>
+            {onSyncGameState && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onSyncGameState}
+                disabled={!canSyncGameState}
+              >
+                Sync game state
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="flex-1 min-w-[100px]"
               onClick={() => onOpenChange(false)}
             >
               Close

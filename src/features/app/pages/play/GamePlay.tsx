@@ -785,7 +785,7 @@ function GamePlayWithoutBoundary() {
     t,
   ]);
 
-  useGameStateSync({
+  const { requestStateSync } = useGameStateSync({
     gamesSocket,
     sessionId,
     hasJoined,
@@ -1070,6 +1070,11 @@ function GamePlayWithoutBoundary() {
                 <div>
                   sessionId={sessionId || 'null'} | initialSnapshot={initialSnapshot ? 'yes' : 'no'} | gameData={gameData ? 'yes' : 'no'}
                 </div>
+                {gameData && typeof gameData === 'object' && 'phase' in gameData && (
+                  <div className="text-amber-700 font-medium">
+                    Coffee Roulette: phase={(gameData as { phase?: string }).phase} | pairs={Array.isArray((gameData as { pairs?: unknown[] }).pairs) ? (gameData as { pairs: unknown[] }).pairs.length : 0} | coffeePair={coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole})` : 'none'}
+                  </div>
+                )}
                 <div>
                   tokens: guest_token={eventId ? String(!!getGuestToken(eventId)) : 'n/a'} | access_token={String(!!localStorage.getItem('access_token'))}
                 </div>
@@ -1107,6 +1112,8 @@ function GamePlayWithoutBoundary() {
           }, 250);
           void refetchMessages();
         }}
+        onSyncGameState={() => void requestStateSync('manual_sync')}
+        canSyncGameState={!!sessionId && gamesSocket.isConnected}
         onRetryGames={() => {
           setGamesSocketError(null);
           setGamesSocketErrorCode(null);
@@ -1117,6 +1124,8 @@ function GamePlayWithoutBoundary() {
 
       <IdentityDebugModal
         open={identityDebugOpen}
+        onSyncGameState={() => void requestStateSync('identity_debug_sync')}
+        canSyncGameState={!!sessionId && gamesSocket.isConnected}
         onOpenChange={(nextOpen) => {
           // Keep it always visible in dev; it's our primary tool to track identity stability.
           if (import.meta.env.DEV) {
