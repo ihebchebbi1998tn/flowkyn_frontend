@@ -51,7 +51,8 @@ export default function EventForm() {
   const [teamMembers, setTeamMembers] = useState<{ email: string; name?: string; status: string }[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<string[]>([]);
-  const [inviteMode, setInviteMode] = useState<'departments' | 'users'>('departments');
+  const [enableDepartmentInvites, setEnableDepartmentInvites] = useState(true);
+  const [enableUserInvites, setEnableUserInvites] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [createdEventId, setCreatedEventId] = useState<string | null>(null);
 
@@ -162,18 +163,13 @@ export default function EventForm() {
           new Map(all.map((item) => [item.email, item])).values()
         );
         setTeamMembers(uniqueTeamMembers);
-
-        // Auto-select everyone by default if we are creating a new event
-        if (!isEditing && uniqueTeamMembers.length > 0 && selectedMembers.length === 0) {
-          setSelectedMembers(uniqueTeamMembers.map(m => m.email));
-        }
       } catch {
         // Best-effort helper; failure here shouldn't block event creation
         setTeamMembers([]);
       }
     }
     fetchMembers();
-  }, [form.organization_id, isEditing, selectedMembers.length]);
+  }, [form.organization_id, isEditing]);
 
   // Fetch departments for department-based invites
   const { data: departments, isLoading: departmentsLoading } = useOrgDepartments(form.organization_id);
@@ -184,10 +180,10 @@ export default function EventForm() {
     if (departmentsLoading) return;
     if (!departments || departments.length === 0) return;
     setSelectedDepartmentIds((prev) => {
-      if (inviteMode !== 'departments') return prev;
+      if (!enableDepartmentInvites) return prev;
       return prev.length > 0 ? prev : (departments as Department[]).map((d) => d.id);
     });
-  }, [departments, departmentsLoading, isEditing, inviteMode]);
+  }, [departments, departmentsLoading, isEditing, enableDepartmentInvites]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,9 +225,10 @@ export default function EventForm() {
     } else {
       const createPayload: Record<string, unknown> = { ...payload };
 
-      if (inviteMode === 'departments') {
+      if (enableDepartmentInvites && selectedDepartmentIds.length > 0) {
         createPayload.invite_department_ids = selectedDepartmentIds;
-      } else {
+      }
+      if (enableUserInvites && selectedMembers.length > 0) {
         createPayload.invites = selectedMembers;
       }
 
@@ -472,10 +469,10 @@ export default function EventForm() {
             <div className="flex flex-wrap gap-2 items-center">
               <button
                 type="button"
-                onClick={() => setInviteMode('departments')}
+                onClick={() => setEnableDepartmentInvites((v) => !v)}
                 className={[
                   'px-3 py-1.5 rounded-full border text-[11px] transition-colors',
-                  inviteMode === 'departments'
+                  enableDepartmentInvites
                     ? 'border-primary text-primary bg-primary/5'
                     : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
                 ].join(' ')}
@@ -484,10 +481,10 @@ export default function EventForm() {
               </button>
               <button
                 type="button"
-                onClick={() => setInviteMode('users')}
+                onClick={() => setEnableUserInvites((v) => !v)}
                 className={[
                   'px-3 py-1.5 rounded-full border text-[11px] transition-colors',
-                  inviteMode === 'users'
+                  enableUserInvites
                     ? 'border-primary text-primary bg-primary/5'
                     : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
                 ].join(' ')}
@@ -496,17 +493,17 @@ export default function EventForm() {
               </button>
             </div>
 
-            {inviteMode === 'departments' && (
+            {enableDepartmentInvites && (
               <p className="text-[11px] text-muted-foreground">{t('events.inviteByDepartmentsHelp')}</p>
             )}
 
-            {inviteMode === 'users' && (
+            {enableUserInvites && (
               <p className="text-[11px] text-muted-foreground">
                 {t('events.inviteByUsersHelp', 'Invitations will be sent to the selected team members.')}
               </p>
             )}
 
-            {inviteMode === 'departments' && (
+            {enableDepartmentInvites && (
               <>
                 <Label className="text-[13px]">{t('events.selectDepartments', { defaultValue: 'Select departments' })}</Label>
 
@@ -530,7 +527,7 @@ export default function EventForm() {
               </>
             )}
 
-          {inviteMode === 'users' && (
+          {enableUserInvites && (
             <div className="space-y-1.5">
               <Label className="text-[13px]">{t('events.selectTeamMembers')}</Label>
               <div className="flex flex-wrap gap-2">
@@ -560,7 +557,9 @@ export default function EventForm() {
               className="h-10 text-[13px]"
               disabled={
                 isPending ||
-                (inviteMode === 'departments' ? selectedDepartmentIds.length === 0 : selectedMembers.length === 0)
+                (!enableDepartmentInvites && !enableUserInvites) ||
+                (enableDepartmentInvites && selectedDepartmentIds.length === 0) ||
+                (enableUserInvites && selectedMembers.length === 0)
               }
             >
               {isPending ? t('common.loading') : isEditing ? t('common.save') : t('common.create')}
