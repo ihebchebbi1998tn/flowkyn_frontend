@@ -78,10 +78,16 @@ function GamePlayWithoutBoundary() {
   const guestParticipantId = isGuest ? participantId : null;
   const memberParticipantId = !isGuest ? participantId : null;
   // ─── Profile (avatar + nickname) ───────────────────────────────────────────
-  const initialProfile: ProfileSetupData | null = displayName
-    ? { displayName, avatarUrl: avatarUrl || '' }
-    : eventId
-      ? getStoredProfile(eventId)
+  const storedProfile = eventId ? getStoredProfile(eventId) : null;
+  const initialProfile: ProfileSetupData | null = storedProfile
+    ? {
+        // Prefer the locally saved profile whenever it exists,
+        // because server-backed identity may be missing avatar/name on reload.
+        displayName: storedProfile.displayName || displayName || 'Guest',
+        avatarUrl: storedProfile.avatarUrl || avatarUrl || '',
+      }
+    : displayName
+      ? { displayName, avatarUrl: avatarUrl || '' }
       : null;
 
   const [profile, setProfile] = useState<ProfileSetupData | null>(initialProfile);
@@ -212,6 +218,37 @@ function GamePlayWithoutBoundary() {
       handleJoin();
     }
   }, [profile, showProfileEdit, hasJoined, isJoining, handleJoin, isIdentityLoading]);
+
+  // Ensure the server profile is restored from localStorage after reload.
+  // Without this, server-backed identity can return avatar/name as empty (e.g. for guests),
+  // causing other users (and the local UI) to appear like a brand-new participant.
+  const autoUpsertKeyRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!eventId) return;
+    if (isIdentityLoading) return;
+    if (!hasJoined) return;
+    if (!profile) return;
+
+    const storedKey = `${profile.displayName}::${profile.avatarUrl || ''}`;
+    if (autoUpsertKeyRef.current === storedKey) return;
+
+    const serverName = (displayName || '').trim();
+    const serverAvatar = (avatarUrl || '').trim();
+
+    const needsUpsert =
+      serverName !== profile.displayName.trim() ||
+      serverAvatar !== (profile.avatarUrl || '').trim();
+
+    if (!needsUpsert) return;
+
+    autoUpsertKeyRef.current = storedKey;
+    void upsertProfile
+      .mutateAsync({ display_name: profile.displayName, avatar_url: profile.avatarUrl || null })
+      .catch((err) => {
+        console.warn('[GamePlay] auto upsert profile failed (will allow retry on next render)', err);
+        autoUpsertKeyRef.current = null;
+      });
+  }, [eventId, isIdentityLoading, hasJoined, profile, displayName, avatarUrl, upsertProfile]);
 
   // ─── Real data from API ────────────────────────────────────────────────────
   const { data: eventData } = useEventPublicInfo(eventId || '');
