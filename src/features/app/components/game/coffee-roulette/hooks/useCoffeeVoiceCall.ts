@@ -280,7 +280,7 @@ export function useCoffeeVoiceCall(params: {
         // Throttle UI updates to reduce renders.
         if (ts - remoteMeterLastUpdateRef.current >= 60) {
           remoteMeterLastUpdateRef.current = ts;
-          a.getByteTimeDomainData(data);
+          a.getByteTimeDomainData(data as Uint8Array<ArrayBuffer>);
 
           let sumSq = 0;
           for (let i = 0; i < data.length; i++) {
@@ -426,7 +426,7 @@ export function useCoffeeVoiceCall(params: {
           // Throttle UI updates to reduce renders.
           if (ts - meterLastUpdateRef.current >= 60) {
             meterLastUpdateRef.current = ts;
-            a.getByteTimeDomainData(data);
+            a.getByteTimeDomainData(data as Uint8Array<ArrayBuffer>);
             // Compute RMS from time-domain samples.
             let sumSq = 0;
             for (let i = 0; i < data.length; i++) {
@@ -683,7 +683,34 @@ export function useCoffeeVoiceCall(params: {
         void stopVoice({ emitHangup: false }).then(() => onRemoteHangup?.());
       });
 
-      localUnsubscribersRef.current.push(unsubOffer, unsubAnswer, unsubIce, unsubHangup);
+      // FIX #3: Listen for notification that partner enabled voice
+      // This is sent when the voice offer was cached but partner wasn't connected
+      const unsubVoiceAwaiting = gamesSocket.on('coffee:voice_offer_awaiting', 
+        (msg: { pairId: string; fromParticipantId: string; toParticipantId?: string }) => {
+          if (msg.pairId !== pairId) return;
+          
+          // Only process if this is for us (check participant ID)
+          if (msg.toParticipantId && msg.toParticipantId !== myParticipantId) return;
+
+          console.log('[CoffeeVoice] Partner enabled voice, requesting cached offer...', {
+            sessionId,
+            pairId,
+            fromParticipantId: msg.fromParticipantId,
+          });
+
+          // Auto-request the cached offer from backend
+          gamesSocket.emit('coffee:voice_request_offer', {
+            sessionId,
+            pairId,
+          }).catch((err) => {
+            console.warn('[CoffeeVoice] Failed to request cached offer:', err);
+            setStatus('error');
+            setError('OFFER_REQUEST_FAILED');
+          });
+        }
+      );
+
+      localUnsubscribersRef.current.push(unsubOffer, unsubAnswer, unsubIce, unsubHangup, unsubVoiceAwaiting);
 
       // Negotiation
       if (isOfferer) {
