@@ -182,14 +182,20 @@ function GamePlayWithoutBoundary() {
         }
       }
       console.log('[GamePlay] handleJoin success', { eventId, mode: isAuthenticated ? 'member' : 'guest' });
+      pushSocketDebug({
+        type: 'identity:join_success',
+        detail: `mode=${isAuthenticated ? 'member' : 'guest'} eventId=${eventId} participantId=${participantId || 'null'}`,
+      });
       setHasJoined(true);
     } catch (err: unknown) {
       if ((err as any)?.status === 409 || (err as any)?.response?.status === 409) {
         console.warn('[GamePlay] handleJoin already participant (409)', { eventId, error: err });
+        pushSocketDebug({ type: 'identity:join_conflict_409', detail: `eventId=${eventId}` });
         setHasJoined(true);
       } else {
         console.error('[GamePlay] handleJoin error', err);
         setJoinError((err as any)?.message || t('event.joinFailed', { defaultValue: 'Failed to join event' }));
+        pushSocketDebug({ type: 'identity:join_failed', detail: String((err as any)?.message || err || 'join failed') });
       }
     } finally {
       setIsJoining(false);
@@ -311,11 +317,25 @@ function GamePlayWithoutBoundary() {
   const [eventRoomJoined, setEventRoomJoined] = useState(false);
   const [chatSocketError, setChatSocketError] = useState<string | null>(null);
   const [gamesSocketError, setGamesSocketError] = useState<string | null>(null);
+  const socketHealthModalOpenRef = useRef(false);
+  const socketDebugEventsRef = useRef<Array<{ ts: number; type: string; detail?: string }>>([]);
+  const [socketDebugTick, setSocketDebugTick] = useState(0);
+
+  const pushSocketDebug = useCallback((evt: { type: string; detail?: string }) => {
+    const ts = Date.now();
+    socketDebugEventsRef.current = [
+      ...socketDebugEventsRef.current.slice(-49),
+      { ts, type: evt.type, detail: evt.detail },
+    ];
+    if (socketHealthModalOpenRef.current) setSocketDebugTick((v) => v + 1);
+  }, []);
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
     // Pass eventId so the socket hook can resolve the correct per-event guest token
     eventId: eventId || undefined,
+    autoConnect: false,
+    authMode: isGuest ? 'guest' : 'access',
     onError: (e) => {
       const exact = (e as any)?.message || (e as any)?.code || t('chat.errors.generic', { defaultValue: 'Chat error' });
       setChatSocketError(String(exact));
@@ -326,6 +346,8 @@ function GamePlayWithoutBoundary() {
   const gamesSocket = useGamesSocket({
     // Use eventId so guests can authenticate with their per-event guest token
     eventId: eventId || undefined,
+    autoConnect: false,
+    authMode: isGuest ? 'guest' : 'access',
     onError: (e) => {
       const exact = (e as any)?.message || (e as any)?.code || t('gamePlay.errors.socket', { defaultValue: 'Game connection error' });
       setGamesSocketError(String(exact));
@@ -343,17 +365,17 @@ function GamePlayWithoutBoundary() {
 
   // 3. Ensure socket connects when joined
   useEffect(() => {
-    if (hasJoined && !eventsSocket.isConnected && eventsSocket.status === 'disconnected') {
+    if (!isIdentityLoading && hasJoined && !eventsSocket.isConnected && eventsSocket.status === 'disconnected') {
       eventsSocket.connect();
     }
-  }, [hasJoined, eventsSocket]);
+  }, [hasJoined, eventsSocket, isIdentityLoading]);
 
   // Ensure games socket also connects when joined (for game states)
   useEffect(() => {
-    if (hasJoined && !gamesSocket.isConnected && gamesSocket.status === 'disconnected') {
+    if (!isIdentityLoading && hasJoined && !gamesSocket.isConnected && gamesSocket.status === 'disconnected') {
       gamesSocket.connect();
     }
-  }, [hasJoined, gamesSocket]);
+  }, [hasJoined, gamesSocket, isIdentityLoading]);
 
   // ─── WebSocket room management (ensure we are in the rooms) ────────────────
   const hasJoinedEventRoomRef = useRef(false);
@@ -380,6 +402,10 @@ function GamePlayWithoutBoundary() {
     // socket remains connected (leading to "game start not seen" + "chat not received").
     if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
       console.log('[GamePlay] Emitting event:join for', eventId);
+      pushSocketDebug({
+        type: 'event:join_emit',
+        detail: `eventsSocket=${eventsSocket.status} hasJoined=${String(hasJoined)} participantId=${participantId || 'null'} attempt=${eventJoinAttemptsRef.current + 1}`,
+      });
       eventsSocket.emit('event:join', { eventId })
         .then((ack: any) => {
           console.log('[GamePlay] event:join ack:', ack);
@@ -387,41 +413,56 @@ function GamePlayWithoutBoundary() {
             hasJoinedEventRoomRef.current = true;
             setEventRoomJoined(true);
             eventJoinAttemptsRef.current = 0;
+            pushSocketDebug({
+              type: 'event:join_ack_ok',
+              detail: `participantId=${String(ack.data.participantId)}`,
+            });
             if (isGuest) {
               localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
             } else {
               localStorage.setItem(`member_participant_id_${eventId}`, ack.data.participantId);
             }
           } else {
-            const exact =
+            const fallback = 'event:join rejected (no participantId returned)';
+            const exactFromAck =
               ack?.data?.error ||
               ack?.error ||
               (typeof ack === 'string' ? ack : null) ||
-              'event:join rejected (no participantId returned)';
-            setChatSocketError(String(exact));
+              fallback;
+            // If we already captured a clearer socket error (FORBIDDEN, etc),
+            // don't overwrite it with the fallback.
+            setChatSocketError((prev) => (prev && prev !== fallback ? prev : String(exactFromAck)));
+            pushSocketDebug({
+              type: 'event:join_ack_rejected',
+              detail: `attempt=${eventJoinAttemptsRef.current + 1} reason=${String(exactFromAck)}`,
+            });
             const nextAttempt = eventJoinAttemptsRef.current + 1;
             eventJoinAttemptsRef.current = nextAttempt;
-            if (nextAttempt <= 3) {
+            if (nextAttempt <= 10) {
               setTimeout(() => {
                 // Only retry if we're still eligible and haven't joined the room yet.
                 if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
                   joinEventRoom();
                 }
-              }, 500 * nextAttempt);
+              }, Math.min(4000, 500 * nextAttempt));
             }
           }
         })
         .catch(err => {
           console.error('[GamePlay] Failed to join event room:', err?.message || err);
           setChatSocketError(String(err?.message || err || 'Failed to join event room'));
+          pushSocketDebug({
+            type: 'event:join_emit_failed',
+            detail: String(err?.message || err || 'join failed'),
+          });
           const nextAttempt = eventJoinAttemptsRef.current + 1;
           eventJoinAttemptsRef.current = nextAttempt;
-          if (nextAttempt <= 3) {
+          if (nextAttempt <= 10) {
             setTimeout(() => {
               if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
                 joinEventRoom();
               }
-            }, 500 * nextAttempt);
+            }, Math.min(4000, 500 * nextAttempt));
           }
           showError(err, t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }));
         });
@@ -438,6 +479,7 @@ function GamePlayWithoutBoundary() {
     if (!eventsSocket.socket) return;
     const onConnect = () => {
       console.log('[GamePlay] Events socket reconnected, re-joining room + refetching messages...');
+      pushSocketDebug({ type: 'eventsSocket_reconnect', detail: `status=${eventsSocket.status} eventId=${eventId || 'null'}` });
       joinEventRoom();
       // Refetch HTTP messages to recover any missed during the disconnection window
       refetchMessages();
@@ -456,6 +498,7 @@ function GamePlayWithoutBoundary() {
     eventsSocket,
     identityRef,
     userRef,
+    onChatDebug: (evt) => pushSocketDebug({ type: evt.type, detail: evt.detail }),
   });
 
   // Cleanup: leave event room on unmount
@@ -731,6 +774,13 @@ function GamePlayWithoutBoundary() {
       const exact = (err as any)?.message || (err as any)?.code || (err as any)?.error || String(err);
       setGamesSocketError(String(exact));
       showError(err, String(exact));
+      pushSocketDebug({ type: 'game:join_error', detail: String(exact) });
+    },
+    onGameDebug: (evt) => {
+      pushSocketDebug({
+        type: evt.type,
+        detail: evt.detail || (evt.data ? 'debug event received' : undefined),
+      });
     },
   });
 
@@ -741,7 +791,24 @@ function GamePlayWithoutBoundary() {
     // We consider the game "ready" only once we have at least one snapshot.
     // This catches cases where `game:join` is rejected even though the socket is connected.
     (initialSnapshot !== null || gameData !== null);
-  const socketHealthModalOpen = (hasJoined && !chatReady) || (!!sessionId && !gamesReady);
+  const socketHealthModalOpen =
+    !isIdentityLoading &&
+    ((hasJoined && !chatReady) || (!!sessionId && !gamesReady));
+
+  useEffect(() => {
+    socketHealthModalOpenRef.current = socketHealthModalOpen;
+  }, [socketHealthModalOpen]);
+
+  useEffect(() => {
+    pushSocketDebug({
+      type: 'socket.health_state',
+      detail: `eventsSocket=${eventsSocket.status} chatReady=${String(chatReady)} eventRoomJoined=${String(eventRoomJoined)} hasJoined=${String(
+        hasJoined,
+      )} participantId=${participantId || 'null'} gamesSocket=${gamesSocket.status} gamesReady=${String(
+        gamesReady,
+      )} sessionId=${sessionId || 'null'}`,
+    });
+  }, [eventsSocket.status, chatReady, eventRoomJoined, hasJoined, participantId, gamesSocket.status, gamesReady, sessionId, pushSocketDebug]);
 
   useEffect(() => {
     if (chatReady) setChatSocketError(null);
@@ -933,6 +1000,39 @@ function GamePlayWithoutBoundary() {
         gamesReady={gamesReady}
         chatError={chatSocketError}
         gamesError={gamesSocketError}
+        extraDetails={
+          <div className="space-y-2">
+            <div className="text-xs font-semibold text-muted-foreground">Debug snapshot</div>
+            <div className="rounded-lg border border-border p-3 bg-muted/20">
+              <div className="text-[11px] text-muted-foreground space-y-1">
+                <div>
+                  auth: {isGuest ? 'guest' : 'access'} | hasJoined={String(hasJoined)} | participantId={participantId || 'null'} | eventRoomJoined=
+                  {String(eventRoomJoined)}
+                </div>
+                <div>
+                  sessionId={sessionId || 'null'} | initialSnapshot={initialSnapshot ? 'yes' : 'no'} | gameData={gameData ? 'yes' : 'no'}
+                </div>
+                <div>
+                  tokens: guest_token={eventId ? String(!!localStorage.getItem(`guest_token_${eventId}`)) : 'n/a'} | access_token={String(!!localStorage.getItem('access_token'))}
+                </div>
+                <div>event:join attempts={eventJoinAttemptsRef.current}</div>
+              </div>
+            </div>
+
+            <div className="text-xs font-semibold text-muted-foreground">Recent socket timeline</div>
+            <pre
+              key={socketDebugTick}
+              className="text-[11px] leading-4 bg-black/5 rounded-lg p-3 border border-border max-h-56 overflow-y-auto whitespace-pre-wrap break-words"
+            >
+              {socketDebugEventsRef.current
+                .map((e) => {
+                  const d = e.detail ? ` - ${e.detail}` : '';
+                  return `${new Date(e.ts).toISOString()}: ${e.type}${d}`;
+                })
+                .join('\n')}
+            </pre>
+          </div>
+        }
         onRetryChat={() => {
           setChatSocketError(null);
           hasJoinedEventRoomRef.current = false;

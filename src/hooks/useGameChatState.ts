@@ -37,6 +37,7 @@ interface UseGameChatStateOptions {
   eventsSocket: SocketLike;
   identityRef: MutableRefObject<IdentityLike>;
   userRef: MutableRefObject<UserLike | null | undefined>;
+  onChatDebug?: (evt: { type: string; detail?: string; data?: unknown }) => void;
 }
 
 export function useGameChatState({
@@ -49,6 +50,7 @@ export function useGameChatState({
   eventsSocket,
   identityRef,
   userRef,
+  onChatDebug,
 }: UseGameChatStateOptions) {
   const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
   const [pinnedMessage, setPinnedMessage] = useState<ChatMessage | null>(null);
@@ -88,10 +90,20 @@ export function useGameChatState({
   useEffect(() => {
     if (!eventsSocket.isConnected) {
       console.log('[useGameChatState] Chat listener: socket not connected');
+      onChatDebug?.({ type: 'chat:socket_not_connected', detail: 'eventsSocket.isConnected=false' });
       return;
     }
 
     const handleChatMessage = (data: any) => {
+      onChatDebug?.({
+        type: 'chat:message_received',
+        detail: `id=${String(data?.id || 'unknown')}`,
+        data: {
+          senderUserId: data?.userId || null,
+          participantId: data?.participantId || null,
+          messagePreview: typeof data?.message === 'string' ? data.message.slice(0, 60) : null,
+        },
+      });
       const idCurrent = identityRef.current;
       const usr = userRef.current;
       const name = data.senderName || 'Player';

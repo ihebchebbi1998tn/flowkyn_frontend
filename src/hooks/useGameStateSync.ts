@@ -24,6 +24,7 @@ interface UseGameStateSyncOptions {
   setGameData: (v: unknown) => void;
   setIsGameAdmin: (v: boolean) => void;
   onGameJoinError?: (err: unknown) => void;
+  onGameDebug?: (evt: { type: string; detail?: string; data?: unknown }) => void;
 }
 
 /**
@@ -40,6 +41,7 @@ export function useGameStateSync({
   setGameData,
   setIsGameAdmin,
   onGameJoinError,
+  onGameDebug,
 }: UseGameStateSyncOptions) {
   const lastServerGameUpdateAtRef = useRef<number>(Date.now());
   const lastSnapshotRevisionIdRef = useRef<string | null>(null);
@@ -97,11 +99,29 @@ export function useGameStateSync({
     if (!participantId && !hasJoined) return;
     if (gamesSocket.isConnected && sessionId) {
       console.log('[GamePlay] Emitting game:join for', sessionId);
+      onGameDebug?.({
+        type: 'game:join_emit',
+        detail: `emit game:join sessionId=${sessionId}`,
+        data: { socketStatus: gamesSocket.status, hasJoined, participantId: participantId || null },
+      });
       gamesSocket
         .emit<any>('game:join', { sessionId })
         .then((resp: any) => {
           const data = resp?.data || resp;
           console.log('[GamePlay] game:join resp:', data);
+          onGameDebug?.({
+            type: 'game:join_ack',
+            detail: 'game:join ack received',
+            data: {
+              hasSnapshot: !!data?.snapshot,
+              snapshotKind: data?.snapshot?.kind || null,
+              snapshotPhase: data?.snapshot?.phase || null,
+              snapshotCreatedAt: data?.snapshotCreatedAt || null,
+              activeRoundId: data?.activeRoundId || null,
+              isAdmin: data?.isAdmin ?? null,
+              snapshotRevisionTime: data?.snapshotCreatedAt || null,
+            },
+          });
           if (data?.activeRoundId) setActiveRoundId(data.activeRoundId);
           setIsGameAdmin(!!data?.isAdmin);
           applyJoinSnapshotIfNewer(data);
@@ -109,6 +129,11 @@ export function useGameStateSync({
         .catch((err: any) => {
           console.warn('[GamePlay] Failed to join game room (transient):', err?.message || err);
           onGameJoinError?.(err);
+          onGameDebug?.({
+            type: 'game:join_emit_failed',
+            detail: err?.message || String(err),
+            data: err,
+          });
         });
     }
   }, [
@@ -123,6 +148,7 @@ export function useGameStateSync({
     setIsGameAdmin,
     applyJoinSnapshotIfNewer,
     onGameJoinError,
+    onGameDebug,
   ]);
 
   const requestStateSync = useCallback(
@@ -180,6 +206,18 @@ export function useGameStateSync({
       if (snap) {
         const currentRevisionTime = lastSnapshotRevisionTimeRef.current;
         const isNewer = incomingRevisionTime > 0 ? incomingRevisionTime >= currentRevisionTime : true;
+        onGameDebug?.({
+          type: 'game:state_event',
+          detail: `game:state snapshot incomingRevisionTime=${incomingRevisionTime} currentRevisionTime=${currentRevisionTime} accepted=${String(
+            isNewer,
+          )}`,
+          data: {
+            incomingRevisionId,
+            incomingRevisionTime,
+            snapshotKind: snap?.kind || null,
+            snapshotPhase: snap?.phase || null,
+          },
+        });
         if (!isNewer) {
           console.log('[GamePlay][sync] Ignoring stale game:state snapshot', {
             incomingRevisionId,
@@ -206,6 +244,16 @@ export function useGameStateSync({
         const incomingRevisionTime = parseRevisionTime(payload?.snapshotCreatedAt);
         const currentRevisionTime = lastSnapshotRevisionTimeRef.current;
         const isNewer = incomingRevisionTime > 0 ? incomingRevisionTime >= currentRevisionTime : true;
+        onGameDebug?.({
+          type: 'game:data_event',
+          detail: `game:data incomingRevisionTime=${incomingRevisionTime} currentRevisionTime=${currentRevisionTime} accepted=${String(isNewer)}`,
+          data: {
+            incomingRevisionId,
+            incomingRevisionTime,
+            gameKind: payload?.gameData?.kind || null,
+            gamePhase: payload?.gameData?.phase || null,
+          },
+        });
         if (!isNewer) {
           console.log('[GamePlay][sync] Ignoring stale game:data snapshot', {
             incomingRevisionId,
@@ -243,16 +291,24 @@ export function useGameStateSync({
     });
 
     const unsubStarted = gamesSocket.on('game:started', () => {
+      onGameDebug?.({ type: 'game:started', detail: 'received game:started' });
       if (sessionId) void requestStateSync('event:game_started');
     });
     const unsubRoundStarted = gamesSocket.on('game:round_started', (payload: any) => {
+      onGameDebug?.({
+        type: 'game:round_started',
+        detail: `received game:round_started roundId=${payload?.roundId || 'null'}`,
+        data: payload,
+      });
       if (payload?.roundId) setActiveRoundId(payload.roundId);
       if (sessionId) void requestStateSync('event:round_started');
     });
     const unsubRoundEnded = gamesSocket.on('game:round_ended', () => {
+      onGameDebug?.({ type: 'game:round_ended', detail: 'received game:round_ended' });
       if (sessionId) void requestStateSync('event:round_ended');
     });
     const unsubEnded = gamesSocket.on('game:ended', () => {
+      onGameDebug?.({ type: 'game:ended', detail: 'received game:ended' });
       if (sessionId) void requestStateSync('event:game_ended');
     });
 
@@ -272,6 +328,7 @@ export function useGameStateSync({
     setActiveRoundId,
     setGameData,
     setInitialSnapshot,
+    onGameDebug,
   ]);
 
   // Extra periodic safety refresh:
@@ -301,9 +358,19 @@ export function useGameStateSync({
     const attemptJoin = async (attempt: number) => {
       if (cancelled) return;
       try {
+        onGameDebug?.({
+          type: 'game:join_retry_emit',
+          detail: `retry game:join attempt=${attempt} sessionId=${sessionId}`,
+          data: { socketStatus: gamesSocket.status },
+        });
         const ack = await gamesSocket.emit<any>('game:join', { sessionId });
         const ok = (ack as any)?.ok;
         const data = (ack as any)?.data;
+        onGameDebug?.({
+          type: 'game:join_retry_ack',
+          detail: `retry ack attempt=${attempt} ok=${String(ok)}`,
+          data: { hasSnapshot: !!data?.snapshot, activeRoundId: data?.activeRoundId || null },
+        });
         if (ok === false) {
           throw new Error((ack as any)?.error || 'JOIN_FAILED');
         }
@@ -321,6 +388,11 @@ export function useGameStateSync({
           error: err?.message || err,
         });
         onGameJoinError?.(err);
+        onGameDebug?.({
+          type: 'game:join_retry_failed',
+          detail: `retry failed attempt=${attempt} error=${err?.message || String(err)}`,
+          data: err,
+        });
       }
     };
 
@@ -345,6 +417,7 @@ export function useGameStateSync({
     setActiveRoundId,
     setGameData,
     setInitialSnapshot,
+    onGameDebug,
   ]);
 
   const wasGamesConnectedRef = useRef(false);

@@ -14,12 +14,19 @@ interface UseSocketOptions {
   namespace: string;
   autoConnect?: boolean;
   eventId?: string; // For event-specific guest token lookup
+  /**
+   * Controls which token type to use for authentication.
+   * - `guest`: always prefer `guest_token_${eventId}` (or `guest_token`)
+   * - `access`: always prefer `access_token`
+   * - undefined: existing behavior (guest token if present, else access token)
+   */
+  authMode?: 'guest' | 'access';
   onConnect?: () => void;
   onDisconnect?: (reason: string) => void;
   onError?: (err: { message: string; code?: string }) => void;
 }
 
-export function useSocket({ namespace, autoConnect = true, eventId, onConnect, onDisconnect, onError }: UseSocketOptions) {
+export function useSocket({ namespace, autoConnect = true, eventId, authMode, onConnect, onDisconnect, onError }: UseSocketOptions) {
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [status, setStatus] = useState<ConnectionStatus>('disconnected');
@@ -35,8 +42,20 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
   const connect = useCallback(() => {
     // Support both guest tokens (event-specific) and regular access tokens
     const guestToken = eventId ? localStorage.getItem(`guest_token_${eventId}`) : localStorage.getItem('guest_token');
-    const token = guestToken || localStorage.getItem('access_token');
-    if (!token) return;
+    const accessToken = localStorage.getItem('access_token');
+    const resolvedToken =
+      authMode === 'guest' ? guestToken : authMode === 'access' ? accessToken : guestToken || accessToken;
+
+    if (!resolvedToken) {
+      console.warn('[useSocket] connect aborted: no auth token resolved', {
+        namespace,
+        eventId,
+        authMode,
+        hasGuestToken: !!guestToken,
+        hasAccessToken: !!accessToken,
+      });
+      return;
+    }
 
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -44,14 +63,31 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
 
     setStatus(prev => (prev === 'disconnected' ? 'connecting' : 'reconnecting'));
 
-    console.log('[useSocket] connect called', { namespace, eventId, hasGuestToken: !!guestToken, hasAccessToken: !!localStorage.getItem('access_token') });
+    console.log('[useSocket] connect called', {
+      namespace,
+      eventId,
+      authMode,
+      hasGuestToken: !!guestToken,
+      hasAccessToken: !!accessToken,
+    });
 
     const socket = io(`${SOCKET_URL}${namespace}`, {
       auth: (cb) => {
         // Fetch fresh token at the exact moment of connection/reconnection
         const freshGuest = eventId ? localStorage.getItem(`guest_token_${eventId}`) : localStorage.getItem('guest_token');
-        const freshToken = freshGuest || localStorage.getItem('access_token');
-        cb({ token: freshToken });
+        const freshAccess = localStorage.getItem('access_token');
+        const resolvedFreshToken =
+          authMode === 'guest' ? freshGuest : authMode === 'access' ? freshAccess : freshGuest || freshAccess;
+        if (!resolvedFreshToken) {
+          console.warn('[useSocket] auth callback: token missing at connect time', {
+            namespace,
+            eventId,
+            authMode,
+            hasFreshGuest: !!freshGuest,
+            hasFreshAccess: !!freshAccess,
+          });
+        }
+        cb({ token: resolvedFreshToken });
       },
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -109,7 +145,7 @@ export function useSocket({ namespace, autoConnect = true, eventId, onConnect, o
     });
 
     socketRef.current = socket;
-  }, [namespace, eventId]); // Include eventId as dependency for event-specific tokens
+  }, [namespace, eventId, authMode]);
 
   const disconnect = useCallback(() => {
     socketRef.current?.disconnect();
