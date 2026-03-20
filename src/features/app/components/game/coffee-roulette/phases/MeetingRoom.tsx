@@ -190,10 +190,9 @@ export function MeetingRoom({
 
       <audio ref={audioRef} className="hidden" autoPlay />
       <div
-        className="w-full py-4 px-6 flex flex-col gap-4"
+        className="w-full h-full py-4 px-6 flex flex-col gap-4 min-h-0"
         style={{
           background: `linear-gradient(to bottom, #f5f3ff 0%, #faf8ff 100%)`,
-          minHeight: '360px',
           position: 'relative',
         }}
       >

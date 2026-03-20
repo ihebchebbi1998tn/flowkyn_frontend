@@ -169,7 +169,7 @@ export const EventChat = memo(function EventChat({
   }, []);
 
   return (
-    <div className={cn("flex flex-col rounded-2xl border border-border bg-card overflow-hidden", className)}>
+    <div className={cn("flex flex-col h-full rounded-2xl border border-border bg-card overflow-hidden", className)}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-primary/5 to-transparent shrink-0">
         <div className="flex items-center gap-2">
@@ -186,7 +186,7 @@ export const EventChat = memo(function EventChat({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto px-3 py-4 space-y-1 min-h-[260px] max-h-[360px] scrollbar-hide"
+        className="flex-1 overflow-y-auto px-3 py-4 space-y-1 min-h-0 max-h-none scrollbar-hide"
       >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">

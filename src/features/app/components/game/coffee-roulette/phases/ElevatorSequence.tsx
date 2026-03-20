@@ -61,7 +61,7 @@ export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }:
   return (
     <div style={themeVars as React.CSSProperties}>
       <div
-        className="min-h-screen flex items-center justify-center relative overflow-hidden"
+        className="h-full min-h-0 flex items-center justify-center relative overflow-hidden"
         style={{
           background: `var(--gradient-room)`,
         }}

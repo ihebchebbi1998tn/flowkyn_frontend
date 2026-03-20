@@ -65,7 +65,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
   return (
     <div style={themeVars as React.CSSProperties}>
       <div
-          className="min-h-[500px] flex flex-col"
+          className="h-full flex flex-col min-h-0"
         style={{
           background: `linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%)`,
         }}
@@ -131,15 +131,15 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
         </motion.div>
 
         {/* Main Content */}
-        <div className="flex-1 px-4 py-4 overflow-y-auto">
+        <div className="flex-1 px-4 py-4 overflow-y-auto min-h-0">
           <div className="w-full max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
               {/* Participants */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm"
+                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0"
                 style={{ padding: 16 }}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -154,7 +154,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                   </p>
                 </div>
 
-                <div style={{ maxHeight: 240, overflowY: 'auto', paddingRight: 6 }}>
+                <div className="flex-1 min-h-0 overflow-y-auto" style={{ paddingRight: 6 }}>
                   <div
                     style={{
                       display: 'grid',
@@ -205,7 +205,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.08 }}
-                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm"
+                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0"
                 style={{ padding: 16 }}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -225,7 +225,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                     {t('gamePlay.coffeeRoulette.lobby.waitingFor')}
                   </p>
                 ) : (
-                  <div style={{ maxHeight: 240, overflowY: 'auto', paddingRight: 6 }}>
+                  <div className="flex-1 min-h-0 overflow-y-auto" style={{ paddingRight: 6 }}>
                     <div
                       className="grid gap-3"
                       style={{ gridTemplateColumns: `repeat(auto-fit, minmax(230px, 1fr))` }}

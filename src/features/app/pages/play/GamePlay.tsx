@@ -669,7 +669,7 @@ function GamePlayWithoutBoundary() {
 
   // ─── Chat sidebar ──────────────────────────────────────────────────────────
   const chatSidebar = (
-    <div className="space-y-3 sticky top-20 max-h-[calc(100vh-96px)] flex flex-col">
+    <div className="space-y-3 sticky top-20 h-[calc(100vh-96px)] flex flex-col min-h-0">
       <div className="flex items-center justify-between text-label-xs text-muted-foreground px-1">
         <span>
           {eventsSocket.status === 'connected' && t('chat.connected', 'Live & synced')}
@@ -686,7 +686,7 @@ function GamePlayWithoutBoundary() {
           </button>
         )}
       </div>
-      <div className="flex-1 min-h-[260px]">
+      <div className="flex-1 min-h-0">
         <EventChat
           eventId={eventId || ''}
           messages={allMessages}
@@ -711,7 +711,7 @@ function GamePlayWithoutBoundary() {
   );
 
   return (
-    <>
+    <div className="h-full min-h-0 flex flex-col">
       <GamePlayShell
         title={t(activeConfig.titleKey)}
         subtitle={t(activeConfig.subtitleKey)}
@@ -770,7 +770,7 @@ function GamePlayWithoutBoundary() {
           />
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
 

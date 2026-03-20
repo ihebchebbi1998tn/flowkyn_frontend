@@ -151,7 +151,7 @@ export function GamePlayShell({
   const leaderboard = <LeaderboardSidebar participants={participants} />;
 
   return (
-    <div className="space-y-5 w-full max-w-[1400px] mx-auto animate-fade-in">
+    <div className="space-y-5 w-full max-w-[1400px] mx-auto animate-fade-in h-full min-h-0 flex flex-col">
       {/* ─── Header ─── */}
       {!hideHeader && (
         <div className="relative rounded-2xl overflow-hidden border border-border bg-card">
@@ -351,9 +351,9 @@ export function GamePlayShell({
       )}
 
       {/* ─── Content ─── */}
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,0.9fr)] items-start">
-        <div className="space-y-4">{children}</div>
-        <div className="hidden lg:block space-y-4">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,0.9fr)] items-stretch min-h-0 flex-1">
+        <div className="space-y-4 h-full min-h-0 flex flex-col">{children}</div>
+        <div className="hidden lg:block space-y-4 h-full min-h-0 flex flex-col">
           {sidebar || leaderboard}
         </div>
       </div>

@@ -365,7 +365,7 @@ export function CoffeeRouletteBoard({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.25 }}
-          className="flex items-center justify-center min-h-[420px]"
+          className="flex items-center justify-center h-full min-h-0"
         >
           <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-white/80 px-4 py-3 shadow-sm">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -450,7 +450,7 @@ export function CoffeeRouletteBoard({
 
   // Fallback - if myPair not found
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center h-full min-h-0">
       <div className="text-center">
         <p className="text-lg font-semibold mb-4">
           {t('gamePlay.coffeeRoulette.error.notFound', {

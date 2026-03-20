@@ -102,7 +102,7 @@ export function OfficeExitAnimation({
   return (
     <div style={themeVars as React.CSSProperties}>
       <div
-        className="min-h-[460px] md:min-h-[520px] relative overflow-hidden flex items-center justify-center py-10 md:py-16"
+        className="h-full min-h-0 relative overflow-hidden flex items-center justify-center py-10 md:py-16"
         style={{
           background: `var(--gradient-room)`,
         }}
