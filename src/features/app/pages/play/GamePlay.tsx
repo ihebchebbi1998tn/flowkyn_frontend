@@ -337,31 +337,64 @@ function GamePlayWithoutBoundary() {
   }, [hasJoined, gamesSocket]);
 
   // ─── WebSocket room management (ensure we are in the rooms) ────────────────
+  const hasJoinedEventRoomRef = useRef(false);
+  const eventJoinAttemptsRef = useRef(0);
+  useEffect(() => {
+    hasJoinedEventRoomRef.current = false;
+    eventJoinAttemptsRef.current = 0;
+  }, [eventId]);
+
   const joinEventRoom = useCallback(() => {
-    if (eventsSocket.isConnected && eventId) {
+    // IMPORTANT:
+    // event-room join must happen only after we are actually a participant.
+    // Otherwise verifyParticipant() can fail and we might never retry while the
+    // socket remains connected (leading to "game start not seen" + "chat not received").
+    if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
       console.log('[GamePlay] Emitting event:join for', eventId);
       eventsSocket.emit('event:join', { eventId })
         .then((ack: any) => {
           console.log('[GamePlay] event:join ack:', ack);
           if (ack?.data?.participantId) {
+            hasJoinedEventRoomRef.current = true;
+            eventJoinAttemptsRef.current = 0;
             if (isGuest) {
               localStorage.setItem(`guest_participant_id_${eventId}`, ack.data.participantId);
             } else {
               localStorage.setItem(`member_participant_id_${eventId}`, ack.data.participantId);
             }
+          } else {
+            const nextAttempt = eventJoinAttemptsRef.current + 1;
+            eventJoinAttemptsRef.current = nextAttempt;
+            if (nextAttempt <= 3) {
+              setTimeout(() => {
+                // Only retry if we're still eligible and haven't joined the room yet.
+                if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
+                  joinEventRoom();
+                }
+              }, 500 * nextAttempt);
+            }
           }
         })
         .catch(err => {
           console.error('[GamePlay] Failed to join event room:', err?.message || err);
+          const nextAttempt = eventJoinAttemptsRef.current + 1;
+          eventJoinAttemptsRef.current = nextAttempt;
+          if (nextAttempt <= 3) {
+            setTimeout(() => {
+              if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
+                joinEventRoom();
+              }
+            }, 500 * nextAttempt);
+          }
           showError(err, t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }));
         });
     }
-  }, [eventsSocket.isConnected, eventId, isGuest, showError]);
+  }, [eventsSocket.isConnected, eventId, isGuest, showError, hasJoined, participantId]);
 
   // Initial joins
   useEffect(() => {
-    if (eventsSocket.isConnected && eventId) joinEventRoom();
-  }, [eventsSocket.isConnected, eventId, joinEventRoom]);
+    if (eventsSocket.isConnected && eventId && (hasJoined || participantId)) joinEventRoom();
+  }, [eventsSocket.isConnected, eventId, joinEventRoom, hasJoined, participantId]);
 
   // Re-join on socket reconnection + refetch messages that may have been missed
   useEffect(() => {
