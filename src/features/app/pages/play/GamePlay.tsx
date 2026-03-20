@@ -29,6 +29,7 @@ import { useSetGameHeader } from '@/features/app/layouts/gameHeaderContext';
 import { ActivityFeedbackModal } from '@/features/app/components/game/shared/ActivityFeedbackModal';
 import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
 import { SocketHealthModal } from '@/features/app/components/game/shared/SocketHealthModal';
+import { IdentityDebugModal } from '@/features/app/components/game/shared/IdentityDebugModal';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
@@ -328,6 +329,14 @@ function GamePlayWithoutBoundary() {
   const socketHealthModalOpenRef = useRef(false);
   const socketDebugEventsRef = useRef<Array<{ ts: number; type: string; detail?: string }>>([]);
   const [socketDebugTick, setSocketDebugTick] = useState(0);
+
+  const [identityDebugOpen, setIdentityDebugOpen] = useState(() => {
+    try {
+      return import.meta.env.DEV || localStorage.getItem('flowkyn_debug_identity') === '1';
+    } catch {
+      return import.meta.env.DEV;
+    }
+  });
 
   const pushSocketDebug = useCallback((evt: { type: string; detail?: string }) => {
     const ts = Date.now();
@@ -823,6 +832,17 @@ function GamePlayWithoutBoundary() {
     ((hasJoined && !chatReady) || (!!sessionId && !gamesReady));
 
   useEffect(() => {
+    // Re-open when entering a new event so we can compare values across refresh.
+    if (!eventId) return;
+    try {
+      const enabled = import.meta.env.DEV || localStorage.getItem('flowkyn_debug_identity') === '1';
+      if (enabled) setIdentityDebugOpen(true);
+    } catch {
+      // ignore
+    }
+  }, [eventId]);
+
+  useEffect(() => {
     socketHealthModalOpenRef.current = socketHealthModalOpen;
   }, [socketHealthModalOpen]);
 
@@ -1088,6 +1108,34 @@ function GamePlayWithoutBoundary() {
           setGamesSocketErrorDetails(null);
           if (!gamesSocket.isConnected) gamesSocket.connect();
         }}
+      />
+
+      <IdentityDebugModal
+        open={identityDebugOpen}
+        onOpenChange={(nextOpen) => {
+          setIdentityDebugOpen(nextOpen);
+          if (!nextOpen) {
+            try {
+              localStorage.setItem('flowkyn_debug_identity', '0');
+            } catch {
+              // ignore
+            }
+          }
+        }}
+        eventId={eventId || ''}
+        isGuest={isGuest}
+        userId={currentUserId}
+        participantId={participantId}
+        displayName={currentUserName}
+        hasJoined={hasJoined}
+        eventRoomJoined={eventRoomJoined}
+        sessionId={sessionId}
+        gameJoinAckReceived={gameJoinAckReceived}
+        eventsSocketStatus={eventsSocket.status}
+        gamesSocketStatus={gamesSocket.status}
+        localGuestTokenExists={!!eventId && !!localStorage.getItem(`guest_token_${eventId}`)}
+        guestTokenValue={eventId ? getGuestToken(eventId) : null}
+        accessTokenExists={!!localStorage.getItem('access_token')}
       />
 
       {/* In-game profile edit modal */}
