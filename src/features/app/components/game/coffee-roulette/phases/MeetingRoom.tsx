@@ -79,6 +79,8 @@ export function MeetingRoom({
     isMuted,
     micLevel,
     micComfort,
+    remoteMicLevel,
+    remoteMicComfort,
     startVoice,
     stopVoice,
     toggleMute,
@@ -99,6 +101,16 @@ export function MeetingRoom({
       defaultValue: t('gamePlay.coffeeRoulette.voice.errors.unknown'),
     });
   })();
+
+  // Tiny "talking" indicator on avatars:
+  // - Local side uses micLevel
+  // - Remote side uses remoteMicLevel
+  const TALK_LEVEL = 0.18;
+  const localTalking = voiceStatus === 'connected' && !isMuted && micLevel > TALK_LEVEL;
+  const remoteTalking = voiceStatus === 'connected' && remoteMicLevel > TALK_LEVEL;
+  const person1IsLocal = person1.participantId === myParticipantId;
+  const person1Talking = person1IsLocal ? localTalking : remoteTalking;
+  const person2Talking = person1IsLocal ? remoteTalking : localTalking;
 
   // Attach remote audio stream to a hidden audio element.
   useEffect(() => {
@@ -299,6 +311,9 @@ export function MeetingRoom({
                   {person1.avatar}
                 </AvatarFallback>
               </Avatar>
+              {person1Talking && (
+                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-success ring-2 ring-white/90 animate-pulse" />
+              )}
             </motion.div>
             <div className="text-center">
               <p className="font-bold text-lg" style={{ color: '#111827' }}>
@@ -399,6 +414,9 @@ export function MeetingRoom({
                   {person2.avatar}
                 </AvatarFallback>
               </Avatar>
+              {person2Talking && (
+                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-success ring-2 ring-white/90 animate-pulse" />
+              )}
             </motion.div>
             <div className="text-center">
               <p className="font-bold text-lg" style={{ color: '#111827' }}>

@@ -63,6 +63,14 @@ export function useCoffeeVoiceCall(params: {
   const meterLastUpdateRef = useRef<number>(0);
   const micDataRef = useRef<Uint8Array | null>(null);
 
+  // Remote speech meter (how loud the partner's audio is).
+  const remoteAudioContextRef = useRef<AudioContext | null>(null);
+  const remoteAnalyserRef = useRef<AnalyserNode | null>(null);
+  const remoteSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const remoteMeterRafRef = useRef<number | null>(null);
+  const remoteMeterLastUpdateRef = useRef<number>(0);
+  const remoteMicDataRef = useRef<Uint8Array | null>(null);
+
   const [status, setStatus] = useState<VoiceStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
@@ -72,6 +80,10 @@ export function useCoffeeVoiceCall(params: {
   const [micLevel, setMicLevel] = useState(0);
   const [micComfort, setMicComfort] = useState<'quiet' | 'ok' | 'loud'>('ok');
   const micComfortRef = useRef<'quiet' | 'ok' | 'loud'>('ok');
+
+  const [remoteMicLevel, setRemoteMicLevel] = useState(0);
+  const [remoteMicComfort, setRemoteMicComfort] = useState<'quiet' | 'ok' | 'loud'>('quiet');
+  const remoteMicComfortRef = useRef<'quiet' | 'ok' | 'loud'>('quiet');
 
   const iceServers = useMemo(() => {
     return iceServersCache ?? [{ urls: ['stun:stun.l.google.com:19302'] }];
@@ -133,10 +145,15 @@ export function useCoffeeVoiceCall(params: {
       setRemoteStream(null);
       setIsMuted(false);
       setMicLevel(0);
+      setRemoteMicLevel(0);
       micQuietSinceRef.current = null;
       micLoudSinceRef.current = null;
       setMicComfort('ok');
       micComfortRef.current = 'ok';
+      setRemoteMicComfort('quiet');
+      remoteMicComfortRef.current = 'quiet';
+      remoteMicQuietSinceRef.current = null;
+      remoteMicLoudSinceRef.current = null;
       setStatus('idle');
       setError(null);
     },
@@ -170,10 +187,47 @@ export function useCoffeeVoiceCall(params: {
     micDataRef.current = null;
   }, []);
 
+  const stopRemoteMicMeter = useCallback(async () => {
+    if (remoteMeterRafRef.current) cancelAnimationFrame(remoteMeterRafRef.current);
+    remoteMeterRafRef.current = null;
+
+    try {
+      remoteSourceRef.current?.disconnect();
+    } catch {
+      // ignore
+    }
+    remoteSourceRef.current = null;
+
+    try {
+      remoteAnalyserRef.current?.disconnect();
+    } catch {
+      // ignore
+    }
+    remoteAnalyserRef.current = null;
+
+    try {
+      await remoteAudioContextRef.current?.close();
+    } catch {
+      // ignore
+    }
+    remoteAudioContextRef.current = null;
+    remoteMicDataRef.current = null;
+
+    setRemoteMicLevel(0);
+    setRemoteMicComfort('quiet');
+    remoteMicComfortRef.current = 'quiet';
+    remoteMicQuietSinceRef.current = null;
+    remoteMicLoudSinceRef.current = null;
+  }, []);
+
   // Ensure we stop mic meter when voice stops.
   useEffect(() => {
     if (status === 'idle') void stopMicMeter();
   }, [status, stopMicMeter]);
+
+  useEffect(() => {
+    if (status === 'idle') void stopRemoteMicMeter();
+  }, [status, stopRemoteMicMeter]);
 
   // Mic auto-detect thresholds (hysteresis)
   const MIC_QUIET_ENTER = 0.18;
@@ -183,6 +237,112 @@ export function useCoffeeVoiceCall(params: {
   const MIC_HOLD_MS = 800;
   const micQuietSinceRef = useRef<number | null>(null);
   const micLoudSinceRef = useRef<number | null>(null);
+
+  // Remote speech meter comfort hysteresis.
+  const remoteMicQuietSinceRef = useRef<number | null>(null);
+  const remoteMicLoudSinceRef = useRef<number | null>(null);
+
+  // Remote speech meter: measures how loud the partner audio is.
+  useEffect(() => {
+    if (!remoteStream || status === 'idle') return;
+
+    let cancelled = false;
+
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const audioContext = new AudioCtx();
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = 0.8;
+
+      const remoteSource = audioContext.createMediaStreamSource(remoteStream);
+      remoteSource.connect(analyser);
+
+      remoteAudioContextRef.current = audioContext;
+      remoteAnalyserRef.current = analyser;
+      remoteSourceRef.current = remoteSource;
+      remoteMicDataRef.current = new Uint8Array(analyser.fftSize);
+
+      remoteMicComfortRef.current = 'quiet';
+      setRemoteMicComfort('quiet');
+      setRemoteMicLevel(0);
+      remoteMeterLastUpdateRef.current = 0;
+      remoteMicQuietSinceRef.current = null;
+      remoteMicLoudSinceRef.current = null;
+
+      const tick = (ts: number) => {
+        if (cancelled) return;
+
+        const a = remoteAnalyserRef.current;
+        const data = remoteMicDataRef.current;
+        if (!a || !data) return;
+
+        // Throttle UI updates to reduce renders.
+        if (ts - remoteMeterLastUpdateRef.current >= 60) {
+          remoteMeterLastUpdateRef.current = ts;
+          a.getByteTimeDomainData(data);
+
+          let sumSq = 0;
+          for (let i = 0; i < data.length; i++) {
+            const v = (data[i] - 128) / 128;
+            sumSq += v * v;
+          }
+          const rms = Math.sqrt(sumSq / data.length);
+          // Normalize: typical speech ~0.05-0.15; map to [0..1].
+          const level = Math.max(0, Math.min(1, rms * 4));
+          setRemoteMicLevel(level);
+
+          const currentComfort = remoteMicComfortRef.current;
+          if (level < MIC_QUIET_ENTER) {
+            if (remoteMicQuietSinceRef.current == null) remoteMicQuietSinceRef.current = ts;
+            remoteMicLoudSinceRef.current = null;
+            if (ts - remoteMicQuietSinceRef.current >= MIC_HOLD_MS && currentComfort !== 'quiet') {
+              remoteMicComfortRef.current = 'quiet';
+              setRemoteMicComfort('quiet');
+            }
+          } else if (level > MIC_LOUD_ENTER) {
+            if (remoteMicLoudSinceRef.current == null) remoteMicLoudSinceRef.current = ts;
+            remoteMicQuietSinceRef.current = null;
+            const loudSince = remoteMicLoudSinceRef.current;
+            if (loudSince != null && ts - loudSince >= MIC_HOLD_MS && currentComfort !== 'loud') {
+              remoteMicComfortRef.current = 'loud';
+              setRemoteMicComfort('loud');
+            }
+          } else {
+            // Hysteresis release back to OK.
+            if (currentComfort === 'quiet' && level >= MIC_QUIET_EXIT) {
+              remoteMicQuietSinceRef.current = null;
+              remoteMicComfortRef.current = 'ok';
+              setRemoteMicComfort('ok');
+            } else if (currentComfort === 'loud' && level <= MIC_LOUD_EXIT) {
+              remoteMicLoudSinceRef.current = null;
+              remoteMicComfortRef.current = 'ok';
+              setRemoteMicComfort('ok');
+            }
+
+            if (level >= MIC_QUIET_EXIT) remoteMicQuietSinceRef.current = null;
+            if (level <= MIC_LOUD_EXIT) remoteMicLoudSinceRef.current = null;
+          }
+        }
+
+        remoteMeterRafRef.current = requestAnimationFrame(tick);
+      };
+
+      remoteMeterLastUpdateRef.current = 0;
+      remoteMeterRafRef.current = requestAnimationFrame(tick);
+    } catch (e) {
+      console.warn('[CoffeeVoice][telemetry] remote_meter_setup_failed', {
+        sessionId,
+        pairId,
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
+
+    return () => {
+      cancelled = true;
+      void stopRemoteMicMeter();
+    };
+  }, [remoteStream, status, stopRemoteMicMeter]);
 
   // Keep teardown safe on unmount.
   useEffect(() => {
@@ -818,6 +978,8 @@ export function useCoffeeVoiceCall(params: {
     isMuted,
     micLevel,
     micComfort,
+    remoteMicLevel,
+    remoteMicComfort,
     startVoice,
     stopVoice,
     toggleMute,
