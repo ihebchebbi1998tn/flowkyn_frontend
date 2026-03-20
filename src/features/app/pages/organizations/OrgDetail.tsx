@@ -290,6 +290,16 @@ export default function OrgDetail() {
       },
     },
     {
+      key: 'department',
+      header: t('departments.name'),
+      sortable: true,
+      render: (row) => (
+        <span className="text-body-sm text-foreground">
+          {((row as any).department || '').trim() || 'General'}
+        </span>
+      ),
+    },
+    {
       key: 'joined_at', header: t('organizations.memberSince'), sortable: true, hideOnMobile: true,
       render: (row) => {
         const member = row as OrgMember;
@@ -315,8 +325,9 @@ export default function OrgDetail() {
       key: 'actions', header: '', hideOnMobile: true,
       render: (row) => {
         const member = row as OrgMember;
-        const isMember = !!member.id;
-        if (!isMember || member.role_name === 'owner') {
+        // Pending invitations do not have `role_name`, so only show actions for active members.
+        const isActiveMember = !!member.role_name;
+        if (!isActiveMember || member.role_name === 'owner') {
           return null;
         }
         return (

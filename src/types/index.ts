@@ -40,6 +40,8 @@ export interface OrgMember {
   role_id: string;
   role_name: string;
   name: string;
+  /** Member's organization department (defaults to "General" if not mapped) */
+  department?: string;
   email: string;
   avatar_url?: string;
   is_subscription_manager: boolean;

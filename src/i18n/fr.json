@@ -1078,7 +1078,7 @@
     "autoSendReminders": "Rappels automatiques",
     "autoSendRemindersDesc": "Envoyer un e-mail 30 minutes avant les événements",
     "security": "Sécurité",
-    "securityDesc": "Mot de passe, authentification à deux facteurs et sessions",
+    "securityDesc": "Gérer votre mot de passe",
     "changePassword": "Changer le mot de passe",
     "currentPassword": "Mot de passe actuel",
     "newPasswordLabel": "Nouveau mot de passe",

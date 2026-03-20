@@ -1132,7 +1132,7 @@
     "autoSendReminders": "Enviar recordatorios automáticos",
     "autoSendRemindersDesc": "Enviar un correo 30 minutos antes de los eventos",
     "security": "Seguridad",
-    "securityDesc": "Contraseña, 2FA y sesiones activas",
+    "securityDesc": "Gestiona tu contraseña",
     "changePassword": "Cambiar contraseña",
     "currentPassword": "Contraseña actual",
     "newPasswordLabel": "Nueva contraseña",

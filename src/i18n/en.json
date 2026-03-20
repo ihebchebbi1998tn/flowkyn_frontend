@@ -1953,7 +1953,7 @@
     "autoSendReminders": "Auto-send reminders",
     "autoSendRemindersDesc": "Email participants 30 minutes before events",
     "security": "Security",
-    "securityDesc": "Password, two-factor auth, and active sessions",
+    "securityDesc": "Manage your password",
     "changePassword": "Change Password",
     "currentPassword": "Current Password",
     "newPasswordLabel": "New Password",

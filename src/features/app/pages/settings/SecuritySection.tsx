@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Shield, KeyRound, Smartphone, Eye, AlertTriangle } from 'lucide-react';
+import { Shield, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { AlertBanner } from '@/components/notifications/AlertBanner';
-import { Section, SettingRow, FieldGroup } from './ProfileSection';
+import { Section, FieldGroup } from './ProfileSection';
 import { api } from '@/features/app/api/client';
 import { ApiError } from '@/lib/apiError';
 import { toast } from 'sonner';
@@ -108,16 +108,6 @@ export function SecuritySection() {
           {t('settings.updatePassword')}
         </LoadingButton>
       </form>
-      <div className="border-t border-border">
-        <SettingRow icon={KeyRound} label={t('settings.twoFactor')} desc={t('settings.twoFactorDesc')}>
-          <Button variant="outline" size="sm" className="h-8 text-[12px] gap-1.5">{t('settings.enable2FA')}</Button>
-        </SettingRow>
-        <SettingRow icon={Smartphone} label={t('settings.activeSessions')} desc={t('settings.activeSessionsDesc')} noBorder>
-          <Button variant="outline" size="sm" className="h-8 text-[12px] gap-1.5">
-            <Eye className="h-3 w-3" /> {t('settings.manage')}
-          </Button>
-        </SettingRow>
-      </div>
 
       <div className="mt-5 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
         <div className="flex items-center gap-2 mb-1">

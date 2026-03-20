@@ -41,7 +41,7 @@ export const organizationsApi = {
 
   /** List pending/previous invitations for an organization */
   listInvitations: (orgId: string) =>
-    api.get<Array<{ id: string; email: string; status: string; created_at: string; expires_at: string }>>(
+    api.get<Array<{ id: string; email: string; status: string; created_at: string; expires_at: string; department?: string }>>(
       `/organizations/${orgId}/invitations`
     ),
 
@@ -49,7 +49,7 @@ export const organizationsApi = {
   listPeople: (orgId: string) =>
     api.get<{
       members: OrgMember[];
-      invitations: Array<{ id: string; email: string; status: string; created_at: string; expires_at: string }>;
+      invitations: Array<{ id: string; email: string; status: string; created_at: string; expires_at: string; department?: string }>;
     }>(`/organizations/${orgId}/people`),
 
   /**

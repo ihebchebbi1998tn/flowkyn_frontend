@@ -1062,7 +1062,7 @@
     "autoSendReminders": "Automatische Erinnerungen",
     "autoSendRemindersDesc": "E-Mail 30 Minuten vor Veranstaltungen senden",
     "security": "Sicherheit",
-    "securityDesc": "Passwort, Zwei-Faktor-Auth und aktive Sitzungen",
+    "securityDesc": "Passwort verwalten",
     "changePassword": "Passwort ändern",
     "currentPassword": "Aktuelles Passwort",
     "newPasswordLabel": "Neues Passwort",
