@@ -15,16 +15,35 @@ interface ErrorBoundaryProps {
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
+  suppressFallback: boolean;
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, suppressFallback: false };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+    const msg = String((error as any)?.message || error);
+
+    // This is a common "deploy mismatch" failure when a client has an older bundle
+    // and tries to load code-split chunks that no longer exist on the server.
+    const isChunkLoadFailure =
+      /Failed to fetch dynamically imported module/i.test(msg) ||
+      /ChunkLoadError/i.test(msg) ||
+      /Loading chunk .* failed/i.test(msg) ||
+      /Failed to load module script/i.test(msg);
+
+    const isStaleBundleTDZ =
+      /Cannot access '.*' before initialization/i.test(msg) ||
+      /before initialization/i.test(msg);
+
+    return {
+      hasError: true,
+      error,
+      suppressFallback: isChunkLoadFailure || isStaleBundleTDZ,
+    };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -37,8 +56,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (import.meta.env.PROD) {
       const msg = String((error as any)?.message || error);
       const isStaleBundleTDZ = /Cannot access '.*' before initialization/i.test(msg) || /before initialization/i.test(msg);
-      if (isStaleBundleTDZ) {
-        const cacheKey = 'flowkyn_auto_recover_stale_bundle_tdz';
+      const isChunkLoadFailure =
+        /Failed to fetch dynamically imported module/i.test(msg) ||
+        /ChunkLoadError/i.test(msg) ||
+        /Loading chunk .* failed/i.test(msg) ||
+        /Failed to load module script/i.test(msg);
+
+      if (isStaleBundleTDZ || isChunkLoadFailure) {
+        const cacheKey = isStaleBundleTDZ
+          ? 'flowkyn_auto_recover_stale_bundle_tdz'
+          : 'flowkyn_auto_recover_chunk_load_failed';
         try {
           const raw = sessionStorage.getItem(cacheKey);
           const attempts = raw ? Number(raw) || 0 : 0;
@@ -71,12 +98,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, error: null, suppressFallback: false });
     window.location.reload();
   };
 
   render() {
     if (this.state.hasError) {
+      if (this.state.suppressFallback) return null;
       return (
         this.props.fallback || (
           <div className="min-h-[80vh] flex items-center justify-center">
