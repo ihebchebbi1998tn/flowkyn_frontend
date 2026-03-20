@@ -24,7 +24,7 @@ import { eventsApi } from '@/features/app/api/events';
 import { gamesApi } from '@/features/app/api/games';
 import { GameBoardRouter } from './GameBoardRouter';
 import { GAME_CONFIGS } from './gameTypes';
-import { useSetGameHeader } from '@/features/app/layouts/FocusedLayout';
+import { useSetGameHeader } from '@/features/app/layouts/gameHeaderContext';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';

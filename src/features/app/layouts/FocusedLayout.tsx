@@ -1,4 +1,4 @@
-import { Suspense, createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Bug, Clock, Copy, CheckCircle2, Gamepad2, Share2, Users, WifiOff } from 'lucide-react';
@@ -9,45 +9,17 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import type { GameParticipant } from '@/features/app/components/game/shell/types';
 import { ROUTES } from '@/constants/routes';
 import { ReportIssueModal } from '@/features/app/pages/support/ReportIssueModal';
 import { copyToClipboard } from '@/utils/clipboard';
+import type { GameParticipant } from '@/features/app/components/game/shell/types';
+import { GameHeaderContext, type GameHeaderState } from './gameHeaderContext';
 
 /**
  * Focused layout for game/event experiences.
  * No sidebar, no topbar — just a minimal branded header
  * with a back button and the game content.
  */
-
-export type GameHeaderState = {
-  title: string;
-  subtitle: string;
-  gameType: 'sync' | 'async';
-  eventId: string;
-  participants: GameParticipant[];
-  onEnd: () => void;
-  currentUserName?: string;
-  currentUserAvatarUrl?: string | null;
-  onEditProfile?: () => void;
-  organizationLogo?: string;
-  organizationName?: string;
-  disconnectedBadgeCount?: number;
-  hideBackButton?: boolean;
-};
-
-type GameHeaderContextValue = {
-  header: GameHeaderState | null;
-  setHeader: (v: GameHeaderState | null) => void;
-};
-
-const GameHeaderContext = createContext<GameHeaderContextValue | null>(null);
-
-export function useSetGameHeader() {
-  const ctx = useContext(GameHeaderContext);
-  if (!ctx) throw new Error('useSetGameHeader must be used within FocusedLayout');
-  return ctx.setHeader;
-}
 
 export function FocusedLayout() {
   const { t } = useTranslation();
