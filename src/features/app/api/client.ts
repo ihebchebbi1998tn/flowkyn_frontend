@@ -12,6 +12,8 @@ export type RequestOptions = RequestInit & {
   params?: Record<string, string>;
   /** For event-scoped endpoints: use guest_token_${eventId} when no access_token (guests) */
   eventId?: string;
+  /** Optional override: force a specific auth token (e.g. guest token even if access_token exists) */
+  authToken?: string;
 };
 
 class ApiClient {
@@ -22,9 +24,9 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private getHeaders(eventId?: string): HeadersInit {
+  private getHeaders(eventId?: string, authToken?: string): HeadersInit {
     const headers: HeadersInit = { 'Content-Type': 'application/json' };
-    let token = localStorage.getItem('access_token');
+    let token = authToken || localStorage.getItem('access_token');
     if (!token && eventId) {
       token = localStorage.getItem(`guest_token_${eventId}`) || localStorage.getItem('guest_token');
     }
@@ -40,10 +42,10 @@ class ApiClient {
   }
 
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-    const { params, eventId, ...fetchOptions } = options;
+    const { params, eventId, authToken, ...fetchOptions } = options;
     const res = await fetch(this.buildUrl(path, params), {
       ...fetchOptions,
-      headers: { ...this.getHeaders(eventId), ...(fetchOptions.headers as HeadersInit) },
+      headers: { ...this.getHeaders(eventId, authToken), ...(fetchOptions.headers as HeadersInit) },
     });
 
     if (res.status === 401) {

@@ -77,6 +77,15 @@ export function ActivityFeedbackModal({
     setError(null);
     setSubmitting(true);
     try {
+      // If the user is a guest, we must force the guest token even if an
+      // access_token exists in localStorage; otherwise the backend will
+      // validate ownership against the wrong participant type.
+      const guestParticipantId = localStorage.getItem(`guest_participant_id_${eventId}`);
+      const forceGuestToken =
+        guestParticipantId && guestParticipantId === participantId
+          ? (localStorage.getItem(`guest_token_${eventId}`) || localStorage.getItem('guest_token') || undefined)
+          : undefined;
+
       await activityFeedbacksApi.create({
         eventId,
         gameSessionId,
@@ -86,7 +95,7 @@ export function ActivityFeedbackModal({
         category,
         comment,
         source,
-      });
+      }, { authToken: forceGuestToken });
       setSuccess(true);
       setTimeout(() => {
         onOpenChange(false);
@@ -102,8 +111,17 @@ export function ActivityFeedbackModal({
   const title = t('activityFeedback.modal.title', { defaultValue: 'Help us improve' });
   const subtitle = t('activityFeedback.modal.subtitle', { defaultValue: 'Before you leave, rate your experience and leave a quick comment.' });
 
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    // If the user dismisses the modal without submitting (skip / close / backdrop),
+    // still send them back to the lobby.
+    if (!nextOpen && !success) {
+      onSubmitted();
+    }
+    onOpenChange(nextOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -193,10 +211,7 @@ export function ActivityFeedbackModal({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  onOpenChange(false);
-                  onSubmitted();
-                }}
+                onClick={() => onOpenChange(false)}
                 disabled={submitting}
               >
                 {t('activityFeedback.modal.skip', { defaultValue: 'Skip' })}

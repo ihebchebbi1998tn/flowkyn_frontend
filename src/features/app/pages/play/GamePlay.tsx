@@ -113,13 +113,12 @@ function GamePlayWithoutBoundary() {
   const currentUserName = profile?.displayName || displayName;
   const currentUserAvatarUrl = profile?.avatarUrl || avatarUrl;
 
-  const handleProfileSave = useCallback((data: ProfileSetupData) => {
+  const handleProfileSave = useCallback(async (data: ProfileSetupData) => {
     if (!eventId) return;
     console.log('[GamePlay] profile save', { eventId, data });
+    await upsertProfile.mutateAsync({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
     saveProfile(eventId, data);
     setProfile(data);
-    upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
-    setShowProfileEdit(false);
   }, [eventId, upsertProfile]);
 
   const requestActivityExitWithFeedback = useCallback((source: ActivityFeedbackSource) => {
@@ -128,8 +127,12 @@ function GamePlayWithoutBoundary() {
   }, []);
 
   const onFeedbackSubmitted = useCallback(() => {
-    navigate(ROUTES.EVENTS);
-  }, [navigate]);
+    // Leaving the game should return to the event lobby (focused/join route),
+    // not the authenticated dashboard (/events). This prevents guests from
+    // being redirected to login/landing pages.
+    if (!eventId) return navigate(ROUTES.EVENTS);
+    navigate(ROUTES.EVENT_LOBBY(eventId));
+  }, [navigate, eventId]);
 
   /** Join logic — ensures tokens are obtained and rooms joined */
   const handleJoin = useCallback(async () => {
@@ -783,7 +786,7 @@ function GamePlayWithoutBoundary() {
             defaultAvatarUrl={profile?.avatarUrl}
             submitLabel={t('profile.save', { defaultValue: 'Save Profile' })}
             onSubmit={handleProfileSave}
-            onClose={profile ? () => setShowProfileEdit(false) : undefined}
+            onClose={() => setShowProfileEdit(false)}
           />
         )}
       </AnimatePresence>

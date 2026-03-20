@@ -32,7 +32,7 @@ interface UserProfileSetupProps {
   /** Whether the form is loading / pending */
   isPending?: boolean;
   /** On submit with the chosen profile data */
-  onSubmit: (data: ProfileSetupData) => void;
+  onSubmit: (data: ProfileSetupData) => void | Promise<void>;
   /** Optional back button */
   onBack?: () => void;
   /** Show as a modal overlay (used in-game) */
@@ -63,6 +63,8 @@ export function UserProfileSetup({
   const [name, setName] = useState(defaultName);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(getSafeImageUrl(defaultAvatarUrl));
   const [saved, setSaved] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmittingLocal, setIsSubmittingLocal] = useState(false);
 
   const resolvedTitle = title ?? t('profileSetup.chooseIdentity');
   const resolvedSubtitle = subtitle ?? t('profileSetup.pickNickname');
@@ -77,15 +79,30 @@ export function UserProfileSetup({
         : null;
   const canSubmit = !nameError;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!canSubmit) return;
-    if (!avatarUrl) {
-      // Auto-pick a placeholder — just submit with initials fallback
-    }
-    onSubmit({ displayName: name.trim(), avatarUrl: avatarUrl || '' });
-    if (asModal) {
-      setSaved(true);
-      setTimeout(() => { setSaved(false); onClose?.(); }, 800);
+    setSubmitError(null);
+    setIsSubmittingLocal(true);
+    try {
+      await Promise.resolve(
+        onSubmit({ displayName: name.trim(), avatarUrl: avatarUrl || '' }),
+      );
+
+      if (asModal) {
+        setSaved(true);
+        setTimeout(() => {
+          setSaved(false);
+          onClose?.();
+        }, 800);
+      }
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        t('profileSetup.submitFailed', { defaultValue: 'Failed to save profile' });
+      setSubmitError(message);
+    } finally {
+      setIsSubmittingLocal(false);
     }
   };
 
@@ -172,6 +189,12 @@ export function UserProfileSetup({
           )}
         </AnimatePresence>
 
+        {submitError && (
+          <div className="mt-3 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-[12px] text-destructive">
+            {submitError}
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex gap-2">
           {onBack && !asModal && (
@@ -181,8 +204,8 @@ export function UserProfileSetup({
           )}
           <Button
             className={cn("h-11 gap-2 font-semibold", (!onBack || asModal) && "w-full")}
-            disabled={!canSubmit || isPending}
-            onClick={handleSubmit}
+            disabled={!canSubmit || isPending || isSubmittingLocal}
+            onClick={() => void handleSubmit()}
           >
             {isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

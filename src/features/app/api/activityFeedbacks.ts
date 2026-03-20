@@ -52,7 +52,11 @@ export interface ActivityFeedbackListResponse {
 }
 
 export const activityFeedbacksApi = {
-  create: (data: CreateActivityFeedbackPayload) =>
-    api.post<{ message: string; data: ActivityFeedback }>('/activity-feedbacks', data),
+  create: (data: CreateActivityFeedbackPayload, opts?: { authToken?: string }) =>
+    api.request<{ message: string; data: ActivityFeedback }>('/activity-feedbacks', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      authToken: opts?.authToken,
+    }),
 };
 
