@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { usePhaseEndTimer } from './usePhaseEndTimer';
+import { useEffect, useRef } from 'react';
 
 /**
  * Manages game phase countdown with precise server-side time synchronization
@@ -9,47 +10,18 @@ export function useGamePhaseTimer(
   maxSeconds: number,
   onTimeUp?: () => void
 ) {
-  const [timeLeft, setTimeLeft] = useState(maxSeconds);
-
+  const timeLeft = usePhaseEndTimer(endTime, maxSeconds, !!endTime);
+  const didNotifyRef = useRef(false);
   useEffect(() => {
+    if (!onTimeUp) return;
     if (!endTime) {
-      setTimeLeft(maxSeconds);
+      didNotifyRef.current = false;
       return;
     }
-
-    // Calculate remaining seconds from server time
-    const calculateRemaining = () => {
-      const remaining = Math.max(0, Math.ceil((new Date(endTime).getTime() - Date.now()) / 1000));
-      return remaining;
-    };
-
-    // Initial update
-    const initialRemaining = calculateRemaining();
-    setTimeLeft(initialRemaining);
-
-    // Only set interval if time remains
-    if (initialRemaining <= 0) {
-      onTimeUp?.();
-      return;
+    if (timeLeft <= 0 && !didNotifyRef.current) {
+      didNotifyRef.current = true;
+      onTimeUp();
     }
-
-    // Update every 500ms for smooth UI
-    const interval = setInterval(() => {
-      const remaining = calculateRemaining();
-      setTimeLeft(remaining);
-
-      // Clear interval when time is up
-      if (remaining <= 0) {
-        clearInterval(interval);
-        onTimeUp?.();
-      }
-    }, 500);
-
-    // Cleanup function to prevent interval stacking
-    return () => {
-      clearInterval(interval);
-    };
-  }, [endTime, maxSeconds, onTimeUp]);
-
+  }, [endTime, onTimeUp, timeLeft]);
   return timeLeft;
 }

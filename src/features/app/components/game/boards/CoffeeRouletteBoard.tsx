@@ -70,16 +70,6 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
       ? initialSnapshot
       : null;
 
-  // Add logging for state changes
-  useEffect(() => {
-    console.log('[CoffeeRouletteBoard] Snapshot updated:', {
-      phase: snapshot?.phase,
-      pairsCount: snapshot?.pairs?.length || 0,
-      myPairExists: !!snapshot?.pairs?.find((p) => p.person1.participantId === currentUserId || p.person2.participantId === currentUserId),
-      currentUserId,
-    });
-  }, [snapshot, currentUserId]);
-
   const phase = (snapshot?.phase || 'waiting') as GamePhase;
   const pairs = snapshot?.pairs || [];
   const myPair = pairs.find((p) => p.person1.participantId === currentUserId || p.person2.participantId === currentUserId) || null;
@@ -118,51 +108,16 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     [t]
   );
 
-  // Listen for real-time socket events from other players
-  useEffect(() => {
-    if (!hasOn(gamesSocket)) return;
-
-    const unsubShuffle = gamesSocket.on('game:state', (payload: unknown) => {
-      const snap = (payload as { state?: { snapshot?: unknown } } | null | undefined)?.state?.snapshot;
-      if (isCoffeeSnapshot(snap)) {
-        console.log('[CoffeeRouletteBoard] Received game:state update:', {
-          phase: snap.phase,
-          pairsCount: snap.pairs?.length,
-        });
-      }
-    });
-
-    const unsubData = gamesSocket.on('game:data', (payload: unknown) => {
-      const gd = (payload as { gameData?: unknown } | null | undefined)?.gameData;
-      if (isCoffeeSnapshot(gd)) {
-        console.log('[CoffeeRouletteBoard] Received game:data update:', {
-          phase: gd.phase,
-          pairsCount: gd.pairs?.length,
-        });
-      }
-    });
-
-    return () => {
-      unsubShuffle?.();
-      unsubData?.();
-    };
-  }, [gamesSocket]);
-
   const startMatching = () => {
-    console.log('[CoffeeRouletteBoard] startMatching', {
-      participantsCount: participants.length,
-    });
     setShowCountdown(true);
   };
 
   const handleCountdownDone = useCallback(() => {
     setShowCountdown(false);
-    console.log('[CoffeeRouletteBoard] handleCountdownDone -> coffee:shuffle');
     onEmitAction('coffee:shuffle', {});
   }, [onEmitAction]);
 
   const startChatting = () => {
-    console.log('[CoffeeRouletteBoard] startChatting -> coffee:start_chat');
     onEmitAction('coffee:start_chat', {});
   };
 
@@ -179,12 +134,10 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
     if (autoStartedChatRef.current) return;
 
     autoStartedChatRef.current = true;
-    console.log('[CoffeeRouletteBoard] autoStartChat -> coffee:start_chat', { currentUserId, pairId: myPair.id });
     onEmitAction('coffee:start_chat', {});
   }, [phase, myPair, snapshot?.startedChatAt, currentUserId, onEmitAction]);
 
   const endSession = () => {
-    console.log('[CoffeeRouletteBoard] endSession -> coffee:end');
     onEmitAction('coffee:end', {});
   };
   const endAndFinishSession = useCallback(async () => {

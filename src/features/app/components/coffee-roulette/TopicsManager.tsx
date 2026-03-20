@@ -5,7 +5,7 @@
  * - Create new topics
  * - Edit existing topics (title, description, icon, weight)
  * - Delete topics
- * - Reorder topics via drag-and-drop
+ * - Topics display (reorder not yet supported by API)
  * - View assigned questions for each topic
  */
 
@@ -24,7 +24,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Plus, Edit2, Trash2, Loader, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+import { AlertCircle, Plus, Edit2, Trash2, Loader, ChevronDown, ChevronUp } from 'lucide-react';
 import { coffeeRouletteConfigApi } from '../../api/coffeeRouletteConfig';
 import type { CoffeeRouletteTopic, CreateTopicRequest, UpdateTopicRequest } from '@/types';
 
@@ -154,16 +154,6 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
     }
   };
 
-  const handleMoveUp = async (index: number) => {
-    // Reorder functionality can be enhanced with proper API support
-    return;
-  };
-
-  const handleMoveDown = async (index: number) => {
-    // Reorder functionality can be enhanced with proper API support
-    return;
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -287,31 +277,12 @@ export function TopicsManager({ eventId, configId }: TopicsManagerProps) {
             <Card key={topic.id} className="hover:shadow-md transition-shadow">
               <div className="p-4">
                 <div className="flex items-center gap-3">
-                  <GripVertical className="h-5 w-5 text-gray-400" />
                   <div className="text-2xl">{topic.icon}</div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold truncate">{topic.title}</h4>
                     {topic.description && (
                       <p className="text-sm text-gray-500 truncate">{topic.description}</p>
                     )}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleMoveUp(index)}
-                      disabled={index === 0}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleMoveDown(index)}
-                      disabled={index === topics.length - 1}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
                   </div>
                   <Button
                     variant="ghost"

@@ -163,10 +163,6 @@ export function WinsOfTheWeekBoard({
     if (!newPost.trim()) return;
     setIsSubmitting(true);
     try {
-      console.log('[WinsOfTheWeekBoard] handlePost', { 
-        length: newPost.trim().length,
-        timestamp: new Date().toISOString(),
-      });
       await onPost(newPost.trim());
       setNewPost('');
       setCharacterWarningLevel('normal');
@@ -193,11 +189,6 @@ export function WinsOfTheWeekBoard({
   };
 
   const toggleReaction = (postId: string, reactionType: string) => {
-    console.log('[WinsOfTheWeekBoard] toggleReaction', { 
-      postId, 
-      reactionType,
-      timestamp: new Date().toISOString(),
-    });
     if (!canReact) return;
     onToggleReaction(postId, reactionType);
   };
@@ -211,12 +202,6 @@ export function WinsOfTheWeekBoard({
     if (!text || !canPost) return;
     setSubmittingReply(postId);
     try {
-      console.log('[WinsOfTheWeekBoard] handleReply', {
-        postId,
-        authorName,
-        length: text.length,
-        timestamp: new Date().toISOString(),
-      });
       await onPost(`@${authorName}: ${text}`);
       setReplyInputs(prev => ({ ...prev, [postId]: '' }));
       setShowReplyFor(null);

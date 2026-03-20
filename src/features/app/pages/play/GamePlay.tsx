@@ -8,6 +8,9 @@ import type { GameParticipant } from '@/features/app/components/game/shell';
 import { EventChat, type ChatMessage } from '@/features/app/components/chat/EventChat';
 import { UserProfileSetup, type ProfileSetupData } from '@/features/app/components/auth/UserProfileSetup';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
+import { getStoredEventProfile, saveEventProfile } from '@/lib/eventProfileStorage';
+import { useGamePlayJoin } from '@/hooks/useGamePlayJoin';
+import { useGamePlayEventRoom } from '@/hooks/useGamePlayEventRoom';
 import { ROUTES } from '@/constants/routes';
 import { useEventPublicInfo, useEventParticipants, useEventMessages, useEventPosts, useJoinEvent, useJoinAsGuest, useAcceptEventInvitation } from '@/hooks/queries/useEventQueries';
 import { useEventIdentity } from '@/hooks/useEventIdentity';
@@ -28,9 +31,6 @@ import { GAME_CONFIGS } from './gameTypes';
 import { useSetGameHeader } from '@/features/app/layouts/gameHeaderContext';
 import { ActivityFeedbackModal } from '@/features/app/components/game/shared/ActivityFeedbackModal';
 import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
-import { SocketHealthModal } from '@/features/app/components/game/shared/SocketHealthModal';
-import { IdentityDebugModal } from '@/features/app/components/game/shared/IdentityDebugModal';
-import { Button } from '@/components/ui/button';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
@@ -39,21 +39,6 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 function getDataArray(v: unknown): unknown[] {
   if (isRecord(v) && Array.isArray(v.data)) return v.data as unknown[];
   return [];
-}
-
-// ─── Profile helpers (same keys as EventLobby) ────────────────────────────────
-const profileKey = (eventId: string) => `event_profile_${eventId}`;
-
-function getStoredProfile(eventId: string): ProfileSetupData | null {
-  try {
-    const raw = localStorage.getItem(profileKey(eventId));
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch { return null; }
-}
-
-function saveProfile(eventId: string, data: ProfileSetupData) {
-  localStorage.setItem(profileKey(eventId), JSON.stringify(data));
 }
 
 // GAME_CONFIGS and GAME_TYPES live in ./gameTypes to keep this file smaller.
@@ -80,7 +65,7 @@ function GamePlayWithoutBoundary() {
   const guestParticipantId = isGuest ? participantId : null;
   const memberParticipantId = !isGuest ? participantId : null;
   // ─── Profile (avatar + nickname) ───────────────────────────────────────────
-  const storedProfile = eventId ? getStoredProfile(eventId) : null;
+  const storedProfile = eventId ? getStoredEventProfile(eventId) : null;
   const initialProfile: ProfileSetupData | null = storedProfile
     ? {
         // Prefer the locally saved profile whenever it exists,
@@ -99,17 +84,31 @@ function GamePlayWithoutBoundary() {
   const [showActivityFeedback, setShowActivityFeedback] = useState(false);
   const [activityFeedbackSource, setActivityFeedbackSource] = useState<ActivityFeedbackSource>('end_clicked');
 
-  const [hasJoined, setHasJoined] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const [joinError, setJoinError] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
-  
   const joinEvent = useJoinEvent();
   const joinAsGuest = useJoinAsGuest();
   const acceptInvitation = useAcceptEventInvitation();
   const upsertProfile = useUpsertEventProfile(eventId || undefined);
   const inviteToken = searchParams.get('token');
   const { isAuthenticated } = useAuth();
+
+  const { hasJoined, setHasJoined, isJoining, joinError, handleJoin } = useGamePlayJoin({
+    eventId: eventId || null,
+    profile,
+    participantId: participantId || null,
+    isIdentityLoading,
+    showProfileEdit,
+    isAuthenticated,
+    user: user || null,
+    inviteToken,
+    guestEmail,
+    joinEvent,
+    joinAsGuest,
+    acceptInvitation,
+    getOrCreateGuestIdentityKey,
+    setGuestToken,
+    tJoinFailed: t('event.joinFailed', { defaultValue: 'Failed to join event' }),
+  });
 
   const identityRef = useRef(identity);
   const userRef = useRef(user);
@@ -124,7 +123,7 @@ function GamePlayWithoutBoundary() {
   const handleProfileSave = useCallback(async (data: ProfileSetupData) => {
     if (!eventId) return;
     await upsertProfile.mutateAsync({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
-    saveProfile(eventId, data);
+    saveEventProfile(eventId, data);
     setProfile(data);
   }, [eventId, upsertProfile]);
 
@@ -140,77 +139,6 @@ function GamePlayWithoutBoundary() {
     if (!eventId) return navigate(ROUTES.EVENTS);
     navigate(ROUTES.EVENT_LOBBY(eventId));
   }, [navigate, eventId]);
-
-  /** Join logic — ensures tokens are obtained and rooms joined */
-  const handleJoin = useCallback(async () => {
-    if (!eventId || !profile || isJoining || hasJoined) return;
-    setJoinError('');
-    setIsJoining(true);
-    try {
-      if (isAuthenticated && user) {
-        if (inviteToken) {
-          await acceptInvitation.mutateAsync({ eventId, token: inviteToken });
-        } else {
-          const result = await joinEvent.mutateAsync(eventId);
-          const pid = isRecord(result) ? result.participant_id : null;
-          if (typeof pid === 'string') {
-            localStorage.setItem(`member_participant_id_${eventId}`, pid);
-          }
-        }
-      } else {
-        const safeAvatarUrl = profile.avatarUrl?.startsWith('http') ? profile.avatarUrl : undefined;
-        const result = await joinAsGuest.mutateAsync({
-          eventId,
-          data: {
-            name: profile.displayName,
-            email: guestEmail || undefined,
-            avatar_url: safeAvatarUrl,
-            token: inviteToken || undefined,
-            guest_identity_key: getOrCreateGuestIdentityKey(eventId),
-          },
-        });
-        if (result.guest_token) {
-          setGuestToken(eventId, result.guest_token);
-          localStorage.setItem(`guest_participant_id_${eventId}`, result.participant_id);
-          localStorage.setItem(`guest_name_${eventId}`, result.guest_name);
-        }
-      }
-      pushSocketDebug({
-        type: 'identity:join_success',
-        detail: `mode=${isAuthenticated ? 'member' : 'guest'} eventId=${eventId} participantId=${participantId || 'null'}`,
-      });
-      setHasJoined(true);
-    } catch (err: unknown) {
-      if ((err as any)?.status === 409 || (err as any)?.response?.status === 409) {
-        console.warn('[GamePlay] handleJoin already participant (409)', { eventId, error: err });
-        pushSocketDebug({ type: 'identity:join_conflict_409', detail: `eventId=${eventId}` });
-        setHasJoined(true);
-      } else {
-        console.error('[GamePlay] handleJoin error', err);
-        setJoinError((err as any)?.message || t('event.joinFailed', { defaultValue: 'Failed to join event' }));
-        pushSocketDebug({ type: 'identity:join_failed', detail: String((err as any)?.message || err || 'join failed') });
-      }
-    } finally {
-      setIsJoining(false);
-    }
-  }, [eventId, profile, isAuthenticated, user, inviteToken, acceptInvitation, joinEvent, joinAsGuest, guestEmail]);
-
-  // 1. If we already have a participant identity from server, we are "joined"
-  useEffect(() => {
-    if (participantId && !hasJoined) {
-      setHasJoined(true);
-    }
-  }, [participantId, hasJoined]);
-
-  // 2. Auto-join after profile is confirmed (first-time joiners only)
-  // Skip when participantId exists — server already knows us (refresh/reconnect), avoid duplicate join
-  useEffect(() => {
-    if (isIdentityLoading) return; // Wait for server to confirm whether we already have a participant account
-    if (participantId) return; // Already have identity — same user reconnecting, do NOT call joinAsGuest again
-    if (profile && !showProfileEdit && !hasJoined && !isJoining) {
-      handleJoin();
-    }
-  }, [profile, showProfileEdit, hasJoined, isJoining, participantId, handleJoin, isIdentityLoading]);
 
   // Ensure the server profile is restored from localStorage after reload.
   // Without this, server-backed identity can return avatar/name as empty (e.g. for guests),
@@ -292,8 +220,7 @@ function GamePlayWithoutBoundary() {
   const [gameData, setGameData] = useState<unknown>(null);
   const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
 
-  // ─── Socket health (hardening + debug modal) ──────────────────────────────
-  const [eventRoomJoined, setEventRoomJoined] = useState(false);
+  // ─── Socket error state ───────────────────────────────────────────────────
   const [chatSocketError, setChatSocketError] = useState<string | null>(null);
   const [chatSocketErrorCode, setChatSocketErrorCode] = useState<string | null>(null);
   const [chatSocketErrorDetails, setChatSocketErrorDetails] = useState<unknown>(null);
@@ -301,20 +228,6 @@ function GamePlayWithoutBoundary() {
   const [gamesSocketErrorCode, setGamesSocketErrorCode] = useState<string | null>(null);
   const [gamesSocketErrorDetails, setGamesSocketErrorDetails] = useState<unknown>(null);
   const [gameJoinAckReceived, setGameJoinAckReceived] = useState(false);
-  const socketHealthModalOpenRef = useRef(false);
-  const socketDebugEventsRef = useRef<Array<{ ts: number; type: string; detail?: string }>>([]);
-  const [socketDebugTick, setSocketDebugTick] = useState(0);
-
-  const [identityDebugOpen, setIdentityDebugOpen] = useState(() => import.meta.env.DEV);
-
-  const pushSocketDebug = useCallback((evt: { type: string; detail?: string }) => {
-    const ts = Date.now();
-    socketDebugEventsRef.current = [
-      ...socketDebugEventsRef.current.slice(-49),
-      { ts, type: evt.type, detail: evt.detail },
-    ];
-    if (socketHealthModalOpenRef.current) setSocketDebugTick((v) => v + 1);
-  }, []);
 
   // ─── WebSocket: Events namespace (chat) ────────────────────────────────────
   const eventsSocket = useEventsSocket({
@@ -375,115 +288,20 @@ function GamePlayWithoutBoundary() {
     }
   }, [hasJoined, gamesSocket, isIdentityLoading]);
 
-  // ─── WebSocket room management (ensure we are in the rooms) ────────────────
-  const hasJoinedEventRoomRef = useRef(false);
-  const eventJoinAttemptsRef = useRef(0);
-  useEffect(() => {
-    hasJoinedEventRoomRef.current = false;
-    eventJoinAttemptsRef.current = 0;
-  }, [eventId]);
-
-  // If the socket disconnects/reconnects, the server-side room membership is not preserved.
-  // Reset our "joined" guard so we re-join `event:${eventId}` after every reconnect.
-  useEffect(() => {
-    if (eventsSocket.status !== 'connected') {
-      hasJoinedEventRoomRef.current = false;
-      eventJoinAttemptsRef.current = 0;
-      setEventRoomJoined(false);
-    }
-  }, [eventsSocket.status]);
-
-  const joinEventRoom = useCallback(() => {
-    // IMPORTANT:
-    // event-room join must happen only after we are actually a participant.
-    // Otherwise verifyParticipant() can fail and we might never retry while the
-    // socket remains connected (leading to "game start not seen" + "chat not received").
-    if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
-      pushSocketDebug({
-        type: 'event:join_emit',
-        detail: `eventsSocket=${eventsSocket.status} hasJoined=${String(hasJoined)} participantId=${participantId || 'null'} attempt=${eventJoinAttemptsRef.current + 1}`,
-      });
-      eventsSocket.emit('event:join', { eventId })
-        .then((resp: any) => {
-          // Our `useSocket.emit()` resolves with `response.data` for ok acks.
-          const resolvedParticipantId = resp?.participantId || resp?.data?.participantId || null;
-          if (resolvedParticipantId) {
-            hasJoinedEventRoomRef.current = true;
-            setEventRoomJoined(true);
-            eventJoinAttemptsRef.current = 0;
-            pushSocketDebug({
-              type: 'event:join_ack_ok',
-              detail: `participantId=${String(resolvedParticipantId)}`,
-            });
-            if (isGuest) {
-              localStorage.setItem(`guest_participant_id_${eventId}`, resolvedParticipantId);
-            } else {
-              localStorage.setItem(`member_participant_id_${eventId}`, resolvedParticipantId);
-            }
-          } else {
-            const fallback = 'event:join rejected (no participantId returned)';
-            const exactFromAck = resp?.error || resp?.code || fallback;
-            // If we already captured a clearer socket error (FORBIDDEN, etc),
-            // don't overwrite it with the fallback.
-            setChatSocketError((prev) => (prev && prev !== fallback ? prev : String(exactFromAck)));
-            setChatSocketErrorCode((resp?.code ? String(resp.code) : null) || null);
-            setChatSocketErrorDetails((resp?.details ?? null) || (resp?.data?.details ?? null) || null);
-            pushSocketDebug({
-              type: 'event:join_ack_rejected',
-              detail: `attempt=${eventJoinAttemptsRef.current + 1} reason=${String(exactFromAck)}`,
-            });
-            const nextAttempt = eventJoinAttemptsRef.current + 1;
-            eventJoinAttemptsRef.current = nextAttempt;
-            if (nextAttempt <= 10) {
-              setTimeout(() => {
-                // Only retry if we're still eligible and haven't joined the room yet.
-                if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
-                  joinEventRoom();
-                }
-              }, Math.min(4000, 500 * nextAttempt));
-            }
-          }
-        })
-        .catch(err => {
-          console.error('[GamePlay] Failed to join event room:', err?.message || err);
-          setChatSocketError(String(err?.message || err || 'Failed to join event room'));
-          setChatSocketErrorCode((err as any)?.code ? String((err as any).code) : null);
-          setChatSocketErrorDetails((err as any)?.details ?? null);
-          pushSocketDebug({
-            type: 'event:join_emit_failed',
-            detail: String(err?.message || err || 'join failed'),
-          });
-          const nextAttempt = eventJoinAttemptsRef.current + 1;
-          eventJoinAttemptsRef.current = nextAttempt;
-          if (nextAttempt <= 10) {
-            setTimeout(() => {
-              if (eventsSocket.isConnected && eventId && (hasJoined || participantId) && !hasJoinedEventRoomRef.current) {
-                joinEventRoom();
-              }
-            }, Math.min(4000, 500 * nextAttempt));
-          }
-          showError(err, t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }));
-        });
-    }
-  }, [eventsSocket.isConnected, eventId, isGuest, showError, hasJoined, participantId]);
-
-  // Initial joins
-  useEffect(() => {
-    if (eventsSocket.isConnected && eventId && (hasJoined || participantId)) joinEventRoom();
-  }, [eventsSocket.isConnected, eventId, joinEventRoom, hasJoined, participantId]);
-
-  // Re-join on socket reconnection + refetch messages that may have been missed
-  useEffect(() => {
-    if (!eventsSocket.socket) return;
-    const onConnect = () => {
-      pushSocketDebug({ type: 'eventsSocket_reconnect', detail: `status=${eventsSocket.status} eventId=${eventId || 'null'}` });
-      joinEventRoom();
-      // Refetch HTTP messages to recover any missed during the disconnection window
-      refetchMessages();
-    };
-    eventsSocket.socket.on('connect', onConnect);
-    return () => { eventsSocket.socket?.off('connect', onConnect); };
-  }, [eventsSocket.socket, joinEventRoom, refetchMessages]);
+  // ─── Event room join (with retries) ───────────────────────────────────────
+  const { eventRoomJoined } = useGamePlayEventRoom({
+    eventsSocket,
+    eventId: eventId || null,
+    hasJoined,
+    participantId: participantId || null,
+    isGuest,
+    setChatSocketError,
+    setChatSocketErrorCode,
+    setChatSocketErrorDetails,
+    showError,
+    refetchMessages,
+    tJoinRoomFailed: t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }),
+  });
 
   const { allMessages, initialMessages, liveMessages, pinnedMessage, setPinnedMessage } = useGameChatState({
     eventId: eventId || undefined,
@@ -495,20 +313,7 @@ function GamePlayWithoutBoundary() {
     eventsSocket,
     identityRef,
     userRef,
-    onChatDebug: (evt) => pushSocketDebug({ type: evt.type, detail: evt.detail }),
   });
-
-  // Cleanup: leave event room on unmount
-  useEffect(() => {
-    return () => {
-      // Always safely check if we can emit. We remove isConnected from deps 
-      // of the effect itself so it doesn't re-run/re-leave rapidly on reconnects,
-      // but we use the socket ref's current state inside the cleanup.
-      if (eventId && eventsSocket.socket?.connected) {
-        eventsSocket.socket.emit('event:leave', { eventId });
-      }
-    };
-  }, [eventId, eventsSocket.socket]);
 
   // ─── Async game data: activity posts (Wins of the Week) ─────────────────────
   const rawPosts = (postsData as any)?.data || [];
@@ -544,82 +349,6 @@ function GamePlayWithoutBoundary() {
       reacted: !!r.reacted,
     })),
   }));
-
-  const coffeePairDebug = useMemo(() => {
-    if (activeConfig.gameTypeKey !== 'coffee-roulette') return null;
-    if (!participantId) return null;
-    if (!gameData || typeof gameData !== 'object') return null;
-
-    const gd = gameData as {
-      phase?: string;
-      pairs?: Array<{
-        id?: string;
-        topic?: string;
-        person1?: { participantId?: string };
-        person2?: { participantId?: string };
-      }>;
-    };
-    const pairs = Array.isArray(gd.pairs) ? gd.pairs : [];
-    const myPair = pairs.find((p) => p?.person1?.participantId === participantId || p?.person2?.participantId === participantId);
-    if (!myPair || typeof myPair.id !== 'string') return null;
-    const iAmPerson1 = myPair.person1?.participantId === participantId;
-    const partnerParticipantId = iAmPerson1 ? myPair.person2?.participantId : myPair.person1?.participantId;
-    if (typeof partnerParticipantId !== 'string' || !partnerParticipantId) return null;
-
-    return {
-      pairId: myPair.id,
-      myRole: (iAmPerson1 ? 'person1' : 'person2') as 'person1' | 'person2',
-      meParticipantId: participantId,
-      partnerParticipantId,
-      topic: typeof myPair.topic === 'string' ? myPair.topic : '',
-      phase: typeof gd.phase === 'string' ? gd.phase : 'unknown',
-    };
-  }, [activeConfig.gameTypeKey, participantId, gameData]);
-
-  const coffeePairsDebug = useMemo(() => {
-    if (activeConfig.gameTypeKey !== 'coffee-roulette') return [] as Array<{
-      pairId: string;
-      person1ParticipantId: string;
-      person1Name: string;
-      person2ParticipantId: string;
-      person2Name: string;
-      topic: string;
-      phase: string;
-    }>;
-    if (!gameData || typeof gameData !== 'object') return [];
-
-    const gd = gameData as {
-      phase?: string;
-      pairs?: Array<{
-        id?: string;
-        topic?: string;
-        person1?: { participantId?: string; name?: string };
-        person2?: { participantId?: string; name?: string };
-      }>;
-    };
-    const phase = typeof gd.phase === 'string' ? gd.phase : 'unknown';
-    const pairs = Array.isArray(gd.pairs) ? gd.pairs : [];
-
-    return pairs
-      .map((p) => {
-        const pairId = typeof p?.id === 'string' ? p.id : null;
-        const p1Id = typeof p?.person1?.participantId === 'string' ? p.person1.participantId : null;
-        const p2Id = typeof p?.person2?.participantId === 'string' ? p.person2.participantId : null;
-        if (!pairId || !p1Id || !p2Id) return null;
-        return {
-          pairId,
-          person1ParticipantId: p1Id,
-          person1Name: typeof p?.person1?.name === 'string' ? p.person1.name : '',
-          person2ParticipantId: p2Id,
-          person2Name: typeof p?.person2?.name === 'string' ? p.person2.name : '',
-          topic: typeof p?.topic === 'string' ? p.topic : '',
-          phase,
-        };
-      })
-      .filter((x): x is NonNullable<typeof x> => !!x);
-  }, [activeConfig.gameTypeKey, gameData]);
-
-
 
   // Resolve active game session on mount + periodically when none (in case we miss game:session_created)
   useEffect(() => {
@@ -687,35 +416,13 @@ function GamePlayWithoutBoundary() {
     }
   }, [eventsSocket.status, eventId, refetchMessages, refetchParticipants, refetchPosts]);
 
-  // Fallback polling: when events socket is offline, periodically refetch messages
-  // so in-game chat still updates without requiring a full page reload.
+  // Fallback polling: when joined, periodically refetch messages so chat stays in sync
+  // (covers both offline recovery and online safety net when room join/events are missed).
   useEffect(() => {
-    if (!eventId) return;
-    if (eventsSocket.status === 'connected') return;
-
-    const interval = setInterval(() => {
-      if (eventsSocket.status !== 'connected') {
-        refetchMessages();
-      }
-    }, 5000);
-
+    if (!eventId || !hasJoined) return;
+    const interval = setInterval(() => refetchMessages(), 5000);
     return () => clearInterval(interval);
-  }, [eventId, eventsSocket.status, refetchMessages]);
-
-  // Extra safety net: when the socket is connected but a room join/event is missed
-  // (can happen during rapid reconnects), periodic refetch keeps chat in sync.
-  useEffect(() => {
-    if (!eventId) return;
-    if (!hasJoined) return;
-    // If websocket is truly offline, the earlier effect already handles it.
-    if (eventsSocket.status !== 'connected') return;
-
-    const interval = setInterval(() => {
-      refetchMessages();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [eventId, hasJoined, eventsSocket.status, refetchMessages]);
+  }, [eventId, hasJoined, refetchMessages]);
 
   // Participants polling: fallback so Coffee Roulette and other games see new joins
   // even if event:user_joined/participant:joined are missed (e.g. late socket connect)
@@ -843,60 +550,19 @@ function GamePlayWithoutBoundary() {
       setGamesSocketErrorCode((err as any)?.code ? String((err as any).code) : null);
       setGamesSocketErrorDetails((err as any)?.details ?? null);
       showError(err, String(exact));
-      pushSocketDebug({ type: 'game:join_error', detail: String(exact) });
     },
-    onGameDebug: (evt) => {
-      pushSocketDebug({
-        type: evt.type,
-        detail: evt.detail || (evt.data ? 'debug event received' : undefined),
-      });
-    },
-    onGameJoinAck: (data) => {
+    onGameJoinAck: () => {
       setGameJoinAckReceived(true);
-      pushSocketDebug({
-        type: 'game:join_ack_ok_ui',
-        detail: `ack for sessionId=${String(sessionId)} snapshot=${data?.snapshot ? 'yes' : 'no'} activeRoundId=${data?.activeRoundId || 'null'}`,
-      });
     },
   });
 
   const chatReady = eventsSocket.status === 'connected' && eventRoomJoined;
   const gamesReady =
     gamesSocket.status === 'connected' && !!sessionId && gameJoinAckReceived;
-  const socketHealthModalOpen =
-    !isIdentityLoading &&
-    ((hasJoined && !chatReady) || (!!sessionId && !gamesReady));
-
-  useEffect(() => {
-    // Re-open when entering a new event so we can compare values across refresh.
-    if (!eventId) return;
-    try {
-      const enabled = import.meta.env.DEV || localStorage.getItem('flowkyn_debug_identity') === '1';
-      if (enabled) setIdentityDebugOpen(true);
-    } catch {
-      // ignore
-    }
-  }, [eventId]);
-
-  useEffect(() => {
-    socketHealthModalOpenRef.current = socketHealthModalOpen;
-  }, [socketHealthModalOpen]);
-
   useEffect(() => {
     // Reset "ready" when session changes.
     setGameJoinAckReceived(false);
   }, [sessionId]);
-
-  useEffect(() => {
-    pushSocketDebug({
-      type: 'socket.health_state',
-      detail: `eventsSocket=${eventsSocket.status} chatReady=${String(chatReady)} eventRoomJoined=${String(eventRoomJoined)} hasJoined=${String(
-        hasJoined,
-      )} participantId=${participantId || 'null'} gamesSocket=${gamesSocket.status} gamesReady=${String(
-        gamesReady,
-      )} sessionId=${sessionId || 'null'}`,
-    });
-  }, [eventsSocket.status, chatReady, eventRoomJoined, hasJoined, participantId, gamesSocket.status, gamesReady, sessionId, pushSocketDebug]);
 
   useEffect(() => {
     if (chatReady) setChatSocketError(null);
@@ -1073,140 +739,6 @@ function GamePlayWithoutBoundary() {
           onRequestActivityExitWithFeedback={requestActivityExitWithFeedback}
         />
       </GamePlayShell>
-
-      <div className="fixed bottom-4 right-4 z-[60]">
-        <Button
-          type="button"
-          variant="secondary"
-          className="shadow-md"
-          onClick={() => setIdentityDebugOpen(true)}
-        >
-          Debug
-        </Button>
-      </div>
-
-      <SocketHealthModal
-        open={socketHealthModalOpen}
-        onOpenChange={(nextOpen) => {
-          // Keep modal controlled by socket state; user dismiss shouldn't hide real issues.
-          void nextOpen;
-        }}
-        chatStatus={eventsSocket.status}
-        gamesStatus={gamesSocket.status}
-        chatReady={chatReady}
-        gamesReady={gamesReady}
-        chatError={chatSocketError}
-        chatErrorCode={chatSocketErrorCode}
-        chatErrorDetails={chatSocketErrorDetails}
-        gamesError={gamesSocketError}
-        gamesErrorCode={gamesSocketErrorCode}
-        gamesErrorDetails={gamesSocketErrorDetails}
-        extraDetails={
-          <div className="space-y-2">
-            <div className="text-xs font-semibold text-muted-foreground">Debug snapshot</div>
-            <div className="rounded-lg border border-border p-3 bg-muted/20">
-              <div className="text-[11px] text-muted-foreground space-y-1">
-                <div>
-                  auth: {isGuest ? 'guest' : 'access'} | hasJoined={String(hasJoined)} | participantId={participantId || 'null'} | eventRoomJoined=
-                  {String(eventRoomJoined)}
-                </div>
-                <div>
-                  sessionId={sessionId || 'null'} | initialSnapshot={initialSnapshot ? 'yes' : 'no'} | gameData={gameData ? 'yes' : 'no'}
-                </div>
-                {gameData && typeof gameData === 'object' && 'phase' in gameData && (
-                  <div className="text-amber-700 font-medium">
-                    Coffee Roulette: phase={(gameData as { phase?: string }).phase} | pairs={Array.isArray((gameData as { pairs?: unknown[] }).pairs) ? (gameData as { pairs: unknown[] }).pairs.length : 0} | coffeePair={coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole})` : 'none'}
-                  </div>
-                )}
-                <div>
-                  tokens: guest_token={eventId ? String(!!getGuestToken(eventId)) : 'n/a'} | access_token={String(!!localStorage.getItem('access_token'))}
-                </div>
-                <div>
-                  guest_identity_key={eventId ? (getGuestIdentityKey(eventId) || 'null') : 'n/a'}
-                </div>
-                <div>event:join attempts={eventJoinAttemptsRef.current}</div>
-              </div>
-            </div>
-
-            <div className="text-xs font-semibold text-muted-foreground">Recent socket timeline</div>
-            <pre
-              key={socketDebugTick}
-              className="text-[11px] leading-4 bg-black/5 rounded-lg p-3 border border-border max-h-56 overflow-y-auto whitespace-pre-wrap break-words"
-            >
-              {socketDebugEventsRef.current
-                .map((e) => {
-                  const d = e.detail ? ` - ${e.detail}` : '';
-                  return `${new Date(e.ts).toISOString()}: ${e.type}${d}`;
-                })
-                .join('\n')}
-            </pre>
-          </div>
-        }
-        onRetryChat={() => {
-          setChatSocketError(null);
-          setChatSocketErrorCode(null);
-          setChatSocketErrorDetails(null);
-          hasJoinedEventRoomRef.current = false;
-          eventJoinAttemptsRef.current = 0;
-          setEventRoomJoined(false);
-          if (!eventsSocket.isConnected) eventsSocket.connect();
-          setTimeout(() => {
-            if (eventsSocket.isConnected && eventId && (hasJoined || participantId)) joinEventRoom();
-          }, 250);
-          void refetchMessages();
-        }}
-        onSyncGameState={() => void requestStateSync('manual_sync')}
-        canSyncGameState={!!sessionId && gamesSocket.isConnected}
-        onRetryGames={() => {
-          setGamesSocketError(null);
-          setGamesSocketErrorCode(null);
-          setGamesSocketErrorDetails(null);
-          if (!gamesSocket.isConnected) gamesSocket.connect();
-        }}
-      />
-
-      <IdentityDebugModal
-        open={identityDebugOpen}
-        onSyncGameState={() => void requestStateSync('identity_debug_sync')}
-        canSyncGameState={!!sessionId && gamesSocket.isConnected}
-        onOpenChange={(nextOpen) => {
-          // Keep it always visible in dev; it's our primary tool to track identity stability.
-          if (import.meta.env.DEV) {
-            setIdentityDebugOpen(true);
-            return;
-          }
-          setIdentityDebugOpen(nextOpen);
-        }}
-        eventId={eventId || ''}
-        isGuest={isGuest}
-        userId={currentUserId}
-        participantId={participantId}
-        displayName={currentUserName}
-        hasJoined={hasJoined}
-        eventRoomJoined={eventRoomJoined}
-        sessionId={sessionId}
-        gameJoinAckReceived={gameJoinAckReceived}
-        eventsSocketStatus={eventsSocket.status}
-        gamesSocketStatus={gamesSocket.status}
-        eventsSocketAuthMode={eventsSocket.authDebugMode}
-        gamesSocketAuthMode={gamesSocket.authDebugMode}
-        localGuestTokenExists={!!eventId && !!localStorage.getItem(`guest_token_${eventId}`)}
-        guestTokenValue={eventId ? getGuestToken(eventId) : null}
-        accessTokenExists={!!localStorage.getItem('access_token')}
-        guestIdentityKey={eventId ? getGuestIdentityKey(eventId) : null}
-        participantCount={participants.length}
-        participants={participants.map((p) => ({
-          id: p.id,
-          name: p.name,
-          avatarUrl: p.avatarUrl,
-          isHost: p.isHost,
-        }))}
-        gameTypeKey={activeConfig.gameTypeKey}
-        gameDataPreview={gameData}
-        gamePhase={gameData && typeof gameData === 'object' && 'phase' in gameData ? (gameData as { phase?: string }).phase : undefined}
-        coffeePairDebug={coffeePairDebug}
-        coffeePairsDebug={coffeePairsDebug}
-      />
 
       {/* In-game profile edit modal */}
       <AnimatePresence>

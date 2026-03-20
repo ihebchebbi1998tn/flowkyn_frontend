@@ -99,7 +99,6 @@ export default function EventForm() {
     const orgId = user?.organization_id || localStorage.getItem('flowkyn_org_id');
     
     if (orgId && !form.organization_id) {
-      console.log('[EventForm] Setting org ID from user or localStorage:', orgId);
       setForm(f => ({ ...f, organization_id: orgId }));
     }
     
@@ -194,7 +193,6 @@ export default function EventForm() {
       const recoveredOrgId = user?.organization_id || localStorage.getItem('flowkyn_org_id');
       
       if (recoveredOrgId) {
-        console.log('[EventForm] Recovered org ID from recovery attempt:', recoveredOrgId);
         setForm(f => ({ ...f, organization_id: recoveredOrgId }));
         // Let next render cycle use the recovered ID
         return;

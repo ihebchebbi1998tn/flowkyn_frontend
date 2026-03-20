@@ -41,26 +41,9 @@ import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useApiError } from '@/hooks/useApiError';
 import { useParticipantProfileRealtimeSync } from '@/hooks/useParticipantProfileRealtimeSync';
 import { setGuestToken, getOrCreateGuestIdentityKey } from '@/lib/guestTokenPersistence';
-
-
-// ─── Profile helpers ────────────────────────────────────────────────────────
-
-/** Keys for per-event profile in localStorage */
-const profileKey = (eventId: string) => `event_profile_${eventId}`;
-
-function getStoredProfile(eventId: string): { displayName: string; avatarUrl: string } | null {
-  try {
-    const raw = localStorage.getItem(profileKey(eventId));
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    if (data.avatarUrl) data.avatarUrl = getSafeImageUrl(data.avatarUrl);
-    return data;
-  } catch { return null; }
-}
-
-function saveProfile(eventId: string, data: ProfileSetupData) {
-  localStorage.setItem(profileKey(eventId), JSON.stringify(data));
-}
+import { getStoredEventProfile, saveEventProfile } from '@/lib/eventProfileStorage';
+import { useEventLobbyJoin } from '@/hooks/useEventLobbyJoin';
+import { useEventLobbyPresence } from '@/hooks/useEventLobbyPresence';
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -73,7 +56,6 @@ export default function EventLobby() {
   const gameParam = searchParams.get('game');
   const { isAuthenticated, user } = useAuth();
 
-  console.log('[EventLobby] mount', { eventId: id });
 
   const { data: event, isLoading: eventLoading } = useEventPublicInfo(id || '');
   const { data: participantsData, refetch: refetchParticipants } = useEventParticipants(id || '');
@@ -92,20 +74,18 @@ export default function EventLobby() {
     ? { displayName, avatarUrl: avatarUrl || '' }
     : null;
 
-  const storedProfile = id ? getStoredProfile(id) : null;
-  console.log('[EventLobby] identity & storedProfile', { id, identity, storedProfile });
+  const rawStored = id ? getStoredEventProfile(id) : null;
+  const storedProfile = rawStored
+    ? { ...rawStored, avatarUrl: getSafeImageUrl(rawStored.avatarUrl) || rawStored.avatarUrl }
+    : null;
 
   const [profile, setProfile] = useState<ProfileSetupData | null>(storedProfile);
   const [showProfileForm, setShowProfileForm] = useState(!storedProfile);
 
   const [guestEmail, setGuestEmail] = useState('');
-  const [hasJoined, setHasJoined] = useState(false);
-  const [copied, setCopied] = useState(false);
-  // Removed lobby countdown: navigation should be immediate; countdown belongs to game start.
-  const [joinError, setJoinError] = useState<string>('');
-  const [isJoining, setIsJoining] = useState(false);
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [copied, setCopied] = useState(false);
   const upsertProfile = useUpsertEventProfile(id || undefined);
   const { showError } = useApiError();
 
@@ -120,118 +100,41 @@ export default function EventLobby() {
   identityRef.current = identity;
   userRef.current = user;
 
-  /** Join logic — defined before effect that depends on it */
-  const handleJoin = useCallback(async () => {
-    if (!id || !profile || isJoining || hasJoined) return;
-    console.log('[EventLobby] handleJoin start', {
-      eventId: id,
-      isAuthenticated,
-      isGuest,
-      hasInviteToken: !!inviteToken,
-      profile,
-    });
-    setJoinError('');
-    setIsJoining(true);
-    try {
-      if (isAuthenticated && user) {
-        if (inviteToken) {
-          if (!/^[A-Za-z0-9_-]+$/.test(inviteToken)) {
-            setJoinError(t('events.invalidInvitationToken'));
-            return;
-          }
-          await acceptInvitation.mutateAsync({ eventId: id, token: inviteToken });
-        } else {
-          const result = await joinEvent.mutateAsync(id);
-          if ((result as any)?.participant_id) {
-            localStorage.setItem(`member_participant_id_${id}`, (result as any).participant_id);
-          }
-        }
-        trackEvent(TRACK.EVENT_JOINED, { eventId: id, viaInvitation: !!inviteToken });
-      } else {
-        const safeAvatarUrl = profile.avatarUrl?.startsWith('http') ? profile.avatarUrl : undefined;
-        const result = await joinAsGuest.mutateAsync({
-          eventId: id,
-          data: {
-            name: profile.displayName,
-            email: guestEmail || undefined,
-            avatar_url: safeAvatarUrl,
-            token: inviteToken || undefined,
-            guest_identity_key: getOrCreateGuestIdentityKey(id),
-          },
-        });
-        if (result.guest_token) {
-          setGuestToken(id, result.guest_token);
-          localStorage.setItem(`guest_participant_id_${id}`, result.participant_id);
-          localStorage.setItem(`guest_name_${id}`, result.guest_name);
-        }
-        trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: id, guestName: profile.displayName });
-      }
-      console.log('[EventLobby] handleJoin success', { eventId: id, mode: isAuthenticated ? 'member' : 'guest' });
-      setHasJoined(true);
-    } catch (err: any) {
-      if (err?.statusCode === 409 || err?.status === 409 || err?.code === 'ALREADY_PARTICIPANT') {
-        console.warn('[EventLobby] handleJoin already participant (409)', { eventId: id, error: err });
-        setHasJoined(true);
-      } else {
-        console.error('[EventLobby] handleJoin error', err);
-        const code = err?.response?.data?.code || err?.code;
-        if (code === 'EVENT_FULL') {
-          setJoinError(t('events.errors.full', 'This event is full. Ask your host if they can increase the limit.'));
-        } else if (code === 'NAME_TAKEN') {
-          setJoinError(t('events.errors.nameTaken', 'This name is already taken in this lobby. Please choose a slightly different one.'));
-        } else if (code === 'GUESTS_NOT_ALLOWED') {
-          setJoinError(t('events.errors.guestsNotAllowed', 'This event is for members only. Please sign in or ask your host for access.'));
-        } else if (code === 'NOT_A_MEMBER') {
-          setJoinError(t('events.errors.notMember', "You’re not a member of this workspace for this event."));
-        } else if (code === 'SESSION_NOT_ACTIVE') {
-          setJoinError(t('events.errors.notActive', 'This event isn’t active yet — your host needs to start it.'));
-        } else {
-          setJoinError(err?.response?.data?.message || err?.message || t('events.joinFailed'));
-        }
-      }
-    } finally {
-      setIsJoining(false);
-    }
-  }, [id, profile, isAuthenticated, user, inviteToken, acceptInvitation, joinEvent, joinAsGuest, guestEmail, t]);
+  const { hasJoined, setHasJoined, isJoining, joinError } = useEventLobbyJoin({
+    eventId: id || null,
+    profile,
+    storedProfile,
+    showProfileForm,
+    isIdentityLoading,
+    participantId: identity.participantId || null,
+    isAuthenticated,
+    user: user || null,
+    inviteToken,
+    guestEmail,
+    joinEvent,
+    joinAsGuest,
+    acceptInvitation,
+    getOrCreateGuestIdentityKey,
+    setGuestToken,
+    t,
+    onJoinSuccess: ({ eventId: eid, viaInvitation, guestName: gname }) => {
+      trackEvent(TRACK.EVENT_JOINED, { eventId: eid, viaInvitation });
+      if (gname) trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: eid, guestName: gname });
+    },
+  });
 
-  // ─── Auto-Join Logic ──────────────────────────────────────────────────────
-
-  // 1. If returning user (already has participant + completed profile before), set joined immediately.
-  //    Do NOT set hasJoined from participantId alone — the creator is auto-joined on the backend
-  //    but must still choose avatar/nickname. Only skip the profile form when they have storedProfile.
-  useEffect(() => {
-    if (identity.participantId && storedProfile && !hasJoined) {
-      console.log('[EventLobby] detected returning participant with stored profile, marking hasJoined=true', {
-        eventId: id,
-        participantId: identity.participantId,
-      });
-      setHasJoined(true);
-    }
-  }, [identity.participantId, storedProfile, hasJoined]);
-
-  // 2. Auto-trigger join when profile is ready and form is dismissed (first-time joiners)
-  useEffect(() => {
-    // Important: avoid calling `joinAsGuest` again on refresh.
-    // If `identity.participantId` exists, the guest is already in the lobby and
-    // `joinAsGuest` would try to recreate a new participant -> NAME_TAKEN.
-    if (
-      !isIdentityLoading &&
-      profile &&
-      !showProfileForm &&
-      !hasJoined &&
-      !identity.participantId &&
-      !isJoining &&
-      !joinError
-    ) {
-      console.log('[EventLobby] auto-joining after profile ready', {
-        eventId: id,
-        hasJoined,
-        isJoining,
-        hasJoinError: !!joinError,
-      });
-      handleJoin();
-    }
-  }, [profile, showProfileForm, hasJoined, isJoining, joinError, handleJoin, identity.participantId, isIdentityLoading, id]);
+  useEventLobbyPresence({
+    eventId: id || null,
+    hasJoined,
+    isGuest,
+    eventsSocket,
+    identityRef,
+    refetchParticipants,
+    setOnlineCount,
+    setIsSyncing,
+    showError,
+    tJoinRoomFailed: t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }),
+  });
 
   const joinLink = `${window.location.origin}/join/${id}${gameParam ? `?game=${gameParam}` : ''}`;
   const participants = (participantsData as any)?.data ?? [];
@@ -253,7 +156,6 @@ export default function EventLobby() {
   const copyLink = async () => {
     const success = await copyToClipboard(joinLink);
     if (success) {
-      console.log('[EventLobby] copy link success', { joinLink });
       trackEvent(TRACK.EVENT_LINK_COPIED, { eventId: id });
       setCopied(true);
       if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current);
@@ -267,134 +169,10 @@ export default function EventLobby() {
     return () => { if (copyLinkTimeoutRef.current) clearTimeout(copyLinkTimeoutRef.current); };
   }, []);
 
-  // Ensure socket connects when user successfully joins (especially guests who just got their token)
-  useEffect(() => {
-    if (hasJoined && !eventsSocket.isConnected && eventsSocket.status === 'disconnected') {
-      console.log('[EventLobby] hasJoined=true, connecting events socket', { eventId: id });
-      eventsSocket.connect();
-    }
-  }, [hasJoined, eventsSocket]);
-
-  // Join the event room whenever the events socket is connected.
-  // We intentionally do NOT gate this on hasJoined anymore:
-  // - The backend verifyParticipant() will auto-insert organization members who haven't gone
-  //   through the lobby join flow yet, so they can still participate in chat.
-  // - This ensures that anyone who can successfully send chat messages is also in the room
-  //   to receive real-time updates, instead of only seeing new messages after a reload.
-  const eventsSocketRef = useRef(eventsSocket);
-  eventsSocketRef.current = eventsSocket;
-  useEffect(() => {
-    if (!id || !eventsSocket.isConnected) return;
-    const sock = eventsSocketRef.current;
-    console.log('[EventLobby] events socket connected, emitting event:join', {
-      eventId: id,
-      socketConnected: sock.isConnected,
-    });
-    sock.emit('event:join', { eventId: id })
-      .then((ack: any) => {
-        console.log('[EventLobby] event:join ack', ack);
-        if (ack?.data?.participantId) {
-          if (identityRef.current.isGuest) {
-            localStorage.setItem(`guest_participant_id_${id}`, ack.data.participantId);
-          } else {
-            localStorage.setItem(`member_participant_id_${id}`, ack.data.participantId);
-          }
-        }
-        sock.emit('event:presence', { eventId: id }).catch(() => {});
-      })
-      .catch((err: any) => {
-        console.error('[EventLobby] Failed to join event room:', err?.message || err);
-        showError(err, t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }));
-      });
-  }, [hasJoined, id, eventsSocket.isConnected, showError]);
-
-  // Listen for presence updates and participant join/leave to keep lobby live
-  useEffect(() => {
-    if (!eventsSocket.isConnected || !id) return;
-
-    const handlePresence = (payload: any) => {
-      if (payload?.eventId !== id || !Array.isArray(payload.onlineUserIds)) return;
-      console.log('[EventLobby] event:presence payload', payload);
-      setOnlineCount(payload.onlineUserIds.length);
-    };
-
-    const handleUserJoined = () => {
-      console.log('[EventLobby] event:user_joined');
-      refetchParticipants();
-      eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
-    };
-
-    const handleUserLeft = () => {
-      console.log('[EventLobby] event:user_left');
-      refetchParticipants();
-      eventsSocket.emit('event:presence', { eventId: id }).catch(() => {});
-    };
-
-    // participant:joined/left come via event:notification (API join before socket); refetch immediately
-    const handleNotification = (data: { type?: string }) => {
-      if (data?.type === 'participant:joined' || data?.type === 'participant:left') {
-        refetchParticipants();
-      }
-    };
-    const unsubNotification = eventsSocket.on('event:notification', handleNotification);
-    const unsubPresence = eventsSocket.on('event:presence', handlePresence);
-    const unsubJoined = eventsSocket.on('event:user_joined', handleUserJoined);
-    const unsubLeft = eventsSocket.on('event:user_left', handleUserLeft);
-
-    return () => {
-      unsubNotification?.();
-      unsubPresence?.();
-      unsubJoined?.();
-      unsubLeft?.();
-    };
-  }, [eventsSocket.isConnected, id, refetchParticipants, eventsSocket]);
-
-  // Reconnect backfill: when socket transitions back to connected, refetch participants.
-  const wasConnectedRef = useRef(false);
-  useEffect(() => {
-    if (eventsSocket.status === 'connected') {
-      if (!wasConnectedRef.current) {
-        wasConnectedRef.current = true;
-        if (id) {
-          setIsSyncing(true);
-          Promise.all([refetchParticipants()])
-            .catch((err) => {
-              console.error('[EventLobby] reconnect backfill error', err);
-            })
-            .finally(() => setIsSyncing(false));
-        }
-      }
-    } else {
-      wasConnectedRef.current = false;
-    }
-  }, [eventsSocket.status, id, refetchParticipants]);
-
-  // Fallback polling: keep participants fresh even if socket events are missed
-  useEffect(() => {
-    if (!id) return;
-
-    const interval = setInterval(() => {
-      refetchParticipants();
-    }, 6000);
-
-    return () => clearInterval(interval);
-  }, [id, refetchParticipants]);
-
-  // Leave event room when lobby unmounts
-  useEffect(() => {
-    return () => {
-      if (id && eventsSocket.socket?.connected) {
-        console.log('[EventLobby] Leaving event room', id);
-        eventsSocket.socket.emit('event:leave', { eventId: id });
-      }
-    };
-  }, [id, eventsSocket.socket]);
-
   /** Called when user completes profile setup — join happens in useEffect; upsert only after join */
   const handleProfileComplete = (data: ProfileSetupData) => {
     if (!id) return;
-    console.log('[EventLobby] profile complete', { eventId: id, data });
-    saveProfile(id, data);
+    saveEventProfile(id, data);
     setProfile(data);
     setShowProfileForm(false);
     if (hasJoined) upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });

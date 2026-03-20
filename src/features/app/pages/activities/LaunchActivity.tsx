@@ -152,7 +152,6 @@ export default function LaunchActivity() {
     const trimmed = emailInput.trim().toLowerCase();
     if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) && !emails.includes(trimmed)) {
       const next = [...emails, trimmed];
-      console.log('[LaunchActivity] addEmail', { email: trimmed, total: next.length });
       setEmails(next);
       setEmailInput('');
     }
@@ -161,13 +160,11 @@ export default function LaunchActivity() {
   const addBulk = (text: string) => {
     const parsed = text.split(/[,;\n\s]+/).filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim().toLowerCase()));
     const unique = [...new Set([...emails, ...parsed.map(e => e.trim().toLowerCase())])];
-    console.log('[LaunchActivity] addBulk', { added: parsed.length, total: unique.length });
     setEmails(unique);
     setEmailInput('');
   };
 
   const removeEmail = (email: string) => {
-    console.log('[LaunchActivity] removeEmail', { email });
     setEmails(emails.filter(e => e !== email));
   };
 

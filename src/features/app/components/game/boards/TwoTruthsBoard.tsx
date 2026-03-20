@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameResults, CountdownOverlay, type GamePhase } from '../shared';
 import {
@@ -10,7 +10,9 @@ import {
   TwoTruthsRevealSection,
 } from './TwoTruthsSections';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
-import { useGamePhaseTimer } from '@/hooks/useGamePhaseTimer';
+import { usePhaseEndTimer } from '@/hooks/usePhaseEndTimer';
+import { useGameSnapshot } from '@/hooks/useGameSnapshot';
+import type { BaseGameBoardProps } from '@/features/app/components/game/types';
 import { Button } from '@/components/ui/button';
 import { HowItWorksModal } from '../shared/HowItWorksModal';
 
@@ -28,17 +30,13 @@ type TwoTruthsSnapshot = {
   voteEndsAt?: string;
 };
 
-export interface TwoTruthsBoardProps {
+export interface TwoTruthsBoardProps extends BaseGameBoardProps {
   onRoundComplete?: (roundNumber: number) => void;
   participants: Array<{ id: string; name?: string; avatar?: string }>;
-  currentUserId: string;
   currentUserName: string;
   currentUserAvatar: string;
-  sessionId: string | null;
   activeRoundId: string | null;
-  initialSnapshot?: unknown;
   onEmitAction: (actionType: string, payload?: unknown) => Promise<void>;
-  gameData?: unknown;
   isAdmin?: boolean;
 }
 
@@ -62,11 +60,7 @@ export function TwoTruthsBoard({
 }: TwoTruthsBoardProps) {
   const { t } = useTranslation();
   const [howOpen, setHowOpen] = useState(false);
-  const snapshot: TwoTruthsSnapshot | null = isTwoTruthsSnapshot(gameData)
-    ? gameData
-    : isTwoTruthsSnapshot(initialSnapshot)
-      ? initialSnapshot
-      : null;
+  const snapshot = useGameSnapshot<TwoTruthsSnapshot>(gameData, initialSnapshot, isTwoTruthsSnapshot);
 
   const phase: GamePhase = (snapshot?.phase || 'waiting') as GamePhase;
   const round = snapshot?.round || 1;
@@ -104,9 +98,10 @@ export function TwoTruthsBoard({
   }, [phase, isPresenter, revealedLie, selectedVote]);
 
   // Use the new timer hook instead of manual interval
-  const timeLeft = useGamePhaseTimer(
+  const timeLeft = usePhaseEndTimer(
     phase === 'submit' ? submitEndsAt : phase === 'vote' ? voteEndsAt : null,
-    phase === 'submit' ? 30 : 20
+    phase === 'submit' ? 30 : 20,
+    phase === 'submit' || phase === 'vote'
   );
 
   // State machine for submission UX
@@ -140,10 +135,7 @@ export function TwoTruthsBoard({
 
   const maxTime = phase === 'submit' ? 30 : 20;
 
-  // Remove old useEffect with manual interval - handled by useGamePhaseTimer hook
-  // const [timeLeft, setTimeLeft] = useState(maxTime);
-  // useEffect(() => { ... }) - REMOVED, replaced by useGamePhaseTimer
-
+  
   const presenterName =
     participants.find((p) => p.id === presenterId)?.name || currentUserName;
 
@@ -284,3 +276,4 @@ export function TwoTruthsBoard({
     </div>
   );
 }
+

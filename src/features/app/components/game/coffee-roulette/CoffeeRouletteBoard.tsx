@@ -4,18 +4,18 @@
  * Main component that coordinates all phases and backend integration
  * 
  * Backend Integration:
- * - Listens to 'coffee:shuffle' → shows matching animation
- * - Listens to 'coffee:start_chat' → transitions to meeting room
- * - Listens to 'coffee:next_prompt' → updates prompt display
- * - Listens to 'coffee:continue' → resets prompt counter
- * - Listens to 'coffee:end' or 'coffee:end_and_finish' → shows completion
+ * - Listens to 'coffee:shuffle' â†’ shows matching animation
+ * - Listens to 'coffee:start_chat' â†’ transitions to meeting room
+ * - Listens to 'coffee:next_prompt' â†’ updates prompt display
+ * - Listens to 'coffee:continue' â†’ resets prompt counter
+ * - Listens to 'coffee:end' or 'coffee:end_and_finish' â†’ shows completion
  * 
  * Actions emitted:
- * - coffee:shuffle → starts matching process
- * - coffee:start_chat → begins chat phase (automatic after matching)
- * - coffee:next_prompt → requests next conversation prompt
- * - coffee:continue → user chooses to continue chatting
- * - coffee:end → user ends session
+ * - coffee:shuffle â†’ starts matching process
+ * - coffee:start_chat â†’ begins chat phase (automatic after matching)
+ * - coffee:next_prompt â†’ requests next conversation prompt
+ * - coffee:continue â†’ user chooses to continue chatting
+ * - coffee:end â†’ user ends session
  */
 
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
@@ -28,6 +28,10 @@ import { MeetingRoom } from './phases/MeetingRoom';
 import { OfficeExitAnimation } from './phases/OfficeExitAnimation';
 import { getThemeForPair } from './theme/roomThemes';
 import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
+import { useGameSnapshot } from '@/hooks/useGameSnapshot';
+import { usePhaseEndTimer } from '@/hooks/usePhaseEndTimer';
+import { useGameLoadingState } from '@/hooks/useGameLoadingState';
+import type { BaseGameBoardProps } from '@/features/app/components/game/types';
 
 type GamePhase = 'waiting' | 'matching' | 'chatting' | 'complete';
 
@@ -47,15 +51,11 @@ interface CoffeeSnapshot {
   decisionRequired?: boolean;
 }
 
-interface CoffeeRouletteBoardProps {
+export interface CoffeeRouletteBoardProps extends BaseGameBoardProps {
   participants: any[];
-  currentUserId: string;
-  sessionId?: string | null;
   eventId?: string;
-  initialSnapshot?: any;
-  gameData?: any;
   onEmitAction: (actionType: string, payload?: any) => Promise<void>;
-  gamesSocket?: any; // Socket dfor listening to real-time updates
+  gamesSocket?: any;
   onRequestActivityExitWithFeedback?: (source: ActivityFeedbackSource) => void;
 }
 
@@ -71,11 +71,11 @@ export function CoffeeRouletteBoard({
   onRequestActivityExitWithFeedback,
 }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
-  const snapshot: CoffeeSnapshot | null = (gameData?.kind === GAME_TYPES.COFFEE_ROULETTE
-    ? gameData
-    : initialSnapshot?.kind === GAME_TYPES.COFFEE_ROULETTE
-    ? initialSnapshot
-    : null) as any;
+  const snapshot = useGameSnapshot<CoffeeSnapshot>(
+    gameData,
+    initialSnapshot,
+    (value): value is CoffeeSnapshot => !!value && typeof value === 'object' && (value as any).kind === GAME_TYPES.COFFEE_ROULETTE
+  );
 
   // Phase state
   const phase = (snapshot?.phase || 'waiting') as GamePhase;
@@ -91,108 +91,40 @@ export function CoffeeRouletteBoard({
   const decisionRequired = !!snapshot?.decisionRequired;
 
   // Timer state
-  const [chatSecondsRemaining, setChatSecondsRemaining] = useState(() => {
-    if (chatEndsAt) {
-      return Math.max(0, Math.ceil((new Date(chatEndsAt).getTime() - Date.now()) / 1000));
-    }
-    return 30 * 60; // 30 minutes default
-  });
+  const chatSecondsRemaining = usePhaseEndTimer(
+    phase === 'chatting' ? chatEndsAt : null,
+    30 * 60,
+    phase === 'chatting'
+  );
 
   // UI state
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, withLoading } = useGameLoadingState(false);
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const capturedElapsedRef = useRef(0);
-  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const matchingAutoStartKeyRef = useRef<string | null>(null);
 
-  // Listen for real-time socket events from other players
-  useEffect(() => {
-    if (!gamesSocket?.on) return;
-
-    const unsubShuffle = gamesSocket.on('game:state', (payload: any) => {
-      const snap = payload?.state?.snapshot;
-      if (snap?.kind === GAME_TYPES.COFFEE_ROULETTE) {
-        console.log('[CoffeeRouletteBoard] Received game:state update:', {
-          phase: snap.phase,
-          pairsCount: snap.pairs?.length,
-        });
-      }
-    });
-
-    const unsubData = gamesSocket.on('game:data', (payload: any) => {
-      if (payload?.gameData?.kind === GAME_TYPES.COFFEE_ROULETTE) {
-        console.log('[CoffeeRouletteBoard] Received game:data update:', {
-          phase: payload.gameData.phase,
-          pairsCount: payload.gameData.pairs?.length,
-        });
-      }
-    });
-
-    return () => {
-      unsubShuffle?.();
-      unsubData?.();
-    };
-  }, [gamesSocket]);
-
-  // Log state changes for debugging
-  useEffect(() => {
-    console.log('[CoffeeRouletteBoard] Phase changed:', {
-      phase,
-      pairsCount: pairs.length,
-      myPairExists: !!myPair,
-      promptsUsed,
-      decisionRequired,
-    });
-  }, [phase, pairs.length, myPair, promptsUsed, decisionRequired]);
-
-  // Update timer
-  useEffect(() => {
-    if (phase !== 'chatting' || !chatEndsAt) return;
-
-    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-
-    timerIntervalRef.current = setInterval(() => {
-      const remaining = Math.max(0, Math.ceil((new Date(chatEndsAt).getTime() - Date.now()) / 1000));
-      setChatSecondsRemaining(remaining);
-
-      // Capture elapsed time when timer expires
-      if (remaining === 0) {
-        capturedElapsedRef.current = 30 * 60; // Chat duration
-      }
-    }, 1000);
-
-    return () => {
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-    };
-  }, [phase, chatEndsAt]);
-
+  
   // Handle start matching
   const handleStartMatching = useCallback(async () => {
     try {
-      setIsLoading(true);
-      await onEmitAction('coffee:shuffle');
+      await withLoading(() => onEmitAction('coffee:shuffle'));
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to start matching:', error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [onEmitAction]);
+  }, [onEmitAction, withLoading]);
 
-  // Handle matching complete → auto-start chat
+  // Handle matching complete â†’ auto-start chat
   // Any paired participant can emit; backend is idempotent so duplicates are safe.
   // This ensures the other matched user gets the phase update even if they missed the broadcast.
   const handleMatchingComplete = useCallback(async () => {
     if (!myPair) return;
 
     try {
-      setIsLoading(true);
-      await onEmitAction('coffee:start_chat');
+      await withLoading(() => onEmitAction('coffee:start_chat'));
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to start chat:', error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [myPair, onEmitAction]);
+  }, [myPair, onEmitAction, withLoading]);
 
   // Matching phase should auto-advance: any paired participant can emit coffee:start_chat.
   // Fire once per pairing set per client (backend is idempotent).
@@ -208,72 +140,66 @@ export function CoffeeRouletteBoard({
   // Handle next prompt
   const handleNextPrompt = useCallback(async () => {
     try {
-      setIsLoading(true);
-      await Promise.race([
-        onEmitAction('coffee:next_prompt', {
-          // Stale-action guard: server ignores next_prompt if promptsUsed changed.
-          expectedPromptsUsed: promptsUsed,
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Request timeout')), 5000)
-        ),
-      ]);
+      await withLoading(() =>
+        Promise.race([
+          onEmitAction('coffee:next_prompt', {
+            // Stale-action guard: server ignores next_prompt if promptsUsed changed.
+            expectedPromptsUsed: promptsUsed,
+          }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timeout')), 5000)
+          ),
+        ])
+      );
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to get next prompt:', error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [onEmitAction, promptsUsed]);
+  }, [onEmitAction, promptsUsed, withLoading]);
 
   // Handle continue chatting
   const handleContinue = useCallback(async () => {
     try {
-      setIsLoading(true);
-      await Promise.race([
-        onEmitAction('coffee:continue', {
-          // Stale-action guard: server ignores continue if promptsUsed changed.
-          expectedPromptsUsed: promptsUsed,
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Request timeout')), 5000)
-        ),
-      ]);
+      await withLoading(() =>
+        Promise.race([
+          onEmitAction('coffee:continue', {
+            // Stale-action guard: server ignores continue if promptsUsed changed.
+            expectedPromptsUsed: promptsUsed,
+          }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timeout')), 5000)
+          ),
+        ])
+      );
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to continue:', error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [onEmitAction, promptsUsed]);
+  }, [onEmitAction, promptsUsed, withLoading]);
 
   // Handle end session
   const handleEnd = useCallback(async () => {
     try {
-      setIsLoading(true);
-      await Promise.race([
-        onEmitAction('coffee:end'),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Request timeout')), 5000)
-        ),
-      ]);
+      await withLoading(() =>
+        Promise.race([
+          onEmitAction('coffee:end'),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timeout')), 5000)
+          ),
+        ])
+      );
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to end session:', error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [onEmitAction]);
+  }, [onEmitAction, withLoading]);
 
   // Handle reset (go back to waiting)
   const handleReset = useCallback(async () => {
     try {
-      setIsLoading(true);
-      await onEmitAction('coffee:reset');
+      await withLoading(() => onEmitAction('coffee:reset'));
       setCurrentPairIndex(0);
     } catch (error) {
       console.error('[CoffeeRouletteBoard] Failed to reset:', error);
-    } finally {
-      setIsLoading(false);
     }
-  }, [onEmitAction]);
+  }, [onEmitAction, withLoading]);
 
   // Format participants for UI
   const formattedParticipants = useMemo(
@@ -453,7 +379,7 @@ export function CoffeeRouletteBoard({
   }
 
   // Fallback - myPair not found (either waiting for shuffle, or odd one out)
-  const isUnmatchedInRound = (phase === 'matching' || phase === 'chatting') && pairs.length > 0;
+  const isUnmatchedInRound = pairs.length > 0;
   return (
     <div className="flex items-center justify-center h-full min-h-0">
       <div className="text-center">
@@ -476,4 +402,6 @@ export function CoffeeRouletteBoard({
  * Export for use in the application
  */
 export { RoomThemeProvider };
-export type { CoffeeRouletteBoardProps };
+
+
+

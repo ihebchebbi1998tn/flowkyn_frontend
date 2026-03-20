@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+﻿import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, AlertTriangle, Flag, Clock, Shuffle, Settings2 } from 'lucide-react';
-import type { GameParticipant } from '../shell';
 import { PhaseBadge, PhaseTimer, GameActionButton, type GamePhase } from '../shared';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -11,71 +10,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { toast } from 'sonner';
 import { ApiError } from '@/lib/apiError';
 import { HowItWorksModal } from '../shared/HowItWorksModal';
-
-type StrategicPhase = 'setup' | 'roles_assignment' | 'discussion' | 'debrief';
-
-export interface StrategicEscapeSnapshot {
-  kind: 'strategic-escape';
-  phase: StrategicPhase;
-  // New standardized fields (backend)
-  industryKey?: string | null;
-  crisisKey?: string | null;
-  difficultyKey?: 'easy' | 'medium' | 'hard' | string | null;
-  industryLabel?: string | null;
-  crisisLabel?: string | null;
-  difficultyLabel?: string | null;
-  // Legacy fallbacks (older snapshots)
-  industry?: string | null;
-  crisisType?: string | null;
-  difficulty?: 'easy' | 'medium' | 'hard' | string | null;
-  rolesAssigned?: boolean;
-  discussionEndsAt?: string | null;
-}
-
-export interface StrategicEscapeBoardProps {
-  participants: GameParticipant[];
-  currentUserId: string;
-  currentUserName?: string;
-  currentUserAvatar: string;
-  currentUserAvatarUrl?: string | null;
-  eventId: string;
-  sessionId: string | null;
-  initialSnapshot?: unknown;
-  gameData?: unknown;
-  onSessionCreated: (sessionId: string) => void;
-  onEmitSocketAction: (
-    actionType: string,
-    payload?: unknown,
-    opts?: { sessionId?: string },
-  ) => Promise<void>;
-}
-
-function isStrategicEscapeSnapshot(value: unknown): value is StrategicEscapeSnapshot {
-  if (!value || typeof value !== 'object') return false;
-  return (value as Record<string, unknown>).kind === 'strategic-escape';
-}
-
-const INDUSTRY_OPTIONS = [
-  { value: 'techSaaS', icon: '💻' },
-  { value: 'finance', icon: '💰' },
-  { value: 'healthcare', icon: '🏥' },
-  { value: 'retail', icon: '🛒' },
-  { value: 'manufacturing', icon: '🏭' },
-  { value: 'education', icon: '📚' },
-] as const;
-
-const CRISIS_OPTIONS = [
-  { value: 'marketDisruption' },
-  { value: 'productLaunchCrisis' },
-  { value: 'budgetCuts' },
-  { value: 'teamConflict' },
-] as const;
-
-const DIFFICULTY_OPTIONS: Array<{ value: 'easy' | 'medium' | 'hard'; icon: string }> = [
-  { value: 'easy', icon: '😊' },
-  { value: 'medium', icon: '🎯' },
-  { value: 'hard', icon: '🔥' },
-];
+import { useCountdown } from '@/hooks/useCountdown';
+import { usePhaseEndTimer } from '@/hooks/usePhaseEndTimer';
+import { useGameSnapshot } from '@/hooks/useGameSnapshot';
+import {
+  type StrategicEscapeBoardProps,
+  type StrategicEscapeSnapshot,
+  type StrategicPhase,
+  isStrategicEscapeSnapshot,
+} from './strategicEscape.types';
+import {
+  INDUSTRY_OPTIONS,
+  CRISIS_OPTIONS,
+  DIFFICULTY_OPTIONS,
+} from './strategicEscape.constants';
 
 export function StrategicEscapeBoard({
   participants,
@@ -101,8 +49,6 @@ export function StrategicEscapeBoard({
   const [roleLoading, setRoleLoading] = useState(false);
   const [roleRevealOpen, setRoleRevealOpen] = useState(false);
   const [roleRevealShown, setRoleRevealShown] = useState(false);
-  const [swapWindowSeconds, setSwapWindowSeconds] = useState<number | null>(null);
-  const [discussionTimeLeft, setDiscussionTimeLeft] = useState<number>(0);
   const [revealStatus, setRevealStatus] = useState<{ total: number; acknowledged: number; allAcknowledged: boolean } | null>(null);
   const [readyStatus, setReadyStatus] = useState<{ total: number; ready: number; allReady: boolean } | null>(null);
   const [myReady, setMyReady] = useState(false);
@@ -114,11 +60,7 @@ export function StrategicEscapeBoard({
   const [notesSavedAt, setNotesSavedAt] = useState<string | null>(null);
   const lastSavedNotesRef = useRef<string>('');
 
-  const snapshot: StrategicEscapeSnapshot | null = isStrategicEscapeSnapshot(gameData)
-    ? gameData
-    : isStrategicEscapeSnapshot(initialSnapshot)
-      ? initialSnapshot
-      : null;
+  const snapshot = useGameSnapshot<StrategicEscapeSnapshot>(gameData, initialSnapshot, isStrategicEscapeSnapshot);
 
   const phase: StrategicPhase = (snapshot?.phase || 'setup') as StrategicPhase;
   const snap = (snapshot || {}) as StrategicEscapeSnapshot & Record<string, unknown>;
@@ -131,17 +73,6 @@ export function StrategicEscapeBoard({
   const discussionEndsAt = snapshot?.discussionEndsAt || null;
 
   const isHost = participants.some(p => p.id === currentUserId && p.isHost);
-  console.log('[StrategicEscapeBoard] render', {
-    isHost,
-    currentUserId,
-    participantsCount: participants.length,
-    phase,
-    rolesAssigned,
-    sessionId,
-    hasSnapshot: !!snapshot,
-    hasGameData: !!gameData,
-    hasInitialSnapshot: !!initialSnapshot,
-  });
 
   const [localIndustry, setLocalIndustry] = useState<string | null>(null);
   const [localCrisis, setLocalCrisis] = useState<string | null>(null);
@@ -154,7 +85,6 @@ export function StrategicEscapeBoard({
 
   useEffect(() => {
     if (selectedDifficulty) {
-      console.log('[StrategicEscapeBoard] sync localDifficulty from snapshot', { selectedDifficulty });
       setLocalDifficulty(selectedDifficulty as 'easy' | 'medium' | 'hard');
     }
   }, [selectedDifficulty]);
@@ -162,20 +92,13 @@ export function StrategicEscapeBoard({
   // Auto-load my strategic role once a session exists and roles are assigned
   useEffect(() => {
     if (!sessionId || !rolesAssigned || !eventId) {
-      console.log('[StrategicEscapeBoard] skip getMyStrategicRole', {
-        sessionId,
-        rolesAssigned,
-        eventId,
-      });
       return;
     }
     let cancelled = false;
     setRoleLoading(true);
-    console.log('[StrategicEscapeBoard] getMyStrategicRole start', { sessionId, eventId });
     gamesApi
       .getMyStrategicRole(sessionId, eventId)
       .then(res => {
-        console.log('[StrategicEscapeBoard] getMyStrategicRole success', res);
         if (!cancelled) setMyRoleKey(res?.roleKey || null);
       })
       .catch((err) => {
@@ -191,42 +114,13 @@ export function StrategicEscapeBoard({
   }, [sessionId, rolesAssigned, eventId]);
 
   // Local 20s "swap window" after roles are assigned (purely UX-level)
-  useEffect(() => {
-    if (!rolesAssigned) {
-      console.log('[StrategicEscapeBoard] swap window cleared (roles not assigned)');
-      setSwapWindowSeconds(null);
-      return;
-    }
-    console.log('[StrategicEscapeBoard] swap window started (20s)');
-    setSwapWindowSeconds(20);
-  }, [rolesAssigned]);
-
-  useEffect(() => {
-    if (swapWindowSeconds === null || swapWindowSeconds <= 0) return;
-    const interval = setInterval(() => {
-      setSwapWindowSeconds(prev => (prev !== null ? prev - 1 : prev));
-    }, 1000);
-    console.log('[StrategicEscapeBoard] swap window ticking', { swapWindowSeconds });
-    return () => clearInterval(interval);
-  }, [swapWindowSeconds]);
+  const swapWindowSeconds = useCountdown(20, !!rolesAssigned);
 
   const isConfigured = !!localIndustry && !!localCrisis && !!localDifficulty;
-  console.log('[StrategicEscapeBoard] local config state', {
-    localIndustry,
-    localCrisis,
-    localDifficulty,
-    isConfigured,
-  });
 
   const handleCreateSession = useCallback(async () => {
     if (!isHost || !eventId || sessionId || !isConfigured) return;
     setCreateError(null);
-    console.log('[StrategicEscapeBoard] handleCreateSession', {
-      eventId,
-      localIndustry,
-      localCrisis,
-      localDifficulty,
-    });
     setIsCreating(true);
     try {
       const industryLabel = t(`strategic.industries.${localIndustry}.label`);
@@ -245,10 +139,6 @@ export function StrategicEscapeBoard({
         industry: industryLabel,
         crisisType: crisisLabel,
         difficultyLabel,
-      });
-      console.log('[StrategicEscapeBoard] createStrategicSession success', {
-        sessionId: res.sessionId,
-        config: res.config,
       });
       onSessionCreated(res.sessionId);
       
@@ -270,7 +160,7 @@ export function StrategicEscapeBoard({
       
       toast.success(
         t('games.toasts.launching', {
-          defaultValue: 'We’re launching {{gameName}} for this event. Hang tight — your screen will update in a moment.',
+          defaultValue: 'Weâ€™re launching {{gameName}} for this event. Hang tight â€” your screen will update in a moment.',
           gameName: t('activities.strategicEscape.name', { defaultValue: 'Strategic Escape Challenge' }),
         })
       );
@@ -306,10 +196,6 @@ export function StrategicEscapeBoard({
   const handleAssignRoles = useCallback(async () => {
     if (!isHost || !sessionId || rolesAssigned) return;
     setAssignError(null);
-    console.log('[StrategicEscapeBoard] handleAssignRoles', {
-      sessionId,
-      rolesAssigned,
-    });
     setIsAssigningRoles(true);
     try {
       await gamesApi.assignStrategicRoles(sessionId);
@@ -334,13 +220,8 @@ export function StrategicEscapeBoard({
 
   const handleStartDiscussion = useCallback(async () => {
     if (!isHost || !sessionId || !rolesAssigned) return;
-    console.log('[StrategicEscapeBoard] handleStartDiscussion', {
-      sessionId,
-      rolesAssigned,
-    });
     try {
       await onEmitSocketAction('strategic:start_discussion');
-      console.log('[StrategicEscapeBoard] strategic:start_discussion emitted');
     } catch (err) {
       console.error('[StrategicEscapeBoard] strategic:start_discussion error', err);
     }
@@ -348,34 +229,14 @@ export function StrategicEscapeBoard({
 
   const handleEndDiscussion = useCallback(async () => {
     if (!isHost || !sessionId) return;
-    console.log('[StrategicEscapeBoard] handleEndDiscussion', {
-      sessionId,
-    });
     try {
       await onEmitSocketAction('strategic:end_discussion');
-      console.log('[StrategicEscapeBoard] strategic:end_discussion emitted');
     } catch (err) {
       console.error('[StrategicEscapeBoard] strategic:end_discussion error', err);
     }
   }, [isHost, sessionId, onEmitSocketAction]);
 
-  const discussionEndsAtDate = useMemo(
-    () => (discussionEndsAt ? new Date(discussionEndsAt) : null),
-    [discussionEndsAt]
-  );
-
-  useEffect(() => {
-    if (!discussionEndsAtDate) return;
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const end = discussionEndsAtDate.getTime();
-      const timeLeft = Math.max(0, Math.floor((end - now) / 1000));
-      setDiscussionTimeLeft(timeLeft);
-      if (timeLeft <= 0) clearInterval(interval);
-    }, 1000);
-    console.log('[StrategicEscapeBoard] discussion timer started', { discussionEndsAtDate });
-    return () => clearInterval(interval);
-  }, [discussionEndsAtDate]);
+  const discussionTimeLeft = usePhaseEndTimer(discussionEndsAt, 30 * 60, phase === 'discussion');
 
   const difficultyLabelKey =
     selectedDifficulty === 'easy'
@@ -572,7 +433,7 @@ export function StrategicEscapeBoard({
                 {myRoleName || t('strategic.roleReveal.pending', { defaultValue: 'Pending assignment' })}
               </p>
               <p className="text-xs text-muted-foreground">
-                {myRoleBrief || t('strategic.roleReveal.pendingHint', { defaultValue: 'Waiting for role assignment…' })}
+                {myRoleBrief || t('strategic.roleReveal.pendingHint', { defaultValue: 'Waiting for role assignmentâ€¦' })}
               </p>
             </div>
             {myRoleSecret && (
@@ -635,7 +496,7 @@ export function StrategicEscapeBoard({
             </span>
             {selectedIndustryLabel && (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
-                <span>🏢</span>
+                <span>ðŸ¢</span>
                 {selectedIndustryLabel}
               </span>
             )}
@@ -655,7 +516,7 @@ export function StrategicEscapeBoard({
         </div>
 
         <div className="flex items-center gap-2">
-          {phase === 'discussion' && discussionEndsAtDate && (
+          {phase === 'discussion' && discussionEndsAt && (
             <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2">
               <Clock className="h-3.5 w-3.5 text-muted-foreground" />
               <PhaseTimer 
@@ -693,7 +554,7 @@ export function StrategicEscapeBoard({
           {phase === 'setup'
             ? t('strategic.phaseIntro.setup', { defaultValue: 'Right now, the facilitator is configuring the scenario.' })
             : phase === 'roles_assignment'
-              ? t('strategic.phaseIntro.rolesAssignment', { defaultValue: 'Right now, secret roles are being assigned — check your inbox.' })
+              ? t('strategic.phaseIntro.rolesAssignment', { defaultValue: 'Right now, secret roles are being assigned â€” check your inbox.' })
               : phase === 'discussion'
                 ? t('strategic.phaseIntro.discussion', { defaultValue: 'Right now, share perspectives and decisions over time.' })
                 : t('strategic.phaseIntro.debrief', { defaultValue: 'Right now, turn insights into concrete changes.' })}
@@ -846,7 +707,7 @@ export function StrategicEscapeBoard({
                 }}
               >
                 {isCreating
-                  ? t('strategic.actions.creating', { defaultValue: 'Creating session…' })
+                  ? t('strategic.actions.creating', { defaultValue: 'Creating sessionâ€¦' })
                   : sessionId 
                     ? t('strategic.actions.sessionCreated', { defaultValue: 'Session already created' })
                     : t('strategic.actions.createSession', { defaultValue: 'Create strategic session' })}
@@ -867,7 +728,7 @@ export function StrategicEscapeBoard({
         </DialogContent>
       </Dialog>
 
-      {/* Phase: setup — host configures scenario */}
+      {/* Phase: setup â€” host configures scenario */}
       {phase === 'setup' && (
         <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]">
           <div className="space-y-4">
@@ -959,7 +820,7 @@ export function StrategicEscapeBoard({
                   onClick={handleAssignRoles}
                 >
                   {isAssigningRoles
-                    ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles…' })
+                    ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning rolesâ€¦' })
                     : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles' })}
                 </GameActionButton>
                 {isHost && rolesAssigned && revealStatus && !revealStatus.allAcknowledged && (
@@ -987,7 +848,7 @@ export function StrategicEscapeBoard({
         </div>
       )}
 
-      {/* Phase: roles_assignment — secret role cards + swap window UX */}
+      {/* Phase: roles_assignment â€” secret role cards + swap window UX */}
       {phase === 'roles_assignment' && (
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1.4fr)]">
           <div className="space-y-3">
@@ -1065,7 +926,7 @@ export function StrategicEscapeBoard({
                       <p className="text-[11px] font-medium text-muted-foreground">
                         {myRoleKey
                           ? t('strategic.rolesMeta.roleNameLabel', { defaultValue: 'Role' })
-                          : t('strategic.rolesMeta.loading', { defaultValue: 'Waiting for your role…' })}
+                          : t('strategic.rolesMeta.loading', { defaultValue: 'Waiting for your roleâ€¦' })}
                       </p>
                       <p className="text-[15px] font-semibold tracking-tight text-foreground">
                         {myRoleName || t('strategic.rolesMeta.pending', { defaultValue: 'Pending assignment' })}
@@ -1074,7 +935,7 @@ export function StrategicEscapeBoard({
                         {myRoleBrief ||
                           t(
                             'strategic.rolesMeta.pendingHint',
-                            'Your facilitator is assigning roles. Stay tuned — your perspective will be crucial.'
+                            'Your facilitator is assigning roles. Stay tuned â€” your perspective will be crucial.'
                           )}
                       </p>
                     </div>
@@ -1093,7 +954,7 @@ export function StrategicEscapeBoard({
 
               {roleLoading && (
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  {t('strategic.rolesMeta.refreshing', { defaultValue: 'Refreshing your role…' })}
+                  {t('strategic.rolesMeta.refreshing', { defaultValue: 'Refreshing your roleâ€¦' })}
                 </p>
               )}
 
@@ -1138,7 +999,7 @@ export function StrategicEscapeBoard({
                       }}
                     >
                       {isAdvancingPrompt
-                        ? t('strategic.afterReveal.advancingPrompt', { defaultValue: 'Updating…' })
+                        ? t('strategic.afterReveal.advancingPrompt', { defaultValue: 'Updatingâ€¦' })
                         : t('strategic.afterReveal.nextPrompt', { defaultValue: 'Next prompt' })}
                     </GameActionButton>
                   </div>
@@ -1181,7 +1042,7 @@ export function StrategicEscapeBoard({
                     >
                       {myReady
                         ? t('strategic.afterReveal.readyConfirmed', { defaultValue: 'Ready' })
-                        : t('strategic.afterReveal.readyAction', { defaultValue: 'I’m ready' })}
+                        : t('strategic.afterReveal.readyAction', { defaultValue: 'Iâ€™m ready' })}
                     </GameActionButton>
                   </div>
 
@@ -1193,7 +1054,7 @@ export function StrategicEscapeBoard({
                       </p>
                       <span className="text-[10px] text-muted-foreground">
                         {notesSaving
-                          ? t('strategic.afterReveal.notesSaving', { defaultValue: 'Saving…' })
+                          ? t('strategic.afterReveal.notesSaving', { defaultValue: 'Savingâ€¦' })
                           : notesSavedAt
                             ? t('strategic.afterReveal.notesSaved', { defaultValue: 'Saved' })
                             : t('strategic.afterReveal.notesNotSaved', { defaultValue: 'Not saved yet' })}
@@ -1203,13 +1064,13 @@ export function StrategicEscapeBoard({
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder={t('strategic.afterReveal.notesPlaceholder', {
-                        defaultValue: 'Write notes only you can see…',
+                        defaultValue: 'Write notes only you can seeâ€¦',
                       })}
                       className="min-h-[92px] w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-[12px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                     <p className="text-[10px] text-muted-foreground">
                       {t('strategic.afterReveal.notesHint', {
-                        defaultValue: 'Notes are saved to your role only and won’t be shared with others.',
+                        defaultValue: 'Notes are saved to your role only and wonâ€™t be shared with others.',
                       })}
                     </p>
                   </div>
@@ -1266,7 +1127,7 @@ export function StrategicEscapeBoard({
                     onClick={handleAssignRoles}
                   >
                     {isAssigningRoles
-                      ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning roles…' })
+                      ? t('strategic.actions.assigningRoles', { defaultValue: 'Assigning rolesâ€¦' })
                       : t('strategic.actions.assignRoles', { defaultValue: 'Assign roles' })}
                   </GameActionButton>
                   {assignError && (
@@ -1321,7 +1182,7 @@ export function StrategicEscapeBoard({
                 <p className="text-xs text-muted-foreground">
                   {t(
                     'strategic.discussion.subtitle',
-                    'Share updates, decisions, and trade‑offs in your existing channels. Use this space to keep the scenario top‑of‑mind.'
+                    'Share updates, decisions, and tradeâ€‘offs in your existing channels. Use this space to keep the scenario topâ€‘ofâ€‘mind.'
                   )}
                 </p>
               </div>
@@ -1331,7 +1192,7 @@ export function StrategicEscapeBoard({
               <p className="font-medium">
                 {t(
                   'strategic.discussion.prompt',
-                  'Your team faces a last‑minute product launch crisis with competing priorities and limited resources.'
+                  'Your team faces a lastâ€‘minute product launch crisis with competing priorities and limited resources.'
                 )}
               </p>
               <p className="text-[10px] text-primary/90">
@@ -1357,13 +1218,13 @@ export function StrategicEscapeBoard({
                   <li>
                     {t(
                       'strategic.discussion.q2',
-                      'Where are we mis‑aligned across product, marketing, and operations?'
+                      'Where are we misâ€‘aligned across product, marketing, and operations?'
                     )}
                   </li>
                   <li>
                     {t(
                       'strategic.discussion.q3',
-                      'What trade‑off are you personally willing to own?'
+                      'What tradeâ€‘off are you personally willing to own?'
                     )}
                   </li>
                 </ul>
@@ -1383,7 +1244,7 @@ export function StrategicEscapeBoard({
                   <li>
                     {t(
                       'strategic.discussion.i2',
-                      'Reply to each other in‑thread rather than starting new ones.'
+                      'Reply to each other inâ€‘thread rather than starting new ones.'
                     )}
                   </li>
                   <li>
@@ -1478,7 +1339,7 @@ export function StrategicEscapeBoard({
                   <li>
                     {t(
                       'strategic.debrief.a1',
-                      'Capture 2–3 concrete changes you will make to process, communication, or ownership.'
+                      'Capture 2â€“3 concrete changes you will make to process, communication, or ownership.'
                     )}
                   </li>
                   <li>
@@ -1490,7 +1351,7 @@ export function StrategicEscapeBoard({
                   <li>
                     {t(
                       'strategic.debrief.a3',
-                      'Schedule a follow‑up check‑in in 4–6 weeks to review impact.'
+                      'Schedule a followâ€‘up checkâ€‘in in 4â€“6 weeks to review impact.'
                     )}
                   </li>
                 </ul>
@@ -1516,4 +1377,5 @@ export function StrategicEscapeBoard({
     </div>
   );
 }
+
 

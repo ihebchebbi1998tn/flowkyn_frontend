@@ -86,8 +86,6 @@ export const EventChat = memo(function EventChat({
   isGuest = false,
 }: EventChatProps) {
   const { t } = useTranslation();
-  console.log('[EventChat] Render', { messagesCount: messages.length, isOnline, eventId });
-  
   const [input, setInput] = useState('');
   const [isAtBottom, setIsAtBottom] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);

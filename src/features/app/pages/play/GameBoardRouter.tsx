@@ -1,31 +1,17 @@
-import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TwoTruthsBoard, WinsOfTheWeekBoard, StrategicEscapeBoard, ComingSoonBoard } from '@/features/app/components/game/boards';
 import { CoffeeRouletteBoard } from '@/features/app/components/game/coffee-roulette';
 import type { GameParticipant } from '@/features/app/components/game/shell';
 import { eventsApi } from '@/features/app/api/events';
 import { postsApi } from '@/features/app/api/posts';
-import { gamesApi } from '@/features/app/api/games';
 import type { GameTypeKey } from './gameTypes';
 import { GAME_TYPES, GAME_CONFIGS, GAME_KEY_TO_CONFIG_ID } from './gameTypes';
 import { toast } from 'sonner';
 import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
-
-type GameTypeRow = { id: string; key: GameTypeKey; name?: string };
-type GameSessionRow = { id: string; active_round_id?: string | null };
+import { useGameActionEmitter } from '@/hooks/useGameActionEmitter';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
-}
-
-function isGameTypeRow(v: unknown): v is GameTypeRow {
-  if (!isRecord(v)) return false;
-  return typeof v.id === 'string' && typeof v.key === 'string';
-}
-
-function isGameSessionRow(v: unknown): v is GameSessionRow {
-  if (!isRecord(v)) return false;
-  return typeof v.id === 'string';
 }
 
 interface GameBoardRouterProps {
@@ -94,9 +80,18 @@ export function GameBoardRouter({
 }: GameBoardRouterProps) {
   const { t } = useTranslation();
 
-  // Prevent emitting `game:action` to a session before we ensure `game:join` for it.
-  // This is especially important when using a sessionId override (e.g. REST create -> immediate socket emit).
-  const ensuredJoinForSessionRef = useRef<string | null>(null);
+  const onEmitAction = useGameActionEmitter({
+    gameTypeKey: config.gameTypeKey,
+    eventId,
+    sessionId,
+    activeRoundId,
+    setSessionId,
+    setActiveRoundId,
+    setInitialSnapshot,
+    setGameData,
+    gamesSocket,
+    showError,
+  });
 
   const boardProps = {
     participants,
@@ -110,180 +105,6 @@ export function GameBoardRouter({
       : ((isRecord(initialSnapshot) && typeof initialSnapshot.round === 'number') ? initialSnapshot.round : 1),
     onRoundComplete: () => {},
   };
-
-  const onEmitAction = useCallback(
-    async (
-      actionType: string,
-      payload?: unknown,
-      opts?: { sessionIdOverride?: string },
-    ) => {
-      const forcedSid = opts?.sessionIdOverride;
-      let sid = forcedSid ?? sessionId;
-
-      // Auto-create a game session if one doesn't exist yet (e.g. first "Start Round")
-      if (!sid && eventId) {
-        try {
-          const typesUnknown = await gamesApi.listTypes();
-          const types = Array.isArray(typesUnknown) ? typesUnknown : [];
-          const typeRow = types.find((gt) => isGameTypeRow(gt) && gt.key === config.gameTypeKey) as GameTypeRow | undefined;
-          if (!typeRow) {
-            console.error('[GamePlay] Unknown game type key:', config.gameTypeKey);
-            return;
-          }
-          const desiredRounds =
-            actionType === 'two_truths:start'
-              ? Number(isRecord(payload) ? payload.totalRounds : undefined)
-              : undefined;
-          const totalRoundsToSend =
-            Number.isFinite(desiredRounds) && Number.isInteger(desiredRounds) && desiredRounds >= 1
-              ? desiredRounds
-              : undefined;
-
-          const newSessionUnknown = await gamesApi.startSession(eventId, typeRow.id, totalRoundsToSend);
-          if (!isGameSessionRow(newSessionUnknown)) throw new Error('Invalid game session response');
-          const newSession = newSessionUnknown;
-          sid = newSession.id;
-          setSessionId(sid);
-          if (newSession.active_round_id) setActiveRoundId(newSession.active_round_id);
-
-          if (gamesSocket.isConnected) {
-            const respUnknown = await gamesSocket.emit('game:join', { sessionId: sid });
-            const respRecord = isRecord(respUnknown) ? (respUnknown as Record<string, unknown>) : null;
-            const respData = respRecord && isRecord(respRecord.data) ? respRecord.data : null;
-            const data = respData ?? respUnknown;
-            if (isRecord(data) && typeof data.activeRoundId === 'string') setActiveRoundId(data.activeRoundId);
-            if (isRecord(data) && data.snapshot) {
-              setInitialSnapshot(data.snapshot);
-              setGameData(data.snapshot);
-            }
-
-            // Emit the intended action so the first click both creates and executes (e.g. coffee:shuffle)
-            try {
-              await gamesSocket.emit('game:action', {
-                sessionId: sid,
-                roundId: actionType.startsWith('coffee:') ? undefined : (newSession.active_round_id ?? undefined),
-                actionType,
-                payload: isRecord(payload) ? payload : {},
-              });
-              // game:data broadcast will update state; no manual snapshot update needed
-            } catch (actionErr) {
-              const msg = actionErr instanceof Error ? actionErr.message : String(actionErr);
-              console.warn('[GamePlay] Failed to emit action after session create:', msg);
-            }
-          }
-
-          toast.success(
-            t('games.toasts.launching', {
-              defaultValue: 'We’re launching {{gameName}} for this event. Hang tight — your screen will update in a moment.',
-              gameName: typeRow.name || config.gameTypeKey,
-            })
-          );
-        } catch (err: unknown) {
-          const msg = err instanceof Error ? err.message : String(err);
-          console.error('[GamePlay] Failed to auto-create game session:', msg);
-          const errObj = err as { response?: { data?: { code?: unknown } }; code?: unknown };
-          const backendCode =
-            (typeof errObj?.response?.data?.code === 'string' ? errObj.response.data.code : undefined) ||
-            (typeof errObj?.code === 'string' ? errObj.code : undefined);
-          if (backendCode === 'SESSION_NOT_ACTIVE') {
-            showError(
-              err,
-              t(
-                'games.errors.sessionNotActive',
-                'Cannot start a game because the event is not active yet. Ask your workspace admin or host to start the event first.',
-              ),
-            );
-          } else if (backendCode === 'INSUFFICIENT_PERMISSIONS' || backendCode === 'FORBIDDEN') {
-            showError(
-              err,
-              t(
-                'games.errors.notAuthorizedToStart',
-                'Only event admins or moderators can start this game. Ask your facilitator to launch it for the group.',
-              ),
-            );
-          } else if (backendCode === 'NOT_A_MEMBER') {
-            showError(
-              err,
-              t(
-                'games.errors.notMember',
-                'You are not a member of this workspace for this event. Please contact your admin if this feels wrong.',
-              ),
-            );
-          } else {
-            showError(
-              err,
-              t(
-                'games.errors.genericStartFailed',
-                'Failed to start the game session. Please try again or ask your host to start it for you.',
-              ),
-            );
-          }
-          return;
-        }
-      }
-
-      if (!sid) {
-        console.warn('[GamePlay] onEmitAction aborted — no sessionId resolved', {
-          gameKey: config.gameTypeKey,
-          actionType,
-        });
-        return;
-      }
-
-      if (!gamesSocket.isConnected) {
-        showError(new Error('Game socket not connected'), 'Game socket not connected');
-        return;
-      }
-
-      // If caller provided a forced sessionId (typically right after REST session creation),
-      // we might not have the React `sessionId` state updated + joined yet.
-      // Do a best-effort `game:join` to guarantee the client is in `game:${sid}` room
-      // before we broadcast `game:data` updates.
-      if (forcedSid && ensuredJoinForSessionRef.current !== forcedSid) {
-        try {
-          const respUnknown = await gamesSocket.emit('game:join', { sessionId: forcedSid });
-          const respRecord = isRecord(respUnknown) ? (respUnknown as Record<string, unknown>) : null;
-          const respData = respRecord && isRecord(respRecord.data) ? respRecord.data : null;
-          const data = respData ?? respUnknown;
-
-          if (isRecord(data) && typeof data.activeRoundId === 'string') {
-            setActiveRoundId(data.activeRoundId);
-          }
-          if (isRecord(data) && data.snapshot) {
-            setInitialSnapshot(data.snapshot);
-            setGameData(data.snapshot);
-          }
-
-          ensuredJoinForSessionRef.current = forcedSid;
-        } catch (joinErr) {
-          // Not fatal: state sync periodic refresh will still converge.
-          const msg = joinErr instanceof Error ? joinErr.message : String(joinErr);
-          console.warn('[GamePlay] forced join failed (best-effort):', msg);
-        }
-      }
-
-      const ack = await gamesSocket.emit('game:action', {
-        sessionId: sid,
-        // Coffee Roulette reducer does not rely on a specific round id.
-        // Passing a stale `activeRoundId` can cause "Round not found in this session" socket errors.
-        roundId: actionType.startsWith('coffee:') ? undefined : (activeRoundId || undefined),
-        actionType,
-        payload: isRecord(payload) ? payload : {},
-      });
-    },
-    [
-      activeRoundId,
-      config.gameTypeKey,
-      eventId,
-      gamesSocket,
-      sessionId,
-      setActiveRoundId,
-      setGameData,
-      setInitialSnapshot,
-      setSessionId,
-      showError,
-    ],
-  );
 
   switch (config.gameTypeKey) {
     case GAME_TYPES.TWO_TRUTHS:
