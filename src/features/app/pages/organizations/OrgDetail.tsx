@@ -10,6 +10,7 @@ import { FormModal, ConfirmModal } from '@/components/modals/ConfirmModal';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PageShell, PageHeader, DashStat, ChartCard } from '@/features/app/components/dashboard';
 import { TableSkeleton, StatCardSkeleton } from '@/components/loading/Skeletons';
 import { cn } from '@/lib/utils';
@@ -228,6 +229,19 @@ export default function OrgDetail() {
         },
       }
     );
+  };
+
+  const resetInviteForm = () => {
+    setEmailInput('');
+    setSingleDepartment('General');
+    setBulkInput('');
+    setBulkMessage(null);
+    setExcelMessage(null);
+    setPendingInvites([]);
+
+    if (invitesFileInputRef.current) {
+      invitesFileInputRef.current.value = '';
+    }
   };
 
   const handleRemove = () => {
@@ -550,7 +564,13 @@ export default function OrgDetail() {
         </ChartCard>
       </motion.div>
 
-      <FormModal open={showInvite} onClose={() => setShowInvite(false)} title={t('organizations.inviteMember')}
+      <FormModal
+        open={showInvite}
+        onClose={() => {
+          resetInviteForm();
+          setShowInvite(false);
+        }}
+        title={t('organizations.inviteMember')}
         footer={
           <div className="flex gap-2 w-full justify-end">
             <Button variant="outline" onClick={() => setShowInvite(false)} className="text-body-sm">{t('common.cancel')}</Button>
@@ -570,19 +590,23 @@ export default function OrgDetail() {
                 onChange={e => setEmailInput(e.target.value)}
                 placeholder={t('organizations.inviteEmailPlaceholder')}
               />
-              <Input
-            className="h-10 text-body-sm"
+              <Select
                 value={singleDepartment}
-                onChange={(e) => setSingleDepartment(e.target.value)}
-                placeholder={t('departments.placeholder')}
-                list="org-departments"
-              />
-              <datalist id="org-departments">
-                <option value="General" />
-                {(departments || []).map((d) => (
-                  <option key={d.id} value={d.name} />
-                ))}
-              </datalist>
+                onValueChange={(v) => setSingleDepartment(v)}
+                disabled={departmentsLoading}
+              >
+                <SelectTrigger className="h-10 text-body-sm">
+                  <SelectValue placeholder={t('departments.placeholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="General">General</SelectItem>
+                  {(departments || []).map((d) => (
+                    <SelectItem key={d.id} value={d.name}>
+                      {d.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex justify-end">
               <Button variant="outline" size="sm" className="h-9 gap-2" onClick={handleAddSingle} disabled={!emailInput.trim()}>
