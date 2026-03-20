@@ -7,12 +7,11 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Coffee, Users, ArrowRight, User, Clock, Mic } from 'lucide-react';
+import { Coffee, Users, ArrowRight, Clock, Mic } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
-import { useRoomTheme, useThemeVariables } from '../theme/RoomThemeContext';
+import { useThemeVariables } from '../theme/RoomThemeContext';
 import { GameActionButton } from '../../shared';
 
 interface Participant {
@@ -53,15 +52,6 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
     return pairs;
   }, [participants, participantCount]);
 
-  const avatarFallback = (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
-    >
-      <User className="w-4 h-4" />
-    </div>
-  );
-
   return (
     <div
       style={themeVars as React.CSSProperties}
@@ -79,7 +69,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
           animate={{ opacity: 1, y: 0 }}
           className="px-4 py-2.5 border-b"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.90) 0%, var(--color-surface) 100%)',
             borderColor: 'var(--color-primary-light)',
             backdropFilter: 'blur(10px)',
           }}
@@ -102,7 +92,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 <div
                   className="px-4 py-2 rounded-lg text-center"
                   style={{
-                    backgroundColor: 'var(--color-primary-light)',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, var(--color-surface-light) 100%)',
                     border: '1px solid var(--color-primary-light)',
                   }}
                 >
@@ -117,8 +107,8 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 <div
                   className="px-4 py-2 rounded-lg text-center"
                   style={{
-                    backgroundColor: 'var(--color-accent-light)',
-                    border: '1px solid var(--color-accent-light)',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, var(--color-surface-light) 100%)',
+                    border: '1px solid var(--color-accent)',
                   }}
                 >
                   <p className="text-xs font-medium" style={{ color: 'var(--color-text)' }}>
@@ -132,8 +122,11 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
             </div>
             <div className="mt-3 flex items-center gap-2 flex-wrap">
               <div
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-white/50"
-                style={{ borderColor: 'var(--color-primary-light)' }}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50"
+                style={{
+                  borderColor: 'var(--color-primary-light)',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.75) 0%, var(--color-surface) 100%)',
+                }}
               >
                 <Clock className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
                 <span className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
@@ -141,8 +134,11 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 </span>
               </div>
               <div
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-white/50"
-                style={{ borderColor: 'var(--color-accent-light)' }}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50"
+                style={{
+                  borderColor: 'var(--color-accent)',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.75) 0%, var(--color-surface) 100%)',
+                }}
               >
                 <Mic className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
                 <span className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
@@ -151,8 +147,11 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
               </div>
               {!canStart && (
                 <div
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-white/50"
-                  style={{ borderColor: 'var(--color-primary-light)' }}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50"
+                  style={{
+                    borderColor: 'var(--color-primary-light)',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.75) 0%, var(--color-surface) 100%)',
+                  }}
                 >
                   <span className="text-xs font-semibold" style={{ color: 'var(--color-text)' }}>
                     {t('gamePlay.coffeeRoulette.lobby.needMore', { count: missingParticipantsToStart })}
@@ -172,8 +171,12 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0 h-full"
-                style={{ padding: 16 }}
+                className="rounded-2xl border shadow-sm flex flex-col min-h-0 h-full"
+                style={{
+                  padding: 16,
+                  borderColor: 'var(--color-primary-light)',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, var(--color-surface-light) 100%)',
+                }}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -202,7 +205,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.25, delay: idx * 0.01 }}
                         title={participant.name}
-                        className="flex items-center justify-center"
+                        className="flex flex-col items-center justify-center gap-1.5"
                       >
                         <Avatar
                           className="w-9 h-9 ring-1"
@@ -224,9 +227,15 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                               fontWeight: '700',
                             }}
                           >
-                            {avatarFallback}
+                            {participant.name?.slice(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
+                        <p
+                          className="text-[10px] font-semibold text-center truncate"
+                          style={{ color: 'var(--color-text-light)', maxWidth: 48 }}
+                        >
+                          {participant.name}
+                        </p>
                       </motion.div>
                     ))}
                   </div>
@@ -238,8 +247,12 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.08 }}
-                className="rounded-2xl border border-border/60 bg-white/60 shadow-sm flex flex-col min-h-0 h-full"
-                style={{ padding: 16 }}
+                className="rounded-2xl border shadow-sm flex flex-col min-h-0 h-full"
+                style={{
+                  padding: 16,
+                  borderColor: 'var(--color-primary-light)',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, var(--color-surface-light) 100%)',
+                }}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -279,7 +292,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                               hoveredPairIndex === idx ? 'shadow-md scale-105' : 'shadow-sm'
                             )}
                             style={{
-                              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                              backgroundColor: 'var(--color-background-light)',
                               border: `2px solid ${
                                 hoveredPairIndex === idx ? 'var(--color-primary)' : 'var(--color-primary-light)'
                               }`,
@@ -306,7 +319,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                                     fontWeight: '700',
                                   }}
                                 >
-                                  {avatarFallback}
+                                  {pair.person1.name?.slice(0, 2).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex-1 min-w-0">
@@ -350,7 +363,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                                     fontWeight: '700',
                                   }}
                                 >
-                                  {avatarFallback}
+                                  {pair.person2.name?.slice(0, 2).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
                             </div>
@@ -370,7 +383,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                     animate={{ opacity: 1 }}
                     className="mt-2 p-4 rounded-2xl text-center"
                     style={{
-                      backgroundColor: 'var(--color-surface-light)',
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, var(--color-surface) 100%)',
                       border: `1px solid var(--color-primary-light)`,
                     }}
                   >
@@ -384,8 +397,8 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
                     animate={{ opacity: 1 }}
                     className="mt-2 p-4 rounded-2xl text-center"
                     style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.65)',
-                      border: `1px solid var(--color-primary-light)`,
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.80) 0%, var(--color-surface-light) 100%)',
+                      border: '1px solid var(--color-accent)',
                     }}
                   >
                     <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
@@ -405,7 +418,7 @@ export function OfficeLobby({ participants, onStartMatching, isLoading = false }
           transition={{ duration: 0.4, delay: 0.2 }}
           className="px-5 py-3 border-t flex-shrink-0"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.90) 0%, var(--color-surface) 100%)',
             borderColor: 'var(--color-primary-light)',
             backdropFilter: 'blur(10px)',
           }}
