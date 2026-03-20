@@ -20,6 +20,8 @@ import { ROUTES } from '@/constants/routes';
 import { eventsApi } from '@/features/app/api/events';
 import { gamesApi } from '@/features/app/api/games';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
+import { useOrgDepartments } from '@/hooks/queries';
+import type { Department } from '@/types';
 import { ACTIVITIES as CATALOG_ACTIVITIES } from '@/features/app/data/activities';
 
 const ACTIVITIES: Record<string, { name: string; icon: typeof MessageSquare; color: string; bgColor: string; type: 'sync' | 'async'; duration: string }> = {
@@ -75,16 +77,23 @@ export default function LaunchActivity() {
   const [totalRounds, setTotalRounds] = useState('4');
   const [emailInput, setEmailInput] = useState('');
   const [emails, setEmails] = useState<string[]>([]);
+  const [enableDepartmentInvites, setEnableDepartmentInvites] = useState(true);
+  const [enableUserInvites, setEnableUserInvites] = useState(false);
+  const [selectedDepartmentIds, setSelectedDepartmentIds] = useState<string[]>([]);
   const [allowNickname, setAllowNickname] = useState(true);
   const [launching, setLaunching] = useState(false);
   const [error, setError] = useState('');
   const [invitationProgress, setInvitationProgress] = useState({ sent: 0, total: 0 });
 
   const { user } = useAuth();
+
+  const orgId = user?.organization_id || '';
+  const { data: departments, isLoading: departmentsLoading } = useOrgDepartments(orgId);
   
   // Prepopulate invite emails from onboarding (per-organization cache)
   useEffect(() => {
     if (!user?.organization_id) return;
+    if (!enableUserInvites) return;
     try {
       const raw = localStorage.getItem(`onboarding_team_invites_${user.organization_id}`);
       if (!raw) return;
@@ -96,7 +105,15 @@ export default function LaunchActivity() {
       // Best-effort only; ignore parse errors
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.organization_id]);
+  }, [user?.organization_id, enableUserInvites]);
+
+  // When department invites are enabled (default), select all departments by default.
+  useEffect(() => {
+    if (!enableDepartmentInvites) return;
+    if (departmentsLoading) return;
+    if (!departments || departments.length === 0) return;
+    setSelectedDepartmentIds((prev) => (prev.length > 0 ? prev : (departments as Department[]).map((d) => d.id)));
+  }, [departments, departmentsLoading, enableDepartmentInvites]);
 
   if (!activity) { navigate(ROUTES.GAMES); return null; }
   if (isComingSoon) {
@@ -160,7 +177,6 @@ export default function LaunchActivity() {
     
     try {
       // Get organization ID from auth context
-      const orgId = user?.organization_id;
       if (!orgId) {
         throw new Error(
           t('activities.launch.errors.missingOrgId', {
@@ -204,6 +220,10 @@ export default function LaunchActivity() {
         start_time: startTimeIso,
         end_time: endTimeIso,
         allow_guests: allowNickname,
+        ...(enableDepartmentInvites && selectedDepartmentIds.length > 0
+          ? { invite_department_ids: selectedDepartmentIds }
+          : {}),
+        ...(enableUserInvites && emails.length > 0 ? { invites: emails } : {}),
         ...(id === '1' ? { max_rounds: parseInt(totalRounds, 10) } : {}),
       };
 
@@ -232,45 +252,6 @@ export default function LaunchActivity() {
         } catch (gameErr) {
           // Game session creation failures should not block event creation or navigation.
           console.warn('[LaunchActivity] Failed to create game session:', (gameErr as any)?.message);
-        }
-      }
-
-      // Send invitations with better error handling
-      if (emails.length > 0) {
-        setInvitationProgress({ sent: 0, total: emails.length });
-        
-        // Use Promise.allSettled for better error aggregation
-        const invitePromises = emails.map((email, i) =>
-          eventsApi.invite(createdEvent.id, email, i18n.language?.substring(0, 2) || 'en')
-            .then(() => {
-              setInvitationProgress({ sent: i + 1, total: emails.length });
-              return { success: true, email };
-            })
-            .catch((err) => {
-              console.error(`Failed to invite ${email}:`, err);
-              return { success: false, email };
-            })
-        );
-
-        const results = await Promise.all(invitePromises);
-        const failedEmails = results
-          .filter(r => !r.success)
-          .map(r => r.email);
-
-        // Show warning for partial failures, but only prevent navigation on ALL failures
-        if (failedEmails.length > 0 && failedEmails.length < emails.length) {
-          setError(
-            t('activities.launch.errors.inviteSomeFailed', {
-              defaultValue: 'Some invitations failed ({{emails}}). The event was created successfully.',
-              emails: failedEmails.join(', '),
-            })
-          );
-        } else if (failedEmails.length === emails.length) {
-          throw new Error(
-            t('activities.launch.errors.inviteAllFailed', {
-              defaultValue: 'Failed to send invitations. Please try again.',
-            })
-          );
         }
       }
 
@@ -502,54 +483,138 @@ export default function LaunchActivity() {
               </p>
             </div>
 
-            <div className="space-y-1">
-              <Label className="text-[13px] font-medium">
-                {t('activities.launch.invite.emailAddresses', { defaultValue: 'Email Addresses' })}
-              </Label>
-              <div className="flex gap-1.5">
-                <Input value={emailInput} onChange={e => setEmailInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addEmail())}
-                  className="h-10 text-[13px] flex-1 min-w-0" placeholder={t('activities.launch.invite.emailPlaceholder', { defaultValue: 'colleague@company.com' })} />
-                <Button onClick={addEmail} className="h-10 text-[13px] px-4 shrink-0">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-[10px] sm:text-[11px] text-muted-foreground">
-                {t('activities.launch.invite.addHint', { defaultValue: 'Press Enter or click + to add.' })}
-              </p>
+            {/* Invite mode */}
+            <div className="flex flex-wrap gap-2 items-center">
+              <button
+                type="button"
+                onClick={() => setEnableDepartmentInvites((v) => !v)}
+                className={[
+                  'px-3 py-1.5 rounded-full border text-[11px] transition-colors',
+                  enableDepartmentInvites
+                    ? 'border-primary text-primary bg-primary/5'
+                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
+                ].join(' ')}
+              >
+                {t('events.inviteByDepartments', { defaultValue: 'Invite by departments' })}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEnableUserInvites((v) => !v)}
+                className={[
+                  'px-3 py-1.5 rounded-full border text-[11px] transition-colors',
+                  enableUserInvites
+                    ? 'border-primary text-primary bg-primary/5'
+                    : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
+                ].join(' ')}
+              >
+                {t('events.inviteByUsers', { defaultValue: 'Invite by users' })}
+              </button>
             </div>
 
-            <div className="space-y-1">
-              <Label className="text-[13px] font-medium">
-                {t('activities.launch.invite.pasteList', { defaultValue: 'Or paste a list' })}
-              </Label>
-              <Textarea placeholder={t('activities.launch.invite.pastePlaceholder', { defaultValue: 'email1@company.com, email2@company.com, ...' })}
-                rows={2} className="text-[13px]"
-                onBlur={e => { if (e.target.value) { addBulk(e.target.value); e.target.value = ''; }}} />
-            </div>
-
-            {emails.length > 0 && (
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[12px] font-medium text-foreground">
-                    {t('activities.launch.invite.invitedCount', { defaultValue: '{{count}} invited', count: emails.length })}
-                  </p>
-                  <Button variant="ghost" size="sm" className="h-7 text-[11px] text-destructive" onClick={() => setEmails([])}>
-                    {t('activities.launch.invite.clearAll', { defaultValue: 'Clear all' })}
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-1 max-h-[200px] overflow-y-auto">
-                  {emails.map(email => (
-                    <Badge key={email} variant="secondary" className="text-[10px] sm:text-[11px] gap-1 pl-2 sm:pl-2 pr-1.5 py-0.5 h-auto">
-                      <Mail className="h-3 w-3 text-muted-foreground" />
-                      <span className="truncate max-w-[120px] sm:max-w-none">{email}</span>
-                      <button onClick={() => removeEmail(email)} className="ml-0.5 hover:text-destructive transition-colors">
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
+            {enableDepartmentInvites && (
+              <div className="space-y-1">
+                <Label className="text-[13px] font-medium">
+                  {t('events.selectDepartments', { defaultValue: 'Select departments' })}
+                </Label>
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                  {t('events.inviteByDepartmentsHelp')}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {(departments as Department[] | undefined || []).map((dept) => (
+                    <label
+                      key={dept.id}
+                      className="flex items-center gap-2 border rounded px-2 py-1 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedDepartmentIds.includes(dept.id)}
+                        onChange={(e) => {
+                          setSelectedDepartmentIds((sel) =>
+                            e.target.checked
+                              ? [...sel, dept.id]
+                              : sel.filter((id) => id !== dept.id)
+                          );
+                        }}
+                      />
+                      <span className="text-sm">{dept.name}</span>
+                    </label>
                   ))}
+                  {departmentsLoading && (
+                    <span className="text-xs text-muted-foreground">{t('common.loading', { defaultValue: 'Loading...' })}</span>
+                  )}
                 </div>
               </div>
+            )}
+
+            {enableUserInvites && (
+              <>
+                <div className="space-y-1">
+                  <Label className="text-[13px] font-medium">
+                    {t('activities.launch.invite.emailAddresses', { defaultValue: 'Email Addresses' })}
+                  </Label>
+                  <div className="flex gap-1.5">
+                    <Input
+                      value={emailInput}
+                      onChange={e => setEmailInput(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addEmail())}
+                      className="h-10 text-[13px] flex-1 min-w-0"
+                      placeholder={t('activities.launch.invite.emailPlaceholder', { defaultValue: 'colleague@company.com' })}
+                    />
+                    <Button onClick={addEmail} className="h-10 text-[13px] px-4 shrink-0">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+                    {t('activities.launch.invite.addHint', { defaultValue: 'Press Enter or click + to add.' })}
+                  </p>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-[13px] font-medium">
+                    {t('activities.launch.invite.pasteList', { defaultValue: 'Or paste a list' })}
+                  </Label>
+                  <Textarea
+                    placeholder={t('activities.launch.invite.pastePlaceholder', {
+                      defaultValue: 'email1@company.com, email2@company.com, ...'
+                    })}
+                    rows={2}
+                    className="text-[13px]"
+                    onBlur={e => {
+                      if (e.target.value) {
+                        addBulk(e.target.value);
+                        e.target.value = '';
+                      }
+                    }}
+                  />
+                </div>
+
+                {emails.length > 0 && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[12px] font-medium text-foreground">
+                        {t('activities.launch.invite.invitedCount', {
+                          defaultValue: '{{count}} invited',
+                          count: emails.length,
+                        })}
+                      </p>
+                      <Button variant="ghost" size="sm" className="h-7 text-[11px] text-destructive" onClick={() => setEmails([])}>
+                        {t('activities.launch.invite.clearAll', { defaultValue: 'Clear all' })}
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-1 max-h-[200px] overflow-y-auto">
+                      {emails.map(email => (
+                        <Badge key={email} variant="secondary" className="text-[10px] sm:text-[11px] gap-1 pl-2 sm:pl-2 pr-1.5 py-0.5 h-auto">
+                          <Mail className="h-3 w-3 text-muted-foreground" />
+                          <span className="truncate max-w-[120px] sm:max-w-none">{email}</span>
+                          <button onClick={() => removeEmail(email)} className="ml-0.5 hover:text-destructive transition-colors">
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
 
             <Separator />
@@ -570,7 +635,14 @@ export default function LaunchActivity() {
               <Button variant="outline" onClick={() => setStep('configure')} className="h-10 text-[13px] gap-2">
                 <ArrowLeft className="h-4 w-4" /> {t('common.back', { defaultValue: 'Back' })}
               </Button>
-              <Button onClick={() => setStep('review')} disabled={emails.length === 0} className="h-10 px-6 text-[13px] gap-2">
+              <Button
+                onClick={() => setStep('review')}
+                disabled={
+                  (!enableDepartmentInvites || selectedDepartmentIds.length === 0) &&
+                  (!enableUserInvites || emails.length === 0)
+                }
+                className="h-10 px-6 text-[13px] gap-2"
+              >
                 {t('activities.launch.actions.nextReview', { defaultValue: 'Next: Review' })} <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -643,7 +715,21 @@ export default function LaunchActivity() {
                 )}
               </div>
 
-              {emails.length > 0 && (
+              {enableDepartmentInvites && selectedDepartmentIds.length > 0 && (
+                <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
+                    {t('events.selectDepartments', { defaultValue: 'Departments selected' })}
+                  </p>
+                  <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
+                    {t('departmentsSelected', {
+                      defaultValue: '{{count}} department(s) selected',
+                      count: selectedDepartmentIds.length,
+                    })}
+                  </p>
+                </div>
+              )}
+
+              {enableUserInvites && emails.length > 0 && (
                 <div className="p-2.5 sm:p-3 rounded-xl bg-muted/30 border border-border">
                   <p className="text-[10px] sm:text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
                     {t('activities.launch.review.invited', { defaultValue: 'Invited ({{count}})', count: emails.length })}
@@ -670,8 +756,13 @@ export default function LaunchActivity() {
               </div>
               <div className="min-w-0">
                 <p className="text-[12px] sm:text-[13px] font-semibold text-foreground">
-                  {emails.length > 0
-                    ? t('activities.launch.review.inviteEmailCount', { defaultValue: '{{count}} team members will receive an invite email', count: emails.length })
+                  {(enableDepartmentInvites && selectedDepartmentIds.length > 0) || (enableUserInvites && emails.length > 0)
+                    ? (enableUserInvites && emails.length > 0
+                      ? t('activities.launch.review.inviteEmailCount', {
+                        defaultValue: '{{count}} team members will receive an invite email',
+                        count: emails.length,
+                      })
+                      : t('activities.launch.review.noInvites', { defaultValue: 'Invites will be sent based on your department selection.' }))
                     : t('activities.launch.review.noInvites', { defaultValue: 'No invites — share the link manually' })}
                 </p>
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground">
