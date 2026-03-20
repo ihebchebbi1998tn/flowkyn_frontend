@@ -2562,6 +2562,62 @@
       "summaryTitle": "Resumen para el liderazgo",
       "summaryBody": "Comparte tres puntos: lo que simulamos, lo que aprendiste sobre cómo trabajas bajo presión y lo que cambiarás como resultado."
     }
+  },
+  "activityFeedback": {
+    "categories": {
+      "experience": "Experiencia general",
+      "ui": "UI / diseño",
+      "gameplay": "Juego",
+      "voice_audio": "Voz / audio",
+      "other": "Otro"
+    },
+    "modal": {
+      "title": "Ayúdanos a mejorar",
+      "subtitle": "Antes de salir, califica tu experiencia y deja un comentario rápido.",
+      "missingParticipant": "No pudimos identificar tu participante. Aún puedes omitir.",
+      "ratingLabel": "Calificación",
+      "ratingAria": "{{n}} estrellas",
+      "categoryLabel": "Categoría",
+      "commentLabel": "Comentario",
+      "commentPlaceholder": "¿Qué salió bien? ¿Qué podemos mejorar?",
+      "skip": "Omitir",
+      "submit": "Enviar feedback",
+      "submitting": "Enviando…",
+      "submitFailed": "No se pudo enviar el feedback",
+      "successTitle": "¡Gracias por tu feedback!",
+      "successDescription": "Te redirigimos de vuelta al evento."
+    },
+    "admin": {
+      "title": "Feedback de la actividad",
+      "subtitle": "Calificaciones y comentarios enviados por los usuarios",
+      "searchPlaceholder": "Buscar por nombre, tipo de juego o comentario...",
+      "filters": {
+        "rating": "Calificación",
+        "category": "Categoría",
+        "all": "Todos"
+      },
+      "table": {
+        "reporter": "Reportante",
+        "rating": "Calificación",
+        "category": "Categoría",
+        "comment": "Comentario",
+        "game": "Juego",
+        "source": "Origen",
+        "createdAt": "Enviado",
+        "actions": "Acciones",
+        "viewDetails": "Ver detalles"
+      },
+      "stats": {
+        "total": "Total de feedback",
+        "avgRating": "Calificación promedio"
+      },
+      "buttons": {
+        "prev": "Anterior",
+        "next": "Siguiente",
+        "clearFilters": "Borrar filtros"
+      },
+      "noResults": "No se encontró feedback"
+    }
   }
 }
 

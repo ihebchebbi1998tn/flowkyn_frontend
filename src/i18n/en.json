@@ -2555,4 +2555,61 @@
     "close": "Close",
     "last": "Finish"
   }
+  ,
+  "activityFeedback": {
+    "categories": {
+      "experience": "Overall experience",
+      "ui": "UI / design",
+      "gameplay": "Gameplay",
+      "voice_audio": "Voice / audio",
+      "other": "Other"
+    },
+    "modal": {
+      "title": "Help us improve",
+      "subtitle": "Before you leave, rate your experience and leave a quick comment.",
+      "missingParticipant": "Unable to identify your participant. You can still skip.",
+      "ratingLabel": "Rating",
+      "ratingAria": "{{n}} stars",
+      "categoryLabel": "Category",
+      "commentLabel": "Comment",
+      "commentPlaceholder": "What went well? What can we improve?",
+      "skip": "Skip",
+      "submit": "Submit feedback",
+      "submitting": "Submitting…",
+      "submitFailed": "Failed to submit feedback",
+      "successTitle": "Thanks for your feedback!",
+      "successDescription": "Redirecting you back to the event."
+    },
+    "admin": {
+      "title": "Activity Feedback",
+      "subtitle": "Ratings and comments submitted by users",
+      "searchPlaceholder": "Search by name, game type, or comment...",
+      "filters": {
+        "rating": "Rating",
+        "category": "Category",
+        "all": "All"
+      },
+      "table": {
+        "reporter": "Reporter",
+        "rating": "Rating",
+        "category": "Category",
+        "comment": "Comment",
+        "game": "Game",
+        "source": "Source",
+        "createdAt": "Submitted",
+        "actions": "Actions",
+        "viewDetails": "View details"
+      },
+      "stats": {
+        "total": "Total feedback",
+        "avgRating": "Average rating"
+      },
+      "buttons": {
+        "prev": "Prev",
+        "next": "Next",
+        "clearFilters": "Clear filters"
+      },
+      "noResults": "No feedback found"
+    }
+  }
 }

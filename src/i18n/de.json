@@ -2069,4 +2069,61 @@
     "close": "Schließen",
     "last": "Fertig"
   }
+  ,
+  "activityFeedback": {
+    "categories": {
+      "experience": "Gesamterlebnis",
+      "ui": "UI / Design",
+      "gameplay": "Spielablauf",
+      "voice_audio": "Stimme / Audio",
+      "other": "Sonstiges"
+    },
+    "modal": {
+      "title": "Hilf uns, es besser zu machen",
+      "subtitle": "Bevor du gehst: Bewerte deine Erfahrung und hinterlasse einen kurzen Kommentar.",
+      "missingParticipant": "Konnte deinen Teilnehmer nicht identifizieren. Du kannst auch überspringen.",
+      "ratingLabel": "Bewertung",
+      "ratingAria": "{{n}} Sterne",
+      "categoryLabel": "Kategorie",
+      "commentLabel": "Kommentar",
+      "commentPlaceholder": "Was lief gut? Was können wir verbessern?",
+      "skip": "Überspringen",
+      "submit": "Feedback senden",
+      "submitting": "Senden…",
+      "submitFailed": "Feedback konnte nicht gesendet werden",
+      "successTitle": "Danke für dein Feedback!",
+      "successDescription": "Wir leiten dich zurück zum Event."
+    },
+    "admin": {
+      "title": "Feedback zur Aktivität",
+      "subtitle": "Bewertungen und Kommentare, die von Nutzern gesendet wurden",
+      "searchPlaceholder": "Suche nach Name, Spieltyp oder Kommentar...",
+      "filters": {
+        "rating": "Bewertung",
+        "category": "Kategorie",
+        "all": "Alle"
+      },
+      "table": {
+        "reporter": "Meldender",
+        "rating": "Bewertung",
+        "category": "Kategorie",
+        "comment": "Kommentar",
+        "game": "Spiel",
+        "source": "Quelle",
+        "createdAt": "Eingereicht",
+        "actions": "Aktionen",
+        "viewDetails": "Details ansehen"
+      },
+      "stats": {
+        "total": "Gesamtes Feedback",
+        "avgRating": "Durchschnittsbewertung"
+      },
+      "buttons": {
+        "prev": "Zurück",
+        "next": "Weiter",
+        "clearFilters": "Filter löschen"
+      },
+      "noResults": "Kein Feedback gefunden"
+    }
+  }
 }

@@ -27,6 +27,7 @@ import { OfficeLobby } from './phases/OfficeLobby';
 import { MeetingRoom } from './phases/MeetingRoom';
 import { OfficeExitAnimation } from './phases/OfficeExitAnimation';
 import { getThemeForPair } from './theme/roomThemes';
+import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
 
 type GamePhase = 'waiting' | 'matching' | 'chatting' | 'complete';
 
@@ -55,6 +56,7 @@ interface CoffeeRouletteBoardProps {
   gameData?: any;
   onEmitAction: (actionType: string, payload?: any) => Promise<void>;
   gamesSocket?: any; // Socket dfor listening to real-time updates
+  onRequestActivityExitWithFeedback?: (source: ActivityFeedbackSource) => void;
 }
 
 export function CoffeeRouletteBoard({
@@ -66,6 +68,7 @@ export function CoffeeRouletteBoard({
   gameData,
   onEmitAction,
   gamesSocket,
+  onRequestActivityExitWithFeedback,
 }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
   const snapshot: CoffeeSnapshot | null = (gameData?.kind === GAME_TYPES.COFFEE_ROULETTE
@@ -443,7 +446,10 @@ export function CoffeeRouletteBoard({
           duration={elapsedSeconds}
           promptsUsed={promptsUsed}
           onReset={handleReset}
-          onExit={handleEnd}
+          onExit={() => {
+            onRequestActivityExitWithFeedback?.('activity_completed');
+            void handleEnd();
+          }}
           isLoading={isLoading}
         />
       </RoomThemeProvider>

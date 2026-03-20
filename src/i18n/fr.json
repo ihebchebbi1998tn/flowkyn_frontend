@@ -2085,4 +2085,61 @@
     "close": "Fermer",
     "last": "Terminer"
   }
+  ,
+  "activityFeedback": {
+    "categories": {
+      "experience": "Expérience globale",
+      "ui": "Interface / design",
+      "gameplay": "Jeu",
+      "voice_audio": "Voix / audio",
+      "other": "Autre"
+    },
+    "modal": {
+      "title": "Aidez-nous à nous améliorer",
+      "subtitle": "Avant de partir, évaluez votre expérience et laissez un bref commentaire.",
+      "missingParticipant": "Impossible d'identifier votre participant. Vous pouvez quand même passer.",
+      "ratingLabel": "Note",
+      "ratingAria": "{{n}} étoiles",
+      "categoryLabel": "Catégorie",
+      "commentLabel": "Commentaire",
+      "commentPlaceholder": "Qu’est-ce qui a bien fonctionné ? Que pouvons-nous améliorer ?",
+      "skip": "Passer",
+      "submit": "Envoyer le feedback",
+      "submitting": "Envoi…",
+      "submitFailed": "Échec de l’envoi du feedback",
+      "successTitle": "Merci pour votre retour !",
+      "successDescription": "Retour vers l’événement."
+    },
+    "admin": {
+      "title": "Feedback d’activité",
+      "subtitle": "Notes et commentaires envoyés par les utilisateurs",
+      "searchPlaceholder": "Rechercher par nom, type de jeu ou commentaire...",
+      "filters": {
+        "rating": "Note",
+        "category": "Catégorie",
+        "all": "Tous"
+      },
+      "table": {
+        "reporter": "Signataire",
+        "rating": "Note",
+        "category": "Catégorie",
+        "comment": "Commentaire",
+        "game": "Jeu",
+        "source": "Source",
+        "createdAt": "Envoyé le",
+        "actions": "Actions",
+        "viewDetails": "Voir les détails"
+      },
+      "stats": {
+        "total": "Total retours",
+        "avgRating": "Note moyenne"
+      },
+      "buttons": {
+        "prev": "Préc.",
+        "next": "Suiv.",
+        "clearFilters": "Effacer les filtres"
+      },
+      "noResults": "Aucun feedback trouvé"
+    }
+  }
 }

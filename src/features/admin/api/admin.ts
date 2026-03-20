@@ -145,6 +145,29 @@ export interface BugReportStats {
   averageResolutionTime: string;
 }
 
+export interface ActivityFeedbackEntry {
+  id: string;
+  event_id: string;
+  game_session_id: string | null;
+  game_type_key: string;
+  participant_id: string;
+  reporter_name: string;
+  reporter_avatar_url: string | null;
+  rating: number;
+  category: string | null;
+  comment: string;
+  source: string;
+  ip_address: string | null;
+  created_at: string;
+}
+
+export interface ActivityFeedbackStats {
+  totalCount: number;
+  avgRating: string | null;
+  ratingCounts: Record<string, number>;
+  categoryCounts: Array<{ category: string; count: number }>;
+}
+
 export const adminApi = {
   // Dashboard stats
   getStats: () =>
@@ -268,6 +291,24 @@ export const adminApi = {
 
   deleteAttachment: (reportId: string, attachmentId: string) =>
     adminClient.del(`/bug-reports/${reportId}/attachments/${attachmentId}`),
+
+  // Activity Feedback (end-of-activity ratings/comments)
+  listActivityFeedbacks: (page = 1, limit = 20, filters?: { eventId?: string; gameTypeKey?: string; rating?: number; category?: string; search?: string }) =>
+    adminClient.get<PaginatedResponse<ActivityFeedbackEntry>>('/activity-feedbacks/admin', {
+      page: String(page),
+      limit: String(limit),
+      ...(filters?.eventId ? { eventId: filters.eventId } : {}),
+      ...(filters?.gameTypeKey ? { gameTypeKey: filters.gameTypeKey } : {}),
+      ...(filters?.rating !== undefined ? { rating: String(filters.rating) } : {}),
+      ...(filters?.category ? { category: filters.category } : {}),
+      ...(filters?.search ? { search: filters.search } : {}),
+    }),
+
+  getActivityFeedbackStats: () =>
+    adminClient.get<{ data: ActivityFeedbackStats }>('/activity-feedbacks/admin/stats'),
+
+  getActivityFeedback: (id: string) =>
+    adminClient.get<{ data: ActivityFeedbackEntry }>(`/activity-feedbacks/${id}`),
 
   // System — /health is at root level, not under /v1
   getSystemHealth: async () => {

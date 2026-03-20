@@ -9,6 +9,7 @@ import { gamesApi } from '@/features/app/api/games';
 import type { GameTypeKey } from './gameTypes';
 import { GAME_TYPES, GAME_CONFIGS, GAME_KEY_TO_CONFIG_ID } from './gameTypes';
 import { toast } from 'sonner';
+import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
 
 type GameTypeRow = { id: string; key: GameTypeKey; name?: string };
 type GameSessionRow = { id: string; active_round_id?: string | null };
@@ -62,6 +63,7 @@ interface GameBoardRouterProps {
   refetchPosts: () => Promise<unknown>;
   gamesSocket: ReturnType<typeof import('@/hooks/useSocket')['useGamesSocket']>;
   showError: (err: unknown, label?: string) => void;
+  onRequestActivityExitWithFeedback: (source: ActivityFeedbackSource) => void;
 }
 
 export function GameBoardRouter({
@@ -88,6 +90,7 @@ export function GameBoardRouter({
   refetchPosts,
   gamesSocket,
   showError,
+  onRequestActivityExitWithFeedback,
 }: GameBoardRouterProps) {
   const { t } = useTranslation();
 
@@ -263,6 +266,7 @@ export function GameBoardRouter({
           gameData={gameData}
           onEmitAction={onEmitAction}
           gamesSocket={gamesSocket}
+          onRequestActivityExitWithFeedback={onRequestActivityExitWithFeedback}
         />
       );
     case GAME_TYPES.WINS_OF_WEEK:

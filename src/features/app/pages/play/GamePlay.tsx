@@ -25,6 +25,8 @@ import { gamesApi } from '@/features/app/api/games';
 import { GameBoardRouter } from './GameBoardRouter';
 import { GAME_CONFIGS } from './gameTypes';
 import { useSetGameHeader } from '@/features/app/layouts/gameHeaderContext';
+import { ActivityFeedbackModal } from '@/features/app/components/game/shared/ActivityFeedbackModal';
+import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
@@ -85,6 +87,10 @@ function GamePlayWithoutBoundary() {
   const [profile, setProfile] = useState<ProfileSetupData | null>(initialProfile);
   const [showProfileEdit, setShowProfileEdit] = useState(() => !initialProfile);
 
+  // Activity feedback modal (rate + comment) when user exits/ends an activity.
+  const [showActivityFeedback, setShowActivityFeedback] = useState(false);
+  const [activityFeedbackSource, setActivityFeedbackSource] = useState<ActivityFeedbackSource>('end_clicked');
+
   const [hasJoined, setHasJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [joinError, setJoinError] = useState('');
@@ -115,6 +121,15 @@ function GamePlayWithoutBoundary() {
     upsertProfile.mutate({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
     setShowProfileEdit(false);
   }, [eventId, upsertProfile]);
+
+  const requestActivityExitWithFeedback = useCallback((source: ActivityFeedbackSource) => {
+    setActivityFeedbackSource(source);
+    setShowActivityFeedback(true);
+  }, []);
+
+  const onFeedbackSubmitted = useCallback(() => {
+    navigate(ROUTES.EVENTS);
+  }, [navigate]);
 
   /** Join logic — ensures tokens are obtained and rooms joined */
   const handleJoin = useCallback(async () => {
@@ -549,7 +564,7 @@ function GamePlayWithoutBoundary() {
       gameType: lobbyGameType,
       eventId,
       participants,
-      onEnd: () => navigate(ROUTES.EVENTS),
+      onEnd: () => requestActivityExitWithFeedback('end_clicked'),
       currentUserName,
       currentUserAvatarUrl,
       onEditProfile: () => setShowProfileEdit(true),
@@ -567,6 +582,7 @@ function GamePlayWithoutBoundary() {
     currentUserName,
     currentUserAvatarUrl,
     navigate,
+    requestActivityExitWithFeedback,
     setGameHeader,
     (eventPublicObj as any)?.organization_logo,
     (eventPublicObj as any)?.organization_name,
@@ -718,7 +734,7 @@ function GamePlayWithoutBoundary() {
         gameType={activeConfig.type}
         eventId={eventId || ''}
         participants={participants}
-        onEnd={() => navigate(ROUTES.EVENTS)}
+        onEnd={() => requestActivityExitWithFeedback('end_clicked')}
         sidebar={chatSidebar}
         currentUserId={currentUserId}
         currentUserName={currentUserName}
@@ -754,6 +770,7 @@ function GamePlayWithoutBoundary() {
           refetchPosts={refetchPosts}
           gamesSocket={gamesSocket}
           showError={showError}
+          onRequestActivityExitWithFeedback={requestActivityExitWithFeedback}
         />
       </GamePlayShell>
 
@@ -770,6 +787,18 @@ function GamePlayWithoutBoundary() {
           />
         )}
       </AnimatePresence>
+
+      <ActivityFeedbackModal
+        open={showActivityFeedback}
+        onOpenChange={setShowActivityFeedback}
+        disabledReason={!participantId ? t('activityFeedback.modal.missingParticipant', { defaultValue: 'Unable to identify your participant. You can still skip.' }) : undefined}
+        eventId={eventId || ''}
+        participantId={participantId}
+        gameSessionId={sessionId}
+        gameTypeKey={activeConfig.gameTypeKey}
+        source={activityFeedbackSource}
+        onSubmitted={onFeedbackSubmitted}
+      />
     </div>
   );
 }

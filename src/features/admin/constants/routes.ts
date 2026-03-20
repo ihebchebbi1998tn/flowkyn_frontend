@@ -14,5 +14,6 @@ export const ADMIN_ROUTES = {
   EARLY_ACCESS: '/early-access',
   AUDIT_LOGS: '/audit-logs',
   BUG_REPORTS: '/bug-reports',
+  FEEDBACKS: '/feedbacks',
   SETTINGS: '/settings',
 } as const;

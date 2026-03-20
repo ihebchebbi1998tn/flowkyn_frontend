@@ -18,6 +18,7 @@ const AdminAuditLogs = lazy(() => import('./pages/AdminAuditLogs'));
 const AdminSettings = lazy(() => import('./pages/AdminSettings'));
 const AdminBugReportsPage = lazy(() => import('./pages/AdminBugReportsPage'));
 const AdminEarlyAccess = lazy(() => import('./pages/AdminEarlyAccess'));
+const AdminActivityFeedbacksPage = lazy(() => import('./pages/AdminActivityFeedbacksPage'));
 
 export const adminRoutes = (
   <>
@@ -38,6 +39,7 @@ export const adminRoutes = (
       <Route path={ADMIN_ROUTES.EARLY_ACCESS} element={<AdminEarlyAccess />} />
       <Route path={ADMIN_ROUTES.AUDIT_LOGS} element={<AdminAuditLogs />} />
       <Route path={ADMIN_ROUTES.BUG_REPORTS} element={<AdminBugReportsPage />} />
+      <Route path={ADMIN_ROUTES.FEEDBACKS} element={<AdminActivityFeedbacksPage />} />
       <Route path={ADMIN_ROUTES.SETTINGS} element={<AdminSettings />} />
     </Route>
   </>

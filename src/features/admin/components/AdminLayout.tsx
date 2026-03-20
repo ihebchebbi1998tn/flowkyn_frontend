@@ -1,9 +1,10 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Building2, Gamepad2, ScrollText,
-  Settings, LogOut, Shield, ChevronLeft, ChevronRight, Moon, Sun, MessageSquare, Inbox,
+  Settings, LogOut, Shield, ChevronLeft, ChevronRight, Moon, Sun, MessageSquare, Inbox, Star,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   { key: 'contacts', path: ADMIN_ROUTES.CONTACTS, icon: MessageSquare },
   { key: 'earlyAccess', path: ADMIN_ROUTES.EARLY_ACCESS, icon: Inbox },
   { key: 'auditLogs', path: ADMIN_ROUTES.AUDIT_LOGS, icon: ScrollText },
+  { key: 'feedbacks', path: ADMIN_ROUTES.FEEDBACKS, icon: Star },
   { key: 'settings', path: ADMIN_ROUTES.SETTINGS, icon: Settings },
 ];
 
@@ -32,12 +34,14 @@ const LABELS: Record<string, string> = {
   contacts: 'Contact Messages',
   earlyAccess: 'Early Access',
   auditLogs: 'Audit Logs',
+  feedbacks: 'Activity Feedback',
   settings: 'Settings',
 };
 
 export function AdminLayout() {
   const { user, logout } = useAdminAuth();
   const { resolvedTheme, setTheme } = useTheme();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -95,13 +99,15 @@ export function AdminLayout() {
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 )}
-                title={collapsed ? LABELS[key] : undefined}
+                title={
+                  collapsed ? (key === 'feedbacks' ? t('activityFeedback.admin.title', { defaultValue: LABELS[key] }) : LABELS[key]) : undefined
+                }
               >
                 <Icon
                   className={cn("h-[18px] w-[18px] shrink-0", active && "text-primary")}
                   strokeWidth={active ? 2.2 : 1.8}
                 />
-                {!collapsed && <span>{LABELS[key]}</span>}
+                {!collapsed && <span>{key === 'feedbacks' ? t('activityFeedback.admin.title', { defaultValue: LABELS[key] }) : LABELS[key]}</span>}
               </Link>
             );
           })}
