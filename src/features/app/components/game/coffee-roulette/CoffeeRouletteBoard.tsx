@@ -77,63 +77,24 @@ export function CoffeeRouletteBoard({
     (value): value is CoffeeSnapshot => !!value && typeof value === 'object' && (value as any).kind === GAME_TYPES.COFFEE_ROULETTE
   );
 
-  // UI state - Initialize before using in effects
+  // UI state
   const { isLoading, withLoading } = useGameLoadingState(false);
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
-  const [internalSnapshot, setInternalSnapshot] = useState<CoffeeSnapshot | null>(
-    initialSnapshot && (initialSnapshot as any).kind === GAME_TYPES.COFFEE_ROULETTE 
-      ? (initialSnapshot as CoffeeSnapshot)
-      : null
-  );
   const capturedElapsedRef = useRef(0);
   const matchingAutoStartKeyRef = useRef<string | null>(null);
 
-  // FIX #1: Listen for real-time game state updates from backend
-  // This ensures both users stay in sync when one user performs an action
-  useEffect(() => {
-    if (!gamesSocket?.isConnected || !sessionId) return;
-
-    let mounted = true;
-
-    const unsubscribe = gamesSocket.on('game:data', (data: any) => {
-      if (!mounted || data.sessionId !== sessionId) return;
-
-      // Only process Coffee Roulette state
-      if (data.gameData?.kind !== GAME_TYPES.COFFEE_ROULETTE) return;
-
-      const newSnapshot = data.gameData as CoffeeSnapshot;
-
-      console.log('[CoffeeRouletteBoard] State sync received:', {
-        phase: newSnapshot.phase,
-        pairCount: newSnapshot.pairs?.length,
-        promptsUsed: newSnapshot.promptsUsed,
-      });
-
-      // Update internal state to trigger re-renders
-      setInternalSnapshot(newSnapshot);
-    });
-
-    return () => {
-      mounted = false;
-      unsubscribe?.();
-    };
-  }, [gamesSocket?.isConnected, sessionId]);
-
-  // Use internal snapshot as source of truth when available
-  const activeSnapshot = internalSnapshot || snapshot;
-
-  // Phase state
-  const phase = (activeSnapshot?.phase || 'waiting') as GamePhase;
-  const pairs = activeSnapshot?.pairs || [];
+  // Phase state - snapshot is kept in sync by parent's GamePlay listener
+  const phase = (snapshot?.phase || 'waiting') as GamePhase;
+  const pairs = snapshot?.pairs || [];
   const myPair = pairs.find(
     (p) =>
       p.person1.participantId === currentUserId || p.person2.participantId === currentUserId
   ) || null;
 
   // Chat state
-  const chatEndsAt = activeSnapshot?.chatEndsAt || null;
-  const promptsUsed = activeSnapshot?.promptsUsed || 0;
-  const decisionRequired = !!activeSnapshot?.decisionRequired;
+  const chatEndsAt = snapshot?.chatEndsAt || null;
+  const promptsUsed = snapshot?.promptsUsed || 0;
+  const decisionRequired = !!snapshot?.decisionRequired;
 
   // Timer state
   const chatSecondsRemaining = usePhaseEndTimer(

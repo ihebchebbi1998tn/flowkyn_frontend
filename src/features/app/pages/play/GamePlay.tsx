@@ -572,6 +572,35 @@ function GamePlayWithoutBoundary() {
     if (gamesReady) setGamesSocketError(null);
   }, [gamesReady]);
 
+  // ─── Game state sync from WebSocket ────────────────────────────────────────
+  // Listen for real-time game state updates from the backend.
+  // This ensures all participants stay synchronized when actions are performed.
+  useEffect(() => {
+    if (!gamesSocket.isConnected || !sessionId) return;
+
+    let mounted = true;
+
+    const handleGameData = (data: any) => {
+      if (!mounted || data.sessionId !== sessionId) return;
+
+      console.log('[GamePlay] Game state sync received:', {
+        sessionId: data.sessionId,
+        gameKind: data.gameData?.kind,
+        phase: (data.gameData as any)?.phase,
+      });
+
+      // Update the parent game data state so all boards see the change
+      setGameData(data.gameData);
+    };
+
+    const unsub = gamesSocket.on('game:data', handleGameData);
+
+    return () => {
+      mounted = false;
+      unsub?.();
+    };
+  }, [gamesSocket.isConnected, sessionId]);
+
   // ─── Typing state ──────────────────────────────────────────────────────────
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const lastChatSentAtRef = useRef<number | null>(null);
