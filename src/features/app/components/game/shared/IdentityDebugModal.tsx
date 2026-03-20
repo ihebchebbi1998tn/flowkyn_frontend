@@ -48,6 +48,8 @@ export type IdentityDebugModalProps = {
 
   eventsSocketStatus: string;
   gamesSocketStatus: string;
+  eventsSocketAuthMode?: 'token' | 'identity_key_recovered' | 'unknown';
+  gamesSocketAuthMode?: 'token' | 'identity_key_recovered' | 'unknown';
 
   // Tokens
   localGuestTokenExists: boolean;
@@ -68,6 +70,15 @@ export type IdentityDebugModalProps = {
     topic: string;
     phase: string;
   } | null;
+  coffeePairsDebug?: Array<{
+    pairId: string;
+    person1ParticipantId: string;
+    person1Name: string;
+    person2ParticipantId: string;
+    person2Name: string;
+    topic: string;
+    phase: string;
+  }>;
 };
 
 export function IdentityDebugModal({
@@ -86,6 +97,8 @@ export function IdentityDebugModal({
   gameJoinAckReceived,
   eventsSocketStatus,
   gamesSocketStatus,
+  eventsSocketAuthMode = 'unknown',
+  gamesSocketAuthMode = 'unknown',
   localGuestTokenExists,
   guestTokenValue,
   accessTokenExists,
@@ -96,6 +109,7 @@ export function IdentityDebugModal({
   gameDataPreview,
   gamePhase,
   coffeePairDebug,
+  coffeePairsDebug = [],
 }: IdentityDebugModalProps) {
   const decoded = useMemo(() => {
     if (!guestTokenValue) return null;
@@ -113,7 +127,9 @@ export function IdentityDebugModal({
         game: { sessionId, gameJoinAckReceived },
         gameContext: { gameTypeKey, hasGameData: !!gameDataPreview, phase: gamePhase ?? undefined },
         coffeePair: coffeePairDebug,
+        coffeePairs: coffeePairsDebug,
         sockets: { eventsSocketStatus, gamesSocketStatus },
+        socketAuth: { events: eventsSocketAuthMode, games: gamesSocketAuthMode },
         participants: {
           count: participantCount,
           ids: participants.map((p) => p.id),
@@ -141,10 +157,13 @@ export function IdentityDebugModal({
     gameJoinAckReceived,
     eventsSocketStatus,
     gamesSocketStatus,
+    eventsSocketAuthMode,
+    gamesSocketAuthMode,
     gameTypeKey,
     gameDataPreview,
     gamePhase,
     coffeePairDebug,
+    coffeePairsDebug,
     participantCount,
     participants,
     localGuestTokenExists,
@@ -171,8 +190,18 @@ export function IdentityDebugModal({
       `sessionId: ${sessionId || 'null'} | gameJoinAckReceived: ${String(gameJoinAckReceived)}`,
       `gameType: ${gameTypeKey || 'unknown'} | hasGameData: ${String(!!gameDataPreview)} | phase: ${gamePhase ?? 'unknown'}`,
       `coffeePair: ${coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole}) -> ${coffeePairDebug.partnerParticipantId}` : 'none'}`,
+      `coffeePairs(${coffeePairsDebug.length}):`,
+      (coffeePairsDebug.length
+        ? coffeePairsDebug
+            .map(
+              (p, idx) =>
+                `${idx + 1}. ${p.pairId} | ${p.person1ParticipantId} (${p.person1Name || 'unknown'}) <-> ${p.person2ParticipantId} (${p.person2Name || 'unknown'}) | topic=${p.topic || 'none'} | phase=${p.phase}`,
+            )
+            .join('\n')
+        : 'none'),
       `eventsSocket: ${eventsSocketStatus}`,
       `gamesSocket: ${gamesSocketStatus}`,
+      `authMode: events=${eventsSocketAuthMode} | games=${gamesSocketAuthMode}`,
       '',
       `Event Participants (${participantCount})`,
       participants.map((p) => `${p.id} | ${p.name}${p.isHost ? ' | host' : ''}`).join('\n') || 'No participants',
@@ -197,7 +226,8 @@ export function IdentityDebugModal({
     eventId, isGuest, userId, participantId, displayName,
     hasJoined, eventRoomJoined, sessionId, gameJoinAckReceived,
     gameTypeKey, gameDataPreview, gamePhase, coffeePairDebug,
-    eventsSocketStatus, gamesSocketStatus,
+    coffeePairsDebug,
+    eventsSocketStatus, gamesSocketStatus, eventsSocketAuthMode, gamesSocketAuthMode,
     participantCount, participants,
     localGuestTokenExists, cookieBacked, guestIdentityKey, accessTokenExists,
     payloadText,
@@ -234,8 +264,20 @@ export function IdentityDebugModal({
               <div>
                 coffeePair: {coffeePairDebug ? `${coffeePairDebug.pairId} (${coffeePairDebug.myRole}) -> ${coffeePairDebug.partnerParticipantId}` : 'none'}
               </div>
+              <div>coffeePairs: {coffeePairsDebug.length}</div>
+              <pre className="text-[11px] leading-4 bg-black/5 rounded-lg p-2 border border-border max-h-32 overflow-y-auto whitespace-pre-wrap">
+                {coffeePairsDebug.length
+                  ? coffeePairsDebug
+                      .map(
+                        (p, idx) =>
+                          `${idx + 1}. ${p.pairId} | ${p.person1ParticipantId} (${p.person1Name || 'unknown'}) <-> ${p.person2ParticipantId} (${p.person2Name || 'unknown'}) | topic=${p.topic || 'none'} | phase=${p.phase}`,
+                      )
+                      .join('\n')
+                  : 'none'}
+              </pre>
               <div>eventsSocket: {eventsSocketStatus}</div>
               <div>gamesSocket: {gamesSocketStatus}</div>
+              <div>authMode: events={eventsSocketAuthMode} | games={gamesSocketAuthMode}</div>
             </div>
           </div>
 

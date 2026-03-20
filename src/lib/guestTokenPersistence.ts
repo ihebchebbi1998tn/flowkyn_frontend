@@ -48,6 +48,15 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
   }
 }
 
+/** Check if a guest token payload is still valid based on exp claim. */
+export function isGuestTokenValid(token: string): boolean {
+  const payload = decodeJwtPayload(token);
+  if (!payload) return false;
+  const exp = payload.exp;
+  if (typeof exp !== 'number') return false;
+  return exp * 1000 > Date.now();
+}
+
 /** Set guest token in localStorage and cookie backup */
 export function setGuestToken(eventId: string, token: string): void {
   try {
@@ -72,16 +81,23 @@ export function getGuestToken(eventId: string): string | null {
   try {
     const key = `guest_token_${eventId}`;
     let token = localStorage.getItem(key);
-    if (token) return token;
+    if (token && isGuestTokenValid(token)) return token;
+    if (token && !isGuestTokenValid(token)) {
+      localStorage.removeItem(key);
+      token = null;
+    }
 
     // Restore from cookie backup
     const name = cookieKey(eventId);
     const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
     if (match) {
       token = decodeURIComponent(match[1]);
-      if (token) {
+      if (token && isGuestTokenValid(token)) {
         localStorage.setItem(key, token);
         return token;
+      }
+      if (token && !isGuestTokenValid(token)) {
+        document.cookie = `${name}=; path=${COOKIE_PATH}; max-age=0`;
       }
     }
     return null;

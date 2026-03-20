@@ -576,6 +576,49 @@ function GamePlayWithoutBoundary() {
     };
   }, [activeConfig.gameTypeKey, participantId, gameData]);
 
+  const coffeePairsDebug = useMemo(() => {
+    if (activeConfig.gameTypeKey !== 'coffee-roulette') return [] as Array<{
+      pairId: string;
+      person1ParticipantId: string;
+      person1Name: string;
+      person2ParticipantId: string;
+      person2Name: string;
+      topic: string;
+      phase: string;
+    }>;
+    if (!gameData || typeof gameData !== 'object') return [];
+
+    const gd = gameData as {
+      phase?: string;
+      pairs?: Array<{
+        id?: string;
+        topic?: string;
+        person1?: { participantId?: string; name?: string };
+        person2?: { participantId?: string; name?: string };
+      }>;
+    };
+    const phase = typeof gd.phase === 'string' ? gd.phase : 'unknown';
+    const pairs = Array.isArray(gd.pairs) ? gd.pairs : [];
+
+    return pairs
+      .map((p) => {
+        const pairId = typeof p?.id === 'string' ? p.id : null;
+        const p1Id = typeof p?.person1?.participantId === 'string' ? p.person1.participantId : null;
+        const p2Id = typeof p?.person2?.participantId === 'string' ? p.person2.participantId : null;
+        if (!pairId || !p1Id || !p2Id) return null;
+        return {
+          pairId,
+          person1ParticipantId: p1Id,
+          person1Name: typeof p?.person1?.name === 'string' ? p.person1.name : '',
+          person2ParticipantId: p2Id,
+          person2Name: typeof p?.person2?.name === 'string' ? p.person2.name : '',
+          topic: typeof p?.topic === 'string' ? p.topic : '',
+          phase,
+        };
+      })
+      .filter((x): x is NonNullable<typeof x> => !!x);
+  }, [activeConfig.gameTypeKey, gameData]);
+
 
 
   // Resolve active game session on mount + periodically when none (in case we miss game:session_created)
@@ -1145,6 +1188,8 @@ function GamePlayWithoutBoundary() {
         gameJoinAckReceived={gameJoinAckReceived}
         eventsSocketStatus={eventsSocket.status}
         gamesSocketStatus={gamesSocket.status}
+        eventsSocketAuthMode={eventsSocket.authDebugMode}
+        gamesSocketAuthMode={gamesSocket.authDebugMode}
         localGuestTokenExists={!!eventId && !!localStorage.getItem(`guest_token_${eventId}`)}
         guestTokenValue={eventId ? getGuestToken(eventId) : null}
         accessTokenExists={!!localStorage.getItem('access_token')}
@@ -1160,6 +1205,7 @@ function GamePlayWithoutBoundary() {
         gameDataPreview={gameData}
         gamePhase={gameData && typeof gameData === 'object' && 'phase' in gameData ? (gameData as { phase?: string }).phase : undefined}
         coffeePairDebug={coffeePairDebug}
+        coffeePairsDebug={coffeePairsDebug}
       />
 
       {/* In-game profile edit modal */}

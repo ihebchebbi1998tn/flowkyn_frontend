@@ -4,7 +4,7 @@
  */
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { getGuestToken } from '@/lib/guestTokenPersistence';
+import { getGuestIdentityKey, getGuestToken } from '@/lib/guestTokenPersistence';
 
 // Hard-coded socket base URL to ensure consistent production behavior
 const SOCKET_URL = 'https://api.flowkyn.com';
@@ -31,6 +31,7 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [status, setStatus] = useState<ConnectionStatus>('disconnected');
+  const [authDebugMode, setAuthDebugMode] = useState<'token' | 'identity_key_recovered' | 'unknown'>('unknown');
 
   // Store callbacks in refs to avoid reconnect loops
   const onConnectRef = useRef(onConnect);
@@ -43,17 +44,21 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
   const connect = useCallback(() => {
     // Support both guest tokens (event-specific, with cookie backup) and regular access tokens
     const guestToken = eventId ? getGuestToken(eventId) : localStorage.getItem('guest_token');
+    const guestIdentityKey = eventId ? getGuestIdentityKey(eventId) : null;
     const accessToken = localStorage.getItem('access_token');
     const resolvedToken =
       authMode === 'guest' ? guestToken : authMode === 'access' ? accessToken : guestToken || accessToken;
+    const canRecoverGuestByKey = authMode === 'guest' && !!eventId && !!guestIdentityKey;
+    setAuthDebugMode(resolvedToken ? 'token' : canRecoverGuestByKey ? 'identity_key_recovered' : 'unknown');
 
-    if (!resolvedToken) {
+    if (!resolvedToken && !canRecoverGuestByKey) {
       console.warn('[useSocket] connect aborted: no auth token resolved', {
         namespace,
         eventId,
         authMode,
         hasGuestToken: !!guestToken,
         hasAccessToken: !!accessToken,
+        hasGuestIdentityKey: !!guestIdentityKey,
       });
       return;
     }
@@ -70,15 +75,21 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
       authMode,
       hasGuestToken: !!guestToken,
       hasAccessToken: !!accessToken,
+      hasGuestIdentityKey: !!guestIdentityKey,
+      usingGuestRecoveryMode: !resolvedToken && canRecoverGuestByKey,
     });
 
     const socket = io(`${SOCKET_URL}${namespace}`, {
       auth: (cb) => {
         // Fetch fresh token at the exact moment of connection/reconnection (cookie backup included)
         const freshGuest = eventId ? getGuestToken(eventId) : localStorage.getItem('guest_token');
+        const freshGuestIdentityKey = eventId ? getGuestIdentityKey(eventId) : null;
         const freshAccess = localStorage.getItem('access_token');
         const resolvedFreshToken =
           authMode === 'guest' ? freshGuest : authMode === 'access' ? freshAccess : freshGuest || freshAccess;
+        setAuthDebugMode(
+          resolvedFreshToken ? 'token' : (authMode === 'guest' && !!eventId && !!freshGuestIdentityKey) ? 'identity_key_recovered' : 'unknown'
+        );
         if (!resolvedFreshToken) {
           console.warn('[useSocket] auth callback: token missing at connect time', {
             namespace,
@@ -86,9 +97,14 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
             authMode,
             hasFreshGuest: !!freshGuest,
             hasFreshAccess: !!freshAccess,
+            hasFreshGuestIdentityKey: !!freshGuestIdentityKey,
           });
         }
-        cb({ token: resolvedFreshToken });
+        cb({
+          token: resolvedFreshToken,
+          eventId,
+          guestIdentityKey: freshGuestIdentityKey,
+        });
       },
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -153,6 +169,7 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
     socketRef.current = null;
     setIsConnected(false);
     setStatus('disconnected');
+    setAuthDebugMode('unknown');
   }, []);
 
   const emit = useCallback(<T = any>(event: string, data?: any): Promise<T | void> => {
@@ -201,8 +218,8 @@ export function useSocket({ namespace, autoConnect = true, eventId, authMode, on
   }, [autoConnect, connect]);
 
   return useMemo(
-    () => ({ socket: socketRef.current, isConnected, status, connect, disconnect, emit, on, off }),
-    [isConnected, status, connect, disconnect, emit, on, off]
+    () => ({ socket: socketRef.current, isConnected, status, authDebugMode, connect, disconnect, emit, on, off }),
+    [isConnected, status, authDebugMode, connect, disconnect, emit, on, off]
   );
 }
 

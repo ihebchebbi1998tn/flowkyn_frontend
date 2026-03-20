@@ -1,7 +1,7 @@
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useMyEventParticipant } from '@/hooks/queries/useMyEventParticipant';
 import { useEventProfile } from '@/hooks/queries/useEventProfile';
-import { getGuestToken, syncGuestIdentityKeyFromToken } from '@/lib/guestTokenPersistence';
+import { getGuestToken, isGuestTokenValid, syncGuestIdentityKeyFromToken } from '@/lib/guestTokenPersistence';
 import { useEffect } from 'react';
 
 export interface EventIdentity {
@@ -45,6 +45,7 @@ export function useEventIdentity(eventId: string | undefined): EventIdentity {
   // decode the token to recover a stable participantId + guestName. This prevents re-joining
   // (which can trigger NAME_TAKEN on reload).
   const guestToken = eventId ? getGuestToken(eventId) : null;
+  const hasValidGuestToken = !!guestToken && isGuestTokenValid(guestToken);
   const decodedGuestPayload = guestToken ? decodeJwtPayload(guestToken) : null;
 
   type DecodedGuestPayload = {
@@ -66,17 +67,17 @@ export function useEventIdentity(eventId: string | undefined): EventIdentity {
   const fallbackGuestEventId = typeof guestLike?.eventId === 'string' ? guestLike.eventId : null;
   const fallbackIsForThisEvent = !!eventId && fallbackGuestEventId === eventId;
 
-  const isGuest = !!participant?.isGuest || (!!fallbackGuestParticipantId && fallbackIsForThisEvent);
+  const isGuest = !!participant?.isGuest || (hasValidGuestToken && !!fallbackGuestParticipantId && fallbackIsForThisEvent);
 
   // For authenticated users, sockets and backend use real user.id as userId.
   // For guests, sockets use a synthetic "guest:{participantId}" userId, but we keep it simple on the client.
-  const userId = isGuest ? (participant?.id || fallbackGuestParticipantId || '') : (user?.id || '');
-  const participantId = participant?.id || (fallbackIsForThisEvent ? fallbackGuestParticipantId : null);
+  const userId = isGuest ? (participant?.id || (hasValidGuestToken ? fallbackGuestParticipantId : null) || '') : (user?.id || '');
+  const participantId = participant?.id || (hasValidGuestToken && fallbackIsForThisEvent ? fallbackGuestParticipantId : null);
 
   const displayName =
     profile?.display_name ||
     participant?.name ||
-    (fallbackIsForThisEvent && typeof guestLike?.guestName === 'string' ? guestLike.guestName : undefined) ||
+    (hasValidGuestToken && fallbackIsForThisEvent && typeof guestLike?.guestName === 'string' ? guestLike.guestName : undefined) ||
     user?.name ||
     'Guest';
 
