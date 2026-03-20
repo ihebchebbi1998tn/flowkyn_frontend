@@ -100,7 +100,7 @@ export default function EventLobby() {
   identityRef.current = identity;
   userRef.current = user;
 
-  const { hasJoined, setHasJoined, isJoining, joinError } = useEventLobbyJoin({
+  const { hasJoined, setHasJoined, isJoining, joinError, setJoinError, handleJoin } = useEventLobbyJoin({
     eventId: id || null,
     profile,
     storedProfile,

@@ -148,5 +148,5 @@ export function useEventLobbyJoin({
     }
   }, [profile, showProfileForm, hasJoined, isJoining, joinError, handleJoin, participantId, isIdentityLoading]);
 
-  return { hasJoined, setHasJoined, isJoining, joinError, handleJoin };
+  return { hasJoined, setHasJoined, isJoining, joinError, setJoinError, handleJoin };
 }
