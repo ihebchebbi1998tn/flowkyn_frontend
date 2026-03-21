@@ -1107,6 +1107,44 @@
         "t10": "Which fictional character do you relate to the most?",
         "t11": "What’s something you’re surprisingly good at?"
       },
+      "roleBasedPrompts": {
+        "manager": {
+          "p1": "As a manager, what's your biggest challenge with team engagement?",
+          "p2": "What's one leadership lesson you learned the hard way?",
+          "p3": "How do you build trust with people who report to you?",
+          "p4": "What's your philosophy on remote team dynamics?"
+        },
+        "individual_contributor": {
+          "p1": "What's the most impactful project you've worked on?",
+          "p2": "What skill are you developing that excites you most?",
+          "p3": "How do you stay motivated when working async?",
+          "p4": "What's your ideal work environment?"
+        },
+        "designer": {
+          "p1": "What design principles guide your work?",
+          "p2": "What's a recent design decision you're proud of?",
+          "p3": "How do you balance aesthetics with usability?",
+          "p4": "What inspires your creative work?"
+        },
+        "engineer": {
+          "p1": "What's your favorite tech stack and why?",
+          "p2": "What's a challenging bug you've solved recently?",
+          "p3": "How do you approach code quality?",
+          "p4": "What technology excites you most right now?"
+        },
+        "product": {
+          "p1": "What metrics drive your decision-making?",
+          "p2": "How do you prioritize competing features?",
+          "p3": "What's your user research process?",
+          "p4": "What's a product launch you're proud of?"
+        },
+        "sales": {
+          "p1": "What's your strategy for building relationships?",
+          "p2": "How do you handle objections?",
+          "p3": "What's the most rewarding part of your role?",
+          "p4": "How do you stay energized in a competitive environment?"
+        }
+      },
       "spectatorTitle": "Coffee Roulette in progress",
       "spectatorMessage": "Pairs are being matched. You’ll see your partner shortly.",
       "endChat": "End Chat",
