@@ -47,7 +47,17 @@
     "tbd": "TBD",
     "backToEvents": "Zurück zu Veranstaltungen",
     "live": "Live",
-    "async": "Asynchron"
+    "async": "Asynchron",
+    "copyFailed": "Failed to copy. Please try again.",
+    "emDash": "—",
+    "host": "Host",
+    "language": "Language",
+    "unknown": "Unknown",
+    "you": "You",
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}} entries"
+    },
+    "clearAll": "Alles löschen"
   },
   "errors": {
     "eventEnded": "Diese Aktivität ist beendet. Beiträge sind jetzt geschlossen.",
@@ -331,6 +341,30 @@
         "label": "Event-Management",
         "title": "Planen, einladen und verwalten an einem Ort",
         "description": "Planen Sie Aktivitäten, senden Sie Einladungen, verwalten Sie wiederkehrende Events und koordinieren Sie mehrere Teams — alles von einem intuitiven Dashboard."
+      },
+      "activitiesGrid": {
+        "title": "Four flagship activities, ready on day one",
+        "subtitle": "Start with battle‑tested formats your team will recognize and love — then expand with more templates over time.",
+        "strategicEscape": {
+          "tag": "Strategic escape",
+          "title": "Strategic Escape Game",
+          "description": "Asynchronous crisis simulation where each participant plays a different leadership role. Great for cross‑functional thinking and decision‑making."
+        },
+        "coffeeRoulette": {
+          "tag": "Connections",
+          "title": "Coffee Roulette",
+          "description": "Smart 1:1 pairing for virtual coffees. Perfect for onboarding, cross‑team connection, and breaking silos in hybrid organizations."
+        },
+        "twoTruths": {
+          "tag": "Icebreaker",
+          "title": "Two Truths & a Lie",
+          "description": "Fast, fun game to warm up meetings. Players submit prompts, vote, and reveal together — with built‑in scoring and animations."
+        },
+        "winsOfWeek": {
+          "tag": "Async ritual",
+          "title": "Wins of the Week",
+          "description": "Lightweight async check‑in where everyone shares a weekly win. Builds recognition, momentum, and a positive team narrative."
+        }
       }
     },
     "howItWorks": {
@@ -578,7 +612,11 @@
     "email": "E-Mail-Admin",
     "support": "Support",
     "logout": "Abmelden",
-    "language": "Sprache"
+    "language": "Sprache",
+    "suppliers": "Suppliers",
+    "menu": "Menu",
+    "manage": "Manage",
+    "newEvent": "New event"
   },
   "auth": {
     "branding": {
@@ -683,7 +721,10 @@
     "verificationExpired": "Verifizierung fehlgeschlagen. Der Link ist möglicherweise abgelaufen.",
     "goToLogin": "Zur Anmeldung",
     "or": "oder",
-    "backTo": "Zurück zu"
+    "backTo": "Zurück zu",
+    "emailPlaceholder": "name@company.com",
+    "passwordMask": "••••••••",
+    "newEmailPlaceholder": "new-email@company.com"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -716,7 +757,35 @@
     "newActivity": "Neue Aktivität",
     "thisMonth": "Diesen Monat",
     "activitiesCompleted": "Aktivitäten",
-    "points": "Pkt"
+    "points": "Pkt",
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening",
+    "launchActivity": "Launch Activity",
+    "analytics": "Analytics",
+    "activeSessions": "Active Sessions",
+    "totalEvents": "Total Events",
+    "completion": "Completion",
+    "lastSixMonths": "Last 6 months",
+    "details": "Details",
+    "started": "Started",
+    "completed": "Completed",
+    "noActivityData": "No activity data yet",
+    "noActivityDataDesc": "Start running team activities to see engagement trends here.",
+    "noUpcomingEvents": "No upcoming events",
+    "noUpcomingEventsDesc": "Create your first event to get started.",
+    "active": "Active",
+    "events": "Events",
+    "activityBreakdown": "Activity Breakdown",
+    "sessionsByGameType": "Sessions by game type",
+    "categoryDistribution": "Category Distribution",
+    "byActivityCategory": "By activity category",
+    "sessions": "Sessions",
+    "performanceOverview": "Performance Overview",
+    "keyMetrics": "Key metrics",
+    "participants": "Participants",
+    "sessionCompletionRate": "{{rate}}% session completion rate",
+    "latestGameSessions": "Latest game sessions"
   },
   "organizations": {
     "title": "Arbeitsbereich",
@@ -772,7 +841,11 @@
       "unbanFailed": "Fehler beim Reaktivieren der Organisation",
       "bannedBadge": "DEAKTIVIERT",
       "activeBadge": "AKTIV"
-    }
+    },
+    "company": "Company",
+    "inviteEmailPlaceholder": "colleague@company.com",
+    "invitedMember": "Invited",
+    "invitedPending": "Pending"
   },
   "events": {
     "title": "Veranstaltungen",
@@ -782,7 +855,8 @@
       "full": "Diese Veranstaltung ist voll. Fragen Sie Ihren Gastgeber, ob er das Limit erhöhen kann.",
       "guestsNotAllowed": "Diese Veranstaltung ist nur für Mitglieder. Bitte melden Sie sich an oder fragen Sie Ihren Gastgeber nach Zugang.",
       "notMember": "Sie sind kein Mitglied dieses Arbeitsbereichs für diese Veranstaltung.",
-      "notActive": "Diese Veranstaltung ist noch nicht aktiv — Ihr Gastgeber muss sie starten."
+      "notActive": "Diese Veranstaltung ist noch nicht aktiv — Ihr Gastgeber muss sie starten.",
+      "joinRoomFailed": "Failed to join event room"
     },
     "createEvent": "Veranstaltung erstellen",
     "editEvent": "Veranstaltung bearbeiten",
@@ -955,7 +1029,18 @@
     "emptyParticipants": {
       "title": "Sie sind zuerst hier",
       "body": "Teilen Sie den Link unten, um Ihr Team einzuladen, und starten Sie dann gemeinsam."
-    }
+    },
+    "mode": "Mode",
+    "online": "Online",
+    "offline": "Offline",
+    "reconnecting": "Reconnecting…",
+    "syncing": "Syncing…",
+    "membersOnly": "Members only",
+    "guestsAllowed": "Guests allowed",
+    "host": "Host",
+    "statusLabel": "Status",
+    "inviteFailed": "Failed to invite. Please try again.",
+    "selectedAvatarAlt": "Selected avatar"
   },
   "profileSetup": {
     "chooseIdentity": "Wählen Sie Ihre Identität",
@@ -973,7 +1058,8 @@
     "back": "Zurück",
     "errors": {
       "nameTooShort": "Der Name muss mindestens {{min}} Zeichen lang sein"
-    }
+    },
+    "submitFailed": "Profilübermittlung fehlgeschlagen"
   },
   "games": {
     "title": "Aktivitäten",
@@ -1067,7 +1153,98 @@
       "readyTitle": "Bereit, {{name}} zu starten?",
       "readySubtitle": "Richten Sie Ihre Sitzung ein, laden Sie Ihr Team ein und starten Sie in wenigen Minuten.",
       "launchNow": "Jetzt starten"
-    }
+    },
+    "comingSoonDescription": "This activity is coming soon.",
+    "comingSoon": {
+      "milestones": {
+        "researchDesign": "Research & design",
+        "alphaTesting": "Alpha testing",
+        "finalPolish": "Final polish"
+      },
+      "title": "Demnächst verfügbar"
+    },
+    "errors": {
+      "actionFailed": "Action failed. Please try again.",
+      "genericStartFailed": "Failed to start. Please try again.",
+      "notAuthorizedToStart": "You’re not authorized to start this activity.",
+      "notMember": "You’re not a member of this workspace.",
+      "sessionNotActive": "This session is not active."
+    },
+    "coffeeRoulette": {
+      "admin": {
+        "mapping": {
+          "assignDesc": "Weisen Sie Themen Gesprächsfragen für diese Konfiguration zu",
+          "assignTitle": "Fragenmapper",
+          "chooseQuestion": "Frage auswählen",
+          "chooseTopic": "Thema auswählen",
+          "noQuestionsAssigned": "Keine Fragen zugewiesen",
+          "selectQuestion": "Frage auswählen",
+          "selectTopic": "Thema auswählen",
+          "subtitle": "Wählen Sie, welche Fragen für jedes Thema angezeigt werden",
+          "title": "Thema-Frage-Mapper"
+        },
+        "questions": {
+          "createdLabel": "Erstellt",
+          "id": "ID",
+          "noMatches": "Keine Fragen gefunden",
+          "showing": "Zeige {{count}} Fragen",
+          "subtitle": "Verwalten Sie Gesprächsfragen für Coffee Roulette",
+          "title": "Fragen",
+          "updatedLabel": "Aktualisiert"
+        },
+        "settings": {
+          "advanced": "Erweitert",
+          "allowGeneral": "Allgemeine Fragen als Fallback zulassen",
+          "basicSettings": "Grundeinstellungen",
+          "chatDuration": "Chat-Dauer (Minuten)",
+          "configurationDetails": "Konfigurationsdetails",
+          "configurationId": "Konfigurations-ID",
+          "configureDescription": "Konfigurieren Sie, wie Coffee Roulette Teilnehmer paart und Themen auswählt",
+          "create": "Konfiguration erstellen",
+          "createdAt": "Erstellt am",
+          "eventId": "Veranstaltungs-ID",
+          "failedToCreate": "Konfiguration konnte nicht erstellt werden",
+          "failedToLoad": "Konfiguration konnte nicht geladen werden",
+          "failedToUpdate": "Konfiguration konnte nicht aktualisiert werden",
+          "gameConfiguration": "Spielkonfiguration",
+          "maxPrompts": "Maximale Themen",
+          "questionStrategy": "Strategia der Fragenauswahl",
+          "random": "Zufällig - Vollständig zufällige Auswahl jedes Mal",
+          "reset": "Zurücksetzen",
+          "savedSuccessfully": "Konfiguration erfolgreich gespeichert",
+          "selectionStrategies": "Auswahlstrategien",
+          "sequential": "Sequenziell - Rotation durch alle Elemente",
+          "shuffleOnRepeat": "Themen beim Wiederholen mischen",
+          "title": "Coffee-Roulette-Einstellungen",
+          "topicStrategy": "Strategia der Themenauswahl",
+          "update": "Konfiguration aktualisieren",
+          "updatedAt": "Aktualisiert am",
+          "weighted": "Gewichtet - Basierend auf Elementgewichtungen und Wahrscheinlichkeiten"
+        },
+        "topics": {
+          "active": "Aktiv",
+          "addTopic": "Thema hinzufügen",
+          "createTopic": "Thema erstellen",
+          "createdDate": "Erstellungsdatum",
+          "deleteConfirm": "Sind Sie sicher, dass Sie dieses Thema löschen möchten?",
+          "editTopic": "Thema bearbeiten",
+          "failedToCreate": "Thema konnte nicht erstellt werden",
+          "failedToDelete": "Thema konnte nicht gelöscht werden",
+          "failedToLoad": "Themen konnten nicht geladen werden",
+          "failedToUpdate": "Thema konnte nicht aktualisiert werden",
+          "noTopics": "Keine Themen gefunden",
+          "title": "Gesprächsthemen",
+          "topicDescription": "Themenbeschreibung",
+          "topicIcon": "Themensymbol",
+          "topicTitle": "Thementitel",
+          "weight": "Gewichtung (Wahrscheinlichkeit)"
+        }
+      }
+    },
+    "coffeeRouletteTitle": "Coffee Roulette",
+    "strategicEscapeTitle": "Strategic Escape Challenge",
+    "twoTruthsTitle": "Zwei Wahrheiten und eine Lüge",
+    "winsOfWeekTitle": "Erfolge der Woche"
   },
   "notifications": {
     "title": "Benachrichtigungen",
@@ -1098,7 +1275,8 @@
     "errors": {
       "fetchFailed": "Benachrichtigungen konnten nicht geladen werden",
       "markReadFailed": "Benachrichtigung konnte nicht als gelesen markiert werden"
-    }
+    },
+    "viewAll": "View all"
   },
   "analytics": {
     "title": "Analytik",
@@ -1133,7 +1311,9 @@
     "bio": "Biografie",
     "timezone": "Zeitzone",
     "language": "Sprache",
-    "saved": "Profil erfolgreich gespeichert"
+    "saved": "Profil erfolgreich gespeichert",
+    "editTitle": "Edit profile",
+    "save": "Save"
   },
   "users": {
     "title": "Benutzer",
@@ -1213,7 +1393,15 @@
     "saving": "Speichern...",
     "saveAllChanges": "Alle Änderungen speichern",
     "quickNav": "Schnellnavigation",
-    "quickNavHint": "Springen Sie direkt zu einem Abschnitt unten"
+    "quickNavHint": "Springen Sie direkt zu einem Abschnitt unten",
+    "deleteAccountTitle": "Delete your account",
+    "deleteAccountWarning": "This action is permanent and cannot be undone.",
+    "deleteAccountConfirm": "Type DELETE to confirm",
+    "deleteAccountConfirmHint": "This helps prevent accidental deletions.",
+    "deleteAccountPlaceholder": "Type DELETE",
+    "deleting": "Deleting…",
+    "accountDeleted": "Account deleted",
+    "accountDeleteFailed": "Failed to delete account. Please try again."
   },
   "bugReports": {
     "title": "Ein Problem melden",
@@ -1287,7 +1475,18 @@
     "updating": "Wird aktualisiert...",
     "close": "Schließen",
     "confirmDelete": "Sind Sie sicher, dass Sie diesen Bericht löschen möchten?",
-    "resolutionNotes": "Lösungsnotizen"
+    "resolutionNotes": "Lösungsnotizen",
+    "attachmentCount": "{{count}} attachments",
+    "errors": {
+      "loadFailed": "Failed to load reports",
+      "submitFailed": "Failed to submit report",
+      "deleteFailed": "Failed to delete report"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required",
+      "someFilesTooLarge": "Some files are too large"
+    }
   },
   "support": {
     "title": "Hilfe & Support",
@@ -1385,16 +1584,23 @@
       "point3": "Am Ende machen wir ein gemeinsames Debrief."
     },
     "errors": {
-      "assignFailed": "Rollen konnten nicht zugewiesen werden. Stellen Sie sicher, dass Teilnehmende beigetreten sind und dass Sie der Facilitator sind."
+      "assignFailed": "Rollen konnten nicht zugewiesen werden. Stellen Sie sicher, dass Teilnehmende beigetreten sind und dass Sie der Facilitator sind.",
+      "createFailed": "Failed to create strategic session. Please check your permissions and try again."
     },
     "actions": {
       "assignRoles": "Rollen zuweisen",
       "assigningRoles": "Rollen werden zugewiesen…",
       "assignHelp": "Weisen Sie zuerst Rollen zu, damit alle ihre Rolle sehen können. Starten Sie dann die asynchrone Diskussion, wenn Sie bereit sind.",
-      "startDiscussion": "Asynchrone Diskussion starten"
+      "startDiscussion": "Asynchrone Diskussion starten",
+      "createSession": "Create strategic session",
+      "creating": "Creating session…",
+      "createHelp": "Once created, you can assign roles and start the async discussion.",
+      "endDiscussion": "End discussion & move to debrief",
+      "sessionCreated": "Sitzung erstellt"
     },
     "rolesSection": {
-      "subtitle": "Diese Rolle ist privat. Halten Sie sie geheim und nutzen Sie sie, um Ihre Entscheidungen zu leiten."
+      "subtitle": "Diese Rolle ist privat. Halten Sie sie geheim und nutzen Sie sie, um Ihre Entscheidungen zu leiten.",
+      "title": "Your secret role"
     },
     "roleReveal": {
       "title": "Ihre geheime Rolle",
@@ -1480,6 +1686,138 @@
       "rolesAssignment": "Gerade werden geheime Rollen vergeben.",
       "discussion": "Gerade sollten Sie Perspektiven und Entscheidungen über die Zeit teilen.",
       "debrief": "Gerade verwandeln Sie Erkenntnisse in konkrete Änderungen."
+    },
+    "configure": {
+      "title": "Customize your scenario",
+      "subtitle": "Choose an industry, crisis, and difficulty so the scenario feels real for your team.",
+      "industryLabel": "What's your industry?",
+      "crisisLabel": "Choose your crisis type",
+      "difficultyLabel": "Difficulty level"
+    },
+    "preview": {
+      "title": "What your team will experience",
+      "body": "Each participant receives a private role reveal in-app with their secret role and instructions. When they join, they see a role card that reminds them how to think and speak during the challenge.",
+      "hint": "This activity is async: people can join from any time zone, share perspectives in their own time, and then debrief together.",
+      "hostOnly": "Your facilitator is configuring the scenario. You will see your secret role here as soon as the challenge is launched.",
+      "configureHint": "Use the Configure button to choose industry, crisis, and difficulty before you launch.",
+      "summaryTitle": "Current configuration",
+      "summaryIndustry": "Industry",
+      "summaryCrisis": "Crisis type",
+      "summaryDifficulty": "Difficulty",
+      "summaryUnset": "Not set"
+    },
+    "modal": {
+      "openLabel": "Configure scenario",
+      "title": "Configure strategic scenario",
+      "subtitle": "Choose the industry, crisis, and difficulty for this async simulation."
+    },
+    "industries": {
+      "techSaaS": {
+        "label": "Tech / SaaS",
+        "description": "Product launches, outages, roadmap shifts, and high‑growth trade‑offs."
+      },
+      "finance": {
+        "label": "Finance",
+        "description": "Regulation changes, market swings, and risk versus growth decisions."
+      },
+      "healthcare": {
+        "label": "Healthcare",
+        "description": "Patient safety, compliance, and capacity planning under pressure."
+      },
+      "retail": {
+        "label": "Retail / E‑commerce",
+        "description": "Campaigns, inventory, and customer experience during peak demand."
+      },
+      "manufacturing": {
+        "label": "Manufacturing",
+        "description": "Supply chain disruptions, quality issues, and production bottlenecks."
+      },
+      "education": {
+        "label": "Education",
+        "description": "Enrollment shifts, stakeholder expectations, and blended‑learning trade‑offs."
+      }
+    },
+    "crises": {
+      "marketDisruption": {
+        "label": "Market Disruption",
+        "meta": "Difficulty: Medium · Focus: Strategy & competition",
+        "description": "A new competitor launches and threatens your market share. You must respond without overreacting or losing focus."
+      },
+      "productLaunchCrisis": {
+        "label": "Product Launch Crisis",
+        "meta": "Difficulty: Hard · Focus: Crisis management",
+        "description": "Your product launch is in 7 days and everything is going wrong. You must decide what to cut, what to save, and how to communicate."
+      },
+      "budgetCuts": {
+        "label": "Budget Cuts",
+        "meta": "Difficulty: Medium · Focus: Resource allocation",
+        "description": "The board demands a 30% cost reduction while maintaining growth targets. Every role feels the impact differently."
+      },
+      "teamConflict": {
+        "label": "Team Conflict",
+        "meta": "Difficulty: Easy · Focus: Communication & alignment",
+        "description": "Critical departments are not communicating and projects are slipping. You must rebuild trust and shared priorities."
+      }
+    },
+    "difficulties": {
+      "easy": {
+        "label": "Easy — clear right answer",
+        "hint": "Best for a first run or new teams."
+      },
+      "medium": {
+        "label": "Medium — multiple solutions",
+        "hint": "Teams must weigh trade‑offs and align on a path."
+      },
+      "hard": {
+        "label": "Hard — high ambiguity",
+        "hint": "Great for senior teams that want to stress‑test strategy under pressure."
+      }
+    },
+    "discussion": {
+      "title": "Async crisis discussion",
+      "subtitle": "Share updates, decisions, and trade‑offs in your day‑to‑day tools. Use this space to keep the scenario visible.",
+      "prompt": "Your team faces a last‑minute product launch crisis with competing priorities and limited resources.",
+      "promptHint": "Each role brings a unique lens. Capture points of tension, decisions, and risks as you go.",
+      "guidingQuestions": "Guiding questions",
+      "q1": "What is the single biggest risk if we do nothing in the next 7 days?",
+      "q2": "Where are we mis‑aligned across product, marketing, and operations?",
+      "q3": "What trade‑off are you personally willing to own?",
+      "teamInstructions": "For your team",
+      "i1": "Post updates in your existing tools (Slack, Teams, Notion, etc.).",
+      "i2": "Reply in‑thread so conversations stay connected rather than fragmented.",
+      "i3": "Capture one decision log you will review together in the debrief.",
+      "hostToolsTitle": "Host controls",
+      "hostToolsBody": "You can end the async discussion once you feel the team has explored enough perspectives."
+    },
+    "rolesMeta": {
+      "playerLabel": "You",
+      "roleNameLabel": "Role",
+      "unknownPlayer": "Participant",
+      "secret": "Secret role",
+      "loading": "Waiting for your role…",
+      "pending": "Pending assignment",
+      "pendingHint": "Your facilitator is assigning roles. Stay tuned — your perspective will matter.",
+      "secretHint": "Once you know your role, think about what only you can see that others might miss.",
+      "refreshing": "Refreshing your role…",
+      "swapTitle": "Quick swap & alignment",
+      "swapBody": "During the short swap window, teammates can agree to mentally trade roles if another perspective fits them better. Use chat or your meeting to confirm.",
+      "swapWindow": "Role swap window: {{seconds}}s",
+      "swapCountdown": "Swap window closes in {{seconds}}s",
+      "swapClosed": "Role swap window has closed. Keep your current role for the discussion."
+    },
+    "debrief": {
+      "title": "Debrief: what did we learn?",
+      "subtitle": "Use a retro or leadership session to reflect on how you made decisions, what you missed, and what this means for real work.",
+      "questionsTitle": "Suggested debrief questions",
+      "q1": "Where did we move too fast, and where did we move too slow?",
+      "q2": "Which roles saw risk earliest — and were they heard?",
+      "q3": "What would we do differently in a real incident starting tomorrow?",
+      "actionsTitle": "Turn insights into actions",
+      "a1": "Capture 2–3 concrete changes you will make to process, communication, or ownership.",
+      "a2": "Assign clear owners and deadlines for each action.",
+      "a3": "Schedule a follow‑up in 4–6 weeks to review impact.",
+      "summaryTitle": "Summary for leadership",
+      "summaryBody": "Share three bullets: what you simulated, what you learned about how you work under pressure, and what you will change as a result."
     }
   },
   "activities": {
@@ -1523,21 +1861,84 @@
       "defaultEventTitle": "{{activityName}} — Team-Event",
       "fields": {
         "endsAt": "Endet am",
-        "endsAtHelp": "Nach diesem Zeitpunkt sind neue Beiträge und Reaktionen deaktiviert (nur noch lesen)."
+        "endsAtHelp": "Nach diesem Zeitpunkt sind neue Beiträge und Reaktionen deaktiviert (nur noch lesen).",
+        "eventTitle": "Event title",
+        "descriptionOptional": "Description (optional)",
+        "maxParticipants": "Max participants",
+        "visibility": "Visibility",
+        "whenToStart": "When to start",
+        "durationMinutes": "Duration (minutes)"
       },
       "schedule": {
-        "pickEndDateTime": "Enddatum und -uhrzeit auswählen"
+        "pickEndDateTime": "Enddatum und -uhrzeit auswählen",
+        "pickDateTime": "Pick a date & time",
+        "startNow": "Start now",
+        "scheduleLater": "Schedule for later"
       },
       "errors": {
         "endsAtAfterStart": "Enddatum/-uhrzeit muss nach dem Startdatum/-uhrzeit liegen.",
         "inviteSomeFailed": "Einige Einladungen sind fehlgeschlagen ({{emails}}). Das Event wurde erfolgreich erstellt.",
-        "inviteAllFailed": "Einladungen konnten nicht gesendet werden. Bitte versuchen Sie es erneut."
+        "inviteAllFailed": "Einladungen konnten nicht gesendet werden. Bitte versuchen Sie es erneut.",
+        "generic": "Something went wrong. Please try again.",
+        "missingOrgId": "Missing workspace. Please refresh and try again."
       },
       "review": {
         "endsAt": "Endet am",
         "participantsLine": "{{count}} Teilnehmer",
         "participantsLine_one": "{{count}} Teilnehmer",
-        "participantsLine_other": "{{count}} Teilnehmer"
+        "participantsLine_other": "{{count}} Teilnehmer",
+        "title": "Review",
+        "subtitle": "Double-check the details before launching.",
+        "activity": "Activity",
+        "eventTitle": "Event title",
+        "participants": "Participants",
+        "invited": "Invited",
+        "inviteEmailCount": "{{count}} email(s)",
+        "moreCount": "+{{count}} more",
+        "noInvites": "No invites",
+        "signupRequired": "Signup required",
+        "nicknameJoin": "Nickname join enabled",
+        "notSet": "Not set",
+        "schedule": "Schedule",
+        "startingImmediately": "Starting immediately"
+      },
+      "title": "Launch activity",
+      "subtitle": "Set up your session, invite people, and start.",
+      "steps": {
+        "configure": "Configure",
+        "invite": "Invite",
+        "review": "Review"
+      },
+      "actions": {
+        "nextInvite": "Next: Invite",
+        "nextReview": "Next: Review",
+        "launchNow": "Launch now"
+      },
+      "untitledEvent": "Untitled event",
+      "placeholders": {
+        "eventTitle": "e.g., Weekly Wins",
+        "description": "Add a short description…"
+      },
+      "invite": {
+        "title": "Invite",
+        "subtitle": "Invite by email, or share a link.",
+        "emailAddresses": "Email addresses",
+        "emailPlaceholder": "name@company.com",
+        "pasteList": "Paste a list",
+        "pastePlaceholder": "Paste one email per line…",
+        "invitedCount": "{{count}} invited",
+        "clearAll": "Clear all",
+        "addHint": "Press Enter to add",
+        "allowNickname": "Allow nickname join",
+        "noSignup": "No signup required"
+      },
+      "visibility": {
+        "inviteOnly": "Invite only",
+        "workspace": "Workspace"
+      },
+      "progress": {
+        "creating": "Creating…",
+        "inviting": "Inviting…"
       }
     }
   },
@@ -1549,7 +1950,26 @@
     "isTyping": "{{name}} tippt...",
     "peopleTyping": "{{count}} Personen tippen...",
     "newMessages": "Neue Nachrichten",
-    "placeholder": "Nachricht eingeben..."
+    "placeholder": "Nachricht eingeben...",
+    "connected": "Connected",
+    "offline": "Offline",
+    "offlinePlaceholder": "You’re offline. Messages will send when you reconnect.",
+    "reconnecting": "Reconnecting…",
+    "retry": "Retry",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "startVoice": "Start voice chat",
+    "stopVoice": "Stop voice chat",
+    "mute": "Mute microphone",
+    "unmute": "Unmute microphone",
+    "voiceActive": "{{count}} voice users",
+    "voiceParticipants": "Voice:",
+    "voiceTalking": "Talking:",
+    "errors": {
+      "generic": "Chat error",
+      "sendFailed": "Failed to send message",
+      "pinFailed": "Failed to update pinned message"
+    }
   },
   "invitation": {
     "verifying": "Einladung wird überprüft...",
@@ -1568,7 +1988,8 @@
     "missingEventInfo": "Fehlende Veranstaltungsinformationen im Einladungslink.",
     "orgInviteTitle": "Organisationseinladung",
     "orgInviteDescription": "Sie wurden eingeladen, einer Organisation auf Flowkyn beizutreten.",
-    "goToHomepage": "Zur Startseite"
+    "goToHomepage": "Zur Startseite",
+    "missingEventId": "Missing event id in invitation link."
   },
   "modals": {
     "confirmTitle": "Aktion bestätigen",
@@ -1768,7 +2189,17 @@
     "launch": "Flowkyn starten",
     "celebrationTitle": "Willkommen bei Flowkyn",
     "celebrationSubtitle": "{{org}} ist bereit.",
-    "redirecting": "Ihr Dashboard wird vorbereitet…"
+    "redirecting": "Ihr Dashboard wird vorbereitet…",
+    "errors": {
+      "checkInfoAndRetry": "Please check your information and try again.",
+      "createOrgFailed": "Failed to create workspace. Please try again.",
+      "setupFailed": "Setup failed. Please try again."
+    },
+    "logoAlt": "Organization logo",
+    "logoUploadCta": "Upload logo",
+    "logoUploadHint": "PNG, JPG, GIF or WebP. Max 2MB.",
+    "logoUploaded": "Logo uploaded",
+    "logoUploadedHint": "You can replace it anytime."
   },
   "gamePlay": {
     "twoTruths": {
@@ -1803,7 +2234,16 @@
       "skipAnimation": "Animation überspringen",
       "roundSettings": "Rundeneinstellungen",
       "howManyRounds": "Wie viele Runden möchten Sie spielen?",
-      "recommendedRounds": "Empfohlen: 3–5 Runden"
+      "recommendedRounds": "Empfohlen: 3–5 Runden",
+      "defaultStatement1": "Ich habe in einem anderen Land gelebt.",
+      "defaultStatement2": "Ich kann ein Musikinstrument spielen.",
+      "defaultStatement3": "Ich bin einer Berühmtheit begegnet.",
+      "findingTruth": "Wahrheit wird ermittelt…",
+      "revealHost": "Der Host wird es offenbaren, wenn er bereit ist",
+      "waitingForPresenter": "Warten auf den Moderator…",
+      "markAsLie": "Als Lüge markieren",
+      "waitForHost": "Warten auf Host",
+      "waitingForHostToStart": "Warten auf Host zum Starten…"
     },
     "coffeeRoulette": {
       "title": "Kaffee-Roulette",
@@ -1821,10 +2261,10 @@
       "startChatting": "Chat starten",
       "needATopic": "💡 Brauchen Sie ein Thema?",
       "nextTopic": "Nächstes Thema",
-      "nextPrompt": "Nächste Frage",
-      "promptCounter": "Frage {{current}} / {{total}}",
-      "defaultTopic": "Worauf freuen Sie sich gerade besonders?",
-      "spinning": "Wird geladen…",
+      "nextPrompt": "Nächstes Thema",
+      "promptCounter": "{{current}} von {{total}}",
+      "defaultTopic": "Worüber freust du dich gerade?",
+      "spinning": "Dreht sich…",
       "topicPool": {
         "p1": "Welche kleine Gewohnheit hat Ihr Leben verbessert?",
         "p2": "Was würden Sie in einem 5‑Minuten‑Lightning‑Talk beibringen?",
@@ -1848,20 +2288,20 @@
         "t10": "Welche fiktive Figur entspricht dir am ehesten?",
         "t11": "Worin bist du überraschend gut?"
       },
-      "spectatorTitle": "Kaffee-Roulette läuft",
-      "spectatorMessage": "Die Paare werden gerade erstellt. Sie sehen Ihren Partner gleich.",
+      "spectatorTitle": "Coffee Roulette läuft",
+      "spectatorMessage": "Paare werden derzeit zusammengestellt. Sie sehen Ihren Partner in Kürze.",
       "endChat": "Chat beenden",
-      "endAndClose": "Beenden & schließen",
+      "endAndClose": "Beenden und schließen",
       "greatConnection": "Tolle Verbindung! ☕",
       "chattedFor": "Sie haben {{minutes}} Minuten gechattet. Diese Momente bauen echte Teambindungen auf.",
       "connectionMade": "Verbindung hergestellt",
       "newPairing": "Neue Zuordnung",
       "decision": {
-        "title": "Weiter machen?",
-        "body": "Sie haben {{count}} Fragen genutzt. Mit neuen Fragen weitermachen oder diese Session beenden?",
-        "hint": "Sie können jederzeit beenden — der Fortschritt bleibt trotzdem gespeichert.",
-        "continue": "Weiter",
-        "end": "Session beenden"
+        "title": "Fortfahren?",
+        "body": "Sie haben {{count}} Themen erkundet. Möchten Sie mit neuen Themen fortfahren oder diese Sitzung beenden?",
+        "hint": "Sie können jederzeit beenden – der Fortschritt wird gespeichert.",
+        "continue": "Fortfahren",
+        "end": "Beenden"
       },
       "backToEvents": "Zurück zu Veranstaltungen",
       "you": "Sie",
@@ -1875,7 +2315,8 @@
         "needMore": "Sie benötigen {{count}} weitere Teilnehmer",
         "starting": "Wird gestartet...",
         "start": "Kaffee-Roulette starten",
-        "ready": "Bereit, Paare zu erstellen und alle zuzuordnen!"
+        "ready": "Bereit, Paare zu erstellen und alle zuzuordnen!",
+        "voiceEnabled": "Stimme aktiviert"
       },
       "matching": {
         "floorCounter": "Etage {{floor}}",
@@ -1962,7 +2403,10 @@
         "topicDiscussed": "Diskutiertes Thema",
         "minutes": "{{minutes}} Minuten",
         "matchAgain": "Erneut zuordnen",
-        "exit": "Beenden"
+        "exit": "Beenden",
+        "message": "Großartig verbunden! ☕",
+        "prompts": "{{count}} Themen verwendet",
+        "subtitle": "Diese Momente schaffen echte Teamverbindungen."
       },
       "admin": {
         "settings": {
@@ -2039,7 +2483,13 @@
           "failedToUpdate": "Frage konnte nicht aktualisiert werden",
           "failedToDelete": "Frage konnte nicht gelöscht werden",
           "deleteConfirm": "Sind Sie sicher, dass Sie diese Frage löschen möchten?",
-          "confirmDelete": "Löschen"
+          "confirmDelete": "Löschen",
+          "subtitle": "Manage conversation questions for this event",
+          "noMatches": "No questions match the current filters. Create one to get started!",
+          "showing": "Showing {{count}} of {{total}} questions",
+          "id": "Question ID:",
+          "createdLabel": "Created:",
+          "updatedLabel": "Updated:"
         },
         "mapping": {
           "title": "Thema-Fragen-Zuordnung",
@@ -2057,7 +2507,12 @@
           "failedToReorder": "Fragen konnten nicht neu angeordnet werden",
           "selectBoth": "Bitte wählen Sie ein Thema und eine Frage aus",
           "questionsCount": "{{count}} Frage",
-          "questionsCounts": "{{count}} Fragen"
+          "questionsCounts": "{{count}} Fragen",
+          "subtitle": "Assign questions to topics and manage their order",
+          "assignTitle": "Assign Questions to Topics",
+          "assignDesc": "Select a topic and add questions to it",
+          "chooseTopic": "Choose a topic...",
+          "chooseQuestion": "Choose a question..."
         },
         "page": {
           "title": "Kaffee-Roulette-Konfiguration",
@@ -2109,7 +2564,36 @@
           "p3": "Was ist das Erfüllendste an Ihrer Rolle?",
           "p4": "Wie bleiben Sie in einem wettbewerbsintensiven Umfeld energetisiert?"
         }
-      }
+      },
+      "spin1": "Namen mischen…",
+      "spin2": "Übereinstimmungen suchen…",
+      "spin3": "Durcheinander bringen…",
+      "spin4": "Gleich vorbei…",
+      "spin5": "Personen werden gepaart…",
+      "spin6": "Paare finalisieren…",
+      "spin7": "Sperren…",
+      "spin8": "Erledigt!",
+      "rolePrompts": {
+        "title": "Suggested Conversation Starters",
+        "loading": "Loading suggestions...",
+        "description": "Based on your role as a {{role}}, here are some great conversation starters:",
+        "dismiss": "Close",
+        "ready": "Ready to chat!",
+        "empty": "No suggestions available at this time."
+      },
+      "suggestedPrompts": "View suggestions",
+      "roles": {
+        "manager": "Manager",
+        "individual_contributor": "Individual Contributor",
+        "designer": "Designer",
+        "engineer": "Engineer",
+        "product": "Product Manager",
+        "sales": "Sales"
+      },
+      "error": {
+        "notFound": "Coffee-Roulette-Paar nicht gefunden"
+      },
+      "unmatched": "Nicht gepaart"
     },
     "winsOfWeek": {
       "thisWeeksPrompt": "Das Thema dieser Woche",
@@ -2139,7 +2623,11 @@
       "reply": "Antworten",
       "writeReply": "Antwort schreiben...",
       "replyCount": "{{count}} Antwort",
-      "repliesCount": "{{count}} Antworten"
+      "repliesCount": "{{count}} Antworten",
+      "defaultPrompt": "Teilen Sie Ihre Erfolge dieser Woche!",
+      "emptyTitle": "Keine Erfolge",
+      "emptySubtitle": "Noch keine Erfolge geteilt.",
+      "sharing": "Wird geteilt…"
     },
     "results": {
       "gameComplete": "Spiel beendet!",
@@ -2172,7 +2660,10 @@
     "leaderboard": {
       "title": "Bestenliste",
       "online": "{{count}} online",
-      "pending": "Ausstehend"
+      "pending": "Ausstehend",
+      "empty": "No scores yet",
+      "onlineCount": "{{count}} online",
+      "teamProgressTitle": "Team progress"
     },
     "shell": {
       "invite": "Einladen",
@@ -2189,7 +2680,16 @@
       "statusLive": "Live-Team-Session",
       "statusAsync": "Asynchrone Check‑in‑Session",
       "userDisconnectedBadge_one": "{{count}} Nutzer getrennt",
-      "userDisconnectedBadge_other": "{{count}} Nutzer getrennt"
+      "userDisconnectedBadge_other": "{{count}} Nutzer getrennt",
+      "liveSession": "Live session",
+      "asyncSession": "Async session",
+      "readyToConnect": "Ready to connect!",
+      "inviteHelp": "Share this link with teammates you want to bring into this session.",
+      "chatLabel": "Chat",
+      "scoresLabel": "Scores",
+      "userJoinedToast": "{{name}} joined",
+      "back": "Zurück",
+      "userDisconnectedBadge": "Getrennt"
     },
     "phases": {
       "waiting": "Warten",
@@ -2208,7 +2708,10 @@
       "coffeeRouletteSubtitle": "Verbindung · Live",
       "winsOfWeekTitle": "Erfolge der Woche",
       "winsOfWeekSubtitle": "Wohlbefinden · Asynchron",
-      "defaultPrompt": "Teilen Sie Ihren Erfolg der Woche — beruflich oder privat, groß oder klein!"
+      "defaultPrompt": "Teilen Sie Ihren Erfolg der Woche — beruflich oder privat, groß oder klein!",
+      "strategicEscapeTitle": "Strategic Escape Challenge",
+      "strategicEscapeSubtitle": "Async crisis simulation where every role sees something different.",
+      "strategicEscapePrompt": "Your team faces a high‑stakes launch under pressure. Use your role’s lens to surface risks, trade‑offs, and bold moves."
     },
     "wins": {
       "title": "Erfolge",
@@ -2234,6 +2737,10 @@
         "personal_growth": "Persönliches Wachstum",
         "general": "Allgemein"
       }
+    },
+    "errors": {
+      "socket": "Game connection error",
+      "joinRoomFailed": "Failed to join game room"
     }
   },
   "analyticsPage": {
@@ -2268,7 +2775,8 @@
     "currentPlan": "Aktueller Plan",
     "sending": "Wird gesendet...",
     "uploadImageError": "Bitte laden Sie eine Bilddatei hoch",
-    "logoSizeError": "Das Logo muss unter 5 MB sein"
+    "logoSizeError": "Das Logo muss unter 5 MB sein",
+    "logoUploadFailed": "Logo upload failed. Please try again."
   },
   "departments": {
     "title": "Abteilungen",
@@ -2277,7 +2785,9 @@
     "importHint": "Tipp: einfügen oder importieren als „E-Mail, Abteilung“. Standard ist „General“.",
     "toast": {
       "created": "Abteilung erstellt",
-      "deleted": "Abteilung gelöscht"
+      "deleted": "Abteilung gelöscht",
+      "deleteFailed": "Abteilung konnte nicht gelöscht werden",
+      "updated": "Abteilung aktualisiert"
     }
   },
   "templates": {
@@ -2300,10 +2810,14 @@
     "allCaughtUp": "Alles aktuell! Neue Benachrichtigungen erscheinen hier.",
     "total": "Alle Benachrichtigungen",
     "unread": "Ungelesen",
-    "last7Days": "Letzte 7 Tage"
+    "last7Days": "Letzte 7 Tage",
+    "subtitle": "Stay up to date with what’s happening in your workspace."
   },
   "search": {
-    "noResults": "Keine Ergebnisse für \"{{query}}\""
+    "noResults": "Keine Ergebnisse für \"{{query}}\"",
+    "people": "People",
+    "sessions": "Sessions",
+    "tryDifferent": "Try a different search"
   },
   "tour": {
     "welcome": {
@@ -2387,5 +2901,99 @@
       },
       "noResults": "Kein Feedback gefunden"
     }
-  }
+  },
+  "brand": {
+    "name": "Flowkyn"
+  },
+  "event": {
+    "joinFailed": "Failed to join. Please try again."
+  },
+  "tickets": {
+    "myTicketsTitle": "My Tickets",
+    "myTicketsSubtitle": "Track your bug reports and feature requests",
+    "newTicket": "New Ticket",
+    "searchPlaceholder": "Search tickets by title, description...",
+    "statusLabel": "Status",
+    "allStatuses": "All Statuses",
+    "empty": "No tickets found",
+    "createFirst": "Create Your First Ticket",
+    "viewDetails": "View Details",
+    "assignedTo": "Assigned to {{name}}",
+    "attachmentsCount": "{{count}} file(s)",
+    "confirmDelete": "Are you sure you want to delete this ticket? This action cannot be undone.",
+    "allStatusesLabel": "All Statuses",
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "attachments": {
+      "tooLarge": "File \"{{name}}\" is too large",
+      "typeNotSupported": "File type \"{{type}}\" not supported for \"{{name}}\"",
+      "uploadFailed": "Failed to upload \"{{name}}\"",
+      "previewAlt": "attachment preview"
+    },
+    "typeOptions": {
+      "bugReport": "Bug Report",
+      "bugReportDesc": "Something isn't working correctly",
+      "featureRequest": "Feature Request",
+      "featureRequestDesc": "Suggest a new feature",
+      "issue": "Issue",
+      "issueDesc": "General problem or concern",
+      "generalFeedback": "General Feedback",
+      "generalFeedbackDesc": "General comment or suggestion"
+    },
+    "submit": {
+      "title": "Report Issue / Request Feature",
+      "subtitle": "Help us improve by letting us know about bugs, feature requests, or general feedback",
+      "typeLabel": "Type of Report *",
+      "priorityLabel": "Priority",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "e.g., Cannot upload images larger than 5MB",
+      "descriptionLabel": "Description *",
+      "descriptionPlaceholder": "Provide as much detail as possible…",
+      "attachmentsLabel": "Attachments (Screenshots, Logs, etc.)",
+      "dropzone": {
+        "title": "Drop files here or click to select",
+        "subtitle": "Max 10MB per file. Supported: Images, PDF, Word, Excel, Text"
+      },
+      "submitCta": "Submit Ticket",
+      "submitting": "Submitting…"
+    },
+    "toast": {
+      "submitted": "Ticket submitted successfully!",
+      "deleted": "Ticket deleted"
+    },
+    "errors": {
+      "loadFailed": "Failed to load tickets",
+      "submitFailed": "Failed to submit ticket",
+      "deleteFailed": "Failed to delete ticket"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required"
+    }
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "moderator": "Moderator",
+    "member": "Member"
+  },
+  "plans": {
+    "free": "Free"
+  },
+  "timezones": {
+    "utc": "UTC",
+    "europeBerlin": "Europe/Berlin",
+    "europeParis": "Europe/Paris",
+    "americaNewYork": "America/New York",
+    "asiaTokyo": "Asia/Tokyo",
+    "europeBerlinGmt": "Europe/Berlin (GMT+1)",
+    "europeParisGmt": "Europe/Paris (GMT+1)",
+    "newYorkGmt": "New York (GMT-5)",
+    "tokyoGmt": "Tokyo (GMT+9)"
+  },
+  "departmentsSelected": "Abteilungen ausgewählt"
 }

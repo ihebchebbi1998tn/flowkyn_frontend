@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const ROOT = path.resolve(process.cwd(), 'src');
 const LOCALES_DIR = path.resolve(process.cwd(), 'src', 'i18n');
-const LOCALES = ['en', 'fr', 'de'];
+const LOCALES = ['en', 'fr', 'de', 'es'];
 
 function readJson(p) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -114,6 +114,7 @@ function main() {
       en: { count: missing.en.length, sample: topMissing(missing.en), all: missing.en },
       fr: { count: missing.fr.length, sample: topMissing(missing.fr), all: missing.fr },
       de: { count: missing.de.length, sample: topMissing(missing.de), all: missing.de },
+      es: { count: missing.es.length, sample: topMissing(missing.es), all: missing.es },
     },
     whereUsed: {},
     dynamicUsage: dynamicUsage.slice(0, 200),

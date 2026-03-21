@@ -4,2061 +4,450 @@
     "locales": [
       "en",
       "fr",
-      "de"
+      "de",
+      "es"
     ],
-    "totalUsedKeys": 1166,
-    "dynamicPatterns": 62,
-    "filesWithDefaultValue": 43
+    "totalUsedKeys": 1433,
+    "dynamicPatterns": 73,
+    "filesWithDefaultValue": 61
   },
   "missing": {
     "en": {
+      "count": 82,
+      "sample": [
+        "common.clearAll",
+        "departments.toast.deleteFailed",
+        "departments.toast.updated",
+        "departmentsSelected",
+        "gamePlay.coffeeRoulette.complete.message",
+        "gamePlay.coffeeRoulette.complete.prompts",
+        "gamePlay.coffeeRoulette.complete.subtitle",
+        "gamePlay.coffeeRoulette.error.notFound",
+        "gamePlay.coffeeRoulette.lobby.voiceEnabled",
+        "gamePlay.coffeeRoulette.unmatched",
+        "gamePlay.shell.back",
+        "gamePlay.shell.userDisconnectedBadge",
+        "gamePlay.twoTruths.markAsLie",
+        "gamePlay.twoTruths.waitForHost",
+        "gamePlay.twoTruths.waitingForHostToStart",
+        "gamePlay.winsOfWeek.sharing",
+        "games.coffeeRoulette.admin.mapping.assignDesc",
+        "games.coffeeRoulette.admin.mapping.assignTitle",
+        "games.coffeeRoulette.admin.mapping.chooseQuestion",
+        "games.coffeeRoulette.admin.mapping.chooseTopic",
+        "games.coffeeRoulette.admin.mapping.noQuestionsAssigned",
+        "games.coffeeRoulette.admin.mapping.selectQuestion",
+        "games.coffeeRoulette.admin.mapping.selectTopic",
+        "games.coffeeRoulette.admin.mapping.subtitle",
+        "games.coffeeRoulette.admin.mapping.title",
+        "games.coffeeRoulette.admin.questions.createdLabel",
+        "games.coffeeRoulette.admin.questions.id",
+        "games.coffeeRoulette.admin.questions.noMatches",
+        "games.coffeeRoulette.admin.questions.showing",
+        "games.coffeeRoulette.admin.questions.subtitle",
+        "games.coffeeRoulette.admin.questions.title",
+        "games.coffeeRoulette.admin.questions.updatedLabel",
+        "games.coffeeRoulette.admin.settings.advanced",
+        "games.coffeeRoulette.admin.settings.allowGeneral",
+        "games.coffeeRoulette.admin.settings.basicSettings",
+        "games.coffeeRoulette.admin.settings.chatDuration",
+        "games.coffeeRoulette.admin.settings.configurationDetails",
+        "games.coffeeRoulette.admin.settings.configurationId",
+        "games.coffeeRoulette.admin.settings.configureDescription",
+        "games.coffeeRoulette.admin.settings.create",
+        "games.coffeeRoulette.admin.settings.createdAt",
+        "games.coffeeRoulette.admin.settings.eventId",
+        "games.coffeeRoulette.admin.settings.failedToCreate",
+        "games.coffeeRoulette.admin.settings.failedToLoad",
+        "games.coffeeRoulette.admin.settings.failedToUpdate",
+        "games.coffeeRoulette.admin.settings.gameConfiguration",
+        "games.coffeeRoulette.admin.settings.maxPrompts",
+        "games.coffeeRoulette.admin.settings.questionStrategy",
+        "games.coffeeRoulette.admin.settings.random",
+        "games.coffeeRoulette.admin.settings.reset",
+        "games.coffeeRoulette.admin.settings.savedSuccessfully",
+        "games.coffeeRoulette.admin.settings.selectionStrategies",
+        "games.coffeeRoulette.admin.settings.sequential",
+        "games.coffeeRoulette.admin.settings.shuffleOnRepeat",
+        "games.coffeeRoulette.admin.settings.title",
+        "games.coffeeRoulette.admin.settings.topicStrategy",
+        "games.coffeeRoulette.admin.settings.update",
+        "games.coffeeRoulette.admin.settings.updatedAt",
+        "games.coffeeRoulette.admin.settings.weighted",
+        "games.coffeeRoulette.admin.topics.active",
+        "games.coffeeRoulette.admin.topics.addTopic",
+        "games.coffeeRoulette.admin.topics.createTopic",
+        "games.coffeeRoulette.admin.topics.createdDate",
+        "games.coffeeRoulette.admin.topics.deleteConfirm",
+        "games.coffeeRoulette.admin.topics.editTopic",
+        "games.coffeeRoulette.admin.topics.failedToCreate",
+        "games.coffeeRoulette.admin.topics.failedToDelete",
+        "games.coffeeRoulette.admin.topics.failedToLoad",
+        "games.coffeeRoulette.admin.topics.failedToUpdate",
+        "games.coffeeRoulette.admin.topics.noTopics",
+        "games.coffeeRoulette.admin.topics.title",
+        "games.coffeeRoulette.admin.topics.topicDescription",
+        "games.coffeeRoulette.admin.topics.topicIcon",
+        "games.coffeeRoulette.admin.topics.topicTitle",
+        "games.coffeeRoulette.admin.topics.weight",
+        "games.coffeeRouletteTitle",
+        "games.comingSoon.title",
+        "games.strategicEscapeTitle",
+        "games.twoTruthsTitle",
+        "games.winsOfWeekTitle",
+        "profileSetup.submitFailed",
+        "strategic.actions.sessionCreated"
+      ],
+      "all": [
+        "common.clearAll",
+        "departments.toast.deleteFailed",
+        "departments.toast.updated",
+        "departmentsSelected",
+        "gamePlay.coffeeRoulette.complete.message",
+        "gamePlay.coffeeRoulette.complete.prompts",
+        "gamePlay.coffeeRoulette.complete.subtitle",
+        "gamePlay.coffeeRoulette.error.notFound",
+        "gamePlay.coffeeRoulette.lobby.voiceEnabled",
+        "gamePlay.coffeeRoulette.unmatched",
+        "gamePlay.shell.back",
+        "gamePlay.shell.userDisconnectedBadge",
+        "gamePlay.twoTruths.markAsLie",
+        "gamePlay.twoTruths.waitForHost",
+        "gamePlay.twoTruths.waitingForHostToStart",
+        "gamePlay.winsOfWeek.sharing",
+        "games.coffeeRoulette.admin.mapping.assignDesc",
+        "games.coffeeRoulette.admin.mapping.assignTitle",
+        "games.coffeeRoulette.admin.mapping.chooseQuestion",
+        "games.coffeeRoulette.admin.mapping.chooseTopic",
+        "games.coffeeRoulette.admin.mapping.noQuestionsAssigned",
+        "games.coffeeRoulette.admin.mapping.selectQuestion",
+        "games.coffeeRoulette.admin.mapping.selectTopic",
+        "games.coffeeRoulette.admin.mapping.subtitle",
+        "games.coffeeRoulette.admin.mapping.title",
+        "games.coffeeRoulette.admin.questions.createdLabel",
+        "games.coffeeRoulette.admin.questions.id",
+        "games.coffeeRoulette.admin.questions.noMatches",
+        "games.coffeeRoulette.admin.questions.showing",
+        "games.coffeeRoulette.admin.questions.subtitle",
+        "games.coffeeRoulette.admin.questions.title",
+        "games.coffeeRoulette.admin.questions.updatedLabel",
+        "games.coffeeRoulette.admin.settings.advanced",
+        "games.coffeeRoulette.admin.settings.allowGeneral",
+        "games.coffeeRoulette.admin.settings.basicSettings",
+        "games.coffeeRoulette.admin.settings.chatDuration",
+        "games.coffeeRoulette.admin.settings.configurationDetails",
+        "games.coffeeRoulette.admin.settings.configurationId",
+        "games.coffeeRoulette.admin.settings.configureDescription",
+        "games.coffeeRoulette.admin.settings.create",
+        "games.coffeeRoulette.admin.settings.createdAt",
+        "games.coffeeRoulette.admin.settings.eventId",
+        "games.coffeeRoulette.admin.settings.failedToCreate",
+        "games.coffeeRoulette.admin.settings.failedToLoad",
+        "games.coffeeRoulette.admin.settings.failedToUpdate",
+        "games.coffeeRoulette.admin.settings.gameConfiguration",
+        "games.coffeeRoulette.admin.settings.maxPrompts",
+        "games.coffeeRoulette.admin.settings.questionStrategy",
+        "games.coffeeRoulette.admin.settings.random",
+        "games.coffeeRoulette.admin.settings.reset",
+        "games.coffeeRoulette.admin.settings.savedSuccessfully",
+        "games.coffeeRoulette.admin.settings.selectionStrategies",
+        "games.coffeeRoulette.admin.settings.sequential",
+        "games.coffeeRoulette.admin.settings.shuffleOnRepeat",
+        "games.coffeeRoulette.admin.settings.title",
+        "games.coffeeRoulette.admin.settings.topicStrategy",
+        "games.coffeeRoulette.admin.settings.update",
+        "games.coffeeRoulette.admin.settings.updatedAt",
+        "games.coffeeRoulette.admin.settings.weighted",
+        "games.coffeeRoulette.admin.topics.active",
+        "games.coffeeRoulette.admin.topics.addTopic",
+        "games.coffeeRoulette.admin.topics.createTopic",
+        "games.coffeeRoulette.admin.topics.createdDate",
+        "games.coffeeRoulette.admin.topics.deleteConfirm",
+        "games.coffeeRoulette.admin.topics.editTopic",
+        "games.coffeeRoulette.admin.topics.failedToCreate",
+        "games.coffeeRoulette.admin.topics.failedToDelete",
+        "games.coffeeRoulette.admin.topics.failedToLoad",
+        "games.coffeeRoulette.admin.topics.failedToUpdate",
+        "games.coffeeRoulette.admin.topics.noTopics",
+        "games.coffeeRoulette.admin.topics.title",
+        "games.coffeeRoulette.admin.topics.topicDescription",
+        "games.coffeeRoulette.admin.topics.topicIcon",
+        "games.coffeeRoulette.admin.topics.topicTitle",
+        "games.coffeeRoulette.admin.topics.weight",
+        "games.coffeeRouletteTitle",
+        "games.comingSoon.title",
+        "games.strategicEscapeTitle",
+        "games.twoTruthsTitle",
+        "games.winsOfWeekTitle",
+        "profileSetup.submitFailed",
+        "strategic.actions.sessionCreated"
+      ]
+    },
+    "fr": {
       "count": 0,
       "sample": [],
       "all": []
     },
-    "fr": {
-      "count": 338,
-      "sample": [
-        "activities.launch.actions.launchNow",
-        "activities.launch.actions.nextInvite",
-        "activities.launch.actions.nextReview",
-        "activities.launch.defaultEventTitle",
-        "activities.launch.errors.generic",
-        "activities.launch.errors.missingOrgId",
-        "activities.launch.fields.descriptionOptional",
-        "activities.launch.fields.durationMinutes",
-        "activities.launch.fields.eventTitle",
-        "activities.launch.fields.maxParticipants",
-        "activities.launch.fields.visibility",
-        "activities.launch.fields.whenToStart",
-        "activities.launch.invite.addHint",
-        "activities.launch.invite.allowNickname",
-        "activities.launch.invite.clearAll",
-        "activities.launch.invite.emailAddresses",
-        "activities.launch.invite.emailPlaceholder",
-        "activities.launch.invite.invitedCount",
-        "activities.launch.invite.noSignup",
-        "activities.launch.invite.pasteList",
-        "activities.launch.invite.pastePlaceholder",
-        "activities.launch.invite.subtitle",
-        "activities.launch.invite.title",
-        "activities.launch.placeholders.description",
-        "activities.launch.placeholders.eventTitle",
-        "activities.launch.progress.creating",
-        "activities.launch.progress.inviting",
-        "activities.launch.review.activity",
-        "activities.launch.review.eventTitle",
-        "activities.launch.review.inviteEmailCount",
-        "activities.launch.review.invited",
-        "activities.launch.review.moreCount",
-        "activities.launch.review.nicknameJoin",
-        "activities.launch.review.noInvites",
-        "activities.launch.review.notSet",
-        "activities.launch.review.participants",
-        "activities.launch.review.participantsLine",
-        "activities.launch.review.schedule",
-        "activities.launch.review.signupRequired",
-        "activities.launch.review.startingImmediately",
-        "activities.launch.review.subtitle",
-        "activities.launch.review.title",
-        "activities.launch.schedule.pickDateTime",
-        "activities.launch.schedule.scheduleLater",
-        "activities.launch.schedule.startNow",
-        "activities.launch.steps.configure",
-        "activities.launch.steps.invite",
-        "activities.launch.steps.review",
-        "activities.launch.subtitle",
-        "activities.launch.title",
-        "activities.launch.untitledEvent",
-        "activities.launch.visibility.inviteOnly",
-        "activities.launch.visibility.workspace",
-        "auth.emailPlaceholder",
-        "auth.newEmailPlaceholder",
-        "auth.passwordMask",
-        "brand.name",
-        "bugReports.attachmentCount",
-        "bugReports.errors.deleteFailed",
-        "bugReports.errors.loadFailed",
-        "bugReports.errors.submitFailed",
-        "bugReports.validation.descriptionRequired",
-        "bugReports.validation.someFilesTooLarge",
-        "bugReports.validation.titleRequired",
-        "chat.connected",
-        "chat.errors.generic",
-        "chat.errors.pinFailed",
-        "chat.errors.sendFailed",
-        "chat.offline",
-        "chat.offlinePlaceholder",
-        "chat.pin",
-        "chat.reconnecting",
-        "chat.retry",
-        "chat.unpin",
-        "common.copyFailed",
-        "common.emDash",
-        "common.host",
-        "common.language",
-        "common.pagination.showing",
-        "common.unknown",
-        "common.you",
-        "dashboard.active",
-        "dashboard.activeSessions",
-        "dashboard.activityBreakdown",
-        "dashboard.analytics",
-        "dashboard.byActivityCategory",
-        "dashboard.categoryDistribution",
-        "dashboard.completed",
-        "dashboard.completion",
-        "dashboard.details",
-        "dashboard.events",
-        "dashboard.goodAfternoon",
-        "dashboard.goodEvening",
-        "dashboard.goodMorning",
-        "dashboard.keyMetrics",
-        "dashboard.lastSixMonths",
-        "dashboard.latestGameSessions",
-        "dashboard.launchActivity",
-        "dashboard.noUpcomingEvents",
-        "dashboard.noUpcomingEventsDesc",
-        "dashboard.participants",
-        "dashboard.performanceOverview",
-        "dashboard.sessionCompletionRate",
-        "dashboard.sessions",
-        "dashboard.sessionsByGameType",
-        "dashboard.started",
-        "dashboard.totalEvents",
-        "event.joinFailed",
-        "events.errors.joinRoomFailed",
-        "events.guestsAllowed",
-        "events.host",
-        "events.inviteFailed",
-        "events.membersOnly",
-        "events.mode",
-        "events.offline",
-        "events.online",
-        "events.reconnecting",
-        "events.selectedAvatarAlt",
-        "events.statusLabel",
-        "events.syncing",
-        "gamePlay.coffeeRoulette.decision.body",
-        "gamePlay.coffeeRoulette.decision.continue",
-        "gamePlay.coffeeRoulette.decision.end",
-        "gamePlay.coffeeRoulette.decision.hint",
-        "gamePlay.coffeeRoulette.decision.title",
-        "gamePlay.coffeeRoulette.defaultTopic",
-        "gamePlay.coffeeRoulette.endAndClose",
-        "gamePlay.coffeeRoulette.nextPrompt",
-        "gamePlay.coffeeRoulette.promptCounter",
-        "gamePlay.coffeeRoulette.spectatorMessage",
-        "gamePlay.coffeeRoulette.spectatorTitle",
-        "gamePlay.coffeeRoulette.spin1",
-        "gamePlay.coffeeRoulette.spin2",
-        "gamePlay.coffeeRoulette.spin3",
-        "gamePlay.coffeeRoulette.spin4",
-        "gamePlay.coffeeRoulette.spin5",
-        "gamePlay.coffeeRoulette.spin6",
-        "gamePlay.coffeeRoulette.spin7",
-        "gamePlay.coffeeRoulette.spin8",
-        "gamePlay.coffeeRoulette.spinning",
-        "gamePlay.errors.joinRoomFailed",
-        "gamePlay.errors.socket",
-        "gamePlay.leaderboard.empty",
-        "gamePlay.leaderboard.onlineCount",
-        "gamePlay.leaderboard.teamProgressTitle",
-        "gamePlay.shell.asyncSession",
-        "gamePlay.shell.chatLabel",
-        "gamePlay.shell.inviteHelp",
-        "gamePlay.shell.liveSession",
-        "gamePlay.shell.readyToConnect",
-        "gamePlay.shell.scoresLabel",
-        "gamePlay.shell.userJoinedToast",
-        "gamePlay.twoTruths.defaultStatement1",
-        "gamePlay.twoTruths.defaultStatement2",
-        "gamePlay.twoTruths.defaultStatement3",
-        "gamePlay.twoTruths.findingTruth",
-        "gamePlay.twoTruths.revealHost",
-        "gamePlay.twoTruths.waitingForPresenter",
-        "gamePlay.winsOfWeek.defaultPrompt",
-        "gamePlay.winsOfWeek.emptySubtitle",
-        "gamePlay.winsOfWeek.emptyTitle",
-        "games.comingSoon.milestones.alphaTesting",
-        "games.comingSoon.milestones.finalPolish",
-        "games.comingSoon.milestones.researchDesign",
-        "games.comingSoonDescription",
-        "games.errors.actionFailed",
-        "games.errors.genericStartFailed",
-        "games.errors.notAuthorizedToStart",
-        "games.errors.notMember",
-        "games.errors.sessionNotActive",
-        "invitation.missingEventId",
-        "languages.de",
-        "languages.en",
-        "languages.fr",
-        "nav.manage",
-        "nav.menu",
-        "nav.newEvent",
-        "notifications.viewAll",
-        "notificationsPage.subtitle",
-        "onboarding.errors.checkInfoAndRetry",
-        "onboarding.errors.createOrgFailed",
-        "onboarding.errors.setupFailed",
-        "onboarding.logoAlt",
-        "onboarding.logoUploadCta",
-        "onboarding.logoUploadHint",
-        "onboarding.logoUploaded",
-        "onboarding.logoUploadedHint",
-        "orgDetail.logoUploadFailed",
-        "organizations.company",
-        "organizations.inviteEmailPlaceholder",
-        "organizations.invitedMember",
-        "organizations.invitedPending",
-        "plans.free",
-        "profile.editTitle",
-        "profile.save",
-        "roles.admin",
-        "roles.member",
-        "roles.moderator",
-        "roles.owner",
-        "search.people"
-      ],
-      "all": [
-        "activities.launch.actions.launchNow",
-        "activities.launch.actions.nextInvite",
-        "activities.launch.actions.nextReview",
-        "activities.launch.defaultEventTitle",
-        "activities.launch.errors.generic",
-        "activities.launch.errors.missingOrgId",
-        "activities.launch.fields.descriptionOptional",
-        "activities.launch.fields.durationMinutes",
-        "activities.launch.fields.eventTitle",
-        "activities.launch.fields.maxParticipants",
-        "activities.launch.fields.visibility",
-        "activities.launch.fields.whenToStart",
-        "activities.launch.invite.addHint",
-        "activities.launch.invite.allowNickname",
-        "activities.launch.invite.clearAll",
-        "activities.launch.invite.emailAddresses",
-        "activities.launch.invite.emailPlaceholder",
-        "activities.launch.invite.invitedCount",
-        "activities.launch.invite.noSignup",
-        "activities.launch.invite.pasteList",
-        "activities.launch.invite.pastePlaceholder",
-        "activities.launch.invite.subtitle",
-        "activities.launch.invite.title",
-        "activities.launch.placeholders.description",
-        "activities.launch.placeholders.eventTitle",
-        "activities.launch.progress.creating",
-        "activities.launch.progress.inviting",
-        "activities.launch.review.activity",
-        "activities.launch.review.eventTitle",
-        "activities.launch.review.inviteEmailCount",
-        "activities.launch.review.invited",
-        "activities.launch.review.moreCount",
-        "activities.launch.review.nicknameJoin",
-        "activities.launch.review.noInvites",
-        "activities.launch.review.notSet",
-        "activities.launch.review.participants",
-        "activities.launch.review.participantsLine",
-        "activities.launch.review.schedule",
-        "activities.launch.review.signupRequired",
-        "activities.launch.review.startingImmediately",
-        "activities.launch.review.subtitle",
-        "activities.launch.review.title",
-        "activities.launch.schedule.pickDateTime",
-        "activities.launch.schedule.scheduleLater",
-        "activities.launch.schedule.startNow",
-        "activities.launch.steps.configure",
-        "activities.launch.steps.invite",
-        "activities.launch.steps.review",
-        "activities.launch.subtitle",
-        "activities.launch.title",
-        "activities.launch.untitledEvent",
-        "activities.launch.visibility.inviteOnly",
-        "activities.launch.visibility.workspace",
-        "auth.emailPlaceholder",
-        "auth.newEmailPlaceholder",
-        "auth.passwordMask",
-        "brand.name",
-        "bugReports.attachmentCount",
-        "bugReports.errors.deleteFailed",
-        "bugReports.errors.loadFailed",
-        "bugReports.errors.submitFailed",
-        "bugReports.validation.descriptionRequired",
-        "bugReports.validation.someFilesTooLarge",
-        "bugReports.validation.titleRequired",
-        "chat.connected",
-        "chat.errors.generic",
-        "chat.errors.pinFailed",
-        "chat.errors.sendFailed",
-        "chat.offline",
-        "chat.offlinePlaceholder",
-        "chat.pin",
-        "chat.reconnecting",
-        "chat.retry",
-        "chat.unpin",
-        "common.copyFailed",
-        "common.emDash",
-        "common.host",
-        "common.language",
-        "common.pagination.showing",
-        "common.unknown",
-        "common.you",
-        "dashboard.active",
-        "dashboard.activeSessions",
-        "dashboard.activityBreakdown",
-        "dashboard.analytics",
-        "dashboard.byActivityCategory",
-        "dashboard.categoryDistribution",
-        "dashboard.completed",
-        "dashboard.completion",
-        "dashboard.details",
-        "dashboard.events",
-        "dashboard.goodAfternoon",
-        "dashboard.goodEvening",
-        "dashboard.goodMorning",
-        "dashboard.keyMetrics",
-        "dashboard.lastSixMonths",
-        "dashboard.latestGameSessions",
-        "dashboard.launchActivity",
-        "dashboard.noUpcomingEvents",
-        "dashboard.noUpcomingEventsDesc",
-        "dashboard.participants",
-        "dashboard.performanceOverview",
-        "dashboard.sessionCompletionRate",
-        "dashboard.sessions",
-        "dashboard.sessionsByGameType",
-        "dashboard.started",
-        "dashboard.totalEvents",
-        "event.joinFailed",
-        "events.errors.joinRoomFailed",
-        "events.guestsAllowed",
-        "events.host",
-        "events.inviteFailed",
-        "events.membersOnly",
-        "events.mode",
-        "events.offline",
-        "events.online",
-        "events.reconnecting",
-        "events.selectedAvatarAlt",
-        "events.statusLabel",
-        "events.syncing",
-        "gamePlay.coffeeRoulette.decision.body",
-        "gamePlay.coffeeRoulette.decision.continue",
-        "gamePlay.coffeeRoulette.decision.end",
-        "gamePlay.coffeeRoulette.decision.hint",
-        "gamePlay.coffeeRoulette.decision.title",
-        "gamePlay.coffeeRoulette.defaultTopic",
-        "gamePlay.coffeeRoulette.endAndClose",
-        "gamePlay.coffeeRoulette.nextPrompt",
-        "gamePlay.coffeeRoulette.promptCounter",
-        "gamePlay.coffeeRoulette.spectatorMessage",
-        "gamePlay.coffeeRoulette.spectatorTitle",
-        "gamePlay.coffeeRoulette.spin1",
-        "gamePlay.coffeeRoulette.spin2",
-        "gamePlay.coffeeRoulette.spin3",
-        "gamePlay.coffeeRoulette.spin4",
-        "gamePlay.coffeeRoulette.spin5",
-        "gamePlay.coffeeRoulette.spin6",
-        "gamePlay.coffeeRoulette.spin7",
-        "gamePlay.coffeeRoulette.spin8",
-        "gamePlay.coffeeRoulette.spinning",
-        "gamePlay.errors.joinRoomFailed",
-        "gamePlay.errors.socket",
-        "gamePlay.leaderboard.empty",
-        "gamePlay.leaderboard.onlineCount",
-        "gamePlay.leaderboard.teamProgressTitle",
-        "gamePlay.shell.asyncSession",
-        "gamePlay.shell.chatLabel",
-        "gamePlay.shell.inviteHelp",
-        "gamePlay.shell.liveSession",
-        "gamePlay.shell.readyToConnect",
-        "gamePlay.shell.scoresLabel",
-        "gamePlay.shell.userJoinedToast",
-        "gamePlay.twoTruths.defaultStatement1",
-        "gamePlay.twoTruths.defaultStatement2",
-        "gamePlay.twoTruths.defaultStatement3",
-        "gamePlay.twoTruths.findingTruth",
-        "gamePlay.twoTruths.revealHost",
-        "gamePlay.twoTruths.waitingForPresenter",
-        "gamePlay.winsOfWeek.defaultPrompt",
-        "gamePlay.winsOfWeek.emptySubtitle",
-        "gamePlay.winsOfWeek.emptyTitle",
-        "games.comingSoon.milestones.alphaTesting",
-        "games.comingSoon.milestones.finalPolish",
-        "games.comingSoon.milestones.researchDesign",
-        "games.comingSoonDescription",
-        "games.errors.actionFailed",
-        "games.errors.genericStartFailed",
-        "games.errors.notAuthorizedToStart",
-        "games.errors.notMember",
-        "games.errors.sessionNotActive",
-        "invitation.missingEventId",
-        "languages.de",
-        "languages.en",
-        "languages.fr",
-        "nav.manage",
-        "nav.menu",
-        "nav.newEvent",
-        "notifications.viewAll",
-        "notificationsPage.subtitle",
-        "onboarding.errors.checkInfoAndRetry",
-        "onboarding.errors.createOrgFailed",
-        "onboarding.errors.setupFailed",
-        "onboarding.logoAlt",
-        "onboarding.logoUploadCta",
-        "onboarding.logoUploadHint",
-        "onboarding.logoUploaded",
-        "onboarding.logoUploadedHint",
-        "orgDetail.logoUploadFailed",
-        "organizations.company",
-        "organizations.inviteEmailPlaceholder",
-        "organizations.invitedMember",
-        "organizations.invitedPending",
-        "plans.free",
-        "profile.editTitle",
-        "profile.save",
-        "roles.admin",
-        "roles.member",
-        "roles.moderator",
-        "roles.owner",
-        "search.people",
-        "search.sessions",
-        "search.tryDifferent",
-        "settings.accountDeleteFailed",
-        "settings.accountDeleted",
-        "settings.deleteAccountConfirm",
-        "settings.deleteAccountConfirmHint",
-        "settings.deleteAccountPlaceholder",
-        "settings.deleteAccountTitle",
-        "settings.deleteAccountWarning",
-        "settings.deleting",
-        "strategic.actions.assignHelp",
-        "strategic.actions.assignRoles",
-        "strategic.actions.assigningRoles",
-        "strategic.actions.createHelp",
-        "strategic.actions.createSession",
-        "strategic.actions.creating",
-        "strategic.actions.endDiscussion",
-        "strategic.actions.startDiscussion",
-        "strategic.configure.crisisLabel",
-        "strategic.configure.difficultyLabel",
-        "strategic.configure.industryLabel",
-        "strategic.debrief.a1",
-        "strategic.debrief.a2",
-        "strategic.debrief.a3",
-        "strategic.debrief.actionsTitle",
-        "strategic.debrief.q1",
-        "strategic.debrief.q2",
-        "strategic.debrief.q3",
-        "strategic.debrief.questionsTitle",
-        "strategic.debrief.subtitle",
-        "strategic.debrief.summaryBody",
-        "strategic.debrief.summaryTitle",
-        "strategic.debrief.title",
-        "strategic.difficulties.easy.label",
-        "strategic.difficulties.hard.label",
-        "strategic.difficulties.medium.label",
-        "strategic.discussion.guidingQuestions",
-        "strategic.discussion.hostToolsBody",
-        "strategic.discussion.hostToolsTitle",
-        "strategic.discussion.i1",
-        "strategic.discussion.i2",
-        "strategic.discussion.i3",
-        "strategic.discussion.prompt",
-        "strategic.discussion.promptHint",
-        "strategic.discussion.q1",
-        "strategic.discussion.q2",
-        "strategic.discussion.q3",
-        "strategic.discussion.subtitle",
-        "strategic.discussion.teamInstructions",
-        "strategic.discussion.title",
-        "strategic.errors.assignFailed",
-        "strategic.errors.createFailed",
-        "strategic.modal.openLabel",
-        "strategic.modal.subtitle",
-        "strategic.modal.title",
-        "strategic.preview.body",
-        "strategic.preview.configureHint",
-        "strategic.preview.hint",
-        "strategic.preview.hostOnly",
-        "strategic.preview.summaryCrisis",
-        "strategic.preview.summaryDifficulty",
-        "strategic.preview.summaryIndustry",
-        "strategic.preview.summaryTitle",
-        "strategic.preview.summaryUnset",
-        "strategic.preview.title",
-        "strategic.rolesMeta.loading",
-        "strategic.rolesMeta.pending",
-        "strategic.rolesMeta.pendingHint",
-        "strategic.rolesMeta.playerLabel",
-        "strategic.rolesMeta.refreshing",
-        "strategic.rolesMeta.roleNameLabel",
-        "strategic.rolesMeta.secret",
-        "strategic.rolesMeta.secretHint",
-        "strategic.rolesMeta.swapBody",
-        "strategic.rolesMeta.swapClosed",
-        "strategic.rolesMeta.swapCountdown",
-        "strategic.rolesMeta.swapTitle",
-        "strategic.rolesMeta.swapWindow",
-        "strategic.rolesMeta.unknownPlayer",
-        "strategic.rolesSection.subtitle",
-        "strategic.rolesSection.title",
-        "tickets.allStatuses",
-        "tickets.assignedTo",
-        "tickets.attachments.previewAlt",
-        "tickets.attachments.tooLarge",
-        "tickets.attachments.typeNotSupported",
-        "tickets.attachments.uploadFailed",
-        "tickets.attachmentsCount",
-        "tickets.confirmDelete",
-        "tickets.createFirst",
-        "tickets.empty",
-        "tickets.errors.deleteFailed",
-        "tickets.errors.loadFailed",
-        "tickets.errors.submitFailed",
-        "tickets.myTicketsSubtitle",
-        "tickets.myTicketsTitle",
-        "tickets.newTicket",
-        "tickets.priority.critical",
-        "tickets.priority.high",
-        "tickets.priority.low",
-        "tickets.priority.medium",
-        "tickets.searchPlaceholder",
-        "tickets.statusLabel",
-        "tickets.submit.attachmentsLabel",
-        "tickets.submit.descriptionLabel",
-        "tickets.submit.descriptionPlaceholder",
-        "tickets.submit.dropzone.subtitle",
-        "tickets.submit.dropzone.title",
-        "tickets.submit.priorityLabel",
-        "tickets.submit.submitCta",
-        "tickets.submit.submitting",
-        "tickets.submit.subtitle",
-        "tickets.submit.title",
-        "tickets.submit.titleLabel",
-        "tickets.submit.titlePlaceholder",
-        "tickets.submit.typeLabel",
-        "tickets.toast.deleted",
-        "tickets.toast.submitted",
-        "tickets.typeOptions.bugReport",
-        "tickets.typeOptions.bugReportDesc",
-        "tickets.typeOptions.featureRequest",
-        "tickets.typeOptions.featureRequestDesc",
-        "tickets.typeOptions.generalFeedback",
-        "tickets.typeOptions.generalFeedbackDesc",
-        "tickets.typeOptions.issue",
-        "tickets.typeOptions.issueDesc",
-        "tickets.validation.descriptionRequired",
-        "tickets.validation.titleRequired",
-        "tickets.viewDetails",
-        "timezones.americaNewYork",
-        "timezones.asiaTokyo",
-        "timezones.europeBerlin",
-        "timezones.europeBerlinGmt",
-        "timezones.europeParis",
-        "timezones.europeParisGmt",
-        "timezones.newYorkGmt",
-        "timezones.tokyoGmt",
-        "timezones.utc"
-      ]
-    },
     "de": {
-      "count": 348,
-      "sample": [
-        "activities.launch.actions.launchNow",
-        "activities.launch.actions.nextInvite",
-        "activities.launch.actions.nextReview",
-        "activities.launch.defaultEventTitle",
-        "activities.launch.errors.generic",
-        "activities.launch.errors.missingOrgId",
-        "activities.launch.fields.descriptionOptional",
-        "activities.launch.fields.durationMinutes",
-        "activities.launch.fields.eventTitle",
-        "activities.launch.fields.maxParticipants",
-        "activities.launch.fields.visibility",
-        "activities.launch.fields.whenToStart",
-        "activities.launch.invite.addHint",
-        "activities.launch.invite.allowNickname",
-        "activities.launch.invite.clearAll",
-        "activities.launch.invite.emailAddresses",
-        "activities.launch.invite.emailPlaceholder",
-        "activities.launch.invite.invitedCount",
-        "activities.launch.invite.noSignup",
-        "activities.launch.invite.pasteList",
-        "activities.launch.invite.pastePlaceholder",
-        "activities.launch.invite.subtitle",
-        "activities.launch.invite.title",
-        "activities.launch.placeholders.description",
-        "activities.launch.placeholders.eventTitle",
-        "activities.launch.progress.creating",
-        "activities.launch.progress.inviting",
-        "activities.launch.review.activity",
-        "activities.launch.review.eventTitle",
-        "activities.launch.review.inviteEmailCount",
-        "activities.launch.review.invited",
-        "activities.launch.review.moreCount",
-        "activities.launch.review.nicknameJoin",
-        "activities.launch.review.noInvites",
-        "activities.launch.review.notSet",
-        "activities.launch.review.participants",
-        "activities.launch.review.participantsLine",
-        "activities.launch.review.schedule",
-        "activities.launch.review.signupRequired",
-        "activities.launch.review.startingImmediately",
-        "activities.launch.review.subtitle",
-        "activities.launch.review.title",
-        "activities.launch.schedule.pickDateTime",
-        "activities.launch.schedule.scheduleLater",
-        "activities.launch.schedule.startNow",
-        "activities.launch.steps.configure",
-        "activities.launch.steps.invite",
-        "activities.launch.steps.review",
-        "activities.launch.subtitle",
-        "activities.launch.title",
-        "activities.launch.untitledEvent",
-        "activities.launch.visibility.inviteOnly",
-        "activities.launch.visibility.workspace",
-        "auth.emailPlaceholder",
-        "auth.newEmailPlaceholder",
-        "auth.passwordMask",
-        "brand.name",
-        "bugReports.attachmentCount",
-        "bugReports.errors.deleteFailed",
-        "bugReports.errors.loadFailed",
-        "bugReports.errors.submitFailed",
-        "bugReports.validation.descriptionRequired",
-        "bugReports.validation.someFilesTooLarge",
-        "bugReports.validation.titleRequired",
-        "chat.connected",
-        "chat.errors.generic",
-        "chat.errors.pinFailed",
-        "chat.errors.sendFailed",
-        "chat.offline",
-        "chat.offlinePlaceholder",
-        "chat.pin",
-        "chat.reconnecting",
-        "chat.retry",
-        "chat.unpin",
-        "common.copyFailed",
-        "common.emDash",
-        "common.host",
-        "common.language",
-        "common.pagination.showing",
-        "common.unknown",
-        "common.you",
-        "dashboard.active",
-        "dashboard.activeSessions",
-        "dashboard.activityBreakdown",
-        "dashboard.analytics",
-        "dashboard.byActivityCategory",
-        "dashboard.categoryDistribution",
-        "dashboard.completed",
-        "dashboard.completion",
-        "dashboard.details",
-        "dashboard.events",
-        "dashboard.goodAfternoon",
-        "dashboard.goodEvening",
-        "dashboard.goodMorning",
-        "dashboard.keyMetrics",
-        "dashboard.lastSixMonths",
-        "dashboard.latestGameSessions",
-        "dashboard.launchActivity",
-        "dashboard.noUpcomingEvents",
-        "dashboard.noUpcomingEventsDesc",
-        "dashboard.participants",
-        "dashboard.performanceOverview",
-        "dashboard.sessionCompletionRate",
-        "dashboard.sessions",
-        "dashboard.sessionsByGameType",
-        "dashboard.started",
-        "dashboard.totalEvents",
-        "event.joinFailed",
-        "events.errors.joinRoomFailed",
-        "events.guestsAllowed",
-        "events.host",
-        "events.inviteFailed",
-        "events.membersOnly",
-        "events.mode",
-        "events.offline",
-        "events.online",
-        "events.reconnecting",
-        "events.selectedAvatarAlt",
-        "events.settings.allowChatHelp",
-        "events.settings.allowChatLabel",
-        "events.settings.allowGuestsHelp",
-        "events.settings.allowGuestsLabel",
-        "events.settings.autoStartGamesHelp",
-        "events.settings.autoStartGamesLabel",
-        "events.settings.maxRoundsHelp",
-        "events.settings.maxRoundsLabel",
-        "events.settings.sectionDescription",
-        "events.settings.sectionTitle",
-        "events.statusLabel",
-        "events.syncing",
-        "gamePlay.coffeeRoulette.decision.body",
-        "gamePlay.coffeeRoulette.decision.continue",
-        "gamePlay.coffeeRoulette.decision.end",
-        "gamePlay.coffeeRoulette.decision.hint",
-        "gamePlay.coffeeRoulette.decision.title",
-        "gamePlay.coffeeRoulette.defaultTopic",
-        "gamePlay.coffeeRoulette.endAndClose",
-        "gamePlay.coffeeRoulette.nextPrompt",
-        "gamePlay.coffeeRoulette.promptCounter",
-        "gamePlay.coffeeRoulette.spectatorMessage",
-        "gamePlay.coffeeRoulette.spectatorTitle",
-        "gamePlay.coffeeRoulette.spin1",
-        "gamePlay.coffeeRoulette.spin2",
-        "gamePlay.coffeeRoulette.spin3",
-        "gamePlay.coffeeRoulette.spin4",
-        "gamePlay.coffeeRoulette.spin5",
-        "gamePlay.coffeeRoulette.spin6",
-        "gamePlay.coffeeRoulette.spin7",
-        "gamePlay.coffeeRoulette.spin8",
-        "gamePlay.coffeeRoulette.spinning",
-        "gamePlay.errors.joinRoomFailed",
-        "gamePlay.errors.socket",
-        "gamePlay.leaderboard.empty",
-        "gamePlay.leaderboard.onlineCount",
-        "gamePlay.leaderboard.teamProgressTitle",
-        "gamePlay.shell.asyncSession",
-        "gamePlay.shell.chatLabel",
-        "gamePlay.shell.inviteHelp",
-        "gamePlay.shell.liveSession",
-        "gamePlay.shell.readyToConnect",
-        "gamePlay.shell.scoresLabel",
-        "gamePlay.shell.userJoinedToast",
-        "gamePlay.twoTruths.defaultStatement1",
-        "gamePlay.twoTruths.defaultStatement2",
-        "gamePlay.twoTruths.defaultStatement3",
-        "gamePlay.twoTruths.findingTruth",
-        "gamePlay.twoTruths.revealHost",
-        "gamePlay.twoTruths.waitingForPresenter",
-        "gamePlay.winsOfWeek.defaultPrompt",
-        "gamePlay.winsOfWeek.emptySubtitle",
-        "gamePlay.winsOfWeek.emptyTitle",
-        "games.comingSoon.milestones.alphaTesting",
-        "games.comingSoon.milestones.finalPolish",
-        "games.comingSoon.milestones.researchDesign",
-        "games.comingSoonDescription",
-        "games.errors.actionFailed",
-        "games.errors.genericStartFailed",
-        "games.errors.notAuthorizedToStart",
-        "games.errors.notMember",
-        "games.errors.sessionNotActive",
-        "invitation.missingEventId",
-        "languages.de",
-        "languages.en",
-        "languages.fr",
-        "nav.manage",
-        "nav.menu",
-        "nav.newEvent",
-        "notifications.viewAll",
-        "notificationsPage.subtitle",
-        "onboarding.errors.checkInfoAndRetry",
-        "onboarding.errors.createOrgFailed",
-        "onboarding.errors.setupFailed",
-        "onboarding.logoAlt",
-        "onboarding.logoUploadCta",
-        "onboarding.logoUploadHint",
-        "onboarding.logoUploaded",
-        "onboarding.logoUploadedHint",
-        "orgDetail.logoUploadFailed",
-        "organizations.company",
-        "organizations.inviteEmailPlaceholder"
-      ],
-      "all": [
-        "activities.launch.actions.launchNow",
-        "activities.launch.actions.nextInvite",
-        "activities.launch.actions.nextReview",
-        "activities.launch.defaultEventTitle",
-        "activities.launch.errors.generic",
-        "activities.launch.errors.missingOrgId",
-        "activities.launch.fields.descriptionOptional",
-        "activities.launch.fields.durationMinutes",
-        "activities.launch.fields.eventTitle",
-        "activities.launch.fields.maxParticipants",
-        "activities.launch.fields.visibility",
-        "activities.launch.fields.whenToStart",
-        "activities.launch.invite.addHint",
-        "activities.launch.invite.allowNickname",
-        "activities.launch.invite.clearAll",
-        "activities.launch.invite.emailAddresses",
-        "activities.launch.invite.emailPlaceholder",
-        "activities.launch.invite.invitedCount",
-        "activities.launch.invite.noSignup",
-        "activities.launch.invite.pasteList",
-        "activities.launch.invite.pastePlaceholder",
-        "activities.launch.invite.subtitle",
-        "activities.launch.invite.title",
-        "activities.launch.placeholders.description",
-        "activities.launch.placeholders.eventTitle",
-        "activities.launch.progress.creating",
-        "activities.launch.progress.inviting",
-        "activities.launch.review.activity",
-        "activities.launch.review.eventTitle",
-        "activities.launch.review.inviteEmailCount",
-        "activities.launch.review.invited",
-        "activities.launch.review.moreCount",
-        "activities.launch.review.nicknameJoin",
-        "activities.launch.review.noInvites",
-        "activities.launch.review.notSet",
-        "activities.launch.review.participants",
-        "activities.launch.review.participantsLine",
-        "activities.launch.review.schedule",
-        "activities.launch.review.signupRequired",
-        "activities.launch.review.startingImmediately",
-        "activities.launch.review.subtitle",
-        "activities.launch.review.title",
-        "activities.launch.schedule.pickDateTime",
-        "activities.launch.schedule.scheduleLater",
-        "activities.launch.schedule.startNow",
-        "activities.launch.steps.configure",
-        "activities.launch.steps.invite",
-        "activities.launch.steps.review",
-        "activities.launch.subtitle",
-        "activities.launch.title",
-        "activities.launch.untitledEvent",
-        "activities.launch.visibility.inviteOnly",
-        "activities.launch.visibility.workspace",
-        "auth.emailPlaceholder",
-        "auth.newEmailPlaceholder",
-        "auth.passwordMask",
-        "brand.name",
-        "bugReports.attachmentCount",
-        "bugReports.errors.deleteFailed",
-        "bugReports.errors.loadFailed",
-        "bugReports.errors.submitFailed",
-        "bugReports.validation.descriptionRequired",
-        "bugReports.validation.someFilesTooLarge",
-        "bugReports.validation.titleRequired",
-        "chat.connected",
-        "chat.errors.generic",
-        "chat.errors.pinFailed",
-        "chat.errors.sendFailed",
-        "chat.offline",
-        "chat.offlinePlaceholder",
-        "chat.pin",
-        "chat.reconnecting",
-        "chat.retry",
-        "chat.unpin",
-        "common.copyFailed",
-        "common.emDash",
-        "common.host",
-        "common.language",
-        "common.pagination.showing",
-        "common.unknown",
-        "common.you",
-        "dashboard.active",
-        "dashboard.activeSessions",
-        "dashboard.activityBreakdown",
-        "dashboard.analytics",
-        "dashboard.byActivityCategory",
-        "dashboard.categoryDistribution",
-        "dashboard.completed",
-        "dashboard.completion",
-        "dashboard.details",
-        "dashboard.events",
-        "dashboard.goodAfternoon",
-        "dashboard.goodEvening",
-        "dashboard.goodMorning",
-        "dashboard.keyMetrics",
-        "dashboard.lastSixMonths",
-        "dashboard.latestGameSessions",
-        "dashboard.launchActivity",
-        "dashboard.noUpcomingEvents",
-        "dashboard.noUpcomingEventsDesc",
-        "dashboard.participants",
-        "dashboard.performanceOverview",
-        "dashboard.sessionCompletionRate",
-        "dashboard.sessions",
-        "dashboard.sessionsByGameType",
-        "dashboard.started",
-        "dashboard.totalEvents",
-        "event.joinFailed",
-        "events.errors.joinRoomFailed",
-        "events.guestsAllowed",
-        "events.host",
-        "events.inviteFailed",
-        "events.membersOnly",
-        "events.mode",
-        "events.offline",
-        "events.online",
-        "events.reconnecting",
-        "events.selectedAvatarAlt",
-        "events.settings.allowChatHelp",
-        "events.settings.allowChatLabel",
-        "events.settings.allowGuestsHelp",
-        "events.settings.allowGuestsLabel",
-        "events.settings.autoStartGamesHelp",
-        "events.settings.autoStartGamesLabel",
-        "events.settings.maxRoundsHelp",
-        "events.settings.maxRoundsLabel",
-        "events.settings.sectionDescription",
-        "events.settings.sectionTitle",
-        "events.statusLabel",
-        "events.syncing",
-        "gamePlay.coffeeRoulette.decision.body",
-        "gamePlay.coffeeRoulette.decision.continue",
-        "gamePlay.coffeeRoulette.decision.end",
-        "gamePlay.coffeeRoulette.decision.hint",
-        "gamePlay.coffeeRoulette.decision.title",
-        "gamePlay.coffeeRoulette.defaultTopic",
-        "gamePlay.coffeeRoulette.endAndClose",
-        "gamePlay.coffeeRoulette.nextPrompt",
-        "gamePlay.coffeeRoulette.promptCounter",
-        "gamePlay.coffeeRoulette.spectatorMessage",
-        "gamePlay.coffeeRoulette.spectatorTitle",
-        "gamePlay.coffeeRoulette.spin1",
-        "gamePlay.coffeeRoulette.spin2",
-        "gamePlay.coffeeRoulette.spin3",
-        "gamePlay.coffeeRoulette.spin4",
-        "gamePlay.coffeeRoulette.spin5",
-        "gamePlay.coffeeRoulette.spin6",
-        "gamePlay.coffeeRoulette.spin7",
-        "gamePlay.coffeeRoulette.spin8",
-        "gamePlay.coffeeRoulette.spinning",
-        "gamePlay.errors.joinRoomFailed",
-        "gamePlay.errors.socket",
-        "gamePlay.leaderboard.empty",
-        "gamePlay.leaderboard.onlineCount",
-        "gamePlay.leaderboard.teamProgressTitle",
-        "gamePlay.shell.asyncSession",
-        "gamePlay.shell.chatLabel",
-        "gamePlay.shell.inviteHelp",
-        "gamePlay.shell.liveSession",
-        "gamePlay.shell.readyToConnect",
-        "gamePlay.shell.scoresLabel",
-        "gamePlay.shell.userJoinedToast",
-        "gamePlay.twoTruths.defaultStatement1",
-        "gamePlay.twoTruths.defaultStatement2",
-        "gamePlay.twoTruths.defaultStatement3",
-        "gamePlay.twoTruths.findingTruth",
-        "gamePlay.twoTruths.revealHost",
-        "gamePlay.twoTruths.waitingForPresenter",
-        "gamePlay.winsOfWeek.defaultPrompt",
-        "gamePlay.winsOfWeek.emptySubtitle",
-        "gamePlay.winsOfWeek.emptyTitle",
-        "games.comingSoon.milestones.alphaTesting",
-        "games.comingSoon.milestones.finalPolish",
-        "games.comingSoon.milestones.researchDesign",
-        "games.comingSoonDescription",
-        "games.errors.actionFailed",
-        "games.errors.genericStartFailed",
-        "games.errors.notAuthorizedToStart",
-        "games.errors.notMember",
-        "games.errors.sessionNotActive",
-        "invitation.missingEventId",
-        "languages.de",
-        "languages.en",
-        "languages.fr",
-        "nav.manage",
-        "nav.menu",
-        "nav.newEvent",
-        "notifications.viewAll",
-        "notificationsPage.subtitle",
-        "onboarding.errors.checkInfoAndRetry",
-        "onboarding.errors.createOrgFailed",
-        "onboarding.errors.setupFailed",
-        "onboarding.logoAlt",
-        "onboarding.logoUploadCta",
-        "onboarding.logoUploadHint",
-        "onboarding.logoUploaded",
-        "onboarding.logoUploadedHint",
-        "orgDetail.logoUploadFailed",
-        "organizations.company",
-        "organizations.inviteEmailPlaceholder",
-        "organizations.invitedMember",
-        "organizations.invitedPending",
-        "plans.free",
-        "profile.editTitle",
-        "profile.save",
-        "roles.admin",
-        "roles.member",
-        "roles.moderator",
-        "roles.owner",
-        "search.people",
-        "search.sessions",
-        "search.tryDifferent",
-        "settings.accountDeleteFailed",
-        "settings.accountDeleted",
-        "settings.deleteAccountConfirm",
-        "settings.deleteAccountConfirmHint",
-        "settings.deleteAccountPlaceholder",
-        "settings.deleteAccountTitle",
-        "settings.deleteAccountWarning",
-        "settings.deleting",
-        "strategic.actions.assignHelp",
-        "strategic.actions.assignRoles",
-        "strategic.actions.assigningRoles",
-        "strategic.actions.createHelp",
-        "strategic.actions.createSession",
-        "strategic.actions.creating",
-        "strategic.actions.endDiscussion",
-        "strategic.actions.startDiscussion",
-        "strategic.configure.crisisLabel",
-        "strategic.configure.difficultyLabel",
-        "strategic.configure.industryLabel",
-        "strategic.debrief.a1",
-        "strategic.debrief.a2",
-        "strategic.debrief.a3",
-        "strategic.debrief.actionsTitle",
-        "strategic.debrief.q1",
-        "strategic.debrief.q2",
-        "strategic.debrief.q3",
-        "strategic.debrief.questionsTitle",
-        "strategic.debrief.subtitle",
-        "strategic.debrief.summaryBody",
-        "strategic.debrief.summaryTitle",
-        "strategic.debrief.title",
-        "strategic.difficulties.easy.label",
-        "strategic.difficulties.hard.label",
-        "strategic.difficulties.medium.label",
-        "strategic.discussion.guidingQuestions",
-        "strategic.discussion.hostToolsBody",
-        "strategic.discussion.hostToolsTitle",
-        "strategic.discussion.i1",
-        "strategic.discussion.i2",
-        "strategic.discussion.i3",
-        "strategic.discussion.prompt",
-        "strategic.discussion.promptHint",
-        "strategic.discussion.q1",
-        "strategic.discussion.q2",
-        "strategic.discussion.q3",
-        "strategic.discussion.subtitle",
-        "strategic.discussion.teamInstructions",
-        "strategic.discussion.title",
-        "strategic.errors.assignFailed",
-        "strategic.errors.createFailed",
-        "strategic.modal.openLabel",
-        "strategic.modal.subtitle",
-        "strategic.modal.title",
-        "strategic.preview.body",
-        "strategic.preview.configureHint",
-        "strategic.preview.hint",
-        "strategic.preview.hostOnly",
-        "strategic.preview.summaryCrisis",
-        "strategic.preview.summaryDifficulty",
-        "strategic.preview.summaryIndustry",
-        "strategic.preview.summaryTitle",
-        "strategic.preview.summaryUnset",
-        "strategic.preview.title",
-        "strategic.rolesMeta.loading",
-        "strategic.rolesMeta.pending",
-        "strategic.rolesMeta.pendingHint",
-        "strategic.rolesMeta.playerLabel",
-        "strategic.rolesMeta.refreshing",
-        "strategic.rolesMeta.roleNameLabel",
-        "strategic.rolesMeta.secret",
-        "strategic.rolesMeta.secretHint",
-        "strategic.rolesMeta.swapBody",
-        "strategic.rolesMeta.swapClosed",
-        "strategic.rolesMeta.swapCountdown",
-        "strategic.rolesMeta.swapTitle",
-        "strategic.rolesMeta.swapWindow",
-        "strategic.rolesMeta.unknownPlayer",
-        "strategic.rolesSection.subtitle",
-        "strategic.rolesSection.title",
-        "tickets.allStatuses",
-        "tickets.assignedTo",
-        "tickets.attachments.previewAlt",
-        "tickets.attachments.tooLarge",
-        "tickets.attachments.typeNotSupported",
-        "tickets.attachments.uploadFailed",
-        "tickets.attachmentsCount",
-        "tickets.confirmDelete",
-        "tickets.createFirst",
-        "tickets.empty",
-        "tickets.errors.deleteFailed",
-        "tickets.errors.loadFailed",
-        "tickets.errors.submitFailed",
-        "tickets.myTicketsSubtitle",
-        "tickets.myTicketsTitle",
-        "tickets.newTicket",
-        "tickets.priority.critical",
-        "tickets.priority.high",
-        "tickets.priority.low",
-        "tickets.priority.medium",
-        "tickets.searchPlaceholder",
-        "tickets.statusLabel",
-        "tickets.submit.attachmentsLabel",
-        "tickets.submit.descriptionLabel",
-        "tickets.submit.descriptionPlaceholder",
-        "tickets.submit.dropzone.subtitle",
-        "tickets.submit.dropzone.title",
-        "tickets.submit.priorityLabel",
-        "tickets.submit.submitCta",
-        "tickets.submit.submitting",
-        "tickets.submit.subtitle",
-        "tickets.submit.title",
-        "tickets.submit.titleLabel",
-        "tickets.submit.titlePlaceholder",
-        "tickets.submit.typeLabel",
-        "tickets.toast.deleted",
-        "tickets.toast.submitted",
-        "tickets.typeOptions.bugReport",
-        "tickets.typeOptions.bugReportDesc",
-        "tickets.typeOptions.featureRequest",
-        "tickets.typeOptions.featureRequestDesc",
-        "tickets.typeOptions.generalFeedback",
-        "tickets.typeOptions.generalFeedbackDesc",
-        "tickets.typeOptions.issue",
-        "tickets.typeOptions.issueDesc",
-        "tickets.validation.descriptionRequired",
-        "tickets.validation.titleRequired",
-        "tickets.viewDetails",
-        "timezones.americaNewYork",
-        "timezones.asiaTokyo",
-        "timezones.europeBerlin",
-        "timezones.europeBerlinGmt",
-        "timezones.europeParis",
-        "timezones.europeParisGmt",
-        "timezones.newYorkGmt",
-        "timezones.tokyoGmt",
-        "timezones.utc"
-      ]
+      "count": 0,
+      "sample": [],
+      "all": []
+    },
+    "es": {
+      "count": 0,
+      "sample": [],
+      "all": []
     }
   },
   "whereUsed": {
-    "activities.launch.actions.launchNow": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "common.clearAll": [
+      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
     ],
-    "activities.launch.actions.nextInvite": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "departments.toast.deleteFailed": [
+      "src\\hooks\\queries\\useOrgQueries.ts"
     ],
-    "activities.launch.actions.nextReview": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "departments.toast.updated": [
+      "src\\hooks\\queries\\useOrgQueries.ts"
     ],
-    "activities.launch.defaultEventTitle": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "departmentsSelected": [
+      "src\\features\\app\\pages\\activities\\components\\LaunchActivitySections.tsx"
     ],
-    "activities.launch.errors.generic": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "gamePlay.coffeeRoulette.complete.message": [
+      "src\\features\\app\\components\\game\\coffee-roulette\\phases\\OfficeExitAnimation.tsx"
     ],
-    "activities.launch.errors.missingOrgId": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "gamePlay.coffeeRoulette.complete.prompts": [
+      "src\\features\\app\\components\\game\\coffee-roulette\\phases\\OfficeExitAnimation.tsx"
     ],
-    "activities.launch.fields.descriptionOptional": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "gamePlay.coffeeRoulette.complete.subtitle": [
+      "src\\features\\app\\components\\game\\coffee-roulette\\phases\\OfficeExitAnimation.tsx"
     ],
-    "activities.launch.fields.durationMinutes": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "gamePlay.coffeeRoulette.error.notFound": [
+      "src\\features\\app\\components\\game\\coffee-roulette\\CoffeeRouletteBoard.tsx"
     ],
-    "activities.launch.fields.eventTitle": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "gamePlay.coffeeRoulette.lobby.voiceEnabled": [
+      "src\\features\\app\\components\\game\\coffee-roulette\\phases\\OfficeLobby.tsx"
     ],
-    "activities.launch.fields.maxParticipants": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "gamePlay.coffeeRoulette.unmatched": [
+      "src\\features\\app\\components\\game\\coffee-roulette\\CoffeeRouletteBoard.tsx"
     ],
-    "activities.launch.fields.visibility": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
+    "gamePlay.shell.back": [
+      "src\\features\\app\\layouts\\FocusedLayout.tsx"
     ],
-    "activities.launch.fields.whenToStart": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.addHint": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.allowNickname": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.clearAll": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.emailAddresses": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.emailPlaceholder": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.invitedCount": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.noSignup": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.pasteList": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.pastePlaceholder": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.subtitle": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.invite.title": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.placeholders.description": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.placeholders.eventTitle": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.progress.creating": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.progress.inviting": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.activity": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.eventTitle": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.inviteEmailCount": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.invited": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.moreCount": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.nicknameJoin": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.noInvites": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.notSet": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.participants": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.participantsLine": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.schedule": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.signupRequired": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.startingImmediately": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.subtitle": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.review.title": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.schedule.pickDateTime": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.schedule.scheduleLater": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.schedule.startNow": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.steps.configure": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.steps.invite": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.steps.review": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.subtitle": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.title": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.untitledEvent": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.visibility.inviteOnly": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "activities.launch.visibility.workspace": [
-      "src\\features\\app\\pages\\activities\\LaunchActivity.tsx"
-    ],
-    "auth.emailPlaceholder": [
-      "src\\features\\app\\pages\\auth\\ForgotPassword.tsx",
-      "src\\features\\app\\pages\\auth\\Login.tsx",
-      "src\\features\\app\\pages\\auth\\Register.tsx"
-    ],
-    "auth.newEmailPlaceholder": [
-      "src\\features\\app\\pages\\auth\\OTPVerify.tsx"
-    ],
-    "auth.passwordMask": [
-      "src\\features\\app\\pages\\auth\\Login.tsx",
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
-    ],
-    "brand.name": [
-      "src\\features\\app\\components\\auth\\AuthBrandingPanel.tsx",
-      "src\\features\\app\\layouts\\AppSidebar.tsx",
-      "src\\features\\app\\layouts\\Topbar.tsx",
-      "src\\features\\app\\pages\\auth\\ForgotPassword.tsx",
-      "src\\features\\app\\pages\\auth\\Login.tsx",
-      "src\\features\\app\\pages\\auth\\OTPVerify.tsx",
-      "src\\features\\app\\pages\\auth\\Register.tsx",
-      "src\\features\\app\\pages\\auth\\ResetPassword.tsx",
-      "src\\features\\app\\pages\\auth\\VerifyEmail.tsx",
-      "src\\features\\app\\pages\\events\\EventLobby.tsx",
-      "src\\features\\app\\pages\\invitations\\AcceptInvitation.tsx",
-      "src\\features\\app\\pages\\onboarding\\CelebrationScreen.tsx",
-      "src\\features\\app\\pages\\onboarding\\Onboarding.tsx"
-    ],
-    "bugReports.attachmentCount": [
-      "src\\features\\app\\pages\\support\\MyReportsPage.tsx"
-    ],
-    "bugReports.errors.deleteFailed": [
-      "src\\features\\app\\pages\\support\\MyReportsPage.tsx"
-    ],
-    "bugReports.errors.loadFailed": [
-      "src\\features\\app\\pages\\support\\MyReportsPage.tsx"
-    ],
-    "bugReports.errors.submitFailed": [
-      "src\\features\\app\\pages\\support\\BugReportForm.tsx"
-    ],
-    "bugReports.validation.descriptionRequired": [
-      "src\\features\\app\\pages\\support\\BugReportForm.tsx"
-    ],
-    "bugReports.validation.someFilesTooLarge": [
-      "src\\features\\app\\pages\\support\\BugReportForm.tsx"
-    ],
-    "bugReports.validation.titleRequired": [
-      "src\\features\\app\\pages\\support\\BugReportForm.tsx"
-    ],
-    "chat.connected": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "chat.errors.generic": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "chat.errors.pinFailed": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "chat.errors.sendFailed": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx",
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "chat.offline": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "chat.offlinePlaceholder": [
-      "src\\features\\app\\components\\chat\\EventChat.tsx"
-    ],
-    "chat.pin": [
-      "src\\features\\app\\components\\chat\\EventChat.tsx"
-    ],
-    "chat.reconnecting": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "chat.retry": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "chat.unpin": [
-      "src\\features\\app\\components\\chat\\EventChat.tsx"
-    ],
-    "common.copyFailed": [
+    "gamePlay.shell.userDisconnectedBadge": [
       "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx",
-      "src\\features\\app\\pages\\events\\EventDetail.tsx",
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
+      "src\\features\\app\\layouts\\FocusedLayout.tsx"
     ],
-    "common.emDash": [
-      "src\\features\\app\\pages\\events\\EventList.tsx"
-    ],
-    "common.host": [
-      "src\\features\\app\\components\\chat\\EventChat.tsx"
-    ],
-    "common.language": [
-      "src\\components\\common\\LanguageSelector.tsx"
-    ],
-    "common.pagination.showing": [
-      "src\\features\\app\\pages\\tickets\\MyTicketsPage.tsx"
-    ],
-    "common.unknown": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "common.you": [
-      "src\\features\\app\\components\\chat\\EventChat.tsx",
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx",
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "dashboard.active": [
-      "src\\features\\app\\components\\dashboard\\charts\\UpcomingEvents.tsx"
-    ],
-    "dashboard.activeSessions": [
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "dashboard.activityBreakdown": [
-      "src\\features\\app\\components\\dashboard\\charts\\ActivityBreakdownChart.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\ActivityBreakdownSection.tsx"
-    ],
-    "dashboard.analytics": [
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "dashboard.byActivityCategory": [
-      "src\\features\\app\\components\\dashboard\\charts\\ActivityBreakdownChart.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\ActivityBreakdownSection.tsx"
-    ],
-    "dashboard.categoryDistribution": [
-      "src\\features\\app\\components\\dashboard\\charts\\ActivityBreakdownChart.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\ActivityBreakdownSection.tsx"
-    ],
-    "dashboard.completed": [
-      "src\\features\\app\\components\\dashboard\\charts\\EngagementChart.tsx",
-      "src\\features\\app\\components\\dashboard\\charts\\UpcomingEvents.tsx",
-      "src\\features\\app\\pages\\analytics\\AnalyticsDashboard.tsx"
-    ],
-    "dashboard.completion": [
-      "src\\features\\app\\components\\dashboard\\charts\\PerformanceOverview.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\PerformanceSection.tsx",
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "dashboard.details": [
-      "src\\features\\app\\components\\dashboard\\charts\\EngagementChart.tsx"
-    ],
-    "dashboard.events": [
-      "src\\features\\app\\components\\dashboard\\charts\\UpcomingEvents.tsx"
-    ],
-    "dashboard.goodAfternoon": [
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "dashboard.goodEvening": [
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "dashboard.goodMorning": [
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "dashboard.keyMetrics": [
-      "src\\features\\app\\components\\dashboard\\charts\\PerformanceOverview.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\PerformanceSection.tsx"
-    ],
-    "dashboard.lastSixMonths": [
-      "src\\features\\app\\components\\dashboard\\charts\\EngagementChart.tsx"
-    ],
-    "dashboard.latestGameSessions": [
-      "src\\features\\app\\components\\dashboard\\charts\\RecentActivity.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\RecentActivitySection.tsx"
-    ],
-    "dashboard.launchActivity": [
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "dashboard.noUpcomingEvents": [
-      "src\\features\\app\\components\\dashboard\\charts\\UpcomingEvents.tsx"
-    ],
-    "dashboard.noUpcomingEventsDesc": [
-      "src\\features\\app\\components\\dashboard\\charts\\UpcomingEvents.tsx"
-    ],
-    "dashboard.participants": [
-      "src\\features\\app\\components\\dashboard\\charts\\PerformanceOverview.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\PerformanceSection.tsx"
-    ],
-    "dashboard.performanceOverview": [
-      "src\\features\\app\\components\\dashboard\\charts\\PerformanceOverview.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\PerformanceSection.tsx"
-    ],
-    "dashboard.sessionCompletionRate": [
-      "src\\features\\app\\components\\dashboard\\charts\\PerformanceOverview.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\PerformanceSection.tsx"
-    ],
-    "dashboard.sessions": [
-      "src\\features\\app\\components\\dashboard\\charts\\ActivityBreakdownChart.tsx",
-      "src\\features\\app\\components\\dashboard\\charts\\PerformanceOverview.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\ActivityBreakdownSection.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\PerformanceSection.tsx"
-    ],
-    "dashboard.sessionsByGameType": [
-      "src\\features\\app\\components\\dashboard\\charts\\ActivityBreakdownChart.tsx",
-      "src\\features\\app\\components\\dashboard\\sections\\ActivityBreakdownSection.tsx"
-    ],
-    "dashboard.started": [
-      "src\\features\\app\\components\\dashboard\\charts\\EngagementChart.tsx",
-      "src\\features\\app\\pages\\analytics\\AnalyticsDashboard.tsx"
-    ],
-    "dashboard.totalEvents": [
-      "src\\features\\app\\pages\\dashboard\\Dashboard.tsx"
-    ],
-    "event.joinFailed": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "events.errors.joinRoomFailed": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx",
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "events.guestsAllowed": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "events.host": [
-      "src\\features\\app\\components\\game\\shell\\LeaderboardSidebar.tsx",
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "events.inviteFailed": [
-      "src\\features\\app\\pages\\events\\EventDetail.tsx"
-    ],
-    "events.membersOnly": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "events.mode": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.offline": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "events.online": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "events.reconnecting": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "events.selectedAvatarAlt": [
-      "src\\features\\app\\pages\\events\\GuestJoinForm.tsx"
-    ],
-    "events.settings.allowChatHelp": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.allowChatLabel": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.allowGuestsHelp": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.allowGuestsLabel": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.autoStartGamesHelp": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.autoStartGamesLabel": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.maxRoundsHelp": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.maxRoundsLabel": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.sectionDescription": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.settings.sectionTitle": [
-      "src\\features\\app\\pages\\events\\EventForm.tsx"
-    ],
-    "events.statusLabel": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "events.syncing": [
-      "src\\features\\app\\pages\\events\\EventLobby.tsx"
-    ],
-    "gamePlay.coffeeRoulette.decision.body": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.decision.continue": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.decision.end": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.decision.hint": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.decision.title": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.defaultTopic": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.endAndClose": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.nextPrompt": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.promptCounter": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spectatorMessage": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spectatorTitle": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin1": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin2": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin3": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin4": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin5": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin6": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin7": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spin8": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.coffeeRoulette.spinning": [
-      "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx"
-    ],
-    "gamePlay.errors.joinRoomFailed": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "gamePlay.errors.socket": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
-    ],
-    "gamePlay.leaderboard.empty": [
-      "src\\features\\app\\components\\game\\shell\\LeaderboardSidebar.tsx"
-    ],
-    "gamePlay.leaderboard.onlineCount": [
-      "src\\features\\app\\components\\game\\shell\\LeaderboardSidebar.tsx"
-    ],
-    "gamePlay.leaderboard.teamProgressTitle": [
-      "src\\features\\app\\components\\game\\shell\\MobileBottomSheet.tsx"
-    ],
-    "gamePlay.shell.asyncSession": [
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx"
-    ],
-    "gamePlay.shell.chatLabel": [
-      "src\\features\\app\\components\\game\\shell\\MobileBottomSheet.tsx"
-    ],
-    "gamePlay.shell.inviteHelp": [
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx"
-    ],
-    "gamePlay.shell.liveSession": [
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx"
-    ],
-    "gamePlay.shell.readyToConnect": [
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx"
-    ],
-    "gamePlay.shell.scoresLabel": [
-      "src\\features\\app\\components\\game\\shell\\MobileBottomSheet.tsx"
-    ],
-    "gamePlay.shell.userJoinedToast": [
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx"
-    ],
-    "gamePlay.twoTruths.defaultStatement1": [
-      "src\\features\\app\\components\\game\\boards\\TwoTruthsBoard.tsx"
-    ],
-    "gamePlay.twoTruths.defaultStatement2": [
-      "src\\features\\app\\components\\game\\boards\\TwoTruthsBoard.tsx"
-    ],
-    "gamePlay.twoTruths.defaultStatement3": [
-      "src\\features\\app\\components\\game\\boards\\TwoTruthsBoard.tsx"
-    ],
-    "gamePlay.twoTruths.findingTruth": [
+    "gamePlay.twoTruths.markAsLie": [
       "src\\features\\app\\components\\game\\boards\\TwoTruthsSections.tsx"
     ],
-    "gamePlay.twoTruths.revealHost": [
-      "src\\features\\app\\components\\game\\boards\\TwoTruthsBoard.tsx"
+    "gamePlay.twoTruths.waitForHost": [
+      "src\\features\\app\\components\\game\\boards\\TwoTruthsSections.tsx"
     ],
-    "gamePlay.twoTruths.waitingForPresenter": [
-      "src\\features\\app\\components\\game\\boards\\TwoTruthsBoard.tsx"
+    "gamePlay.twoTruths.waitingForHostToStart": [
+      "src\\features\\app\\components\\game\\boards\\TwoTruthsSections.tsx"
     ],
-    "gamePlay.winsOfWeek.defaultPrompt": [
+    "gamePlay.winsOfWeek.sharing": [
       "src\\features\\app\\components\\game\\boards\\WinsOfTheWeekBoard.tsx"
     ],
-    "gamePlay.winsOfWeek.emptySubtitle": [
-      "src\\features\\app\\components\\game\\boards\\WinsOfTheWeekBoard.tsx"
+    "games.coffeeRoulette.admin.mapping.assignDesc": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "gamePlay.winsOfWeek.emptyTitle": [
-      "src\\features\\app\\components\\game\\boards\\WinsOfTheWeekBoard.tsx"
+    "games.coffeeRoulette.admin.mapping.assignTitle": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.comingSoon.milestones.alphaTesting": [
-      "src\\features\\app\\components\\game\\boards\\ComingSoonBoard.tsx"
+    "games.coffeeRoulette.admin.mapping.chooseQuestion": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.comingSoon.milestones.finalPolish": [
-      "src\\features\\app\\components\\game\\boards\\ComingSoonBoard.tsx"
+    "games.coffeeRoulette.admin.mapping.chooseTopic": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.comingSoon.milestones.researchDesign": [
-      "src\\features\\app\\components\\game\\boards\\ComingSoonBoard.tsx"
+    "games.coffeeRoulette.admin.mapping.noQuestionsAssigned": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.comingSoonDescription": [
-      "src\\features\\app\\components\\game\\boards\\ComingSoonBoard.tsx"
+    "games.coffeeRoulette.admin.mapping.selectQuestion": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.errors.actionFailed": [
-      "src\\features\\app\\pages\\play\\GameBoardRouter.tsx"
+    "games.coffeeRoulette.admin.mapping.selectTopic": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.errors.genericStartFailed": [
-      "src\\features\\app\\pages\\play\\GameBoardRouter.tsx"
+    "games.coffeeRoulette.admin.mapping.subtitle": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.errors.notAuthorizedToStart": [
-      "src\\features\\app\\pages\\play\\GameBoardRouter.tsx"
+    "games.coffeeRoulette.admin.mapping.title": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx"
     ],
-    "games.errors.notMember": [
-      "src\\features\\app\\pages\\play\\GameBoardRouter.tsx"
+    "games.coffeeRoulette.admin.questions.createdLabel": [
+      "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx"
     ],
-    "games.errors.sessionNotActive": [
-      "src\\features\\app\\pages\\play\\GameBoardRouter.tsx"
+    "games.coffeeRoulette.admin.questions.id": [
+      "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx"
     ],
-    "invitation.missingEventId": [
-      "src\\features\\app\\pages\\invitations\\AcceptInvitation.tsx"
+    "games.coffeeRoulette.admin.questions.noMatches": [
+      "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx"
     ],
-    "languages.de": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx",
-      "src\\features\\app\\pages\\users\\Profile.tsx"
+    "games.coffeeRoulette.admin.questions.showing": [
+      "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx"
     ],
-    "languages.en": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx",
-      "src\\features\\app\\pages\\users\\Profile.tsx"
+    "games.coffeeRoulette.admin.questions.subtitle": [
+      "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx"
     ],
-    "languages.fr": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx",
-      "src\\features\\app\\pages\\users\\Profile.tsx"
+    "games.coffeeRoulette.admin.questions.title": [
+      "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx"
     ],
-    "nav.manage": [
-      "src\\features\\app\\layouts\\AppSidebar.tsx"
+    "games.coffeeRoulette.admin.questions.updatedLabel": [
+      "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx"
     ],
-    "nav.menu": [
-      "src\\features\\app\\layouts\\AppSidebar.tsx"
+    "games.coffeeRoulette.admin.settings.advanced": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "nav.newEvent": [
-      "src\\features\\app\\layouts\\Topbar.tsx"
+    "games.coffeeRoulette.admin.settings.allowGeneral": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "notifications.viewAll": [
-      "src\\features\\app\\layouts\\Topbar.tsx"
+    "games.coffeeRoulette.admin.settings.basicSettings": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "notificationsPage.subtitle": [
-      "src\\features\\app\\pages\\notifications\\NotificationsPage.tsx"
+    "games.coffeeRoulette.admin.settings.chatDuration": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.errors.checkInfoAndRetry": [
-      "src\\features\\app\\pages\\onboarding\\Onboarding.tsx"
+    "games.coffeeRoulette.admin.settings.configurationDetails": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.errors.createOrgFailed": [
-      "src\\features\\app\\pages\\onboarding\\Onboarding.tsx"
+    "games.coffeeRoulette.admin.settings.configurationId": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.errors.setupFailed": [
-      "src\\features\\app\\pages\\onboarding\\Onboarding.tsx"
+    "games.coffeeRoulette.admin.settings.configureDescription": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.logoAlt": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx"
+    "games.coffeeRoulette.admin.settings.create": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.logoUploadCta": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx"
+    "games.coffeeRoulette.admin.settings.createdAt": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.logoUploadHint": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx"
+    "games.coffeeRoulette.admin.settings.eventId": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.logoUploaded": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx"
+    "games.coffeeRoulette.admin.settings.failedToCreate": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "onboarding.logoUploadedHint": [
-      "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx"
+    "games.coffeeRoulette.admin.settings.failedToLoad": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "orgDetail.logoUploadFailed": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.failedToUpdate": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "organizations.company": [
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx"
+    "games.coffeeRoulette.admin.settings.gameConfiguration": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "organizations.inviteEmailPlaceholder": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.maxPrompts": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "organizations.invitedMember": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.questionStrategy": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "organizations.invitedPending": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.random": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "plans.free": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.reset": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "profile.editTitle": [
-      "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx"
+    "games.coffeeRoulette.admin.settings.savedSuccessfully": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "profile.save": [
-      "src\\features\\app\\pages\\play\\GamePlay.tsx"
+    "games.coffeeRoulette.admin.settings.selectionStrategies": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "roles.admin": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.sequential": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "roles.member": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.shuffleOnRepeat": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "roles.moderator": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.title": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "roles.owner": [
-      "src\\features\\app\\pages\\organizations\\OrgDetail.tsx"
+    "games.coffeeRoulette.admin.settings.topicStrategy": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "search.people": [
-      "src\\features\\app\\layouts\\Topbar.tsx"
+    "games.coffeeRoulette.admin.settings.update": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "search.sessions": [
-      "src\\features\\app\\layouts\\Topbar.tsx"
+    "games.coffeeRoulette.admin.settings.updatedAt": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "search.tryDifferent": [
-      "src\\features\\app\\layouts\\Topbar.tsx"
+    "games.coffeeRoulette.admin.settings.weighted": [
+      "src\\features\\app\\components\\coffee-roulette\\CoffeeRouletteSettings.tsx"
     ],
-    "settings.accountDeleteFailed": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.active": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "settings.accountDeleted": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.addTopic": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "settings.deleteAccountConfirm": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.createTopic": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "settings.deleteAccountConfirmHint": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.createdDate": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "settings.deleteAccountPlaceholder": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.deleteConfirm": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "settings.deleteAccountTitle": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.editTopic": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "settings.deleteAccountWarning": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.failedToCreate": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "settings.deleting": [
-      "src\\features\\app\\pages\\settings\\SecuritySection.tsx"
+    "games.coffeeRoulette.admin.topics.failedToDelete": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.actions.assignHelp": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.actions.assignRoles": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.actions.assigningRoles": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.actions.createHelp": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.actions.createSession": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.actions.creating": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.actions.endDiscussion": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.actions.startDiscussion": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.configure.crisisLabel": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.configure.difficultyLabel": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.configure.industryLabel": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.a1": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.a2": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.a3": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.actionsTitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.q1": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.q2": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.q3": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.questionsTitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.subtitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.summaryBody": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.summaryTitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.debrief.title": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.difficulties.easy.label": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.difficulties.hard.label": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.difficulties.medium.label": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.guidingQuestions": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.hostToolsBody": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.hostToolsTitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.i1": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.i2": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.i3": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.prompt": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.promptHint": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.failedToLoad": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.discussion.q1": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.q2": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.q3": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.subtitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.teamInstructions": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.discussion.title": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.errors.assignFailed": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.errors.createFailed": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.modal.openLabel": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.modal.subtitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.modal.title": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.body": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.configureHint": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.hint": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.hostOnly": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.summaryCrisis": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.summaryDifficulty": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.summaryIndustry": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.summaryTitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.summaryUnset": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.preview.title": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.rolesMeta.loading": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.rolesMeta.pending": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "strategic.rolesMeta.pendingHint": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.failedToUpdate": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.rolesMeta.playerLabel": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.noTopics": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.rolesMeta.refreshing": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.title": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.rolesMeta.roleNameLabel": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.topicDescription": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.rolesMeta.secret": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.topicIcon": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.rolesMeta.secretHint": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.topicTitle": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.rolesMeta.swapBody": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRoulette.admin.topics.weight": [
+      "src\\features\\app\\components\\coffee-roulette\\TopicsManager.tsx"
     ],
-    "strategic.rolesMeta.swapClosed": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.coffeeRouletteTitle": [
+      "src\\features\\admin\\pages\\AdminDashboard.tsx"
     ],
-    "strategic.rolesMeta.swapCountdown": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.comingSoon.title": [
+      "src\\features\\app\\components\\activities\\ActivityCard.tsx",
+      "src\\features\\app\\pages\\activities\\ActivityDetail.tsx",
+      "src\\features\\app\\pages\\activities\\components\\LaunchActivitySections.tsx"
     ],
-    "strategic.rolesMeta.swapTitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.strategicEscapeTitle": [
+      "src\\features\\admin\\pages\\AdminDashboard.tsx"
     ],
-    "strategic.rolesMeta.swapWindow": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.twoTruthsTitle": [
+      "src\\features\\admin\\pages\\AdminDashboard.tsx"
     ],
-    "strategic.rolesMeta.unknownPlayer": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "games.winsOfWeekTitle": [
+      "src\\features\\admin\\pages\\AdminDashboard.tsx"
     ],
-    "strategic.rolesSection.subtitle": [
-      "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    "profileSetup.submitFailed": [
+      "src\\features\\app\\components\\auth\\UserProfileSetup.tsx"
     ],
-    "strategic.rolesSection.title": [
+    "strategic.actions.sessionCreated": [
       "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
-    ],
-    "tickets.allStatuses": [
-      "src\\features\\app\\pages\\tickets\\MyTicketsPage.tsx"
-    ],
-    "tickets.assignedTo": [
-      "src\\features\\app\\pages\\tickets\\MyTicketsPage.tsx"
-    ],
-    "tickets.attachments.previewAlt": [
-      "src\\features\\app\\pages\\tickets\\SubmitTicketPage.tsx"
-    ],
-    "tickets.attachments.tooLarge": [
-      "src\\features\\app\\pages\\tickets\\SubmitTicketPage.tsx"
-    ],
-    "tickets.attachments.typeNotSupported": [
-      "src\\features\\app\\pages\\tickets\\SubmitTicketPage.tsx"
-    ],
-    "tickets.attachments.uploadFailed": [
-      "src\\features\\app\\pages\\tickets\\SubmitTicketPage.tsx"
-    ],
-    "tickets.attachmentsCount": [
-      "src\\features\\app\\pages\\tickets\\MyTicketsPage.tsx"
-    ],
-    "tickets.confirmDelete": [
-      "src\\features\\app\\pages\\tickets\\MyTicketsPage.tsx"
-    ],
-    "tickets.createFirst": [
-      "src\\features\\app\\pages\\tickets\\MyTicketsPage.tsx"
     ]
   },
   "dynamicUsage": [
@@ -2107,6 +496,14 @@
       "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
     },
     {
+      "pattern": "apiErrors.${…}",
+      "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
+      "pattern": "apiErrors.${…}",
+      "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
       "pattern": "strategic.roles.${…}.name",
       "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
     },
@@ -2116,6 +513,22 @@
     },
     {
       "pattern": "strategic.roles.${…}.secret",
+      "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
+      "pattern": "strategic.rolePrompts.${…}.p1",
+      "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
+      "pattern": "strategic.rolePrompts.${…}.p2",
+      "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
+      "pattern": "strategic.rolePrompts.${…}.p3",
+      "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
+      "pattern": "apiErrors.${…}",
       "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
     },
     {
@@ -2165,6 +578,14 @@
     {
       "pattern": "${…}.label",
       "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
+      "pattern": "apiErrors.${…}",
+      "file": "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx"
+    },
+    {
+      "pattern": "gamePlay.coffeeRoulette.voice.errors.${…}",
+      "file": "src\\features\\app\\components\\game\\coffee-roulette\\phases\\MeetingRoom.tsx"
     },
     {
       "pattern": "games.categories.${…}",
@@ -2291,6 +712,18 @@
       "file": "src\\features\\landing\\components\\FeaturesSection.tsx"
     },
     {
+      "pattern": "landing.features.activitiesGrid.${…}.tag",
+      "file": "src\\features\\landing\\components\\FeaturesSection.tsx"
+    },
+    {
+      "pattern": "landing.features.activitiesGrid.${…}.title",
+      "file": "src\\features\\landing\\components\\FeaturesSection.tsx"
+    },
+    {
+      "pattern": "landing.features.activitiesGrid.${…}.description",
+      "file": "src\\features\\landing\\components\\FeaturesSection.tsx"
+    },
+    {
       "pattern": "landing.howItWorks.${…}.title",
       "file": "src\\features\\landing\\components\\HowItWorksSection.tsx"
     },
@@ -2312,23 +745,39 @@
     }
   ],
   "filesWithDefaultValue": [
+    "src\\features\\admin\\components\\AdminLayout.tsx",
+    "src\\features\\admin\\pages\\AdminActivityFeedbacksPage.tsx",
     "src\\features\\app\\components\\activities\\ActivityCard.tsx",
     "src\\features\\app\\components\\auth\\AuthBrandingPanel.tsx",
+    "src\\features\\app\\components\\auth\\UserProfileSetup.tsx",
     "src\\features\\app\\components\\chat\\EventChat.tsx",
+    "src\\features\\app\\components\\coffee-roulette\\QuestionsManager.tsx",
+    "src\\features\\app\\components\\coffee-roulette\\TopicQuestionsMapper.tsx",
     "src\\features\\app\\components\\game\\boards\\CoffeeRouletteBoard.tsx",
     "src\\features\\app\\components\\game\\boards\\CoffeeRoulettePhases.tsx",
     "src\\features\\app\\components\\game\\boards\\ComingSoonBoard.tsx",
     "src\\features\\app\\components\\game\\boards\\StrategicEscapeBoard.tsx",
     "src\\features\\app\\components\\game\\boards\\TwoTruthsBoard.tsx",
+    "src\\features\\app\\components\\game\\boards\\TwoTruthsSections.tsx",
     "src\\features\\app\\components\\game\\boards\\WinsOfTheWeekBoard.tsx",
+    "src\\features\\app\\components\\game\\coffee-roulette\\CoffeeRouletteBoard.tsx",
+    "src\\features\\app\\components\\game\\coffee-roulette\\phases\\MeetingRoom.tsx",
+    "src\\features\\app\\components\\game\\coffee-roulette\\phases\\OfficeExitAnimation.tsx",
+    "src\\features\\app\\components\\game\\coffee-roulette\\phases\\OfficeLobby.tsx",
+    "src\\features\\app\\components\\game\\shared\\ActivityFeedbackModal.tsx",
+    "src\\features\\app\\components\\game\\shared\\HowItWorksModal.tsx",
+    "src\\features\\app\\components\\game\\shared\\InsightsModal.tsx",
+    "src\\features\\app\\components\\game\\shared\\RoleBasedPromptsDisplay.tsx",
     "src\\features\\app\\components\\game\\shell\\GamePlayShell.tsx",
     "src\\features\\app\\components\\game\\shell\\LeaderboardSidebar.tsx",
     "src\\features\\app\\context\\NotificationContext.tsx",
     "src\\features\\app\\guards\\AuthGuard.tsx",
     "src\\features\\app\\layouts\\AppSidebar.tsx",
+    "src\\features\\app\\layouts\\FocusedLayout.tsx",
     "src\\features\\app\\layouts\\Topbar.tsx",
     "src\\features\\app\\pages\\activities\\ActivityDetail.tsx",
     "src\\features\\app\\pages\\activities\\LaunchActivity.tsx",
+    "src\\features\\app\\pages\\activities\\components\\LaunchActivitySections.tsx",
     "src\\features\\app\\pages\\auth\\ForgotPassword.tsx",
     "src\\features\\app\\pages\\auth\\Login.tsx",
     "src\\features\\app\\pages\\auth\\OTPVerify.tsx",
@@ -2336,15 +785,16 @@
     "src\\features\\app\\pages\\auth\\ResetPassword.tsx",
     "src\\features\\app\\pages\\auth\\VerifyEmail.tsx",
     "src\\features\\app\\pages\\events\\EventDetail.tsx",
+    "src\\features\\app\\pages\\events\\EventForm.tsx",
     "src\\features\\app\\pages\\events\\EventList.tsx",
     "src\\features\\app\\pages\\events\\EventLobby.tsx",
     "src\\features\\app\\pages\\events\\GuestJoinForm.tsx",
+    "src\\features\\app\\pages\\events\\components\\EventLobbyCard.tsx",
     "src\\features\\app\\pages\\games\\GameList.tsx",
     "src\\features\\app\\pages\\invitations\\AcceptInvitation.tsx",
     "src\\features\\app\\pages\\onboarding\\CelebrationScreen.tsx",
     "src\\features\\app\\pages\\onboarding\\Onboarding.tsx",
     "src\\features\\app\\pages\\onboarding\\steps\\BrandingStep.tsx",
-    "src\\features\\app\\pages\\organizations\\OrgDetail.tsx",
     "src\\features\\app\\pages\\play\\GameBoardRouter.tsx",
     "src\\features\\app\\pages\\play\\GamePlay.tsx",
     "src\\features\\app\\pages\\settings\\ProfileSection.tsx",
@@ -2354,6 +804,7 @@
     "src\\features\\app\\pages\\support\\SupportFAQ.tsx",
     "src\\features\\app\\pages\\tickets\\MyTicketsPage.tsx",
     "src\\features\\app\\pages\\tickets\\SubmitTicketPage.tsx",
-    "src\\features\\app\\pages\\users\\Profile.tsx"
+    "src\\features\\app\\pages\\users\\Profile.tsx",
+    "src\\hooks\\useGameActionEmitter.ts"
   ]
 }

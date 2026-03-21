@@ -56,7 +56,8 @@
     "you": "Tú",
     "pagination": {
       "showing": "Mostrando {{from}} a {{to}} de {{total}} registros"
-    }
+    },
+    "clearAll": "Limpiar todo"
   },
   "brand": {
     "name": "Flowkyn"
@@ -349,6 +350,30 @@
         "label": "Gestión de eventos",
         "title": "Programa, invita y gestiona en un solo lugar",
         "description": "Planifica actividades, envía invitaciones, gestiona eventos recurrentes y coordina varios equipos — todo desde un panel intuitivo."
+      },
+      "activitiesGrid": {
+        "title": "Four flagship activities, ready on day one",
+        "subtitle": "Start with battle‑tested formats your team will recognize and love — then expand with more templates over time.",
+        "strategicEscape": {
+          "tag": "Strategic escape",
+          "title": "Strategic Escape Game",
+          "description": "Asynchronous crisis simulation where each participant plays a different leadership role. Great for cross‑functional thinking and decision‑making."
+        },
+        "coffeeRoulette": {
+          "tag": "Connections",
+          "title": "Coffee Roulette",
+          "description": "Smart 1:1 pairing for virtual coffees. Perfect for onboarding, cross‑team connection, and breaking silos in hybrid organizations."
+        },
+        "twoTruths": {
+          "tag": "Icebreaker",
+          "title": "Two Truths & a Lie",
+          "description": "Fast, fun game to warm up meetings. Players submit prompts, vote, and reveal together — with built‑in scoring and animations."
+        },
+        "winsOfWeek": {
+          "tag": "Async ritual",
+          "title": "Wins of the Week",
+          "description": "Lightweight async check‑in where everyone shares a weekly win. Builds recognition, momentum, and a positive team narrative."
+        }
       }
     },
     "howItWorks": {
@@ -370,10 +395,22 @@
       }
     },
     "stats": {
-      "stat1": { "value": "41%", "label": "Aumento del compromiso del equipo" },
-      "stat2": { "value": "2×", "label": "Más colaboración entre equipos" },
-      "stat3": { "value": "1k+", "label": "Actividades al mes" },
-      "stat4": { "value": "50%", "label": "Reducción del tiempo de onboarding" }
+      "stat1": {
+        "value": "41%",
+        "label": "Aumento del compromiso del equipo"
+      },
+      "stat2": {
+        "value": "2×",
+        "label": "Más colaboración entre equipos"
+      },
+      "stat3": {
+        "value": "1k+",
+        "label": "Actividades al mes"
+      },
+      "stat4": {
+        "value": "50%",
+        "label": "Reducción del tiempo de onboarding"
+      }
     },
     "testimonials": {
       "sectionLabel": "Testimonios",
@@ -400,11 +437,26 @@
       "sectionLabel": "FAQ",
       "title": "Preguntas frecuentes",
       "items": [
-        { "question": "¿Flowkyn es realmente gratuito?", "answer": "Sí. Flowkyn es gratuito para equipos de hasta 10 miembros. Para equipos más grandes, ofrecemos planes asequibles desde 4 €/usuario/mes." },
-        { "question": "¿Necesitamos un facilitador?", "answer": "No. Cada actividad incluye instrucciones claras paso a paso que cualquier líder de equipo puede seguir. No necesitas un facilitador externo." },
-        { "question": "¿Funciona con diferentes husos horarios?", "answer": "Por supuesto. Flowkyn admite tanto actividades en vivo (sincrónicas) como asíncronas, perfecto para equipos distribuidos globalmente." },
-        { "question": "¿Cuánto duran las actividades?", "answer": "Las actividades van desde icebreakers de 5 minutos hasta sesiones de 60 minutos. Puedes filtrar por duración para encontrar lo que encaje mejor." },
-        { "question": "¿Puedo medir el compromiso?", "answer": "Sí. Flowkyn ofrece paneles analíticos detallados con tasas de participación, tendencias de compromiso y efectividad de las actividades a lo largo del tiempo." }
+        {
+          "question": "¿Flowkyn es realmente gratuito?",
+          "answer": "Sí. Flowkyn es gratuito para equipos de hasta 10 miembros. Para equipos más grandes, ofrecemos planes asequibles desde 4 €/usuario/mes."
+        },
+        {
+          "question": "¿Necesitamos un facilitador?",
+          "answer": "No. Cada actividad incluye instrucciones claras paso a paso que cualquier líder de equipo puede seguir. No necesitas un facilitador externo."
+        },
+        {
+          "question": "¿Funciona con diferentes husos horarios?",
+          "answer": "Por supuesto. Flowkyn admite tanto actividades en vivo (sincrónicas) como asíncronas, perfecto para equipos distribuidos globalmente."
+        },
+        {
+          "question": "¿Cuánto duran las actividades?",
+          "answer": "Las actividades van desde icebreakers de 5 minutos hasta sesiones de 60 minutos. Puedes filtrar por duración para encontrar lo que encaje mejor."
+        },
+        {
+          "question": "¿Puedo medir el compromiso?",
+          "answer": "Sí. Flowkyn ofrece paneles analíticos detallados con tasas de participación, tendencias de compromiso y efectividad de las actividades a lo largo del tiempo."
+        }
       ]
     },
     "cta": {
@@ -470,33 +522,81 @@
       "title": "Política de privacidad",
       "lastUpdated": "Última actualización: 1 de marzo de 2026",
       "sections": [
-        { "title": "Información que recopilamos", "content": "Recopilamos la información que proporcionas directamente, como tu nombre, dirección de correo electrónico y datos de la organización cuando creas una cuenta. También recogemos datos de uso para mejorar nuestros servicios." },
-        { "title": "Cómo usamos tu información", "content": "Usamos tu información para proporcionar y mejorar Flowkyn, comunicarnos contigo sobre tu cuenta y enviarte actualizaciones relevantes del producto. Nunca vendemos tus datos personales a terceros." },
-        { "title": "Almacenamiento y seguridad de los datos", "content": "Tus datos se almacenan en servidores seguros y cifrados dentro de la Unión Europea. Aplicamos medidas de seguridad estándar del sector para proteger tu información." },
-        { "title": "Cookies", "content": "Usamos cookies esenciales para mantener tu sesión y tus preferencias. No usamos cookies de seguimiento con fines publicitarios." },
-        { "title": "Tus derechos", "content": "Tienes derecho a acceder, corregir o eliminar tus datos personales en cualquier momento. También puedes solicitar una exportación completa de tus datos. Para ello, contáctanos en privacy@flowkyn.com." },
-        { "title": "Contacto", "content": "Para dudas relacionadas con privacidad, contáctanos en privacy@flowkyn.com." }
+        {
+          "title": "Información que recopilamos",
+          "content": "Recopilamos la información que proporcionas directamente, como tu nombre, dirección de correo electrónico y datos de la organización cuando creas una cuenta. También recogemos datos de uso para mejorar nuestros servicios."
+        },
+        {
+          "title": "Cómo usamos tu información",
+          "content": "Usamos tu información para proporcionar y mejorar Flowkyn, comunicarnos contigo sobre tu cuenta y enviarte actualizaciones relevantes del producto. Nunca vendemos tus datos personales a terceros."
+        },
+        {
+          "title": "Almacenamiento y seguridad de los datos",
+          "content": "Tus datos se almacenan en servidores seguros y cifrados dentro de la Unión Europea. Aplicamos medidas de seguridad estándar del sector para proteger tu información."
+        },
+        {
+          "title": "Cookies",
+          "content": "Usamos cookies esenciales para mantener tu sesión y tus preferencias. No usamos cookies de seguimiento con fines publicitarios."
+        },
+        {
+          "title": "Tus derechos",
+          "content": "Tienes derecho a acceder, corregir o eliminar tus datos personales en cualquier momento. También puedes solicitar una exportación completa de tus datos. Para ello, contáctanos en privacy@flowkyn.com."
+        },
+        {
+          "title": "Contacto",
+          "content": "Para dudas relacionadas con privacidad, contáctanos en privacy@flowkyn.com."
+        }
       ]
     },
     "terms": {
       "title": "Términos de servicio",
       "lastUpdated": "Última actualización: 1 de marzo de 2026",
       "sections": [
-        { "title": "Aceptación de los términos", "content": "Al acceder o usar Flowkyn, aceptas quedar vinculado por estos Términos de servicio. Si no estás de acuerdo, no utilices la plataforma." },
-        { "title": "Uso del servicio", "content": "Flowkyn proporciona una plataforma para actividades de compromiso de equipos. Aceptas usar el servicio solo con fines legales y de acuerdo con estos términos." },
-        { "title": "Cuentas", "content": "Eres responsable de mantener la confidencialidad de tus credenciales. Debes notificarnos inmediatamente cualquier acceso no autorizado." },
-        { "title": "Propiedad intelectual", "content": "Todo el contenido en Flowkyn, incluidas descripciones de actividades, diseños y marca, es propiedad de Flowkyn y está protegido por derechos de autor." },
-        { "title": "Limitación de responsabilidad", "content": "Flowkyn se proporciona \"tal cual\", sin garantías de ningún tipo. No nos hacemos responsables de daños indirectos, incidentales o consecuentes derivados de tu uso de la plataforma." },
-        { "title": "Terminación", "content": "Podemos suspender o cancelar tu cuenta en cualquier momento por incumplimiento de estos términos. Puedes eliminar tu cuenta en cualquier momento desde tus ajustes." }
+        {
+          "title": "Aceptación de los términos",
+          "content": "Al acceder o usar Flowkyn, aceptas quedar vinculado por estos Términos de servicio. Si no estás de acuerdo, no utilices la plataforma."
+        },
+        {
+          "title": "Uso del servicio",
+          "content": "Flowkyn proporciona una plataforma para actividades de compromiso de equipos. Aceptas usar el servicio solo con fines legales y de acuerdo con estos términos."
+        },
+        {
+          "title": "Cuentas",
+          "content": "Eres responsable de mantener la confidencialidad de tus credenciales. Debes notificarnos inmediatamente cualquier acceso no autorizado."
+        },
+        {
+          "title": "Propiedad intelectual",
+          "content": "Todo el contenido en Flowkyn, incluidas descripciones de actividades, diseños y marca, es propiedad de Flowkyn y está protegido por derechos de autor."
+        },
+        {
+          "title": "Limitación de responsabilidad",
+          "content": "Flowkyn se proporciona \"tal cual\", sin garantías de ningún tipo. No nos hacemos responsables de daños indirectos, incidentales o consecuentes derivados de tu uso de la plataforma."
+        },
+        {
+          "title": "Terminación",
+          "content": "Podemos suspender o cancelar tu cuenta en cualquier momento por incumplimiento de estos términos. Puedes eliminar tu cuenta en cualquier momento desde tus ajustes."
+        }
       ]
     },
     "security": {
       "title": "Seguridad",
       "subtitle": "Proteger tus datos es nuestra máxima prioridad. Así mantenemos seguro Flowkyn.",
-      "encryption": { "title": "Cifrado", "description": "Todos los datos se cifran en tránsito (TLS 1.3) y en reposo (AES-256). Tu información nunca se almacena en texto plano." },
-      "infrastructure": { "title": "Infraestructura", "description": "Alojado en infraestructura europea de nivel empresarial con copias de seguridad automáticas, protección ante fallos y un SLA del 99,9 % de disponibilidad." },
-      "compliance": { "title": "Cumplimiento", "description": "Cumplimos con el RGPD por diseño. Seguimos principios de minimización de datos y ofrecemos capacidades completas de exportación y eliminación." },
-      "privacy": { "title": "Privacidad por defecto", "description": "Sin cookies de seguimiento, sin venta de datos, sin publicidad de terceros. Los datos de tu equipo son solo tuyos." }
+      "encryption": {
+        "title": "Cifrado",
+        "description": "Todos los datos se cifran en tránsito (TLS 1.3) y en reposo (AES-256). Tu información nunca se almacena en texto plano."
+      },
+      "infrastructure": {
+        "title": "Infraestructura",
+        "description": "Alojado en infraestructura europea de nivel empresarial con copias de seguridad automáticas, protección ante fallos y un SLA del 99,9 % de disponibilidad."
+      },
+      "compliance": {
+        "title": "Cumplimiento",
+        "description": "Cumplimos con el RGPD por diseño. Seguimos principios de minimización de datos y ofrecemos capacidades completas de exportación y eliminación."
+      },
+      "privacy": {
+        "title": "Privacidad por defecto",
+        "description": "Sin cookies de seguimiento, sin venta de datos, sin publicidad de terceros. Los datos de tu equipo son solo tuyos."
+      }
     }
   },
   "layout": {
@@ -592,7 +692,9 @@
       "resetFailed": "No se pudo restablecer la contraseña. Es posible que el enlace haya caducado.",
       "resetSendFailed": "No se pudo enviar el enlace. Inténtalo de nuevo.",
       "missingToken": "Token no válido o ausente. Solicita un nuevo enlace.",
-      "orgRequired": "La organización es obligatoria. Completa primero el onboarding."
+      "orgRequired": "La organización es obligatoria. Completa primero el onboarding.",
+      "orgBanned": "Your organization has been banned and is no longer accessible.",
+      "orgBannedWithReason": "Your organization has been banned: {{reason}}"
     },
     "passwordRules": {
       "title": "La contraseña debe incluir:",
@@ -724,7 +826,26 @@
     "removeConfirm": "¿Seguro que quieres eliminar a este miembro?",
     "changeRole": "Cambiar rol",
     "memberSince": "Miembro desde",
-    "totalMembers": "Miembros totales"
+    "totalMembers": "Miembros totales",
+    "admin": {
+      "status": "Status",
+      "statusActive": "Active",
+      "statusBanned": "Banned",
+      "actions": "Actions",
+      "ban": "Ban Organization",
+      "unban": "Unban Organization",
+      "bannedAt": "Banned at",
+      "banReason": "Ban reason",
+      "banReasonPlaceholder": "Enter the reason for banning...",
+      "confirmBan": "Are you sure you want to ban this organization? Users will not be able to login.",
+      "confirmUnban": "Are you sure you want to unban this organization? Users will be able to login again.",
+      "banSuccess": "Organization banned successfully",
+      "unbanSuccess": "Organization unbanned successfully",
+      "banFailed": "Failed to ban organization",
+      "unbanFailed": "Failed to unban organization",
+      "bannedBadge": "BANNED",
+      "activeBadge": "ACTIVE"
+    }
   },
   "events": {
     "title": "Eventos",
@@ -937,7 +1058,8 @@
     "back": "Volver",
     "errors": {
       "nameTooShort": "El nombre debe tener al menos {{min}} caracteres"
-    }
+    },
+    "submitFailed": "Error al enviar el perfil"
   },
   "games": {
     "title": "Actividades",
@@ -1014,7 +1136,8 @@
         "researchDesign": "Investigación y diseño",
         "alphaTesting": "Pruebas alfa",
         "finalPolish": "Acabado final"
-      }
+      },
+      "title": "Próximamente"
     },
     "errors": {
       "actionFailed": "La acción falló. Inténtalo de nuevo.",
@@ -1046,7 +1169,82 @@
       "readyTitle": "¿Listo para lanzar {{name}}?",
       "readySubtitle": "Configura tu sesión, invita a tu equipo y lanza en minutos.",
       "launchNow": "Lanzar ahora"
-    }
+    },
+    "coffeeRoulette": {
+      "admin": {
+        "mapping": {
+          "assignDesc": "Asigne temas a preguntas de conversación para esta configuración",
+          "assignTitle": "Mapeador de preguntas",
+          "chooseQuestion": "Elegir pregunta",
+          "chooseTopic": "Elegir tema",
+          "noQuestionsAssigned": "Sin preguntas asignadas",
+          "selectQuestion": "Seleccionar pregunta",
+          "selectTopic": "Seleccionar tema",
+          "subtitle": "Elija qué preguntas aparecen para cada tema",
+          "title": "Mapeador de Tema-Pregunta"
+        },
+        "questions": {
+          "createdLabel": "Creado",
+          "id": "ID",
+          "noMatches": "No se encontraron preguntas",
+          "showing": "Mostrando {{count}} preguntas",
+          "subtitle": "Administre preguntas de conversación para Coffee Roulette",
+          "title": "Preguntas",
+          "updatedLabel": "Actualizado"
+        },
+        "settings": {
+          "advanced": "Avanzado",
+          "allowGeneral": "Permitir preguntas generales como alternativa",
+          "basicSettings": "Configuración básica",
+          "chatDuration": "Duración del chat (minutos)",
+          "configurationDetails": "Detalles de configuración",
+          "configurationId": "ID de configuración",
+          "configureDescription": "Configure cómo Coffee Roulette empareja participantes y selecciona temas",
+          "create": "Crear configuración",
+          "createdAt": "Creado el",
+          "eventId": "ID de evento",
+          "failedToCreate": "Error al crear la configuración",
+          "failedToLoad": "Error al cargar la configuración",
+          "failedToUpdate": "Error al actualizar la configuración",
+          "gameConfiguration": "Configuración del juego",
+          "maxPrompts": "Temas máximos",
+          "questionStrategy": "Estrategia de selección de preguntas",
+          "random": "Aleatorio - Selección completamente aleatoria cada vez",
+          "reset": "Restablecer",
+          "savedSuccessfully": "Configuración guardada exitosamente",
+          "selectionStrategies": "Estrategias de selección",
+          "sequential": "Secuencial - Rotación de todos los elementos",
+          "shuffleOnRepeat": "Mezclar temas al repetir",
+          "title": "Configuración de Coffee Roulette",
+          "topicStrategy": "Estrategia de selección de temas",
+          "update": "Actualizar configuración",
+          "updatedAt": "Actualizado el",
+          "weighted": "Ponderado - Basado en pesos de elementos y probabilidades"
+        },
+        "topics": {
+          "active": "Activo",
+          "addTopic": "Agregar tema",
+          "createTopic": "Crear tema",
+          "createdDate": "Fecha de creación",
+          "deleteConfirm": "¿Está seguro de que desea eliminar este tema?",
+          "editTopic": "Editar tema",
+          "failedToCreate": "Error al crear el tema",
+          "failedToDelete": "Error al eliminar el tema",
+          "failedToLoad": "Error al cargar los temas",
+          "failedToUpdate": "Error al actualizar el tema",
+          "noTopics": "No se encontraron temas",
+          "title": "Temas de conversación",
+          "topicDescription": "Descripción del tema",
+          "topicIcon": "Icono del tema",
+          "topicTitle": "Título del tema",
+          "weight": "Peso (probabilidad)"
+        }
+      }
+    },
+    "coffeeRouletteTitle": "Coffee Roulette",
+    "strategicEscapeTitle": "Strategic Escape Challenge",
+    "twoTruthsTitle": "Dos Verdades y una Mentira",
+    "winsOfWeekTitle": "Triunfos de la Semana"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -1193,7 +1391,14 @@
       "generic": "Error de chat",
       "sendFailed": "No se pudo enviar el mensaje",
       "pinFailed": "No se pudo actualizar el mensaje fijado"
-    }
+    },
+    "startVoice": "Start voice chat",
+    "stopVoice": "Stop voice chat",
+    "mute": "Mute microphone",
+    "unmute": "Unmute microphone",
+    "voiceActive": "{{count}} voice users",
+    "voiceParticipants": "Voice:",
+    "voiceTalking": "Talking:"
   },
   "invitation": {
     "verifying": "Verificando invitación...",
@@ -1223,12 +1428,12 @@
     "twoTruths": {
       "title": "Dos verdades y una mentira",
       "description": "Cada jugador envía dos verdades y una mentira. El equipo vota cuál es la mentira. ¡Hay puntos por engañar a los demás!",
-      "defaultStatement1": "Viví un tiempo en otro país.",
-      "defaultStatement2": "Sé tocar un instrumento musical.",
-      "defaultStatement3": "He conocido a una persona famosa.",
+      "defaultStatement1": "He vivido en otro país.",
+      "defaultStatement2": "Puedo tocar un instrumento musical.",
+      "defaultStatement3": "He conocido a una celebridad.",
       "findingTruth": "Buscando la verdad…",
-      "revealHost": "La persona anfitriona revelará cuando esté lista",
-      "waitingForPresenter": "Esperando a la persona que presenta…",
+      "revealHost": "El anfitrión revelará cuando esté listo",
+      "waitingForPresenter": "Esperando al presentador…",
       "startRound": "Empezar ronda {{round}}",
       "yourTurn": "Tu turno — envía tus frases",
       "makeItBelievable": "Escribe dos verdades y una mentira. ¡Haz que la mentira sea creíble!",
@@ -1258,7 +1463,10 @@
       "skipAnimation": "Saltar animación",
       "roundSettings": "Ajustes de rondas",
       "howManyRounds": "¿Cuántas rondas queréis jugar?",
-      "recommendedRounds": "Recomendado: 3–5 rondas"
+      "recommendedRounds": "Recomendado: 3–5 rondas",
+      "markAsLie": "Marcar como mentira",
+      "waitForHost": "Esperando al anfitrión",
+      "waitingForHostToStart": "Esperando a que el anfitrión comience…"
     },
     "coffeeRoulette": {
       "title": "Coffee Roulette",
@@ -1273,20 +1481,20 @@
       "startChatting": "Empezar a hablar",
       "needATopic": "💡 ¿Necesitas un tema?",
       "nextTopic": "Siguiente tema",
-      "nextPrompt": "Siguiente pregunta",
+      "nextPrompt": "Siguiente tema",
       "promptCounter": "{{current}} de {{total}}",
-      "defaultTopic": "¿Qué es algo que ahora mismo te entusiasma?",
+      "defaultTopic": "¿Qué te entusiasma en este momento?",
       "needMoreParticipants": "Necesitas más participantes para empezar.",
       "waitingForTeam": "Esperando a tu equipo…",
       "waitingForOthers": "Esperando al resto…",
-      "spinning": "Creando parejas…",
-      "spin1": "Mezclando nombres…",
-      "spin2": "Buscando parejas…",
-      "spin3": "Haciendo combinaciones…",
-      "spin4": "Casi está…",
+      "spinning": "Girando…",
+      "spin1": "Barajando nombres…",
+      "spin2": "Encontrando coincidencias…",
+      "spin3": "Mezclando…",
+      "spin4": "Casi listo…",
       "spin5": "Emparejando personas…",
-      "spin6": "Ultimando parejas…",
-      "spin7": "Cerrando emparejamientos…",
+      "spin6": "Finalizando parejas…",
+      "spin7": "Bloqueando…",
       "spin8": "¡Listo!",
       "topicPool": {
         "p1": "¿Qué pequeño hábito ha mejorado tu vida?",
@@ -1311,8 +1519,8 @@
         "t10": "¿Qué personaje ficticio se parece más a ti?",
         "t11": "¿Qué se te da sorprendentemente bien?"
       },
-      "spectatorTitle": "Coffee Roulette en marcha",
-      "spectatorMessage": "Se están creando las parejas. Verás a tu compañero/a en un momento.",
+      "spectatorTitle": "Coffee Roulette en progreso",
+      "spectatorMessage": "Se están emparejando participantes. Verás tu pareja en breve.",
       "endChat": "Terminar chat",
       "endAndClose": "Terminar y cerrar",
       "greatConnection": "¡Gran conexión! ☕",
@@ -1321,10 +1529,10 @@
       "newPairing": "Nuevo emparejamiento",
       "decision": {
         "title": "¿Continuar?",
-        "body": "Ya habéis usado {{count}} preguntas. ¿Continuar con nuevas preguntas o terminar la sesión?",
-        "hint": "Podéis terminar en cualquier momento — el progreso se mantiene.",
+        "body": "Has explorado {{count}} temas. ¿Continuar con nuevos temas o terminar esta sesión?",
+        "hint": "Puedes terminar en cualquier momento — el progreso se guardará.",
         "continue": "Continuar",
-        "end": "Terminar sesión"
+        "end": "Terminar"
       },
       "backToEvents": "Volver a eventos",
       "you": "Tú",
@@ -1338,7 +1546,8 @@
         "needMore": "Faltan {{count}} participantes",
         "starting": "Iniciando...",
         "start": "Empezar Coffee Roulette",
-        "ready": "Listo para crear parejas y emparejar a todos."
+        "ready": "Listo para crear parejas y emparejar a todos.",
+        "voiceEnabled": "Voz habilitada"
       },
       "matching": {
         "floorCounter": "Planta {{floor}}",
@@ -1365,7 +1574,12 @@
         "decisionMessage": "¡Es momento de decidir juntos!",
         "nextTopicButton": "Siguiente tema",
         "keepTalkingButton": "Seguir hablando",
-        "endMeetingButton": "Terminar reunión"
+        "endMeetingButton": "Terminar reunión",
+        "reShuffleButton": "Find Another Match",
+        "reShuffleConfirmTitle": "Find Another Match?",
+        "reShuffleConfirmMessage": "You'll be matched with a different participant. Your current chat will end.",
+        "reShuffleConfirmAction": "Find Another Match",
+        "reShuffleConfirmCancel": "Keep Talking"
       },
       "voice": {
         "enable": "Activar voz",
@@ -1420,7 +1634,10 @@
         "topicDiscussed": "Tema tratado",
         "minutes": "{{minutes}} minutos",
         "matchAgain": "Volver a emparejar",
-        "exit": "Salir"
+        "exit": "Salir",
+        "message": "¡Excelente conexión! ☕",
+        "prompts": "{{count}} temas utilizados",
+        "subtitle": "Estos momentos crean lazos reales del equipo."
       },
       "admin": {
         "settings": {
@@ -1540,12 +1757,71 @@
           "step4": "4. Asocia las preguntas a los temas",
           "step5": "5. ¡Lanza Coffee Roulette con tu evento!"
         }
-      }
+      },
+      "roleBasedPrompts": {
+        "manager": {
+          "p1": "As a manager, what's your biggest challenge with team engagement?",
+          "p2": "What's one leadership lesson you learned the hard way?",
+          "p3": "How do you build trust with people who report to you?",
+          "p4": "What's your philosophy on remote team dynamics?"
+        },
+        "individual_contributor": {
+          "p1": "What's the most impactful project you've worked on?",
+          "p2": "What skill are you developing that excites you most?",
+          "p3": "How do you stay motivated when working async?",
+          "p4": "What's your ideal work environment?"
+        },
+        "designer": {
+          "p1": "What design principles guide your work?",
+          "p2": "What's a recent design decision you're proud of?",
+          "p3": "How do you balance aesthetics with usability?",
+          "p4": "What inspires your creative work?"
+        },
+        "engineer": {
+          "p1": "What's your favorite tech stack and why?",
+          "p2": "What's a challenging bug you've solved recently?",
+          "p3": "How do you approach code quality?",
+          "p4": "What technology excites you most right now?"
+        },
+        "product": {
+          "p1": "What metrics drive your decision-making?",
+          "p2": "How do you prioritize competing features?",
+          "p3": "What's your user research process?",
+          "p4": "What's a product launch you're proud of?"
+        },
+        "sales": {
+          "p1": "What's your strategy for building relationships?",
+          "p2": "How do you handle objections?",
+          "p3": "What's the most rewarding part of your role?",
+          "p4": "How do you stay energized in a competitive environment?"
+        }
+      },
+      "rolePrompts": {
+        "title": "Suggested Conversation Starters",
+        "loading": "Loading suggestions...",
+        "description": "Based on your role as a {{role}}, here are some great conversation starters:",
+        "dismiss": "Close",
+        "ready": "Ready to chat!",
+        "empty": "No suggestions available at this time."
+      },
+      "suggestedPrompts": "View suggestions",
+      "roles": {
+        "manager": "Manager",
+        "individual_contributor": "Individual Contributor",
+        "designer": "Designer",
+        "engineer": "Engineer",
+        "product": "Product Manager",
+        "sales": "Sales"
+      },
+      "error": {
+        "notFound": "Pareja de Coffee Roulette no encontrada"
+      },
+      "unmatched": "Sin emparejar"
     },
     "winsOfWeek": {
-      "defaultPrompt": "Comparte un logro de esta semana — profesional o personal, grande o pequeño.",
-      "emptyTitle": "Todavía no hay logros",
-      "emptySubtitle": "Sé la primera persona en compartir uno.",
+      "defaultPrompt": "¡Comparte tus logros de esta semana!",
+      "emptyTitle": "Sin logros",
+      "emptySubtitle": "Aún no se han compartido logros.",
       "thisWeeksPrompt": "Tema de esta semana",
       "contributions": "{{count}} aportaciones",
       "ongoing": "En curso — comparte cuando quieras",
@@ -1573,7 +1849,8 @@
       "reply": "Responder",
       "writeReply": "Escribe una respuesta...",
       "replyCount": "{{count}} respuesta",
-      "repliesCount": "{{count}} respuestas"
+      "repliesCount": "{{count}} respuestas",
+      "sharing": "Compartiendo…"
     },
     "results": {
       "gameComplete": "¡Juego terminado!",
@@ -1619,7 +1896,9 @@
       "userJoinedToast": "{{name}} se ha unido",
       "userDisconnectedBadge_one": "{{count}} usuario desconectado",
       "userDisconnectedBadge_other": "{{count}} usuarios desconectados",
-      "scores": "Puntuaciones"
+      "scores": "Puntuaciones",
+      "back": "Atrás",
+      "userDisconnectedBadge": "Desconectado"
     },
     "phases": {
       "waiting": "Esperando",
@@ -1642,6 +1921,45 @@
       "strategicEscapeSubtitle": "Simulación de crisis asíncrona donde cada rol ve algo diferente.",
       "strategicEscapePrompt": "Tu equipo se enfrenta a un lanzamiento de alto riesgo bajo presión. Usa la perspectiva de tu rol para detectar riesgos, concesiones y movimientos valientes.",
       "defaultPrompt": "Comparte un logro de esta semana — profesional o personal, grande o pequeño."
+    },
+    "wins": {
+      "title": "Wins",
+      "selectCategory": "Select Category",
+      "category": "Category",
+      "tags": "Tags",
+      "filters": "Filters",
+      "clearAll": "Clear all",
+      "noTags": "No tags",
+      "noCategories": "No categories available",
+      "noFilters": "No filters available",
+      "noFiltersAvailable": "No filters available",
+      "enterTag": "Enter a tag...",
+      "removeTag": "Remove tag",
+      "addTag": "Add Tag",
+      "maxTagsReached": "Maximum tags reached",
+      "loadingFilters": "Loading filters...",
+      "categories": {
+        "innovation": "Innovation",
+        "revenue": "Revenue",
+        "collaboration": "Collaboration",
+        "customer_success": "Customer Success",
+        "personal_growth": "Personal Growth",
+        "general": "General"
+      }
+    },
+    "insights": {
+      "title": "Your Performance",
+      "accuracy": "Accuracy",
+      "accuracyDesc": "{{percentage}}% correct guesses",
+      "improvement": "↑ from {{previousPercentage}}% last time",
+      "bestGuess": "🎯 Best Guess",
+      "trickiestStatement": "😈 Trickiest Statement",
+      "fooled": "{{percentage}}% of players fooled",
+      "yourRanking": "📊 How You Compare",
+      "topPercentile": "Top {{percentile}}% of all players",
+      "noComparison": "First time playing! Keep it up.",
+      "viewDetails": "View Details",
+      "close": "Close"
     }
   },
   "emailAdmin": {
@@ -1939,16 +2257,32 @@
     "TIMEOUT": "La solicitud ha superado el tiempo de espera. Inténtalo de nuevo.",
     "SERVICE_UNAVAILABLE": "El servicio no está disponible temporalmente. Inténtalo de nuevo más tarde.",
     "INTERNAL_ERROR": "Algo ha salido mal. Inténtalo de nuevo más tarde.",
-    "UNKNOWN": "Se ha producido un error inesperado."
+    "UNKNOWN": "Se ha producido un error inesperado.",
+    "ORG_BANNED": "Your organization has been banned and is no longer accessible. Please contact support."
   },
   "onboarding": {
     "stepOf": "Paso {{current}} de {{total}}",
     "steps": {
-      "org": { "title": "Tu organización", "description": "Cuéntanos sobre tu empresa" },
-      "industry": { "title": "Sector y tamaño", "description": "Ayúdanos a personalizar tu experiencia" },
-      "goals": { "title": "Tus objetivos", "description": "¿Qué quieres conseguir?" },
-      "branding": { "title": "Idioma e imagen de marca", "description": "Últimos detalles" },
-      "teamInvite": { "title": "Invita a tu equipo", "description": "Añade compañeros para colaborar (opcional)" }
+      "org": {
+        "title": "Tu organización",
+        "description": "Cuéntanos sobre tu empresa"
+      },
+      "industry": {
+        "title": "Sector y tamaño",
+        "description": "Ayúdanos a personalizar tu experiencia"
+      },
+      "goals": {
+        "title": "Tus objetivos",
+        "description": "¿Qué quieres conseguir?"
+      },
+      "branding": {
+        "title": "Idioma e imagen de marca",
+        "description": "Últimos detalles"
+      },
+      "teamInvite": {
+        "title": "Invita a tu equipo",
+        "description": "Añade compañeros para colaborar (opcional)"
+      }
     },
     "errors": {
       "checkInfoAndRetry": "Revisa la información e inténtalo de nuevo.",
@@ -1978,20 +2312,53 @@
     "industry": "Sector",
     "companySize": "Tamaño de la empresa",
     "sizes": {
-      "1-10": { "label": "1–10", "description": "Equipo pequeño" },
-      "11-50": { "label": "11–50", "description": "Equipo en crecimiento" },
-      "51-200": { "label": "51–200", "description": "Mediana" },
-      "201-500": { "label": "201–500", "description": "Grande" },
-      "500+": { "label": "500+", "description": "Enterprise" }
+      "1-10": {
+        "label": "1–10",
+        "description": "Equipo pequeño"
+      },
+      "11-50": {
+        "label": "11–50",
+        "description": "Equipo en crecimiento"
+      },
+      "51-200": {
+        "label": "51–200",
+        "description": "Mediana"
+      },
+      "201-500": {
+        "label": "201–500",
+        "description": "Grande"
+      },
+      "500+": {
+        "label": "500+",
+        "description": "Enterprise"
+      }
     },
     "goalsHint": "Selecciona todo lo que aplique — esto nos ayuda a recomendarte las actividades adecuadas",
     "goals": {
-      "team_bonding": { "label": "Cohesión del equipo", "description": "Construir lazos más fuertes entre compañeros" },
-      "icebreakers": { "label": "Icebreakers", "description": "Ayudar a que las nuevas personas se integren más rápido" },
-      "engagement": { "label": "Compromiso", "description": "Mejorar el ánimo y la satisfacción" },
-      "remote_culture": { "label": "Cultura remota", "description": "Reducir la brecha en equipos distribuidos" },
-      "onboarding": { "label": "Onboarding", "description": "Hacer el onboarding divertido y memorable" },
-      "wellness": { "label": "Bienestar", "description": "Apoyar la salud mental y el equilibrio vida‑trabajo" }
+      "team_bonding": {
+        "label": "Cohesión del equipo",
+        "description": "Construir lazos más fuertes entre compañeros"
+      },
+      "icebreakers": {
+        "label": "Icebreakers",
+        "description": "Ayudar a que las nuevas personas se integren más rápido"
+      },
+      "engagement": {
+        "label": "Compromiso",
+        "description": "Mejorar el ánimo y la satisfacción"
+      },
+      "remote_culture": {
+        "label": "Cultura remota",
+        "description": "Reducir la brecha en equipos distribuidos"
+      },
+      "onboarding": {
+        "label": "Onboarding",
+        "description": "Hacer el onboarding divertido y memorable"
+      },
+      "wellness": {
+        "label": "Bienestar",
+        "description": "Apoyar la salud mental y el equilibrio vida‑trabajo"
+      }
     },
     "selected": "Seleccionados:",
     "preferredLanguage": "Idioma preferido",
@@ -2092,7 +2459,9 @@
     "importHint": "Consejo: pega o importa como «email, departamento». El departamento por defecto es General.",
     "toast": {
       "created": "Departamento creado",
-      "deleted": "Departamento eliminado"
+      "deleted": "Departamento eliminado",
+      "deleteFailed": "Error al eliminar el departamento",
+      "updated": "Departamento actualizado"
     }
   },
   "templates": {
@@ -2372,7 +2741,8 @@
       "assigningRoles": "Asignando roles…",
       "assignHelp": "Primero, asigna roles para que todos puedan ver su rol. Luego inicia la discusión asíncrona cuando estés listo.",
       "startDiscussion": "Iniciar discusión asíncrona",
-      "endDiscussion": "Terminar la discusión y pasar a la puesta en común"
+      "endDiscussion": "Terminar la discusión y pasar a la puesta en común",
+      "sessionCreated": "Sesión creada"
     },
     "roleReveal": {
       "title": "Tu rol secreto",
@@ -2621,6 +2991,6 @@
       },
       "noResults": "No se encontró feedback"
     }
-  }
+  },
+  "departmentsSelected": "Departamentos seleccionados"
 }
-
