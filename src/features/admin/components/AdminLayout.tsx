@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Building2, Gamepad2, ScrollText,
   Settings, LogOut, Shield, ChevronLeft, ChevronRight, Moon, Sun, MessageSquare, Inbox, Star,
+  Zap, Package, AlertCircle, TrendingUp, BarChart3, LineChart,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,13 @@ const NAV_ITEMS = [
   { key: 'earlyAccess', path: ADMIN_ROUTES.EARLY_ACCESS, icon: Inbox },
   { key: 'auditLogs', path: ADMIN_ROUTES.AUDIT_LOGS, icon: ScrollText },
   { key: 'feedbacks', path: ADMIN_ROUTES.FEEDBACKS, icon: Star },
+  // TIER 1 Features
+  { key: 'featureFlags', path: ADMIN_ROUTES.FEATURE_FLAGS, icon: Zap },
+  { key: 'gameContent', path: ADMIN_ROUTES.GAME_CONTENT, icon: Package },
+  { key: 'moderationQueue', path: ADMIN_ROUTES.MODERATION_QUEUE, icon: AlertCircle },
+  { key: 'userEngagement', path: ADMIN_ROUTES.USER_ENGAGEMENT, icon: TrendingUp },
+  { key: 'organizationAnalytics', path: ADMIN_ROUTES.ORG_ANALYTICS, icon: BarChart3 },
+  { key: 'analyticsReports', path: ADMIN_ROUTES.ANALYTICS_REPORTS, icon: LineChart },
   { key: 'settings', path: ADMIN_ROUTES.SETTINGS, icon: Settings },
 ];
 
@@ -35,6 +43,13 @@ const LABELS: Record<string, string> = {
   earlyAccess: 'Early Access',
   auditLogs: 'Audit Logs',
   feedbacks: 'Activity Feedback',
+  // TIER 1 Features
+  featureFlags: 'Feature Flags',
+  gameContent: 'Game Content',
+  moderationQueue: 'Moderation Queue',
+  userEngagement: 'User Engagement',
+  organizationAnalytics: 'Org Analytics',
+  analyticsReports: 'Reports',
   settings: 'Settings',
 };
 
