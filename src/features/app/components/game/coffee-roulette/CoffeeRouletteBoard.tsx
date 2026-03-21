@@ -91,6 +91,24 @@ export function CoffeeRouletteBoard({
       p.person1.participantId === currentUserId || p.person2.participantId === currentUserId
   ) || null;
 
+  // Log whenever state changes
+  useEffect(() => {
+    console.log('[CoffeeRouletteBoard STATE UPDATE]', {
+      phase,
+      pairCount: pairs.length,
+      myPairId: myPair?.id,
+      myPair: myPair ? {
+        person1: myPair.person1.participantId,
+        person2: myPair.person2.participantId,
+        topic: myPair.topic,
+      } : null,
+      currentUserId,
+      sessionId,
+      snapshotAvailable: !!snapshot,
+      timestamp: new Date().toISOString(),
+    });
+  }, [phase, pairs, myPair, currentUserId, sessionId, snapshot]);
+
   // Chat state
   const chatEndsAt = snapshot?.chatEndsAt || null;
   const promptsUsed = snapshot?.promptsUsed || 0;
@@ -104,11 +122,20 @@ export function CoffeeRouletteBoard({
   );
   const handleStartMatching = useCallback(async () => {
     try {
+      console.log('[CoffeeRouletteBoard SHUFFLE] User clicked "Start Matching"', {
+        currentUserId,
+        sessionId,
+        participantId: currentUserId,
+        timestamp: new Date().toISOString(),
+      });
+
       await withLoading(() => onEmitAction('coffee:shuffle'));
+
+      console.log('[CoffeeRouletteBoard SHUFFLE] Shuffle action emitted successfully');
     } catch (error) {
-      console.error('[CoffeeRouletteBoard] Failed to start matching:', error);
+      console.error('[CoffeeRouletteBoard SHUFFLE] Failed to start matching:', error);
     }
-  }, [onEmitAction, withLoading]);
+  }, [onEmitAction, withLoading, currentUserId, sessionId]);
 
   // Handle matching complete â†’ auto-start chat
   // Any paired participant can emit; backend is idempotent so duplicates are safe.

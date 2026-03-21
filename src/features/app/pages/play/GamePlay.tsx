@@ -220,6 +220,16 @@ function GamePlayWithoutBoundary() {
   const [gameData, setGameData] = useState<unknown>(null);
   const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
 
+  // Log gameData changes for debugging
+  useEffect(() => {
+    console.log('[GamePlay] gameData changed:', {
+      kind: (gameData as any)?.kind,
+      phase: (gameData as any)?.phase,
+      pairCount: (gameData as any)?.pairs?.length,
+      hasGameData: !!gameData,
+    });
+  }, [gameData]);
+
   // ─── Socket error state ───────────────────────────────────────────────────
   const [chatSocketError, setChatSocketError] = useState<string | null>(null);
   const [chatSocketErrorCode, setChatSocketErrorCode] = useState<string | null>(null);
@@ -580,22 +590,57 @@ function GamePlayWithoutBoundary() {
 
     let mounted = true;
 
-    const handleGameData = (data: any) => {
-      if (!mounted || data.sessionId !== sessionId) return;
+    console.log('[GamePlay] Registering game:data listener', {
+      sessionId,
+      socketConnected: gamesSocket.isConnected,
+      socketId: (gamesSocket as any)?.socket?.id,
+    });
 
-      console.log('[GamePlay] Game state sync received:', {
+    const handleGameData = (data: any) => {
+      console.log('[GamePlay] game:data event received (raw):', {
+        dataSessionId: data?.sessionId,
+        currentSessionId: sessionId,
+        mounted,
+        hasGameData: !!data?.gameData,
+        gameKind: data?.gameData?.kind,
+      });
+
+      if (!mounted) {
+        console.warn('[GamePlay] Ignoring game:data - component unmounted');
+        return;
+      }
+
+      if (data.sessionId !== sessionId) {
+        console.warn('[GamePlay] Ignoring game:data - session mismatch', {
+          dataSessionId: data.sessionId,
+          currentSessionId: sessionId,
+        });
+        return;
+      }
+
+      console.log('[GamePlay] Updating gameData state with:', {
         sessionId: data.sessionId,
         gameKind: data.gameData?.kind,
         phase: (data.gameData as any)?.phase,
+        pairCount: (data.gameData as any)?.pairs?.length,
+        pairs: (data.gameData as any)?.pairs?.map?.((p: any) => ({
+          id: p.id,
+          person1: p.person1?.participantId,
+          person2: p.person2?.participantId,
+          topic: p.topic,
+        })),
       });
 
       // Update the parent game data state so all boards see the change
       setGameData(data.gameData);
+      console.log('[GamePlay] setGameData() called with', (data.gameData as any)?.pairs?.length, 'pairs');
     };
 
     const unsub = gamesSocket.on('game:data', handleGameData);
+    console.log('[GamePlay] game:data listener registered, unsub:', typeof unsub);
 
     return () => {
+      console.log('[GamePlay] Cleaning up game:data listener');
       mounted = false;
       unsub?.();
     };
