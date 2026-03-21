@@ -853,10 +853,56 @@ export function useCoffeeVoiceCall(params: {
       offerReceivedRef.current = true;
       lastPartnerHangupAtRef.current = null;
       setShowEnableVoicePrompt(true);
+      console.log('[CoffeeVoice] Received voice offer - showing prompt modal', {
+        sessionId,
+        pairId,
+        fromParticipantId: msg.fromParticipantId,
+      });
     });
 
-    return unsubOffer;
-  }, [gamesSocket, isOfferer, pairId, sessionId, status]);
+    // Listen for notification that partner enabled voice (when offer was cached)
+    const unsubVoiceAwaiting = gamesSocket.on('coffee:voice_offer_awaiting',
+      (msg: { pairId: string; fromParticipantId: string; toParticipantId?: string }) => {
+        if (msg.pairId !== pairId) return;
+        
+        // Only process if this is for us
+        if (msg.toParticipantId && msg.toParticipantId !== myParticipantId) {
+          console.log('[CoffeeVoice] Voice offer awaiting is for another user, ignoring', {
+            toParticipantId: msg.toParticipantId,
+            myParticipantId,
+          });
+          return;
+        }
+
+        // Check if we already have the offer pending or voice is active
+        if (peerRef.current || status !== 'idle' || pendingOfferSdpRef.current) return;
+
+        console.log('[CoffeeVoice] Partner enabled voice, requesting cached offer...', {
+          sessionId,
+          pairId,
+          fromParticipantId: msg.fromParticipantId,
+        });
+
+        // Show the modal to the user
+        setShowEnableVoicePrompt(true);
+
+        // Auto-request the cached offer from backend
+        gamesSocket.emit('coffee:voice_request_offer', {
+          sessionId,
+          pairId,
+        }).catch((err) => {
+          console.warn('[CoffeeVoice] Failed to request cached offer:', err);
+          setStatus('error');
+          setError('OFFER_REQUEST_FAILED');
+        });
+      }
+    );
+
+    return () => {
+      unsubOffer?.();
+      unsubVoiceAwaiting?.();
+    };
+  }, [gamesSocket, isOfferer, pairId, sessionId, status, myParticipantId]);
 
   // Poll for a cached offer while we are idle (answerer role).
   useEffect(() => {
