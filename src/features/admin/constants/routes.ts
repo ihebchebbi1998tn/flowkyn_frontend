@@ -16,4 +16,11 @@ export const ADMIN_ROUTES = {
   BUG_REPORTS: '/bug-reports',
   FEEDBACKS: '/feedbacks',
   SETTINGS: '/settings',
+  // TIER 1 Features
+  FEATURE_FLAGS: '/tier1/feature-flags',
+  GAME_CONTENT: '/tier1/game-content',
+  MODERATION_QUEUE: '/tier1/moderation-queue',
+  USER_ENGAGEMENT: '/tier1/user-engagement',
+  ORG_ANALYTICS: '/tier1/organization-analytics',
+  ANALYTICS_REPORTS: '/tier1/analytics-reports',
 } as const;

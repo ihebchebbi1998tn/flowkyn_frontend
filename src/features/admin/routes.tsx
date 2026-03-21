@@ -20,6 +20,14 @@ const AdminBugReportsPage = lazy(() => import('./pages/AdminBugReportsPage'));
 const AdminEarlyAccess = lazy(() => import('./pages/AdminEarlyAccess'));
 const AdminActivityFeedbacksPage = lazy(() => import('./pages/AdminActivityFeedbacksPage'));
 
+// TIER 1 Feature Pages
+const FeatureFlagsPage = lazy(() => import('@/pages/admin/FeatureFlagsPage').then(m => ({ default: m.FeatureFlagsPage })));
+const GameContentPage = lazy(() => import('@/pages/admin/GameContentPage').then(m => ({ default: m.GameContentPage })));
+const ModerationQueuePage = lazy(() => import('@/pages/admin/ModerationQueuePage').then(m => ({ default: m.ModerationQueuePage })));
+const UserEngagementPage = lazy(() => import('@/pages/admin/UserEngagementPage').then(m => ({ default: m.UserEngagementPage })));
+const OrganizationAnalyticsPage = lazy(() => import('@/pages/admin/OrganizationAnalyticsPage').then(m => ({ default: m.OrganizationAnalyticsPage })));
+const AnalyticsReportsPage = lazy(() => import('@/pages/admin/AnalyticsReportsPage').then(m => ({ default: m.AnalyticsReportsPage })));
+
 export const adminRoutes = (
   <>
     <Route path="/login" element={<AdminLogin />} />
@@ -41,6 +49,14 @@ export const adminRoutes = (
       <Route path={ADMIN_ROUTES.BUG_REPORTS} element={<AdminBugReportsPage />} />
       <Route path={ADMIN_ROUTES.FEEDBACKS} element={<AdminActivityFeedbacksPage />} />
       <Route path={ADMIN_ROUTES.SETTINGS} element={<AdminSettings />} />
+      
+      {/* TIER 1 Feature Routes */}
+      <Route path={ADMIN_ROUTES.FEATURE_FLAGS} element={<FeatureFlagsPage />} />
+      <Route path={ADMIN_ROUTES.GAME_CONTENT} element={<GameContentPage />} />
+      <Route path={ADMIN_ROUTES.MODERATION_QUEUE} element={<ModerationQueuePage />} />
+      <Route path={ADMIN_ROUTES.USER_ENGAGEMENT} element={<UserEngagementPage />} />
+      <Route path={ADMIN_ROUTES.ORG_ANALYTICS} element={<OrganizationAnalyticsPage />} />
+      <Route path={ADMIN_ROUTES.ANALYTICS_REPORTS} element={<AnalyticsReportsPage />} />
     </Route>
   </>
 );
