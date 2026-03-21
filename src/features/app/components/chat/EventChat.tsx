@@ -204,41 +204,13 @@ export const EventChat = memo(function EventChat({
           <h3 className="text-[13px] font-bold text-foreground">{t('chat.title')}</h3>
         </div>
 
-        {/* Voice Controls */}
+        {/* Voice Participants Badge (only in header) */}
         <div className="flex items-center gap-2">
           {voiceActive && voiceStatus === 'connected' && (
-            <>
-              <Badge variant="secondary" className="text-[9px] gap-1">
-                <div className="h-1.5 w-1.5 rounded-full animate-pulse bg-success" />
-                {remoteParticipants.length} {t('chat.voiceActive', { defaultValue: 'voice users' })}
-              </Badge>
-
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8"
-                onClick={onToggleMute}
-                title={isMuted ? t('chat.unmute', { defaultValue: 'Unmute' }) : t('chat.mute', { defaultValue: 'Mute' })}
-              >
-                {isMuted ? (
-                  <MicOff className="h-4 w-4 text-destructive" />
-                ) : (
-                  <Mic className="h-4 w-4 text-success" />
-                )}
-              </Button>
-            </>
-          )}
-
-          {onStartVoice && onStopVoice && (
-            <Button
-              size="icon"
-              variant={voiceActive ? 'destructive' : 'outline'}
-              className="h-8 w-8"
-              onClick={handleToggleVoice}
-              title={voiceActive ? t('chat.stopVoice', { defaultValue: 'Stop voice' }) : t('chat.startVoice', { defaultValue: 'Start voice' })}
-            >
-              {voiceActive ? <PhoneOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-            </Button>
+            <Badge variant="secondary" className="text-[9px] gap-1">
+              <div className="h-1.5 w-1.5 rounded-full animate-pulse bg-success" />
+              {remoteParticipants.length} {t('chat.voiceActive', { defaultValue: 'voice users' })}
+            </Badge>
           )}
         </div>
 
@@ -450,6 +422,38 @@ export const EventChat = memo(function EventChat({
             className="h-10 text-[13px] rounded-xl border-border/50 bg-muted/30 focus:bg-background transition-colors flex-1"
             disabled={!isOnline}
           />
+          
+          {/* Voice Controls - Next to Send Button */}
+          {voiceActive && voiceStatus === 'connected' && (
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-10 w-10 rounded-xl"
+              onClick={onToggleMute}
+              title={isMuted ? t('chat.unmute', { defaultValue: 'Unmute' }) : t('chat.mute', { defaultValue: 'Mute' })}
+            >
+              {isMuted ? (
+                <MicOff className="h-4 w-4 text-destructive" />
+              ) : (
+                <Mic className="h-4 w-4 text-success" />
+              )}
+            </Button>
+          )}
+
+          {onStartVoice && onStopVoice && (
+            <Button
+              type="button"
+              size="icon"
+              variant={voiceActive ? 'destructive' : 'outline'}
+              className="h-10 w-10 rounded-xl shrink-0"
+              onClick={handleToggleVoice}
+              title={voiceActive ? t('chat.stopVoice', { defaultValue: 'Stop voice' }) : t('chat.startVoice', { defaultValue: 'Start voice' })}
+            >
+              {voiceActive ? <PhoneOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+          )}
+
           <Button
             type="submit" size="icon" disabled={!input.trim() || !isOnline}
             className="h-10 w-10 rounded-xl shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30"
