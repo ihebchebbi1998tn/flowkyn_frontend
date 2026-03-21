@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameResults, CountdownOverlay, type GamePhase } from '../shared';
 import {
@@ -73,6 +73,8 @@ export function TwoTruthsBoard({
   const scores = snapshot?.scores || {};
   const submitEndsAt = snapshot?.submitEndsAt || null;
   const voteEndsAt = snapshot?.voteEndsAt || null;
+  const submitSeconds = Math.max(5, Number(snapshot?.submitSeconds || 30));
+  const voteSeconds = Math.max(5, Number(snapshot?.voteSeconds || 20));
 
   const [localStatements, setLocalStatements] = useState(['', '', '']);
   const [selectedVote, setSelectedVote] = useState<'s0' | 's1' | 's2' | null>(null);
@@ -100,7 +102,7 @@ export function TwoTruthsBoard({
   // Use the new timer hook instead of manual interval
   const timeLeft = usePhaseEndTimer(
     phase === 'submit' ? submitEndsAt : phase === 'vote' ? voteEndsAt : null,
-    phase === 'submit' ? 30 : 20,
+    phase === 'submit' ? submitSeconds : voteSeconds,
     phase === 'submit' || phase === 'vote'
   );
 
@@ -133,7 +135,7 @@ export function TwoTruthsBoard({
     setLieIndex(2);
   }, [onEmitAction, onRoundComplete, round]);
 
-  const maxTime = phase === 'submit' ? 30 : 20;
+  const maxTime = phase === 'submit' ? submitSeconds : voteSeconds;
 
   
   const presenterName =

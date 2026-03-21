@@ -98,7 +98,7 @@ export default function EventLobby() {
     showProfileForm,
     isIdentityLoading,
     participantId: identity.participantId || null,
-    isAuthenticated,
+      isAuthenticated,
     user: user || null,
     inviteToken,
     guestEmail,
@@ -116,7 +116,7 @@ export default function EventLobby() {
 
   useEventLobbyPresence({
     eventId: id || null,
-    hasJoined,
+        hasJoined,
     isGuest,
     eventsSocket,
     identityRef,
@@ -223,7 +223,7 @@ export default function EventLobby() {
   // ── Main lobby ───────────────────────────────────────────────────────────
   return (
     <ErrorBoundary>
-      <div className="min-h-[80vh] flex items-center justify-center animate-fade-in">
+        <div className="min-h-[80vh] flex items-center justify-center animate-fade-in">
         <EventLobbyCard
           event={event as any}
           showProfileForm={showProfileForm}
@@ -248,8 +248,8 @@ export default function EventLobby() {
           isSyncing={isSyncing}
           participantId={identity.participantId || null}
           t={t}
-        />
-      </div>
+                  />
+                </div>
     </ErrorBoundary>
   );
 }

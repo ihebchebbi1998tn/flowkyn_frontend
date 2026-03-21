@@ -1140,7 +1140,12 @@
         "decisionMessage": "Time to decide together!",
         "nextTopicButton": "Next Topic",
         "keepTalkingButton": "Keep Talking",
-        "endMeetingButton": "End Meeting"
+        "endMeetingButton": "End Meeting",
+        "reShuffleButton": "Find Another Match",
+        "reShuffleConfirmTitle": "Find Another Match?",
+        "reShuffleConfirmMessage": "You'll be matched with a different participant. Your current chat will end.",
+        "reShuffleConfirmAction": "Find Another Match",
+        "reShuffleConfirmCancel": "Keep Talking"
       },
       "voice": {
         "enable": "Enable voice",

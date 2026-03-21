@@ -47,6 +47,7 @@ interface CoffeeSnapshot {
   }>;
   startedChatAt: string | null;
   chatEndsAt?: string;
+  chatDurationMinutes?: number;
   promptsUsed?: number;
   decisionRequired?: boolean;
 }
@@ -111,13 +112,15 @@ export function CoffeeRouletteBoard({
 
   // Chat state
   const chatEndsAt = snapshot?.chatEndsAt || null;
+  const chatDurationMinutes = Math.max(1, Number(snapshot?.chatDurationMinutes || 30));
+  const chatDurationSeconds = chatDurationMinutes * 60;
   const promptsUsed = snapshot?.promptsUsed || 0;
   const decisionRequired = !!snapshot?.decisionRequired;
 
   // Timer state
   const chatSecondsRemaining = usePhaseEndTimer(
     phase === 'chatting' ? chatEndsAt : null,
-    30 * 60,
+    chatDurationSeconds,
     phase === 'chatting'
   );
   const handleStartMatching = useCallback(async () => {
@@ -378,7 +381,7 @@ export function CoffeeRouletteBoard({
     const person1 = mergeWithLatestProfile(isMyPerson1 ? myPair.person1 : myPair.person2);
     const person2 = mergeWithLatestProfile(isMyPerson1 ? myPair.person2 : myPair.person1);
 
-    const elapsedSeconds = capturedElapsedRef.current || (30 * 60 - chatSecondsRemaining);
+    const elapsedSeconds = capturedElapsedRef.current || Math.max(0, chatDurationSeconds - chatSecondsRemaining);
     const topicText = myPair.topicKey
       ? t(myPair.topicKey, { defaultValue: myPair.topic })
       : myPair.topic;

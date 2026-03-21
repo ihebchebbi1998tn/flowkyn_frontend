@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, AlertTriangle, Flag, Clock, Shuffle, Settings2 } from 'lucide-react';
@@ -71,6 +71,7 @@ export function StrategicEscapeBoard({
     'medium') as 'easy' | 'medium' | 'hard');
   const rolesAssigned = !!snapshot?.rolesAssigned;
   const discussionEndsAt = snapshot?.discussionEndsAt || null;
+  const discussionDurationMinutes = Math.max(1, Number(snapshot?.discussionDurationMinutes || 45));
 
   const isHost = participants.some(p => p.id === currentUserId && p.isHost);
 
@@ -236,7 +237,11 @@ export function StrategicEscapeBoard({
     }
   }, [isHost, sessionId, onEmitSocketAction]);
 
-  const discussionTimeLeft = usePhaseEndTimer(discussionEndsAt, 30 * 60, phase === 'discussion');
+  const discussionTimeLeft = usePhaseEndTimer(
+    discussionEndsAt,
+    discussionDurationMinutes * 60,
+    phase === 'discussion'
+  );
 
   const difficultyLabelKey =
     selectedDifficulty === 'easy'
@@ -521,7 +526,7 @@ export function StrategicEscapeBoard({
               <Clock className="h-3.5 w-3.5 text-muted-foreground" />
               <PhaseTimer 
                 timeLeft={discussionTimeLeft}
-                maxTime={30 * 60}
+                maxTime={discussionDurationMinutes * 60}
               />
             </div>
           )}

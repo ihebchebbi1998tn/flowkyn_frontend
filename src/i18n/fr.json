@@ -1740,7 +1740,12 @@
         "decisionMessage": "Temps de décider ensemble!",
         "nextTopicButton": "Prochain sujet",
         "keepTalkingButton": "Continuer à discuter",
-        "endMeetingButton": "Terminer la réunion"
+        "endMeetingButton": "Terminer la réunion",
+        "reShuffleButton": "Trouver une autre correspondance",
+        "reShuffleConfirmTitle": "Trouver une autre correspondance ?",
+        "reShuffleConfirmMessage": "Vous serez jumelé avec un autre participant. Votre discussion actuelle prendra fin.",
+        "reShuffleConfirmAction": "Trouver une autre correspondance",
+        "reShuffleConfirmCancel": "Continuer à discuter"
       },
       "voice": {
         "enable": "Activer la voix",

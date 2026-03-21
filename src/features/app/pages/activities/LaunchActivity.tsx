@@ -180,6 +180,28 @@ export default function LaunchActivity() {
       }
 
       // Create event
+      const parsedDuration = Math.max(1, parseInt(duration || '0', 10) || 1);
+      const timingConfig =
+        id === '1'
+          ? {
+              default_session_duration_minutes: parsedDuration,
+              two_truths_submit_seconds: 30,
+              two_truths_vote_seconds: 20,
+            }
+          : id === '2'
+            ? {
+                default_session_duration_minutes: parsedDuration,
+                coffee_chat_duration_minutes: parsedDuration,
+              }
+            : id === '4'
+              ? {
+                  default_session_duration_minutes: parsedDuration,
+                  strategic_discussion_duration_minutes: parsedDuration,
+                }
+              : {
+                  default_session_duration_minutes: parsedDuration,
+                };
+
       const eventData = {
         organization_id: orgId,
         title: eventTitle || t('activities.launch.untitledEvent', { defaultValue: 'Untitled Event' }),
@@ -195,6 +217,7 @@ export default function LaunchActivity() {
           : {}),
         ...(enableUserInvites && emails.length > 0 ? { invites: emails } : {}),
         ...(id === '1' ? { max_rounds: parseInt(totalRounds, 10) } : {}),
+        ...timingConfig,
       };
 
       const createdEvent = await eventsApi.create(eventData);

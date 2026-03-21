@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 export function usePhaseEndTimer(
   endTime: string | null,
-  fallbackSeconds: number,
+  fallbackSeconds = 0,
   active = true
 ): number {
   const [left, setLeft] = useState(fallbackSeconds);

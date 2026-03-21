@@ -17,6 +17,7 @@ export interface StrategicEscapeSnapshot {
   crisisType?: string | null;
   difficulty?: 'easy' | 'medium' | 'hard' | string | null;
   rolesAssigned?: boolean;
+  discussionDurationMinutes?: number;
   discussionEndsAt?: string | null;
 }
 

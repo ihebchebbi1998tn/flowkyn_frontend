@@ -7,7 +7,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { MessageCircle, Clock, Lightbulb, RotateCcw, LogOut, Mic, MicOff, PhoneOff, Volume2, VolumeX } from 'lucide-react';
+import { MessageCircle, Clock, Lightbulb, RotateCcw, LogOut, Mic, MicOff, PhoneOff, Volume2, VolumeX, Shuffle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
@@ -34,6 +34,7 @@ interface MeetingRoomProps {
   onNextPrompt?: () => void;
   onContinue?: () => void;
   onEnd?: () => void;
+  onReShuffle?: () => void;
   isLoading?: boolean;
   sessionId?: string;
   eventId?: string;
@@ -55,6 +56,7 @@ export function MeetingRoom({
   onNextPrompt,
   onContinue,
   onEnd,
+  onReShuffle,
   isLoading = false,
   sessionId,
   eventId,
@@ -68,6 +70,7 @@ export function MeetingRoom({
   const themeVars = useThemeVariables();
   const [displayTime, setDisplayTime] = useState(formatTime(timeRemaining));
   const [isWarning, setIsWarning] = useState(false);
+  const [showReShuffleConfirm, setShowReShuffleConfirm] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [remoteVolume, setRemoteVolume] = useState(0.8);
@@ -195,6 +198,35 @@ export function MeetingRoom({
               size="lg"
             >
               {t('gamePlay.coffeeRoulette.voice.prompt.notNow')}
+            </GameActionButton>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showReShuffleConfirm} onOpenChange={setShowReShuffleConfirm}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('gamePlay.coffeeRoulette.chatting.reShuffleConfirmTitle')}</DialogTitle>
+            <DialogDescription>{t('gamePlay.coffeeRoulette.chatting.reShuffleConfirmMessage')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <GameActionButton
+              onClick={async () => {
+                setShowReShuffleConfirm(false);
+                if (onReShuffle) {
+                  onReShuffle();
+                }
+              }}
+              size="lg"
+            >
+              {t('gamePlay.coffeeRoulette.chatting.reShuffleConfirmAction')}
+            </GameActionButton>
+            <GameActionButton
+              variant="outline"
+              onClick={() => setShowReShuffleConfirm(false)}
+              size="lg"
+            >
+              {t('gamePlay.coffeeRoulette.chatting.reShuffleConfirmCancel')}
             </GameActionButton>
           </DialogFooter>
         </DialogContent>
@@ -436,135 +468,236 @@ export function MeetingRoom({
           transition={{ duration: 0.5, delay: 0.4 }}
           className="flex flex-col gap-5 relative z-10 px-2"
         >
-          {/* Row 1: [ Mic | Volume ] ... [ Leave ] - Voice controls grouped, Leave secondary in corner */}
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            {/* Grouped: Mic + Volume slider */}
-            <div
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl"
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                border: '1px solid #e5e7eb',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-              }}
+          {/* Row 1: Professional Voice Controls */}
+          <div className="flex items-center justify-center gap-6 flex-wrap">
+            {/* Status Indicator */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="relative"
             >
               <div
-                className="flex items-center gap-2 px-2 text-xs font-semibold"
-                style={{ color: '#111827' }}
+                className="relative w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg"
+                style={{
+                  backgroundColor: `${voiceDotColor}15`,
+                  border: `3px solid ${voiceDotColor}`,
+                  boxShadow: `0 0 20px ${voiceDotColor}50`,
+                }}
               >
-                <span
-                  className="w-2 h-2 rounded-full shrink-0"
-                  style={{ backgroundColor: voiceDotColor }}
-                />
-                {voiceStatusText}
-              </div>
-
-              <div className="flex flex-col min-w-0">
-                <span className="text-[11px] text-muted-foreground">
-                  {t('gamePlay.coffeeRoulette.voice.micLevelLabel')}
-                </span>
-                <div
-                  className="w-20 h-1.5 rounded-full bg-muted overflow-hidden"
-                  aria-label={t('gamePlay.coffeeRoulette.voice.micLevelLabel')}
-                >
-                  <div
-                    className="h-full transition-all"
+                {voiceStatus === 'connected' && (
+                  <motion.div
+                    className="absolute inset-0 rounded-full"
                     style={{
-                      width: `${Math.round(micLevel * 100)}%`,
-                      backgroundColor: 'var(--color-primary)',
+                      border: `3px solid ${voiceDotColor}`,
                     }}
+                    initial={{ scale: 1, opacity: 0.8 }}
+                    animate={{ scale: 1.5, opacity: 0 }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
                   />
+                )}
+                <div
+                  className="w-4 h-4 rounded-full"
+                  style={{
+                    backgroundColor: voiceDotColor,
+                    boxShadow: `0 0 12px ${voiceDotColor}`,
+                  }}
+                />
+              </div>
+              <p className="text-xs font-bold text-center mt-2 text-muted-foreground">{voiceStatusText}</p>
+            </motion.div>
+
+            {/* Mic Level & Quality Display */}
+            {voiceStatus === 'connected' && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex flex-col gap-3 min-w-max"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-muted-foreground">{t('gamePlay.coffeeRoulette.voice.micLevelLabel')}</span>
+                  <div
+                    className="flex-1 h-2.5 rounded-full bg-gradient-to-r from-slate-200 to-slate-100 overflow-hidden shadow-inner"
+                    style={{ minWidth: '100px' }}
+                  >
+                    <motion.div
+                      className="h-full transition-all"
+                      style={{
+                        background: `linear-gradient(to right, #22c55e, #10b981, var(--color-primary))`,
+                        boxShadow: `inset 0 0 8px ${voiceDotColor}40`,
+                      }}
+                      animate={{
+                        width: `${Math.round(micLevel * 100)}%`,
+                      }}
+                    />
+                  </div>
                 </div>
 
-                {voiceStatus === 'connected' && micComfort !== 'ok' && (
-                  <span
-                    className="text-[10px] font-semibold"
+                {micComfort !== 'ok' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md"
                     style={{
-                      color: micComfort === 'quiet' ? '#f59e0b' : '#ef4444',
-                      marginTop: 2,
+                      backgroundColor: micComfort === 'quiet' ? '#fef08a' : '#fee2e2',
                     }}
                   >
-                    {micComfort === 'quiet'
-                      ? t('gamePlay.coffeeRoulette.voice.micTooQuiet')
-                      : t('gamePlay.coffeeRoulette.voice.micTooLoud')}
-                  </span>
+                    <div
+                      className="w-2 h-2 rounded-full animate-pulse"
+                      style={{
+                        backgroundColor: micComfort === 'quiet' ? '#f59e0b' : '#ef4444',
+                      }}
+                    />
+                    <span
+                      className="text-xs font-semibold"
+                      style={{
+                        color: micComfort === 'quiet' ? '#d97706' : '#dc2626',
+                      }}
+                    >
+                      {micComfort === 'quiet'
+                        ? t('gamePlay.coffeeRoulette.voice.micTooQuiet')
+                        : t('gamePlay.coffeeRoulette.voice.micTooLoud')}
+                    </span>
+                  </motion.div>
                 )}
-              </div>
+              </motion.div>
+            )}
 
+            {/* Control Buttons */}
+            <div className="flex items-center gap-3 flex-wrap justify-center">
               {(voiceStatus === 'idle' || voiceStatus === 'error') && (
-                <GameActionButton
-                  variant="outline"
-                  size="md"
-                  className="shrink-0"
-                  disabled={!sessionId}
-                  onClick={async () => {
-                    await startVoice();
-                  }}
-                >
-                  <Mic className="h-4 w-4" />
-                  {t('gamePlay.coffeeRoulette.voice.enable')}
-                </GameActionButton>
+                <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+                  <GameActionButton
+                    disabled={!sessionId}
+                    onClick={async () => {
+                      await startVoice();
+                    }}
+                    size="lg"
+                    className="gap-2 font-bold shadow-md hover:shadow-xl transition-all px-6"
+                    style={{
+                      backgroundColor: 'var(--color-primary)',
+                      color: 'white',
+                      border: 'none',
+                    }}
+                  >
+                    <Mic className="h-5 w-5" />
+                    {t('gamePlay.coffeeRoulette.voice.enable')}
+                  </GameActionButton>
+                </motion.div>
               )}
 
               {(voiceStatus === 'connecting' || voiceStatus === 'requesting_microphone') && (
-                <GameActionButton variant="outline" size="md" className="shrink-0" disabled>
+                <GameActionButton variant="outline" size="lg" disabled className="gap-2 px-6">
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
+                    <Mic className="h-5 w-5" />
+                  </motion.div>
                   {t('gamePlay.coffeeRoulette.voice.connecting')}
                 </GameActionButton>
               )}
 
               {voiceStatus === 'connected' && (
                 <>
-                  <GameActionButton
-                    variant="outline"
-                    size="md"
-                    className="shrink-0"
-                    onClick={() => toggleMute()}
-                  >
-                    {isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                    {isMuted ? t('gamePlay.coffeeRoulette.voice.unmute') : t('gamePlay.coffeeRoulette.voice.mute')}
-                  </GameActionButton>
+                  {/* Mute/Unmute Button */}
+                  <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+                    <GameActionButton
+                      variant={isMuted ? 'outline' : 'default'}
+                      size="lg"
+                      className="gap-2 font-bold px-6"
+                      onClick={() => toggleMute()}
+                      style={
+                        !isMuted
+                          ? {
+                              backgroundColor: 'var(--color-primary)',
+                              color: 'white',
+                              border: 'none',
+                              boxShadow: '0 6px 20px rgba(108, 92, 231, 0.35)',
+                            }
+                          : {}
+                      }
+                    >
+                      {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                      {isMuted ? t('gamePlay.coffeeRoulette.voice.unmute') : t('gamePlay.coffeeRoulette.voice.mute')}
+                    </GameActionButton>
+                  </motion.div>
 
-                  <div className="flex items-center gap-2">
-                    {remoteVolume <= 0.01 ? <VolumeX className="h-4 w-4 text-muted-foreground shrink-0" /> : <Volume2 className="h-4 w-4 text-muted-foreground shrink-0" />}
+                  {/* Volume Control Card */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      border: '2px solid var(--color-primary)',
+                      boxShadow: '0 4px 16px rgba(108, 92, 231, 0.15)',
+                    }}
+                  >
+                    <motion.div
+                      animate={{
+                        scale: remoteVolume > 0.7 ? [1, 1.15, 1] : 1,
+                      }}
+                      transition={{ duration: 0.8, repeat: remoteVolume > 0.7 ? Infinity : 0 }}
+                    >
+                      {remoteVolume <= 0.01 ? (
+                        <VolumeX className="h-5 w-5 text-muted-foreground" />
+                      ) : (
+                        <Volume2 className="h-5 w-5" style={{ color: 'var(--color-primary)' }} />
+                      )}
+                    </motion.div>
                     <input
                       type="range"
                       min={0}
                       max={1}
                       step={0.05}
                       value={remoteVolume}
-                      className="w-24 h-1.5 accent-primary"
+                      className="h-2 accent-primary cursor-pointer"
+                      style={{ width: '120px' }}
                       aria-label={t('gamePlay.coffeeRoulette.voice.volumeLabel', {
                         percent: Math.round(remoteVolume * 100),
                       })}
                       onChange={(e) => setRemoteVolume(Number(e.target.value))}
                     />
-                  </div>
+                    <span className="text-sm font-bold text-primary min-w-fit">
+                      {Math.round(remoteVolume * 100)}%
+                    </span>
+                  </motion.div>
+
+                  {/* End Call Button */}
+                  <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
+                    <GameActionButton
+                      variant="outline"
+                      size="lg"
+                      className="gap-2 font-bold px-6 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+                      onClick={async () => {
+                        await stopVoice({ emitHangup: true });
+                      }}
+                    >
+                      <PhoneOff className="h-5 w-5" />
+                      {t('gamePlay.coffeeRoulette.voice.leave')}
+                    </GameActionButton>
+                  </motion.div>
                 </>
               )}
             </div>
-
-            {/* Leave - secondary, corner, less aggressive (no red) */}
-            {voiceStatus === 'connected' && (
-              <GameActionButton
-                variant="ghost"
-                  size="md"
-                className="text-muted-foreground hover:text-foreground hover:bg-muted/50 shrink-0"
-                onClick={async () => {
-                  await stopVoice({ emitHangup: true });
-                }}
-              >
-                <PhoneOff className="h-4 w-4" />
-                <span className="text-xs">{t('gamePlay.coffeeRoulette.voice.leave')}</span>
-              </GameActionButton>
-            )}
           </div>
 
+          {/* Error State - Professional Alert */}
           {voiceStatus === 'error' && (
-            <div className="text-center text-caption text-destructive">
-              {t('gamePlay.coffeeRoulette.voice.error')}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="px-4 py-3.5 rounded-lg border-l-4"
+              style={{
+                backgroundColor: '#fee2e2',
+                borderColor: '#ef4444',
+              }}
+            >
+              <p className="text-sm font-bold text-destructive">
+                {t('gamePlay.coffeeRoulette.voice.error')}
+              </p>
               {voiceError && (
-                <div className="mt-1 text-[11px] opacity-80">{voiceErrorText}</div>
+                <p className="text-xs text-destructive/80 mt-1.5 leading-relaxed">{voiceErrorText}</p>
               )}
-            </div>
+            </motion.div>
           )}
 
           {/* Row 2: Primary CTA - Next Topic (bigger, more contrast) */}
@@ -603,6 +736,24 @@ export function MeetingRoom({
               >
                 <RotateCcw className="h-5 w-5" />
                 {t('gamePlay.coffeeRoulette.chatting.keepTalkingButton')}
+              </GameActionButton>
+            )}
+
+            {onReShuffle && (
+              <GameActionButton
+                onClick={() => setShowReShuffleConfirm(true)}
+                disabled={isLoading}
+                variant="outline"
+                size="lg"
+                className="gap-3 font-semibold"
+                style={{
+                  borderColor: '#e5e7eb',
+                  borderWidth: '2px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                }}
+              >
+                <Shuffle className="h-5 w-5" />
+                {t('gamePlay.coffeeRoulette.chatting.reShuffleButton')}
               </GameActionButton>
             )}
 

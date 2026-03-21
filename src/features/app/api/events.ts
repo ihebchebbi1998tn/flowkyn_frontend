@@ -43,6 +43,11 @@ export const eventsApi = {
     auto_start_games?: boolean;
     max_rounds?: number;
     allow_participant_game_control?: boolean;
+    default_session_duration_minutes?: number;
+    two_truths_submit_seconds?: number;
+    two_truths_vote_seconds?: number;
+    coffee_chat_duration_minutes?: number;
+    strategic_discussion_duration_minutes?: number;
   }) =>
     api.post<FlowkynEvent>('/events', data),
 

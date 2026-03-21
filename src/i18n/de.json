@@ -1724,7 +1724,12 @@
         "decisionMessage": "Zeit, gemeinsam zu entscheiden!",
         "nextTopicButton": "Nächstes Thema",
         "keepTalkingButton": "Weiterchatten",
-        "endMeetingButton": "Besprechung beenden"
+        "endMeetingButton": "Besprechung beenden",
+        "reShuffleButton": "Neue Übereinstimmung finden",
+        "reShuffleConfirmTitle": "Neue Übereinstimmung finden?",
+        "reShuffleConfirmMessage": "Sie werden mit einem anderen Teilnehmer gepaart. Ihre aktuelle Unterhaltung endet.",
+        "reShuffleConfirmAction": "Neue Übereinstimmung finden",
+        "reShuffleConfirmCancel": "Weiterchatten"
       },
       "voice": {
         "enable": "Stimme aktivieren",
