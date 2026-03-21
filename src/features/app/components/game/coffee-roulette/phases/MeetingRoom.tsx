@@ -119,7 +119,6 @@ export function MeetingRoom({
   useEffect(() => {
     if (!audioRef.current) return;
     if (!remoteStream) return;
-    // @ts-expect-error - srcObject exists in modern browsers.
     audioRef.current.srcObject = remoteStream;
     audioRef.current.volume = remoteVolume;
     void audioRef.current.play().catch(() => {});

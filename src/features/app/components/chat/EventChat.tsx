@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, MessageCircle, ChevronDown } from 'lucide-react';
+import { Send, MessageCircle, ChevronDown, Mic, MicOff, PhoneOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -47,6 +47,15 @@ interface EventChatProps {
     displayName?: string | null;
     avatarUrl?: string | null;
   }>;
+  /** Voice chat state (from useEventVoiceChat hook) */
+  voiceStatus?: string;
+  voiceError?: string | null;
+  isMuted?: boolean;
+  remoteParticipants?: string[];
+  voiceStatuses?: Record<string, 'idle' | 'active' | 'muted'>;
+  onStartVoice?: () => void;
+  onStopVoice?: () => void;
+  onToggleMute?: () => void;
 }
 
 function AvatarBubble({ name, avatarUrl, isOwn }: { name: string; avatarUrl?: string | null; isOwn: boolean }) {
@@ -84,13 +93,32 @@ export const EventChat = memo(function EventChat({
   onTogglePinMessage,
   participantProfiles = [],
   isGuest = false,
+  voiceStatus,
+  voiceError,
+  isMuted,
+  remoteParticipants = [],
+  voiceStatuses = {},
+  onStartVoice,
+  onStopVoice,
+  onToggleMute,
 }: EventChatProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [voiceActive, setVoiceActive] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleToggleVoice = async () => {
+    if (voiceActive) {
+      onStopVoice?.();
+      setVoiceActive(false);
+    } else {
+      onStartVoice?.();
+      setVoiceActive(true);
+    }
+  };
 
   useEffect(() => {
     if (isAtBottom && scrollRef.current) {
@@ -175,10 +203,56 @@ export const EventChat = memo(function EventChat({
           <MessageCircle className="h-4 w-4 text-primary" />
           <h3 className="text-[13px] font-bold text-foreground">{t('chat.title')}</h3>
         </div>
+
+        {/* Voice Controls */}
+        <div className="flex items-center gap-2">
+          {voiceActive && voiceStatus === 'connected' && (
+            <>
+              <Badge variant="secondary" className="text-[9px] gap-1">
+                <div className="h-1.5 w-1.5 rounded-full animate-pulse bg-success" />
+                {remoteParticipants.length} {t('chat.voiceActive', { defaultValue: 'voice users' })}
+              </Badge>
+
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8"
+                onClick={onToggleMute}
+                title={isMuted ? t('chat.unmute', { defaultValue: 'Unmute' }) : t('chat.mute', { defaultValue: 'Mute' })}
+              >
+                {isMuted ? (
+                  <MicOff className="h-4 w-4 text-destructive" />
+                ) : (
+                  <Mic className="h-4 w-4 text-success" />
+                )}
+              </Button>
+            </>
+          )}
+
+          {onStartVoice && onStopVoice && (
+            <Button
+              size="icon"
+              variant={voiceActive ? 'destructive' : 'outline'}
+              className="h-8 w-8"
+              onClick={handleToggleVoice}
+              title={voiceActive ? t('chat.stopVoice', { defaultValue: 'Stop voice' }) : t('chat.startVoice', { defaultValue: 'Start voice' })}
+            >
+              {voiceActive ? <PhoneOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            </Button>
+          )}
+        </div>
+
         <Badge variant="outline" className="text-[9px]">
           {messages.length} {t('chat.messages')}
         </Badge>
       </div>
+
+      {/* Voice Error Message */}
+      {voiceActive && voiceError && (
+        <div className="px-3 py-2 bg-destructive/10 border-b border-destructive/20 text-[11px] text-destructive">
+          {voiceError}
+        </div>
+      )}
 
       {/* Messages */}
       <div
@@ -308,6 +382,41 @@ export const EventChat = memo(function EventChat({
             <span className="text-[10px] text-muted-foreground/60">
               {typingUsers.length === 1 ? t('chat.isTyping', { name: typingUsers[0] }) : t('chat.peopleTyping', { count: typingUsers.length })}
             </span>
+          </motion.div>
+        )}
+
+        {/* Voice Participants Indicator */}
+        {voiceActive && remoteParticipants.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex gap-2 px-2 py-3 bg-primary/5 rounded-lg my-2"
+          >
+            <span className="text-[9px] font-semibold text-primary flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+              {t('chat.voiceParticipants', { defaultValue: 'Voice:' })}
+            </span>
+            <div className="flex flex-wrap gap-1">
+              {remoteParticipants.map((pId) => {
+                const status = voiceStatuses[pId] || 'idle';
+                const participant = participantProfiles.find((p) => p.participantId === pId);
+                return (
+                  <Badge
+                    key={pId}
+                    variant={status === 'muted' ? 'secondary' : 'default'}
+                    className="text-[9px]"
+                  >
+                    <span
+                      className={cn(
+                        'h-1.5 w-1.5 rounded-full mr-1',
+                        status === 'active' ? 'bg-success animate-pulse' : status === 'muted' ? 'bg-muted-foreground' : 'bg-gray-400'
+                      )}
+                    />
+                    {participant?.displayName || 'User'}
+                  </Badge>
+                );
+              })}
+            </div>
           </motion.div>
         )}
       </div>

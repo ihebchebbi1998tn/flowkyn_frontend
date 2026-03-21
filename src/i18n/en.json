@@ -1816,6 +1816,12 @@
     "peopleTyping": "{{count}} people typing...",
     "newMessages": "New messages",
     "placeholder": "Type a message...",
+    "startVoice": "Start voice chat",
+    "stopVoice": "Stop voice chat",
+    "mute": "Mute microphone",
+    "unmute": "Unmute microphone",
+    "voiceActive": "{{count}} voice users",
+    "voiceParticipants": "Voice:",
     "errors": {
       "generic": "Chat error",
       "sendFailed": "Failed to send message",
