@@ -1390,6 +1390,20 @@
       "pts": "pts",
       "roundsPlayed": "{{count}} rounds played — here are the final standings"
     },
+    "insights": {
+      "title": "Your Performance",
+      "accuracy": "Accuracy",
+      "accuracyDesc": "{{percentage}}% correct guesses",
+      "improvement": "↑ from {{previousPercentage}}% last time",
+      "bestGuess": "🎯 Best Guess",
+      "trickiestStatement": "😈 Trickiest Statement",
+      "fooled": "{{percentage}}% of players fooled",
+      "yourRanking": "📊 How You Compare",
+      "topPercentile": "Top {{percentile}}% of all players",
+      "noComparison": "First time playing! Keep it up.",
+      "viewDetails": "View Details",
+      "close": "Close"
+    },
     "leaderboard": {
       "title": "Leaderboard",
       "empty": "No scores yet",

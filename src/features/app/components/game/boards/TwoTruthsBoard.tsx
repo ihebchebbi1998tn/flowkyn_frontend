@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GameResults, CountdownOverlay, type GamePhase } from '../shared';
+import { GameResults, CountdownOverlay, type GamePhase, InsightsModal } from '../shared';
 import {
   TwoTruthsHeader,
   TwoTruthsWaitingSection,
@@ -60,6 +60,7 @@ export function TwoTruthsBoard({
 }: TwoTruthsBoardProps) {
   const { t } = useTranslation();
   const [howOpen, setHowOpen] = useState(false);
+  const [insightsOpen, setInsightsOpen] = useState(false);
   const snapshot = useGameSnapshot<TwoTruthsSnapshot>(gameData, initialSnapshot, isTwoTruthsSnapshot);
 
   const phase: GamePhase = (snapshot?.phase || 'waiting') as GamePhase;
@@ -267,14 +268,37 @@ export function TwoTruthsBoard({
 
       {/* RESULTS */}
       {phase === 'results' && (
-        <GameResults
-          subtitle={t('gamePlay.results.roundsPlayed', { defaultValue: '{{count}} rounds played', count: totalRounds })}
-          results={results}
-          onPlayAgain={() => {
-            onEmitAction('two_truths:start');
-          }}
-        />
+        <>
+          <GameResults
+            subtitle={t('gamePlay.results.roundsPlayed', { defaultValue: '{{count}} rounds played', count: totalRounds })}
+            results={results}
+            onPlayAgain={() => {
+              onEmitAction('two_truths:start');
+            }}
+          />
+          <div className="flex justify-center pt-4">
+            <button
+              onClick={() => setInsightsOpen(true)}
+              className="text-sm text-primary hover:text-primary/80 underline"
+            >
+              {t('gamePlay.insights.viewDetails', { defaultValue: 'View Details' })}
+            </button>
+          </div>
+        </>
       )}
+
+      <InsightsModal
+        open={insightsOpen}
+        onOpenChange={setInsightsOpen}
+        insights={{
+          accuracy: 70,
+          previousAccuracy: 60,
+          bestGuess: 'I learned Python in 2 weeks',
+          trickiestStatement: 'CEO spent $50K on office plants',
+          trickiestFoolPercentage: 95,
+          percentile: 75,
+        }}
+      />
     </div>
   );
 }

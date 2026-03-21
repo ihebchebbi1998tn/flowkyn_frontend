@@ -1961,6 +1961,20 @@
       "pts": "Pkt",
       "roundsPlayed": "{{count}} Runden gespielt — hier ist das Endergebnis"
     },
+    "insights": {
+      "title": "Ihre Leistung",
+      "accuracy": "Genauigkeit",
+      "accuracyDesc": "{{percentage}}% richtige Antworten",
+      "improvement": "↑ gegenüber {{previousPercentage}}% letztes Mal",
+      "bestGuess": "🎯 Beste Vermutung",
+      "trickiestStatement": "😈 Tückischste Aussage",
+      "fooled": "{{percentage}}% der Spieler getäuscht",
+      "yourRanking": "📊 Ihr Ranking",
+      "topPercentile": "Top {{percentile}}% aller Spieler",
+      "noComparison": "Erstes Mal! Weiter so.",
+      "viewDetails": "Details anzeigen",
+      "close": "Schließen"
+    },
     "leaderboard": {
       "title": "Bestenliste",
       "online": "{{count}} online",

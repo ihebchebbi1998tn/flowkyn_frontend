@@ -8,4 +8,5 @@ export { ConfettiParticles } from './ConfettiParticles';
 export { Podium } from './Podium';
 export { GameActionButton } from './GameActionButton';
 export { GameBoardPhaseLayout } from './GameBoardPhaseLayout';
+export { InsightsModal, type InsightsData } from './InsightsModal';
 export { playSound, playCountBeep, playGoBeep, playJoinChime, playRevealSound, playDrumroll, playScoreTick } from './audio';

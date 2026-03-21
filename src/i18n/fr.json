@@ -1977,6 +1977,20 @@
       "pts": "pts",
       "roundsPlayed": "{{count}} tours joués — voici le classement final"
     },
+    "insights": {
+      "title": "Votre performance",
+      "accuracy": "Précision",
+      "accuracyDesc": "{{percentage}}% de bonnes réponses",
+      "improvement": "↑ par rapport à {{previousPercentage}}% la dernière fois",
+      "bestGuess": "🎯 Meilleure devinette",
+      "trickiestStatement": "😈 Affirmation la plus trompeuse",
+      "fooled": "{{percentage}}% des joueurs dupés",
+      "yourRanking": "📊 Comment vous vous comparez",
+      "topPercentile": "Top {{percentile}}% de tous les joueurs",
+      "noComparison": "Première fois ! Continuez comme ça.",
+      "viewDetails": "Afficher les détails",
+      "close": "Fermer"
+    },
     "leaderboard": {
       "title": "Classement",
       "online": "{{count}} en ligne",
