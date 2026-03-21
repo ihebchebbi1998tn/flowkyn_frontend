@@ -1145,6 +1145,23 @@
           "p4": "How do you stay energized in a competitive environment?"
         }
       },
+      "rolePrompts": {
+        "title": "Suggested Conversation Starters",
+        "loading": "Loading suggestions...",
+        "description": "Based on your role as a {{role}}, here are some great conversation starters:",
+        "dismiss": "Close",
+        "ready": "Ready to chat!",
+        "empty": "No suggestions available at this time."
+      },
+      "suggestedPrompts": "View suggestions",
+      "roles": {
+        "manager": "Manager",
+        "individual_contributor": "Individual Contributor",
+        "designer": "Designer",
+        "engineer": "Engineer",
+        "product": "Product Manager",
+        "sales": "Sales"
+      },
       "spectatorTitle": "Coffee Roulette in progress",
       "spectatorMessage": "Pairs are being matched. You’ll see your partner shortly.",
       "endChat": "End Chat",

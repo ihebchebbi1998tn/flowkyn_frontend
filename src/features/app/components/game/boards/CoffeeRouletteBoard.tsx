@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { motion } from 'framer-motion';
-import { PhaseBadge, CountdownOverlay, type GamePhase, GameActionButton } from '../shared';
+import { PhaseBadge, CountdownOverlay, type GamePhase, GameActionButton, RoleBasedPromptsDisplay } from '../shared';
 import { GAME_TYPES } from '@/features/app/pages/play/gameTypes';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { HowItWorksModal } from '../shared/HowItWorksModal';
@@ -64,6 +64,7 @@ function hasOn(obj: unknown): obj is { on: (event: string, cb: (payload: unknown
 export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapshot, gameData, onEmitAction, gamesSocket }: CoffeeRouletteBoardProps) {
   const { t } = useTranslation();
   const [howOpen, setHowOpen] = useState(false);
+  const [showPrompts, setShowPrompts] = useState(false);
   const snapshot: CoffeeSnapshot | null = isCoffeeSnapshot(gameData)
     ? gameData
     : isCoffeeSnapshot(initialSnapshot)
@@ -442,8 +443,16 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
             </div>
           </div>
 
-          <div className="flex justify-center pt-2">
-          <GameActionButton variant="brand" onClick={startChatting} disabled={!myPair} size="xl">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowPrompts(true)}
+              className="h-10"
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              {t('gamePlay.coffeeRoulette.suggestedPrompts', { defaultValue: 'View suggestions' })}
+            </Button>
+            <GameActionButton variant="brand" onClick={startChatting} disabled={!myPair} size="xl">
               <MessageCircle className="h-5 w-5" /> {t('gamePlay.coffeeRoulette.startChatting', { defaultValue: 'Start chatting' })}
             </GameActionButton>
           </div>
@@ -632,6 +641,16 @@ export function CoffeeRouletteBoard({ participants, currentUserId, initialSnapsh
             </div>
           </div>
         </div>
+      )}
+
+      {/* Role-based prompts modal */}
+      {myPair && (
+        <RoleBasedPromptsDisplay
+          participantId={currentUserId}
+          sessionId={myPair.id}
+          open={showPrompts}
+          onOpenChange={setShowPrompts}
+        />
       )}
     </div>
   );

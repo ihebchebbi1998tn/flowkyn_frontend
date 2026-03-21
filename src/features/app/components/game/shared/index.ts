@@ -9,4 +9,5 @@ export { Podium } from './Podium';
 export { GameActionButton } from './GameActionButton';
 export { GameBoardPhaseLayout } from './GameBoardPhaseLayout';
 export { InsightsModal, type InsightsData } from './InsightsModal';
+export { RoleBasedPromptsDisplay, type RoleBasedPromptsData } from './RoleBasedPromptsDisplay';
 export { playSound, playCountBeep, playGoBeep, playJoinChime, playRevealSound, playDrumroll, playScoreTick } from './audio';
