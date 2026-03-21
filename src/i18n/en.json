@@ -2332,6 +2332,7 @@
     "AUTH_ALREADY_VERIFIED": "This email is already verified.",
     "AUTH_VERIFICATION_EXPIRED": "Verification link has expired. Please request a new one.",
     "AUTH_RESET_TOKEN_EXPIRED": "Password reset link has expired. Please request a new one.",
+    "ORG_BANNED": "Your organization has been banned and is no longer accessible. Please contact support.",
     "FORBIDDEN": "You don't have permission to do this.",
     "INSUFFICIENT_PERMISSIONS": "You don't have the required permissions.",
     "NOT_A_MEMBER": "You are not a member of this workspace.",

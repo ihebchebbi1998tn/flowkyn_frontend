@@ -1501,6 +1501,7 @@
     "AUTH_ALREADY_VERIFIED": "Cet e-mail est déjà vérifié.",
     "AUTH_VERIFICATION_EXPIRED": "Le lien de vérification a expiré. Veuillez en demander un nouveau.",
     "AUTH_RESET_TOKEN_EXPIRED": "Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.",
+    "ORG_BANNED": "Votre organisation a été suspendue et n'est plus accessible. Veuillez contacter le support.",
     "FORBIDDEN": "Vous n'avez pas la permission d'effectuer cette action.",
     "INSUFFICIENT_PERMISSIONS": "Vous n'avez pas les autorisations requises.",
     "NOT_A_MEMBER": "Vous n'êtes pas membre de cet espace de travail.",

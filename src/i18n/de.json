@@ -1485,6 +1485,7 @@
     "AUTH_ALREADY_VERIFIED": "Diese E-Mail-Adresse wurde bereits bestätigt.",
     "AUTH_VERIFICATION_EXPIRED": "Der Bestätigungslink ist abgelaufen. Bitte fordern Sie einen neuen an.",
     "AUTH_RESET_TOKEN_EXPIRED": "Der Passwort-Reset-Link ist abgelaufen. Bitte fordern Sie einen neuen an.",
+    "ORG_BANNED": "Ihre Organisation wurde deaktiviert und ist nicht mehr zugänglich. Bitte kontaktieren Sie den Support.",
     "FORBIDDEN": "Sie haben keine Berechtigung für diese Aktion.",
     "INSUFFICIENT_PERMISSIONS": "Sie verfügen nicht über die erforderlichen Berechtigungen.",
     "NOT_A_MEMBER": "Sie sind kein Mitglied dieses Arbeitsbereichs.",
