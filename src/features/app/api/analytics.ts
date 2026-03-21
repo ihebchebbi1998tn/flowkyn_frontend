@@ -6,6 +6,10 @@
  * - Dashboard stats (active sessions, team members, upcoming events)
  * - Analytics overview (engagement trends, activity breakdown, top activities)
  * - Active game sessions (currently running)
+ * - Engagement metrics (detailed organization metrics)
+ * - Real-time metrics (live session data)
+ * - Event analytics (detailed event performance)
+ * - Participant rankings (leaderboards)
  *
  * All analytics endpoints require authentication and scope data
  * to the user's organizations.
@@ -69,6 +73,98 @@ export interface ActiveSession {
   organization_name: string;
 }
 
+/** Engagement metrics for an organization */
+export interface EngagementMetrics {
+  total_participants: number;
+  total_events: number;
+  total_sessions: number;
+  avg_session_duration_minutes: number;
+  session_completion_rate: number;
+  active_participants_now: number;
+  last_session_at: string | null;
+}
+
+/** Real-time metrics data */
+export interface RealTimeMetrics {
+  activeSessions: Array<{
+    id: string;
+    status: string;
+    current_round: number;
+    started_at: string;
+    game_name: string;
+    game_key: string;
+    event_title: string;
+    participant_count: number;
+  }>;
+  onlineParticipantsCount: number;
+  recentSessions: Array<{
+    id: string;
+    status: string;
+    ended_at: string;
+    game_name: string;
+    event_title: string;
+    participant_count: number;
+  }>;
+  gameBreakdown: Array<{
+    name: string;
+    key: string;
+    session_count: number;
+    total_participants: number;
+    avg_duration_minutes: number;
+  }>;
+  timestamp: string;
+}
+
+/** Event analytics */
+export interface EventAnalytics {
+  event: {
+    id: string;
+    title: string;
+    status: string;
+    event_mode: string;
+    created_at: string;
+    total_participants: number;
+    active_participants: number;
+    total_sessions: number;
+  };
+  sessions: Array<{
+    id: string;
+    status: string;
+    current_round: number;
+    started_at: string;
+    ended_at: string | null;
+    game_name: string;
+    participant_count: number;
+  }>;
+  participants: Array<{
+    id: string;
+    display_name: string;
+    created_at: string;
+    left_at: string | null;
+    interaction_count: number;
+    last_activity_at: string | null;
+  }>;
+  timeline: Array<{
+    id: string;
+    started_at: string;
+    ended_at: string | null;
+    status: string;
+    game_name: string;
+    participant_count: number;
+  }>;
+}
+
+/** Participant ranking */
+export interface ParticipantRanking {
+  id: string;
+  display_name: string;
+  avatar_seed: string;
+  sessions_participated: number;
+  events_attended: number;
+  total_interactions: number;
+  completion_rate: number;
+}
+
 export const analyticsApi = {
   /** Track a custom analytics event */
   track: (eventName: string, properties: Record<string, unknown> = {}) =>
@@ -85,4 +181,20 @@ export const analyticsApi = {
   /** Get list of currently active game sessions */
   getActiveSessions: () =>
     api.get<ActiveSession[]>('/analytics/active-sessions'),
+
+  /** Get engagement metrics for an organization */
+  getEngagementMetrics: (organizationId: string) =>
+    api.get<EngagementMetrics>(`/analytics/engagement/${organizationId}`),
+
+  /** Get real-time metrics for an organization */
+  getRealTimeMetrics: (organizationId: string) =>
+    api.get<RealTimeMetrics>(`/analytics/realtime/${organizationId}`),
+
+  /** Get detailed analytics for a specific event */
+  getEventAnalytics: (eventId: string) =>
+    api.get<EventAnalytics>(`/analytics/event/${eventId}`),
+
+  /** Get participant rankings/leaderboard for an organization */
+  getParticipantRankings: (organizationId: string, limit = 20) =>
+    api.get<ParticipantRanking[]>(`/analytics/rankings/${organizationId}`, { limit: String(limit) }),
 };

@@ -5,6 +5,10 @@ export const analyticsKeys = {
   dashboard: ['analytics', 'dashboard'] as const,
   overview: (months: number) => ['analytics', 'overview', months] as const,
   activeSessions: ['analytics', 'active-sessions'] as const,
+  engagement: (organizationId: string) => ['analytics', 'engagement', organizationId] as const,
+  realtime: (organizationId: string) => ['analytics', 'realtime', organizationId] as const,
+  eventAnalytics: (eventId: string) => ['analytics', 'event', eventId] as const,
+  rankings: (organizationId: string, limit: number) => ['analytics', 'rankings', organizationId, limit] as const,
 };
 
 export function useDashboardStats() {
@@ -35,5 +39,42 @@ export function useTrackEvent() {
   return useMutation({
     mutationFn: ({ eventName, properties }: { eventName: string; properties?: Record<string, unknown> }) =>
       analyticsApi.track(eventName, properties),
+  });
+}
+
+export function useEngagementMetrics(organizationId: string, enabled = true) {
+  return useQuery({
+    queryKey: analyticsKeys.engagement(organizationId),
+    queryFn: () => analyticsApi.getEngagementMetrics(organizationId),
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 mins
+  });
+}
+
+export function useRealTimeMetrics(organizationId: string, enabled = true) {
+  return useQuery({
+    queryKey: analyticsKeys.realtime(organizationId),
+    queryFn: () => analyticsApi.getRealTimeMetrics(organizationId),
+    enabled,
+    refetchInterval: 15 * 1000, // Poll every 15s for real-time data
+    staleTime: 0, // Always fresh
+  });
+}
+
+export function useEventAnalytics(eventId: string, enabled = true) {
+  return useQuery({
+    queryKey: analyticsKeys.eventAnalytics(eventId),
+    queryFn: () => analyticsApi.getEventAnalytics(eventId),
+    enabled,
+    staleTime: 2 * 60 * 1000, // 2 mins
+  });
+}
+
+export function useParticipantRankings(organizationId: string, limit = 20, enabled = true) {
+  return useQuery({
+    queryKey: analyticsKeys.rankings(organizationId, limit),
+    queryFn: () => analyticsApi.getParticipantRankings(organizationId, limit),
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 mins
   });
 }
