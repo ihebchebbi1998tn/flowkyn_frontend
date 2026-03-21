@@ -76,6 +76,17 @@ class ApiClient {
         requestId: 'unknown',
         timestamp: new Date().toISOString(),
       }));
+      
+      // Log detailed error information for debugging
+      console.error(`[ApiClient] HTTP Error ${res.status}:`, {
+        path,
+        method: fetchOptions.method || 'GET',
+        status: res.status,
+        error: body.error,
+        code: body.code,
+        url: this.buildUrl(path, params),
+      });
+      
       throw new ApiError({
         error: body.error || `HTTP ${res.status}`,
         code: body.code || 'INTERNAL_ERROR',

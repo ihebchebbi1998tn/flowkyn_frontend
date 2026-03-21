@@ -30,11 +30,35 @@ export const gameSessionsKeys = {
 export function useSessionDetails(sessionId: string | null, enabled = true) {
   return useQuery({
     queryKey: gameSessionsKeys.details(sessionId || ''),
-    queryFn: () => gameSessionsApi.getSessionDetails(sessionId!),
+    queryFn: async () => {
+      if (!sessionId) {
+        throw new Error('Session ID is required');
+      }
+      
+      try {
+        const result = await gameSessionsApi.getSessionDetails(sessionId);
+        
+        if (!result) {
+          throw new Error('Empty response from server');
+        }
+        
+        return result;
+      } catch (err) {
+        console.error(`[useSessionDetails] Failed to fetch session ${sessionId}:`, err);
+        throw err;
+      }
+    },
     enabled: enabled && !!sessionId,
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: (failureCount, error) => {
+      // Retry 2 times for non-404 errors
+      if (error instanceof Error && error.message.includes('404')) {
+        return false; // Don't retry 404s
+      }
+      return failureCount < 2;
+    },
   });
 }
 

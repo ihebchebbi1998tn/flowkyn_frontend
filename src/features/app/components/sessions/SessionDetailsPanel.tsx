@@ -43,10 +43,51 @@ export function SessionDetailsPanel({
     return <DashboardSkeleton />;
   }
 
-  if (error || !session) {
+  if (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const isNotFound = errorMessage.includes('404') || errorMessage.includes('not found');
+    
+    console.error('[SessionDetailsPanel] Error loading session:', {
+      sessionId,
+      error: errorMessage,
+      fullError: error,
+    });
+
+    return (
+      <Card className="p-6">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="text-5xl">⚠️</div>
+          <h3 className="text-lg font-semibold">
+            {isNotFound 
+              ? t('error.sessionNotFound', 'Session not found') 
+              : t('error.failedToLoadSession', 'Failed to load session')}
+          </h3>
+          <p className="text-sm text-muted-foreground text-center max-w-md">
+            {isNotFound 
+              ? t('error.sessionNotFoundDescription', 'This session may have been deleted or you do not have permission to view it.')
+              : t('error.failedToLoadSessionDescription', 'An error occurred while loading session details. Please try again.')}
+          </p>
+          <div className="text-xs text-muted-foreground bg-muted p-2 rounded mt-2 max-w-md break-words">
+            {errorMessage}
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => window.location.reload()}
+            className="mt-4"
+          >
+            {t('common.retry', 'Retry')}
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  if (!session) {
+    console.warn('[SessionDetailsPanel] No session data received but no error thrown');
     return (
       <Card className="p-6 text-center">
-        <p className="text-red-500">{t('error.sessionNotFound', 'Session not found')}</p>
+        <p className="text-amber-600">{t('error.noSessionData', 'No session data available')}</p>
       </Card>
     );
   }
