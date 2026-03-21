@@ -226,6 +226,70 @@ export const EventChat = memo(function EventChat({
         </div>
       )}
 
+      {/* Active Voice Participants Banner */}
+      <AnimatePresence>
+        {voiceActive && voiceStatus === 'connected' && remoteParticipants.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="border-b border-primary/20 bg-gradient-to-r from-primary/8 via-primary/5 to-transparent px-3 py-2.5"
+          >
+            <div className="flex items-center gap-2">
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+                className="flex items-center gap-1"
+              >
+                <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+                <span className="text-[10px] font-semibold text-primary">{t('chat.voiceTalking', { defaultValue: 'Talking:' })}</span>
+              </motion.div>
+
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {remoteParticipants.map((pId, idx) => {
+                  const participant = participantProfiles.find((p) => p.participantId === pId);
+                  const status = voiceStatuses[pId] || 'idle';
+                  const isTalking = status === 'active';
+                  const isMuted = status === 'muted';
+
+                  return (
+                    <motion.div
+                      key={pId}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className={cn(
+                        'flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-medium',
+                        isTalking
+                          ? 'bg-success/15 text-success border border-success/30'
+                          : isMuted
+                            ? 'bg-destructive/15 text-destructive border border-destructive/30'
+                            : 'bg-muted/30 text-muted-foreground border border-muted/40'
+                      )}
+                    >
+                      {isTalking ? (
+                        <motion.div
+                          className="h-1.5 w-1.5 rounded-full bg-success"
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 0.6, repeat: Infinity }}
+                        />
+                      ) : isMuted ? (
+                        <MicOff className="h-3 w-3" />
+                      ) : (
+                        <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
+                      )}
+                      <span>{participant?.displayName || 'User'}</span>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Messages */}
       <div
         ref={scrollRef}

@@ -1822,6 +1822,7 @@
     "unmute": "Unmute microphone",
     "voiceActive": "{{count}} voice users",
     "voiceParticipants": "Voice:",
+    "voiceTalking": "Talking:",
     "errors": {
       "generic": "Chat error",
       "sendFailed": "Failed to send message",
