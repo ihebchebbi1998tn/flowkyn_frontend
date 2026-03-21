@@ -1,19 +1,19 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MessageSquare, ChevronRight } from 'lucide-react';
+import { MessageSquare, ChevronRight, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageShell, PageHeader, ChartCard, EmptyState } from '@/features/app/components/dashboard';
 import { CardGridSkeleton } from '@/components/loading/Skeletons';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
 import { ActivityCard } from '@/features/app/components/activities/ActivityCard';
 import { ActivityFilters, type ActivityFilterState } from '@/features/app/components/activities/ActivityFilters';
 import { ACTIVITIES } from '@/features/app/data/activities';
 import { useActiveSessions } from '@/hooks/queries/useAnalyticsQueries';
-import { GAME_KEY_TO_CONFIG_ID } from '@/features/app/pages/play/gameTypes';
+import { SessionDetailsPanel } from '@/features/app/components/sessions';
 
 const statusStyle = (s: string) => {
   switch (s) {
@@ -29,8 +29,8 @@ const defaultFilters: ActivityFilterState = {
 
 export default function GameList() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [filters, setFilters] = useState<ActivityFilterState>(defaultFilters);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
 
   const { data: activeSessions, isLoading: sessionsLoading } = useActiveSessions();
 
@@ -66,15 +66,10 @@ export default function GameList() {
           }>
           <div className="divide-y divide-border">
             {liveSessionsList.map(session => {
-              const configId = GAME_KEY_TO_CONFIG_ID[session.game_type_key as keyof typeof GAME_KEY_TO_CONFIG_ID] || '1';
               return (
               <button
                 key={session.id}
-                onClick={() =>
-                  navigate(
-                    ROUTES.PLAY(session.event_id) + `?game=${configId}`
-                  )
-                }
+                onClick={() => setSelectedSessionId(session.id)}
                 className="flex items-center justify-between gap-3 w-full px-5 py-3 hover:bg-accent/50 transition-colors group text-left">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
@@ -134,6 +129,31 @@ export default function GameList() {
               <ActivityCard activity={activity} />
             </motion.div>
           ))}
+        </div>
+      )}
+
+      {/* Session Details Modal */}
+      {selectedSessionId && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-end overflow-y-auto">
+          <div className="w-full max-w-4xl bg-background m-4 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 z-10 bg-background border-b border-border flex items-center justify-between p-6">
+              <h2 className="text-xl font-semibold">{t('session.detailsTitle', 'Session Details')}</h2>
+              <button
+                onClick={() => setSelectedSessionId(null)}
+                className="p-1 hover:bg-accent rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <SessionDetailsPanel
+                sessionId={selectedSessionId}
+                enabled={!!selectedSessionId}
+                onClosed={() => setSelectedSessionId(null)}
+                onDeleted={() => setSelectedSessionId(null)}
+              />
+            </div>
+          </div>
         </div>
       )}
     </PageShell>
