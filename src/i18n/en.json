@@ -617,7 +617,9 @@
       "resetFailed": "Failed to reset password. The link may have expired.",
       "resetSendFailed": "Failed to send reset link. Please try again.",
       "missingToken": "Invalid or missing reset token. Please request a new link.",
-      "orgRequired": "Organization is required. Please complete onboarding first."
+      "orgRequired": "Organization is required. Please complete onboarding first.",
+      "orgBanned": "Your organization has been banned and is no longer accessible.",
+      "orgBannedWithReason": "Your organization has been banned: {{reason}}"
     },
     "passwordRules": {
       "title": "Password must contain:",
@@ -688,7 +690,26 @@
     "removeConfirm": "Are you sure you want to remove this member?",
     "changeRole": "Change Role",
     "memberSince": "Member since",
-    "totalMembers": "Total Members"
+    "totalMembers": "Total Members",
+    "admin": {
+      "status": "Status",
+      "statusActive": "Active",
+      "statusBanned": "Banned",
+      "actions": "Actions",
+      "ban": "Ban Organization",
+      "unban": "Unban Organization",
+      "bannedAt": "Banned at",
+      "banReason": "Ban reason",
+      "banReasonPlaceholder": "Enter the reason for banning...",
+      "confirmBan": "Are you sure you want to ban this organization? Users will not be able to login.",
+      "confirmUnban": "Are you sure you want to unban this organization? Users will be able to login again.",
+      "banSuccess": "Organization banned successfully",
+      "unbanSuccess": "Organization unbanned successfully",
+      "banFailed": "Failed to ban organization",
+      "unbanFailed": "Failed to unban organization",
+      "bannedBadge": "BANNED",
+      "activeBadge": "ACTIVE"
+    }
   },
   "events": {
     "title": "Events",

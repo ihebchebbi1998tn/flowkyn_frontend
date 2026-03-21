@@ -589,7 +589,9 @@
       "resetFailed": "Échec de la réinitialisation. Le lien a peut-être expiré.",
       "resetSendFailed": "Échec de l'envoi du lien. Veuillez réessayer.",
       "missingToken": "Jeton invalide ou manquant. Veuillez demander un nouveau lien.",
-      "orgRequired": "L'organisation est requise. Veuillez d'abord compléter l'intégration."
+      "orgRequired": "L'organisation est requise. Veuillez d'abord compléter l'intégration.",
+      "orgBanned": "Votre organisation a été suspendue et n'est plus accessible.",
+      "orgBannedWithReason": "Votre organisation a été suspendue : {{reason}}"
     },
     "passwordRules": {
       "title": "Le mot de passe doit contenir :",
@@ -687,7 +689,26 @@
     "removeConfirm": "Êtes-vous sûr de vouloir retirer ce membre ?",
     "changeRole": "Changer le rôle",
     "memberSince": "Membre depuis",
-    "totalMembers": "Nombre total de membres"
+    "totalMembers": "Nombre total de membres",
+    "admin": {
+      "status": "Statut",
+      "statusActive": "Actif",
+      "statusBanned": "Suspendu",
+      "actions": "Actions",
+      "ban": "Suspendre l'organisation",
+      "unban": "Réactiver l'organisation",
+      "bannedAt": "Suspendu le",
+      "banReason": "Raison de la suspension",
+      "banReasonPlaceholder": "Entrez la raison de la suspension...",
+      "confirmBan": "Êtes-vous sûr de vouloir suspendre cette organisation ? Les utilisateurs ne pourront pas se connecter.",
+      "confirmUnban": "Êtes-vous sûr de vouloir réactiver cette organisation ? Les utilisateurs pourront se connecter à nouveau.",
+      "banSuccess": "Organisation suspendue avec succès",
+      "unbanSuccess": "Organisation réactivée avec succès",
+      "banFailed": "Échec de la suspension de l'organisation",
+      "unbanFailed": "Échec de la réactivation de l'organisation",
+      "bannedBadge": "SUSPENDU",
+      "activeBadge": "ACTIF"
+    }
   },
   "events": {
     "title": "Événements",

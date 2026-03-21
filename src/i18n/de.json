@@ -574,7 +574,9 @@
       "resetFailed": "Passwort-Zurücksetzung fehlgeschlagen. Der Link ist möglicherweise abgelaufen.",
       "resetSendFailed": "Fehler beim Senden des Links. Bitte versuchen Sie es erneut.",
       "missingToken": "Ungültiger oder fehlender Token. Bitte fordern Sie einen neuen Link an.",
-      "orgRequired": "Organisation erforderlich. Bitte schließen Sie zuerst das Onboarding ab."
+      "orgRequired": "Organisation erforderlich. Bitte schließen Sie zuerst das Onboarding ab.",
+      "orgBanned": "Ihre Organisation wurde deaktiviert und ist nicht mehr zugänglich.",
+      "orgBannedWithReason": "Ihre Organisation wurde deaktiviert: {{reason}}"
     },
     "passwordRules": {
       "title": "Passwort muss enthalten:",
@@ -671,7 +673,26 @@
     "removeConfirm": "Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten?",
     "changeRole": "Rolle ändern",
     "memberSince": "Mitglied seit",
-    "totalMembers": "Gesamtmitglieder"
+    "totalMembers": "Gesamtmitglieder",
+    "admin": {
+      "status": "Status",
+      "statusActive": "Aktiv",
+      "statusBanned": "Deaktiviert",
+      "actions": "Aktionen",
+      "ban": "Organisation deaktivieren",
+      "unban": "Organisation reaktivieren",
+      "bannedAt": "Deaktiviert am",
+      "banReason": "Grund für Deaktivierung",
+      "banReasonPlaceholder": "Geben Sie den Grund für die Deaktivierung ein...",
+      "confirmBan": "Sind Sie sicher, dass Sie diese Organisation deaktivieren möchten? Benutzer können sich nicht anmelden.",
+      "confirmUnban": "Sind Sie sicher, dass Sie diese Organisation reaktivieren möchten? Benutzer können sich wieder anmelden.",
+      "banSuccess": "Organisation erfolgreich deaktiviert",
+      "unbanSuccess": "Organisation erfolgreich reaktiviert",
+      "banFailed": "Fehler beim Deaktivieren der Organisation",
+      "unbanFailed": "Fehler beim Reaktivieren der Organisation",
+      "bannedBadge": "DEAKTIVIERT",
+      "activeBadge": "AKTIV"
+    }
   },
   "events": {
     "title": "Veranstaltungen",
