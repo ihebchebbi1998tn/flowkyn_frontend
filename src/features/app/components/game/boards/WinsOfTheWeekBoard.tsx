@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWinsFeed } from '@/hooks/useWinsFeed';
 import { HowItWorksModal } from '../shared/HowItWorksModal';
+import { CategoryPicker } from '@/features/app/components/wins';
 
 const REACTION_ICONS: Record<string, typeof Heart> = {
   heart: Heart,
@@ -102,6 +103,7 @@ export interface WinsOfTheWeekBoardProps {
   currentUserName: string;
   currentUserAvatar: string;
   currentUserAvatarUrl?: string | null;
+  organizationId: string;
   posts: {
     id: string;
     authorName: string;
@@ -109,13 +111,15 @@ export interface WinsOfTheWeekBoardProps {
     authorAvatarUrl?: string | null;
     content: string;
     timestamp: string;
+    category?: string;
+    tags?: string[];
     reactions: { type: string; count: number; reacted: boolean }[];
   }[];
   canPost: boolean;
   canReact?: boolean;
   endsAt?: string;
   postingClosed?: boolean;
-  onPost: (content: string) => Promise<void> | void;
+  onPost: (content: string, category?: string, tags?: string[]) => Promise<void> | void;
   onToggleReaction: (postId: string, reactionType: string) => Promise<void> | void;
 }
 
@@ -125,6 +129,7 @@ export function WinsOfTheWeekBoard({
   currentUserName,
   currentUserAvatar,
   currentUserAvatarUrl,
+  organizationId,
   posts,
   canPost,
   canReact = true,
@@ -137,6 +142,7 @@ export function WinsOfTheWeekBoard({
   const [howOpen, setHowOpen] = useState(false);
   const displayPrompt = prompt || t('gamePlay.winsOfWeek.defaultPrompt', { defaultValue: 'Share your win from this week — work or personal, big or small!' });
   const [newPost, setNewPost] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
   const [showReplyFor, setShowReplyFor] = useState<string | null>(null);
   const [submittingReply, setSubmittingReply] = useState<string | null>(null);
@@ -163,8 +169,9 @@ export function WinsOfTheWeekBoard({
     if (!newPost.trim()) return;
     setIsSubmitting(true);
     try {
-      await onPost(newPost.trim());
+      await onPost(newPost.trim(), selectedCategory[0] || undefined, []);
       setNewPost('');
+      setSelectedCategory([]);
       setCharacterWarningLevel('normal');
     } catch (error) {
       console.error('[WinsOfTheWeekBoard] handlePost error', error);
@@ -288,7 +295,7 @@ export function WinsOfTheWeekBoard({
             {currentUserAvatarUrl ? <img src={currentUserAvatarUrl} alt={currentUserName} className="h-full w-full object-cover" /> : null}
             <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-semibold">{currentUserAvatar}</AvatarFallback>
           </Avatar>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-3">
             <Textarea
               value={newPost}
               onChange={e => handleInputChange(e.target.value)}
@@ -297,6 +304,21 @@ export function WinsOfTheWeekBoard({
               className="text-[13px] resize-none border-0 bg-muted/30 focus-visible:ring-1"
               disabled={!canPost || isSubmitting}
             />
+
+            {/* Category Picker */}
+            {canPost && (
+              <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
+                <CategoryPicker
+                  organizationId={organizationId}
+                  selectedCategories={selectedCategory}
+                  onSelectionChange={setSelectedCategory}
+                  maxSelections={1}
+                  disabled={isSubmitting}
+                  size="sm"
+                />
+              </div>
+            )}
+
             <div className="flex justify-end gap-2 items-center">
               <motion.span 
                 className={cn(
@@ -428,6 +450,24 @@ export function WinsOfTheWeekBoard({
                 </div>
 
                 <p className="text-[13px] text-foreground leading-relaxed mb-3 pl-[42px]">{post.content}</p>
+
+                {/* Category and Tags */}
+                <div className="pl-[42px] mb-3 space-y-2">
+                  {post.category && (
+                    <div className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary">
+                      {post.category}
+                    </div>
+                  )}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.map(tag => (
+                        <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Reactions row */}
                 <div className="flex items-center gap-1.5 pl-[42px] flex-wrap">

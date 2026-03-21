@@ -2225,6 +2225,31 @@
       "winsOfWeekTitle": "Victoires de la semaine",
       "winsOfWeekSubtitle": "Bien-être · Asynchrone",
       "defaultPrompt": "Partagez votre victoire de la semaine — travail ou personnel, grande ou petite !"
+    },
+    "wins": {
+      "title": "Victoires",
+      "selectCategory": "Sélectionner une catégorie",
+      "category": "Catégorie",
+      "tags": "Étiquettes",
+      "filters": "Filtres",
+      "clearAll": "Effacer tout",
+      "noTags": "Aucune étiquette",
+      "noCategories": "Aucune catégorie disponible",
+      "noFilters": "Aucun filtre disponible",
+      "noFiltersAvailable": "Aucun filtre disponible",
+      "enterTag": "Entrer une étiquette...",
+      "removeTag": "Supprimer l'étiquette",
+      "addTag": "Ajouter une étiquette",
+      "maxTagsReached": "Nombre maximal d'étiquettes atteint",
+      "loadingFilters": "Chargement des filtres...",
+      "categories": {
+        "innovation": "Innovation",
+        "revenue": "Revenus",
+        "collaboration": "Collaboration",
+        "customer_success": "Succès client",
+        "personal_growth": "Croissance personnelle",
+        "general": "Général"
+      }
     }
   },
   "analyticsPage": {

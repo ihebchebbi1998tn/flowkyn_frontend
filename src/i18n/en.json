@@ -1431,6 +1431,31 @@
       "replyCount": "{{count}} reply",
       "repliesCount": "{{count}} replies"
     },
+    "wins": {
+      "title": "Wins",
+      "selectCategory": "Select Category",
+      "category": "Category",
+      "tags": "Tags",
+      "filters": "Filters",
+      "clearAll": "Clear all",
+      "noTags": "No tags",
+      "noCategories": "No categories available",
+      "noFilters": "No filters available",
+      "noFiltersAvailable": "No filters available",
+      "enterTag": "Enter a tag...",
+      "removeTag": "Remove tag",
+      "addTag": "Add Tag",
+      "maxTagsReached": "Maximum tags reached",
+      "loadingFilters": "Loading filters...",
+      "categories": {
+        "innovation": "Innovation",
+        "revenue": "Revenue",
+        "collaboration": "Collaboration",
+        "customer_success": "Customer Success",
+        "personal_growth": "Personal Growth",
+        "general": "General"
+      }
+    },
     "results": {
       "gameComplete": "Game Complete!",
       "getReady": "Get ready for the reveal!",

@@ -2209,6 +2209,31 @@
       "winsOfWeekTitle": "Erfolge der Woche",
       "winsOfWeekSubtitle": "Wohlbefinden · Asynchron",
       "defaultPrompt": "Teilen Sie Ihren Erfolg der Woche — beruflich oder privat, groß oder klein!"
+    },
+    "wins": {
+      "title": "Erfolge",
+      "selectCategory": "Kategorie auswählen",
+      "category": "Kategorie",
+      "tags": "Markierungen",
+      "filters": "Filter",
+      "clearAll": "Alles löschen",
+      "noTags": "Keine Markierungen",
+      "noCategories": "Keine Kategorien verfügbar",
+      "noFilters": "Keine Filter verfügbar",
+      "noFiltersAvailable": "Keine Filter verfügbar",
+      "enterTag": "Markierung eingeben...",
+      "removeTag": "Markierung entfernen",
+      "addTag": "Markierung hinzufügen",
+      "maxTagsReached": "Maximale Anzahl der Markierungen erreicht",
+      "loadingFilters": "Filter werden geladen...",
+      "categories": {
+        "innovation": "Innovation",
+        "revenue": "Umsatz",
+        "collaboration": "Zusammenarbeit",
+        "customer_success": "Kundenservice",
+        "personal_growth": "Persönliches Wachstum",
+        "general": "Allgemein"
+      }
     }
   },
   "analyticsPage": {

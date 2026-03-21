@@ -14,3 +14,4 @@ export { analyticsApi } from './analytics';
 export { postsApi } from './posts';
 export { contactApi } from './contact';
 export { bugReportsApi } from './bugReports';
+export { winsApi } from './wins';
