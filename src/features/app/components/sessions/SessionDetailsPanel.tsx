@@ -14,11 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Download, XCircle, Trash2, Clock, Users, MessageSquare, Zap } from 'lucide-react';
 import { useSessionDetails, useCloseSession, useDeleteSession, useExportSessionData } from '@/hooks/queries/useSessionsQueries';
-import { SessionParticipants } from './SessionParticipants';
-import { SessionMessages } from './SessionMessages';
-import { SessionActions } from './SessionActions';
-import { SessionTimeline } from './SessionTimeline';
-import { DashboardSkeleton } from '../analytics/DashboardSkeleton';
+import { SessionParticipants, SessionMessages, SessionActions, SessionTimeline } from '.';
+import { DashboardSkeleton } from '@/components/loading/Skeletons';
 
 interface SessionDetailsPanelProps {
   sessionId: string;

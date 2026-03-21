@@ -28,6 +28,8 @@ type TwoTruthsSnapshot = {
   scores?: Record<string, number>;
   submitEndsAt?: string;
   voteEndsAt?: string;
+  submitSeconds?: number;
+  voteSeconds?: number;
 };
 
 export interface TwoTruthsBoardProps extends BaseGameBoardProps {
