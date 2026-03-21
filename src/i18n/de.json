@@ -352,10 +352,22 @@
       }
     },
     "stats": {
-      "stat1": { "value": "41%", "label": "Steigerung des Team-Engagements" },
-      "stat2": { "value": "2×", "label": "Mehr teamübergreifende Zusammenarbeit" },
-      "stat3": { "value": "1k+", "label": "Aktivitäten pro Monat" },
-      "stat4": { "value": "50%", "label": "Reduktion der Einarbeitungszeit" }
+      "stat1": {
+        "value": "41%",
+        "label": "Steigerung des Team-Engagements"
+      },
+      "stat2": {
+        "value": "2×",
+        "label": "Mehr teamübergreifende Zusammenarbeit"
+      },
+      "stat3": {
+        "value": "1k+",
+        "label": "Aktivitäten pro Monat"
+      },
+      "stat4": {
+        "value": "50%",
+        "label": "Reduktion der Einarbeitungszeit"
+      }
     },
     "testimonials": {
       "sectionLabel": "Erfahrungsberichte",
@@ -382,11 +394,26 @@
       "sectionLabel": "FAQ",
       "title": "Häufig gestellte Fragen",
       "items": [
-        { "question": "Ist Flowkyn wirklich kostenlos?", "answer": "Ja! Flowkyn ist kostenlos für Teams bis 10 Mitglieder. Für größere Teams bieten wir erschwingliche Pläne ab 4 €/Nutzer/Monat." },
-        { "question": "Brauchen wir einen Moderator?", "answer": "Nein. Jede Aktivität enthält klare Schritt-für-Schritt-Anleitungen, denen jeder Teamleiter folgen kann. Kein externer Moderator nötig." },
-        { "question": "Funktioniert es über Zeitzonen hinweg?", "answer": "Absolut. Flowkyn unterstützt sowohl live (synchrone) als auch asynchrone Aktivitäten, perfekt für global verteilte Teams." },
-        { "question": "Wie lange dauern die Aktivitäten?", "answer": "Aktivitäten reichen von 5-Minuten-Eisbrechern bis zu 60-Minuten-Intensivsitzungen. Sie können nach Dauer filtern." },
-        { "question": "Kann ich das Engagement verfolgen?", "answer": "Ja. Flowkyn bietet detaillierte Analytics-Dashboards mit Teilnahmequoten, Engagement-Trends und Aktivitätseffektivität über die Zeit." }
+        {
+          "question": "Ist Flowkyn wirklich kostenlos?",
+          "answer": "Ja! Flowkyn ist kostenlos für Teams bis 10 Mitglieder. Für größere Teams bieten wir erschwingliche Pläne ab 4 €/Nutzer/Monat."
+        },
+        {
+          "question": "Brauchen wir einen Moderator?",
+          "answer": "Nein. Jede Aktivität enthält klare Schritt-für-Schritt-Anleitungen, denen jeder Teamleiter folgen kann. Kein externer Moderator nötig."
+        },
+        {
+          "question": "Funktioniert es über Zeitzonen hinweg?",
+          "answer": "Absolut. Flowkyn unterstützt sowohl live (synchrone) als auch asynchrone Aktivitäten, perfekt für global verteilte Teams."
+        },
+        {
+          "question": "Wie lange dauern die Aktivitäten?",
+          "answer": "Aktivitäten reichen von 5-Minuten-Eisbrechern bis zu 60-Minuten-Intensivsitzungen. Sie können nach Dauer filtern."
+        },
+        {
+          "question": "Kann ich das Engagement verfolgen?",
+          "answer": "Ja. Flowkyn bietet detaillierte Analytics-Dashboards mit Teilnahmequoten, Engagement-Trends und Aktivitätseffektivität über die Zeit."
+        }
       ]
     },
     "cta": {
@@ -452,33 +479,81 @@
       "title": "Datenschutzrichtlinie",
       "lastUpdated": "Zuletzt aktualisiert: 1. März 2026",
       "sections": [
-        { "title": "Erhobene Informationen", "content": "Wir erfassen Informationen, die Sie direkt angeben, wie Ihren Namen, Ihre E-Mail-Adresse und Organisationsdetails bei der Kontoerstellung. Wir erfassen auch Nutzungsdaten zur Verbesserung unserer Dienste." },
-        { "title": "Verwendung Ihrer Informationen", "content": "Wir verwenden Ihre Informationen, um Flowkyn bereitzustellen und zu verbessern, mit Ihnen über Ihr Konto zu kommunizieren und relevante Produktupdates zu senden. Wir verkaufen Ihre persönlichen Daten niemals an Dritte." },
-        { "title": "Datenspeicherung und Sicherheit", "content": "Ihre Daten werden auf sicheren, verschlüsselten Servern innerhalb der Europäischen Union gespeichert. Wir implementieren branchenübliche Sicherheitsmaßnahmen." },
-        { "title": "Cookies", "content": "Wir verwenden wesentliche Cookies, um Ihre Sitzung und Einstellungen aufrechtzuerhalten. Wir verwenden keine Tracking-Cookies für Werbezwecke." },
-        { "title": "Ihre Rechte", "content": "Sie haben das Recht, jederzeit auf Ihre personenbezogenen Daten zuzugreifen, sie zu korrigieren oder zu löschen. Sie können auch einen vollständigen Export Ihrer Daten anfordern. Kontaktieren Sie uns unter privacy@flowkyn.com." },
-        { "title": "Kontakt", "content": "Für datenschutzbezogene Anfragen kontaktieren Sie uns unter privacy@flowkyn.com." }
+        {
+          "title": "Erhobene Informationen",
+          "content": "Wir erfassen Informationen, die Sie direkt angeben, wie Ihren Namen, Ihre E-Mail-Adresse und Organisationsdetails bei der Kontoerstellung. Wir erfassen auch Nutzungsdaten zur Verbesserung unserer Dienste."
+        },
+        {
+          "title": "Verwendung Ihrer Informationen",
+          "content": "Wir verwenden Ihre Informationen, um Flowkyn bereitzustellen und zu verbessern, mit Ihnen über Ihr Konto zu kommunizieren und relevante Produktupdates zu senden. Wir verkaufen Ihre persönlichen Daten niemals an Dritte."
+        },
+        {
+          "title": "Datenspeicherung und Sicherheit",
+          "content": "Ihre Daten werden auf sicheren, verschlüsselten Servern innerhalb der Europäischen Union gespeichert. Wir implementieren branchenübliche Sicherheitsmaßnahmen."
+        },
+        {
+          "title": "Cookies",
+          "content": "Wir verwenden wesentliche Cookies, um Ihre Sitzung und Einstellungen aufrechtzuerhalten. Wir verwenden keine Tracking-Cookies für Werbezwecke."
+        },
+        {
+          "title": "Ihre Rechte",
+          "content": "Sie haben das Recht, jederzeit auf Ihre personenbezogenen Daten zuzugreifen, sie zu korrigieren oder zu löschen. Sie können auch einen vollständigen Export Ihrer Daten anfordern. Kontaktieren Sie uns unter privacy@flowkyn.com."
+        },
+        {
+          "title": "Kontakt",
+          "content": "Für datenschutzbezogene Anfragen kontaktieren Sie uns unter privacy@flowkyn.com."
+        }
       ]
     },
     "terms": {
       "title": "Nutzungsbedingungen",
       "lastUpdated": "Zuletzt aktualisiert: 1. März 2026",
       "sections": [
-        { "title": "Annahme der Bedingungen", "content": "Durch den Zugriff auf oder die Nutzung von Flowkyn erklären Sie sich mit diesen Nutzungsbedingungen einverstanden. Wenn Sie nicht einverstanden sind, nutzen Sie die Plattform bitte nicht." },
-        { "title": "Nutzung des Dienstes", "content": "Flowkyn stellt eine Plattform für Team-Engagement-Aktivitäten bereit. Sie verpflichten sich, den Dienst nur für rechtmäßige Zwecke und in Übereinstimmung mit diesen Bedingungen zu nutzen." },
-        { "title": "Konten", "content": "Sie sind für die Vertraulichkeit Ihrer Kontodaten verantwortlich. Sie müssen uns unverzüglich über jeden unbefugten Zugriff informieren." },
-        { "title": "Geistiges Eigentum", "content": "Alle Inhalte auf Flowkyn, einschließlich Aktivitätsbeschreibungen, Designs und Branding, sind Eigentum von Flowkyn und urheberrechtlich geschützt." },
-        { "title": "Haftungsbeschränkung", "content": "Flowkyn wird 'wie besehen' ohne Garantien jeglicher Art bereitgestellt. Wir haften nicht für indirekte, zufällige oder Folgeschäden." },
-        { "title": "Kündigung", "content": "Wir können Ihr Konto jederzeit bei Verstoß gegen diese Bedingungen kündigen oder sperren. Sie können Ihr Konto jederzeit über Ihre Einstellungen löschen." }
+        {
+          "title": "Annahme der Bedingungen",
+          "content": "Durch den Zugriff auf oder die Nutzung von Flowkyn erklären Sie sich mit diesen Nutzungsbedingungen einverstanden. Wenn Sie nicht einverstanden sind, nutzen Sie die Plattform bitte nicht."
+        },
+        {
+          "title": "Nutzung des Dienstes",
+          "content": "Flowkyn stellt eine Plattform für Team-Engagement-Aktivitäten bereit. Sie verpflichten sich, den Dienst nur für rechtmäßige Zwecke und in Übereinstimmung mit diesen Bedingungen zu nutzen."
+        },
+        {
+          "title": "Konten",
+          "content": "Sie sind für die Vertraulichkeit Ihrer Kontodaten verantwortlich. Sie müssen uns unverzüglich über jeden unbefugten Zugriff informieren."
+        },
+        {
+          "title": "Geistiges Eigentum",
+          "content": "Alle Inhalte auf Flowkyn, einschließlich Aktivitätsbeschreibungen, Designs und Branding, sind Eigentum von Flowkyn und urheberrechtlich geschützt."
+        },
+        {
+          "title": "Haftungsbeschränkung",
+          "content": "Flowkyn wird 'wie besehen' ohne Garantien jeglicher Art bereitgestellt. Wir haften nicht für indirekte, zufällige oder Folgeschäden."
+        },
+        {
+          "title": "Kündigung",
+          "content": "Wir können Ihr Konto jederzeit bei Verstoß gegen diese Bedingungen kündigen oder sperren. Sie können Ihr Konto jederzeit über Ihre Einstellungen löschen."
+        }
       ]
     },
     "security": {
       "title": "Sicherheit",
       "subtitle": "Der Schutz Ihrer Daten hat für uns höchste Priorität. So sichern wir Flowkyn.",
-      "encryption": { "title": "Verschlüsselung", "description": "Alle Daten werden bei der Übertragung (TLS 1.3) und im Ruhezustand (AES-256) verschlüsselt. Ihre Informationen werden niemals im Klartext gespeichert." },
-      "infrastructure": { "title": "Infrastruktur", "description": "Gehostet auf EU-Infrastruktur der Enterprise-Klasse mit automatisierten Backups, Ausfallschutz und 99,9 % Uptime-SLA." },
-      "compliance": { "title": "Compliance", "description": "DSGVO-konform von Grund auf. Wir folgen Datenminimierungsprinzipien und bieten vollständige Datenexport- und Löschfunktionen." },
-      "privacy": { "title": "Datenschutz als Standard", "description": "Keine Tracking-Cookies, kein Datenverkauf, keine Werbung Dritter. Die Daten Ihres Teams bleiben Ihre." }
+      "encryption": {
+        "title": "Verschlüsselung",
+        "description": "Alle Daten werden bei der Übertragung (TLS 1.3) und im Ruhezustand (AES-256) verschlüsselt. Ihre Informationen werden niemals im Klartext gespeichert."
+      },
+      "infrastructure": {
+        "title": "Infrastruktur",
+        "description": "Gehostet auf EU-Infrastruktur der Enterprise-Klasse mit automatisierten Backups, Ausfallschutz und 99,9 % Uptime-SLA."
+      },
+      "compliance": {
+        "title": "Compliance",
+        "description": "DSGVO-konform von Grund auf. Wir folgen Datenminimierungsprinzipien und bieten vollständige Datenexport- und Löschfunktionen."
+      },
+      "privacy": {
+        "title": "Datenschutz als Standard",
+        "description": "Keine Tracking-Cookies, kein Datenverkauf, keine Werbung Dritter. Die Daten Ihres Teams bleiben Ihre."
+      }
     }
   },
   "layout": {
@@ -589,7 +664,7 @@
     "verifying": "Wird überprüft…",
     "resendIn": "Erneut senden in {{seconds}}s",
     "emailVerified": "E-Mail verifiziert!",
-      "emailVerifiedSuccess": "Ihre E-Mail wurde erfolgreich verifiziert.",
+    "emailVerifiedSuccess": "Ihre E-Mail wurde erfolgreich verifiziert.",
     "settingUpAccount": "Ihr Konto wird eingerichtet…",
     "codeResent": "Code erneut gesendet! Überprüfen Sie Ihre E-Mail.",
     "alreadyVerified": "Konto bereits verifiziert. Versuchen Sie sich anzumelden.",
@@ -651,7 +726,12 @@
     "owner": "Eigentümer",
     "members": "Mitglieder",
     "role": "Rolle",
-    "roles": { "owner": "Eigentümer", "admin": "Administrator", "member": "Mitglied", "viewer": "Betrachter" },
+    "roles": {
+      "owner": "Eigentümer",
+      "admin": "Administrator",
+      "member": "Mitglied",
+      "viewer": "Betrachter"
+    },
     "inviteMember": "Mitglied einladen",
     "inviteEmail": "E-Mail-Adresse",
     "inviteRole": "Rolle",
@@ -698,7 +778,11 @@
     "title": "Veranstaltungen",
     "subtitle": "Verwalten Sie Ihre Team-Building-Events und Aktivitäten",
     "errors": {
-      "joinRoomFailed": "Event-Raum konnte nicht beigetreten werden"
+      "nameTaken": "Dieser Name ist in dieser Lobby bereits vergeben. Bitte wählen Sie einen anderen.",
+      "full": "Diese Veranstaltung ist voll. Fragen Sie Ihren Gastgeber, ob er das Limit erhöhen kann.",
+      "guestsNotAllowed": "Diese Veranstaltung ist nur für Mitglieder. Bitte melden Sie sich an oder fragen Sie Ihren Gastgeber nach Zugang.",
+      "notMember": "Sie sind kein Mitglied dieses Arbeitsbereichs für diese Veranstaltung.",
+      "notActive": "Diese Veranstaltung ist noch nicht aktiv — Ihr Gastgeber muss sie starten."
     },
     "createEvent": "Veranstaltung erstellen",
     "editEvent": "Veranstaltung bearbeiten",
@@ -709,9 +793,24 @@
     "startTime": "Startzeit",
     "endTime": "Endzeit",
     "participants": "Teilnehmer",
-    "modes": { "online": "Online", "inPerson": "Vor Ort", "hybrid": "Hybrid" },
-    "visibilities": { "public": "Öffentlich", "private": "Privat", "organization": "Nur Arbeitsbereich" },
-    "filters": { "all": "Alle", "upcoming": "Kommende", "past": "Vergangene", "active": "Aktive", "draft": "Entwurf", "completed": "Abgeschlossen" },
+    "modes": {
+      "online": "Online",
+      "inPerson": "Vor Ort",
+      "hybrid": "Hybrid"
+    },
+    "visibilities": {
+      "public": "Öffentlich",
+      "private": "Privat",
+      "organization": "Nur Arbeitsbereich"
+    },
+    "filters": {
+      "all": "Alle",
+      "upcoming": "Kommende",
+      "past": "Vergangene",
+      "active": "Aktive",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen"
+    },
     "joinEvent": "Beitreten",
     "leaveEvent": "Verlassen",
     "guestJoin": "Als Gast beitreten",
@@ -758,13 +857,6 @@
     "continueToLobby": "Weiter zur Lobby",
     "invalidInvitationToken": "Ungültiger Einladungslink. Bitte prüfen Sie den Link.",
     "joinFailed": "Beitritt fehlgeschlagen. Bitte versuchen Sie es erneut.",
-    "errors": {
-      "nameTaken": "Dieser Name ist in dieser Lobby bereits vergeben. Bitte wählen Sie einen anderen.",
-      "full": "Diese Veranstaltung ist voll. Fragen Sie Ihren Gastgeber, ob er das Limit erhöhen kann.",
-      "guestsNotAllowed": "Diese Veranstaltung ist nur für Mitglieder. Bitte melden Sie sich an oder fragen Sie Ihren Gastgeber nach Zugang.",
-      "notMember": "Sie sind kein Mitglied dieses Arbeitsbereichs für diese Veranstaltung.",
-      "notActive": "Diese Veranstaltung ist noch nicht aktiv — Ihr Gastgeber muss sie starten."
-    },
     "postCreate": {
       "title": "Veranstaltung erfolgreich erstellt!",
       "description": "Ihre Veranstaltung wurde erstellt und Einladungen wurden versandt. Möchten Sie der Lobby jetzt beitreten?",
@@ -896,7 +988,14 @@
     "tableActions": "Aktionen",
     "submitAction": "Absenden",
     "gameStatus": "Status",
-    "statuses": { "waiting": "Wartend", "inProgress": "Läuft", "completed": "Abgeschlossen", "cancelled": "Abgebrochen", "active": "Aktiv", "paused": "Pausiert" },
+    "statuses": {
+      "waiting": "Wartend",
+      "inProgress": "Läuft",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgebrochen",
+      "active": "Aktiv",
+      "paused": "Pausiert"
+    },
     "round": "Runde",
     "score": "Punktzahl",
     "activeCount": "{{count}} aktiv",
@@ -975,7 +1074,12 @@
     "markAsRead": "Als gelesen markieren",
     "markAllRead": "Alle als gelesen markieren",
     "noNotifications": "Keine Benachrichtigungen",
-    "types": { "eventReminder": "Veranstaltungserinnerung", "gameUpdate": "Aktivitäts-Update", "invitation": "Einladung", "system": "System" },
+    "types": {
+      "eventReminder": "Veranstaltungserinnerung",
+      "gameUpdate": "Aktivitäts-Update",
+      "invitation": "Einladung",
+      "system": "System"
+    },
     "timeAgo": "vor",
     "unread": "Ungelesen",
     "readAll": "Alle",
@@ -1472,7 +1576,11 @@
     "deleteTitle": "Löschen",
     "deleteMessage": "Diese Aktion kann nicht rückgängig gemacht werden."
   },
-  "theme": { "light": "Hell", "dark": "Dunkel", "system": "System" },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
   "apiErrors": {
     "AUTH_INVALID_CREDENTIALS": "Ungültige E-Mail oder Passwort",
     "AUTH_ACCOUNT_SUSPENDED": "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.",
@@ -1518,11 +1626,26 @@
   "onboarding": {
     "stepOf": "Schritt {{current}} von {{total}}",
     "steps": {
-      "org": { "title": "Ihre Organisation", "description": "Erzählen Sie uns von Ihrem Unternehmen" },
-      "industry": { "title": "Branche & Größe", "description": "Helfen Sie uns, Ihr Erlebnis zu personalisieren" },
-      "goals": { "title": "Ihre Ziele", "description": "Was möchten Sie erreichen?" },
-      "branding": { "title": "Sprache & Branding", "description": "Letzte Feinheiten" },
-      "teamInvite": { "title": "Laden Sie Ihr Team ein", "description": "Fügen Sie Teamkollegen hinzu, um zusammenzuarbeiten (optional)" }
+      "org": {
+        "title": "Ihre Organisation",
+        "description": "Erzählen Sie uns von Ihrem Unternehmen"
+      },
+      "industry": {
+        "title": "Branche & Größe",
+        "description": "Helfen Sie uns, Ihr Erlebnis zu personalisieren"
+      },
+      "goals": {
+        "title": "Ihre Ziele",
+        "description": "Was möchten Sie erreichen?"
+      },
+      "branding": {
+        "title": "Sprache & Branding",
+        "description": "Letzte Feinheiten"
+      },
+      "teamInvite": {
+        "title": "Laden Sie Ihr Team ein",
+        "description": "Fügen Sie Teamkollegen hinzu, um zusammenzuarbeiten (optional)"
+      }
     },
     "orgName": "Organisationsname",
     "orgNamePlaceholder": "z. B. Acme GmbH",
@@ -1542,20 +1665,53 @@
     "industry": "Branche",
     "companySize": "Unternehmensgröße",
     "sizes": {
-      "1-10": { "label": "1–10", "description": "Kleines Team" },
-      "11-50": { "label": "11–50", "description": "Wachsendes Team" },
-      "51-200": { "label": "51–200", "description": "Mittelgroß" },
-      "201-500": { "label": "201–500", "description": "Groß" },
-      "500+": { "label": "500+", "description": "Enterprise" }
+      "1-10": {
+        "label": "1–10",
+        "description": "Kleines Team"
+      },
+      "11-50": {
+        "label": "11–50",
+        "description": "Wachsendes Team"
+      },
+      "51-200": {
+        "label": "51–200",
+        "description": "Mittelgroß"
+      },
+      "201-500": {
+        "label": "201–500",
+        "description": "Groß"
+      },
+      "500+": {
+        "label": "500+",
+        "description": "Enterprise"
+      }
     },
     "goalsHint": "Wählen Sie alle zutreffenden — das hilft uns, die richtigen Aktivitäten zu empfehlen",
     "goals": {
-      "team_bonding": { "label": "Teamzusammenhalt", "description": "Stärkere Verbindungen zwischen Teammitgliedern aufbauen" },
-      "icebreakers": { "label": "Eisbrecher", "description": "Neuen Mitgliedern helfen, sich schneller zu integrieren" },
-      "engagement": { "label": "Mitarbeiterengagement", "description": "Moral und Zufriedenheit steigern" },
-      "remote_culture": { "label": "Remote-Kultur", "description": "Die Lücke für verteilte Teams überbrücken" },
-      "onboarding": { "label": "Onboarding neuer Mitarbeiter", "description": "Onboarding spaßig und unvergesslich machen" },
-      "wellness": { "label": "Wohlbefinden", "description": "Psychische Gesundheit und Work-Life-Balance unterstützen" }
+      "team_bonding": {
+        "label": "Teamzusammenhalt",
+        "description": "Stärkere Verbindungen zwischen Teammitgliedern aufbauen"
+      },
+      "icebreakers": {
+        "label": "Eisbrecher",
+        "description": "Neuen Mitgliedern helfen, sich schneller zu integrieren"
+      },
+      "engagement": {
+        "label": "Mitarbeiterengagement",
+        "description": "Moral und Zufriedenheit steigern"
+      },
+      "remote_culture": {
+        "label": "Remote-Kultur",
+        "description": "Die Lücke für verteilte Teams überbrücken"
+      },
+      "onboarding": {
+        "label": "Onboarding neuer Mitarbeiter",
+        "description": "Onboarding spaßig und unvergesslich machen"
+      },
+      "wellness": {
+        "label": "Wohlbefinden",
+        "description": "Psychische Gesundheit und Work-Life-Balance unterstützen"
+      }
     },
     "selected": "Ausgewählt:",
     "preferredLanguage": "Bevorzugte Sprache",
@@ -1915,6 +2071,44 @@
           "step4": "4. Ordnen Sie Fragen Themen zu",
           "step5": "5. Starten Sie Kaffee-Roulette mit Ihrem Ereignis!"
         }
+      },
+      "roleBasedPrompts": {
+        "manager": {
+          "p1": "Was ist als Manager Ihre größte Herausforderung bei der Mitarbeiterbeteiligung?",
+          "p2": "Welche Führungslektion haben Sie auf die harte Tour gelernt?",
+          "p3": "Wie bauen Sie Vertrauen mit Ihrem Team auf?",
+          "p4": "Wie sieht Ihre Philosophie zu Remote-Team-Dynamik aus?"
+        },
+        "individual_contributor": {
+          "p1": "Was ist das wirkungsvollste Projekt, an dem Sie gearbeitet haben?",
+          "p2": "Welche Fähigkeit entwickeln Sie mit Begeisterung?",
+          "p3": "Wie bleiben Sie motiviert, wenn Sie asynchron arbeiten?",
+          "p4": "Wie sieht Ihre ideale Arbeitsumgebung aus?"
+        },
+        "designer": {
+          "p1": "Welche Designprinzipien leiten Ihre Arbeit?",
+          "p2": "Welche aktuelle Designentscheidung sind Sie stolz?",
+          "p3": "Wie balancieren Sie Ästhetik und Usability?",
+          "p4": "Was inspiriert Ihre kreative Arbeit?"
+        },
+        "engineer": {
+          "p1": "Was ist Ihr bevorzugter Tech Stack und warum?",
+          "p2": "Welchen kniffligen Bug haben Sie kürzlich gelöst?",
+          "p3": "Wie gehen Sie mit Codequalität um?",
+          "p4": "Welche Technologie begeistert Sie im Moment?"
+        },
+        "product": {
+          "p1": "Welche Metriken lenken Ihre Entscheidungsfindung?",
+          "p2": "Wie priorisieren Sie konkurrierende Features?",
+          "p3": "Was ist Ihr Prozess für Benutzerforschung?",
+          "p4": "Auf welchen Produktlaunch sind Sie stolz?"
+        },
+        "sales": {
+          "p1": "Wie ist Ihre Strategie zum Aufbau von Beziehungen?",
+          "p2": "Wie gehen Sie mit Einwänden um?",
+          "p3": "Was ist das Erfüllendste an Ihrer Rolle?",
+          "p4": "Wie bleiben Sie in einem wettbewerbsintensiven Umfeld energetisiert?"
+        }
       }
     },
     "winsOfWeek": {
@@ -2112,8 +2306,7 @@
     "skip": "Überspringen",
     "close": "Schließen",
     "last": "Fertig"
-  }
-  ,
+  },
   "activityFeedback": {
     "categories": {
       "experience": "Gesamterlebnis",
