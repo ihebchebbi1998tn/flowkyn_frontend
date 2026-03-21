@@ -2995,5 +2995,62 @@
     "newYorkGmt": "New York (GMT-5)",
     "tokyoGmt": "Tokyo (GMT+9)"
   },
-  "departmentsSelected": "Abteilungen ausgewählt"
+  "departmentsSelected": "Abteilungen ausgewählt",
+  "session": {
+    "duration": "Dauer",
+    "participants": "Teilnehmer",
+    "messages": "Nachrichten",
+    "actions": "Aktionen",
+    "close": "Sitzung beenden",
+    "delete": "Sitzung löschen",
+    "export": "Exportieren",
+    "active": "Aktiv",
+    "guest": "Gast",
+    "joined": "Beigetreten",
+    "left": "Verlassen",
+    "interactions": "Interaktionen",
+    "noParticipants": "Keine Teilnehmer vorhanden",
+    "noMessages": "Keine Nachrichten vorhanden",
+    "noActions": "Keine Aktionen vorhanden",
+    "noTimeline": "Keine Ereignisse vorhanden",
+    "loadMore": "Mehr laden",
+    "participant": "Teilnehmer",
+    "action": "Aktion",
+    "timestamp": "Zeitstempel",
+    "payload": "Details",
+    "round": "Runde",
+    "started": "Gestartet",
+    "ended": "Beendet",
+    "createdAt": "Erstellt",
+    "updatedAt": "Aktualisiert",
+    "sessionNotFound": "Sitzung nicht gefunden",
+    "roundCompleted": "Runden abgeschlossen",
+    "activeParticipants": "Aktiv",
+    "completedParticipants": "Abgeschlossen",
+    "sessionId": "Sitzungs-ID",
+    "eventTitle": "Ereignis",
+    "gameName": "Spiel",
+    "gameType": "Spieltyp",
+    "currentRound": "Aktuelle Runde",
+    "totalRounds": "Gesamte Runden",
+    "gameStatus": "Status",
+    "closeConfirm": {
+      "title": "Sitzung beenden?",
+      "description": "Dies beendet die Sitzung für alle Teilnehmer. Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "deleteConfirm": {
+      "title": "Sitzung löschen?",
+      "description": "Dies löscht die Sitzung dauerhaft und anonymisiert alle Nachrichten. Diese Aktion kann nicht rückgängig gemacht werden."
+    },
+    "timeline": {
+      "joined": "{{name}} ist beigetreten",
+      "left": "{{name}} hat verlassen",
+      "roundStarted": "Runde {{number}} gestartet",
+      "roundEnded": "Runde {{number}} beendet",
+      "action": "{{name}} hat {{action}} ausgeführt"
+    },
+    "exportSuccess": "Sitzungsdaten erfolgreich exportiert",
+    "closedSuccess": "Sitzung erfolgreich beendet",
+    "deletedSuccess": "Sitzung erfolgreich gelöscht"
+  }
 }

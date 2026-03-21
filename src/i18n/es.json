@@ -2992,5 +2992,62 @@
       "noResults": "No se encontró feedback"
     }
   },
-  "departmentsSelected": "Departamentos seleccionados"
+  "departmentsSelected": "Departamentos seleccionados",
+  "session": {
+    "duration": "Duración",
+    "participants": "Participantes",
+    "messages": "Mensajes",
+    "actions": "Acciones",
+    "close": "Cerrar sesión",
+    "delete": "Eliminar sesión",
+    "export": "Exportar",
+    "active": "Activo",
+    "guest": "Invitado",
+    "joined": "Se unió",
+    "left": "Se fue",
+    "interactions": "Interacciones",
+    "noParticipants": "Sin participantes por ahora",
+    "noMessages": "Sin mensajes por ahora",
+    "noActions": "Sin acciones por ahora",
+    "noTimeline": "Sin eventos por ahora",
+    "loadMore": "Cargar más",
+    "participant": "Participante",
+    "action": "Acción",
+    "timestamp": "Marca de tiempo",
+    "payload": "Detalles",
+    "round": "Ronda",
+    "started": "Iniciado",
+    "ended": "Finalizado",
+    "createdAt": "Creado",
+    "updatedAt": "Actualizado",
+    "sessionNotFound": "Sesión no encontrada",
+    "roundCompleted": "Rondas completadas",
+    "activeParticipants": "Activos",
+    "completedParticipants": "Completados",
+    "sessionId": "ID de sesión",
+    "eventTitle": "Evento",
+    "gameName": "Juego",
+    "gameType": "Tipo de juego",
+    "currentRound": "Ronda actual",
+    "totalRounds": "Total de rondas",
+    "gameStatus": "Estado",
+    "closeConfirm": {
+      "title": "¿Cerrar sesión?",
+      "description": "Esto finalizará la sesión para todos los participantes. Esta acción no se puede deshacer."
+    },
+    "deleteConfirm": {
+      "title": "¿Eliminar sesión?",
+      "description": "Esto eliminará permanentemente la sesión y anonimizará todos los mensajes. Esta acción no se puede deshacer."
+    },
+    "timeline": {
+      "joined": "{{name}} se unió",
+      "left": "{{name}} se fue",
+      "roundStarted": "Ronda {{number}} iniciada",
+      "roundEnded": "Ronda {{number}} finalizada",
+      "action": "{{name}} realizó {{action}}"
+    },
+    "exportSuccess": "Datos de sesión exportados correctamente",
+    "closedSuccess": "Sesión cerrada correctamente",
+    "deletedSuccess": "Sesión eliminada correctamente"
+  }
 }

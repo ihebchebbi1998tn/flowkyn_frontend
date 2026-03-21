@@ -656,6 +656,63 @@
   "event": {
     "joinFailed": "Failed to join. Please try again."
   },
+  "session": {
+    "duration": "Duration",
+    "participants": "Participants",
+    "messages": "Messages",
+    "actions": "Actions",
+    "close": "Close Session",
+    "delete": "Delete Session",
+    "export": "Export",
+    "active": "Active",
+    "guest": "Guest",
+    "joined": "Joined",
+    "left": "Left",
+    "interactions": "Interactions",
+    "noParticipants": "No participants yet",
+    "noMessages": "No messages yet",
+    "noActions": "No actions yet",
+    "noTimeline": "No events yet",
+    "loadMore": "Load more",
+    "participant": "Participant",
+    "action": "Action",
+    "timestamp": "Timestamp",
+    "payload": "Details",
+    "round": "Round",
+    "started": "Started",
+    "ended": "Ended",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "sessionNotFound": "Session not found",
+    "roundCompleted": "Rounds completed",
+    "activeParticipants": "Active",
+    "completedParticipants": "Completed",
+    "sessionId": "Session ID",
+    "eventTitle": "Event",
+    "gameName": "Game",
+    "gameType": "Game Type",
+    "currentRound": "Current Round",
+    "totalRounds": "Total Rounds",
+    "gameStatus": "Status",
+    "closeConfirm": {
+      "title": "Close Session?",
+      "description": "This will finish the session for all participants. This action cannot be undone."
+    },
+    "deleteConfirm": {
+      "title": "Delete Session?",
+      "description": "This will permanently delete the session and anonymize all messages. This action cannot be undone."
+    },
+    "timeline": {
+      "joined": "{{name}} joined",
+      "left": "{{name}} left",
+      "roundStarted": "Round {{number}} started",
+      "roundEnded": "Round {{number}} ended",
+      "action": "{{name}} performed {{action}}"
+    },
+    "exportSuccess": "Session data exported successfully",
+    "closedSuccess": "Session closed successfully",
+    "deletedSuccess": "Session deleted successfully"
+  },
   "organizations": {
     "title": "Workspace",
     "myOrg": "My Workspace",

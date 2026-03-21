@@ -2995,5 +2995,62 @@
     "newYorkGmt": "New York (GMT-5)",
     "tokyoGmt": "Tokyo (GMT+9)"
   },
-  "departmentsSelected": "Départements sélectionnés"
+  "departmentsSelected": "Départements sélectionnés",
+  "session": {
+    "duration": "Durée",
+    "participants": "Participants",
+    "messages": "Messages",
+    "actions": "Actions",
+    "close": "Fermer la session",
+    "delete": "Supprimer la session",
+    "export": "Exporter",
+    "active": "Actif",
+    "guest": "Invité",
+    "joined": "Rejoint",
+    "left": "Parti",
+    "interactions": "Interactions",
+    "noParticipants": "Pas de participants pour le moment",
+    "noMessages": "Pas de messages pour le moment",
+    "noActions": "Aucune action pour le moment",
+    "noTimeline": "Aucun événement pour le moment",
+    "loadMore": "Charger plus",
+    "participant": "Participant",
+    "action": "Action",
+    "timestamp": "Horodatage",
+    "payload": "Détails",
+    "round": "Manche",
+    "started": "Commencé",
+    "ended": "Terminé",
+    "createdAt": "Créé",
+    "updatedAt": "Mis à jour",
+    "sessionNotFound": "Session non trouvée",
+    "roundCompleted": "Manches complétées",
+    "activeParticipants": "Actifs",
+    "completedParticipants": "Terminés",
+    "sessionId": "ID de la session",
+    "eventTitle": "Événement",
+    "gameName": "Jeu",
+    "gameType": "Type de jeu",
+    "currentRound": "Manche actuelle",
+    "totalRounds": "Nombre total de manches",
+    "gameStatus": "Statut",
+    "closeConfirm": {
+      "title": "Fermer la session ?",
+      "description": "Cela mettra fin à la session pour tous les participants. Cette action ne peut pas être annulée."
+    },
+    "deleteConfirm": {
+      "title": "Supprimer la session ?",
+      "description": "Cela supprimera définitivement la session et anonymisera tous les messages. Cette action ne peut pas être annulée."
+    },
+    "timeline": {
+      "joined": "{{name}} a rejoint",
+      "left": "{{name}} a quitté",
+      "roundStarted": "La manche {{number}} a commencé",
+      "roundEnded": "La manche {{number}} s'est terminée",
+      "action": "{{name}} a effectué {{action}}"
+    },
+    "exportSuccess": "Données de session exportées avec succès",
+    "closedSuccess": "Session fermée avec succès",
+    "deletedSuccess": "Session supprimée avec succès"
+  }
 }
