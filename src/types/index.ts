@@ -29,6 +29,7 @@ export interface Organization {
   member_count?: number;
   event_count?: number;
   plan_name?: string;
+  status?: 'test' | 'real' | 'inactive' | 'banned';
   created_at: string;
   updated_at: string;
 }

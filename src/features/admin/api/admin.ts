@@ -210,6 +210,9 @@ export const adminApi = {
   updateOrganization: (id: string, data: Partial<Organization>) =>
     adminClient.patch<Organization>(`/admin/organizations/${id}`, data),
 
+  updateOrganizationStatus: (id: string, status: 'test' | 'real' | 'inactive' | 'banned') =>
+    adminClient.patch<Organization>(`/admin/organizations/${id}/status`, { status }),
+
   deleteOrganization: (id: string) =>
     adminClient.del(`/admin/organizations/${id}`),
 

@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Search, MoreHorizontal, Trash2, Eye, Users, Loader } from 'lucide-react';
+import { Search, MoreHorizontal, Trash2, Eye, Users, Loader, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,9 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
 import { adminApi } from '@/api/admin';
 import { PageHeader } from '@/components/common/PageHeader';
 import { TableSkeleton } from '@/components/loading/Skeletons';
@@ -28,6 +31,20 @@ const planColors: Record<string, string> = {
   enterprise: 'bg-warning/10 text-warning',
 };
 
+const statusColors: Record<string, string> = {
+  test: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  real: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  inactive: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
+  banned: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+};
+
+const statusLabels: Record<string, string> = {
+  test: '🧪 Test',
+  real: '✅ Real',
+  inactive: '⏸️ Inactive',
+  banned: '🚫 Banned',
+};
+
 export default function AdminOrganizations() {
   const [search, setSearch] = useState('');
   const [orgs, setOrgs] = useState<Organization[]>([]);
@@ -38,6 +55,7 @@ export default function AdminOrganizations() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState<Partial<Organization>>({});
   const [savingEdit, setSavingEdit] = useState(false);
+  const [statusChangeLoading, setStatusChangeLoading] = useState<string | null>(null);
 
   const fetchOrgs = useCallback(async () => {
     setLoading(true);
@@ -90,6 +108,22 @@ export default function AdminOrganizations() {
     }
   };
 
+  const handleStatusChange = async (orgId: string, newStatus: 'test' | 'real' | 'inactive' | 'banned') => {
+    try {
+      setStatusChangeLoading(orgId);
+      const updated = await adminApi.updateOrganizationStatus(orgId, newStatus);
+      
+      // Update local state
+      setOrgs(orgs.map(o => o.id === updated.id ? updated : o));
+      
+      toast.success(`Organization marked as ${statusLabels[newStatus]}`);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to update organization status');
+    } finally {
+      setStatusChangeLoading(null);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this organization? This cannot be undone.')) return;
     try {
@@ -120,12 +154,13 @@ export default function AdminOrganizations() {
                 <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden sm:table-cell">Members</th>
                 <th className="text-left font-semibold px-4 py-3 text-muted-foreground hidden lg:table-cell">Events</th>
                 <th className="text-left font-semibold px-4 py-3 text-muted-foreground">Plan</th>
+                <th className="text-left font-semibold px-4 py-3 text-muted-foreground">Status</th>
                 <th className="text-right font-semibold px-4 py-3 text-muted-foreground w-[60px]"></th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6}><TableSkeleton rows={5} cols={6} /></td></tr>
+                <tr><td colSpan={7}><TableSkeleton rows={5} cols={7} /></td></tr>
               ) : (
                 orgs.map(org => (
                   <tr key={org.id} className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors">
@@ -154,6 +189,35 @@ export default function AdminOrganizations() {
                         {org.plan_name || 'free'}
                       </Badge>
                     </td>
+                    <td className="px-4 py-3">
+                      <Select
+                        value={org.status || 'real'}
+                        onValueChange={(value) => handleStatusChange(org.id, value as 'test' | 'real' | 'inactive' | 'banned')}
+                        disabled={statusChangeLoading === org.id}
+                      >
+                        <SelectTrigger className="h-8 text-[12px] w-[120px]">
+                          {statusChangeLoading === org.id ? (
+                            <Loader className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <SelectValue placeholder="Select status" />
+                          )}
+                        </SelectTrigger>
+                        <SelectContent className="min-w-[120px]">
+                          <SelectItem value="test" className="text-[12px]">
+                            🧪 Test
+                          </SelectItem>
+                          <SelectItem value="real" className="text-[12px]">
+                            ✅ Real
+                          </SelectItem>
+                          <SelectItem value="inactive" className="text-[12px]">
+                            ⏸️ Inactive
+                          </SelectItem>
+                          <SelectItem value="banned" className="text-[12px]">
+                            🚫 Banned
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -161,7 +225,7 @@ export default function AdminOrganizations() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-44">
                           <DropdownMenuItem className="text-[13px] gap-2 cursor-pointer" onClick={() => handleViewDetails(org)}>
-                            <Eye className="h-3.5 w-3.5" /> Edit
+                            <Eye className="h-3.5 w-3.5" /> Edit Details
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-[13px] gap-2 text-destructive cursor-pointer" onClick={() => handleDelete(org.id)}>
@@ -174,7 +238,7 @@ export default function AdminOrganizations() {
                 ))
               )}
               {!loading && orgs.length === 0 && (
-                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">No organizations found</td></tr>
+                <tr><td colSpan={7} className="text-center py-8 text-muted-foreground">No organizations found</td></tr>
               )}
             </tbody>
           </table>
