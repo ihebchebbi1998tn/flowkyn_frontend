@@ -22,6 +22,7 @@ import { useGameChatState } from '@/hooks/useGameChatState';
 import { useGameStateSync } from '@/hooks/useGameStateSync';
 import { useParticipantPresenceSync } from '@/hooks/useParticipantPresenceSync';
 import { useEventsSocket, useGamesSocket } from '@/hooks/useSocket';
+import { useEventVoiceChat } from '@/hooks/useEventVoiceChat';
 import { useAuth } from '@/features/app/context/AuthContext';
 import { useApiError } from '@/hooks/useApiError';
 import { eventsApi } from '@/features/app/api/events';
@@ -323,6 +324,22 @@ function GamePlayWithoutBoundary() {
     eventsSocket,
     identityRef,
     userRef,
+  });
+
+  // ─── Voice chat state ─────────────────────────────────────────────────────
+  const {
+    status: voiceStatus,
+    error: voiceError,
+    isMuted,
+    remoteParticipants,
+    voiceStatuses,
+    startVoice,
+    stopVoice,
+    toggleMute,
+  } = useEventVoiceChat({
+    eventId: eventId || '',
+    myParticipantId: participantId || '',
+    eventsSocket,
   });
 
   // ─── Async game data: activity posts (Wins of the Week) ─────────────────────
@@ -761,6 +778,14 @@ function GamePlayWithoutBoundary() {
           hostParticipantId={hostParticipantId}
           pinnedMessageId={pinnedMessage?.id}
           onTogglePinMessage={hostParticipantId ? handleTogglePinMessage : undefined}
+          voiceStatus={voiceStatus}
+          voiceError={voiceError}
+          isMuted={isMuted}
+          remoteParticipants={remoteParticipants}
+          voiceStatuses={voiceStatuses}
+          onStartVoice={startVoice}
+          onStopVoice={stopVoice}
+          onToggleMute={toggleMute}
         />
       </div>
     </div>
