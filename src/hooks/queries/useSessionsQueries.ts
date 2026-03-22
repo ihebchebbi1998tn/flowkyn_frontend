@@ -32,19 +32,40 @@ export function useSessionDetails(sessionId: string | null, enabled = true) {
     queryKey: gameSessionsKeys.details(sessionId || ''),
     queryFn: async () => {
       if (!sessionId) {
+        console.warn('[useSessionDetails] ⚠️ Session ID is null, throwing error');
         throw new Error('Session ID is required');
       }
       
+      console.log(`[useSessionDetails] 🔍 Fetching details for session: ${sessionId}`);
+      const startTime = performance.now();
+      
       try {
         const result = await gameSessionsApi.getSessionDetails(sessionId);
+        const duration = performance.now() - startTime;
         
         if (!result) {
+          console.error(`[useSessionDetails] ❌ Empty response from server for session: ${sessionId}`);
           throw new Error('Empty response from server');
         }
         
+        console.log(`[useSessionDetails] ✅ Successfully fetched session details (${duration.toFixed(0)}ms)`, {
+          sessionId,
+          gameName: result.game_name,
+          status: result.status,
+          participants: result.participants?.length || 0,
+          messages: result.total_messages,
+          actions: result.total_actions,
+          totalRounds: result.total_rounds,
+        });
+        
         return result;
       } catch (err) {
-        console.error(`[useSessionDetails] Failed to fetch session ${sessionId}:`, err);
+        const duration = performance.now() - startTime;
+        console.error(`[useSessionDetails] ❌ Failed to fetch session ${sessionId} (${duration.toFixed(0)}ms):`, {
+          error: err instanceof Error ? err.message : String(err),
+          stack: err instanceof Error ? err.stack : undefined,
+          sessionId,
+        });
         throw err;
       }
     },
@@ -54,10 +75,17 @@ export function useSessionDetails(sessionId: string | null, enabled = true) {
     refetchOnWindowFocus: false,
     retry: (failureCount, error) => {
       // Retry 2 times for non-404 errors
-      if (error instanceof Error && error.message.includes('404')) {
-        return false; // Don't retry 404s
-      }
-      return failureCount < 2;
+      const isNotFound = error instanceof Error && error.message.includes('404');
+      const shouldRetry = failureCount < 2 && !isNotFound;
+      
+      console.log(`[useSessionDetails] 🔄 Retry decision:`, {
+        failureCount,
+        isNotFound,
+        shouldRetry,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      
+      return shouldRetry;
     },
   });
 }

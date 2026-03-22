@@ -44,17 +44,45 @@ class ApiClient {
 
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { params, eventId, authToken, ...fetchOptions } = options;
-    const res = await fetch(this.buildUrl(path, params), {
+    const method = fetchOptions.method || 'GET';
+    const startTime = performance.now();
+    const fullUrl = this.buildUrl(path, params);
+
+    // Log request start
+    console.log(`[ApiClient] 📤 ${method} ${path}`, {
+      url: fullUrl,
+      params,
+      eventId,
+      hasAuthToken: !!authToken || !!localStorage.getItem('access_token'),
+      hasAccessToken: !!localStorage.getItem('access_token'),
+    });
+
+    const res = await fetch(fullUrl, {
       ...fetchOptions,
       headers: { ...this.getHeaders(eventId, authToken), ...(fetchOptions.headers as HeadersInit) },
     });
 
+    const duration = performance.now() - startTime;
+    console.log(`[ApiClient] 📥 ${method} ${path} - Status ${res.status} (${duration.toFixed(0)}ms)`, {
+      status: res.status,
+      statusText: res.statusText,
+      duration,
+    });
+
     if (res.status === 401) {
+      console.warn(`[ApiClient] ⚠️ 401 Unauthorized for ${path}`, {
+        usedAccessToken: !!localStorage.getItem('access_token'),
+      });
+
       const usedAccessToken = !!localStorage.getItem('access_token');
       const refreshed = usedAccessToken ? await this.refreshToken() : false;
-      if (refreshed) return this.request<T>(path, options);
+      if (refreshed) {
+        console.log(`[ApiClient] 🔄 Token refreshed, retrying ${path}`);
+        return this.request<T>(path, options);
+      }
       // Only redirect to login when we had an expired JWT; guests should not be redirected
       if (usedAccessToken) {
+        console.error(`[ApiClient] ❌ Token refresh failed, redirecting to login`);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         window.location.href = '/login';
@@ -78,13 +106,15 @@ class ApiClient {
       }));
       
       // Log detailed error information for debugging
-      console.error(`[ApiClient] HTTP Error ${res.status}:`, {
+      console.error(`[ApiClient] ❌ HTTP Error ${res.status}:`, {
         path,
-        method: fetchOptions.method || 'GET',
+        method,
         status: res.status,
         error: body.error,
         code: body.code,
-        url: this.buildUrl(path, params),
+        details: body.details,
+        url: fullUrl,
+        duration: `${duration.toFixed(0)}ms`,
       });
       
       throw new ApiError({
@@ -97,8 +127,18 @@ class ApiClient {
       });
     }
 
-    if (res.status === 204) return undefined as T;
-    return res.json();
+    if (res.status === 204) {
+      console.log(`[ApiClient] ✅ ${method} ${path} - No content`, { duration: `${duration.toFixed(0)}ms` });
+      return undefined as T;
+    }
+
+    const data = await res.json();
+    console.log(`[ApiClient] ✅ ${method} ${path} - Success`, {
+      status: res.status,
+      dataKeys: Array.isArray(data) ? `[${data.length} items]` : typeof data === 'object' ? Object.keys(data || {}) : typeof data,
+      duration: `${duration.toFixed(0)}ms`,
+    });
+    return data;
   }
 
   private refreshToken(): Promise<boolean> {

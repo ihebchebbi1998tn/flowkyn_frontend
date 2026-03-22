@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { MessageSquare, ChevronRight, X } from 'lucide-react';
@@ -32,7 +33,17 @@ export default function GameList() {
   const [filters, setFilters] = useState<ActivityFilterState>(defaultFilters);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
 
+  console.log(`[GameList] 🎮 Component rendered`, { selectedSessionId });
+
   const { data: activeSessions, isLoading: sessionsLoading } = useActiveSessions();
+
+  React.useEffect(() => {
+    console.log(`[GameList] 📊 Active sessions updated:`, {
+      count: activeSessions?.length || 0,
+      isLoading: sessionsLoading,
+      sessions: activeSessions?.map(s => ({ id: s.id, name: s.game_type_name, status: s.status })) || [],
+    });
+  }, [activeSessions, sessionsLoading]);
 
   const filtered = useMemo(() => {
     return ACTIVITIES.filter(a => {
@@ -50,6 +61,16 @@ export default function GameList() {
   }, [filters, t]);
 
   const liveSessionsList = activeSessions ?? [];
+
+  const handleSessionClick = (sessionId: string) => {
+    console.log(`[GameList] 🔍 Session clicked:`, { sessionId });
+    setSelectedSessionId(sessionId);
+  };
+
+  const handleSessionClose = () => {
+    console.log(`[GameList] ❌ Session details closed`);
+    setSelectedSessionId(null);
+  };
 
   return (
     <PageShell>
@@ -69,7 +90,7 @@ export default function GameList() {
               return (
               <button
                 key={session.id}
-                onClick={() => setSelectedSessionId(session.id)}
+                onClick={() => handleSessionClick(session.id)}
                 className="flex items-center justify-between gap-3 w-full px-5 py-3 hover:bg-accent/50 transition-colors group text-left">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
@@ -139,7 +160,10 @@ export default function GameList() {
             <div className="sticky top-0 z-10 bg-background border-b border-border flex items-center justify-between p-6">
               <h2 className="text-xl font-semibold">{t('session.detailsTitle', 'Session Details')}</h2>
               <button
-                onClick={() => setSelectedSessionId(null)}
+                onClick={() => {
+                  console.log(`[GameList] 🔒 Closing session details modal for: ${selectedSessionId}`);
+                  handleSessionClose();
+                }}
                 className="p-1 hover:bg-accent rounded-lg transition-colors"
               >
                 <X className="h-5 w-5" />
@@ -149,8 +173,14 @@ export default function GameList() {
               <SessionDetailsPanel
                 sessionId={selectedSessionId}
                 enabled={!!selectedSessionId}
-                onClosed={() => setSelectedSessionId(null)}
-                onDeleted={() => setSelectedSessionId(null)}
+                onClosed={() => {
+                  console.log(`[GameList] ✅ Session closed successfully, closing modal`);
+                  handleSessionClose();
+                }}
+                onDeleted={() => {
+                  console.log(`[GameList] 🗑️ Session deleted successfully, closing modal`);
+                  handleSessionClose();
+                }}
               />
             </div>
           </div>

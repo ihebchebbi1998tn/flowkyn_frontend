@@ -94,40 +94,113 @@ export const gameSessionsApi = {
   /**
    * Get comprehensive details for a game session
    */
-  getSessionDetails: (sessionId: string) =>
-    api.get<SessionDetails>(`/game-sessions/${sessionId}/details`),
+  getSessionDetails: (sessionId: string) => {
+    console.log(`[gameSessionsApi] 🎮 getSessionDetails called with sessionId: ${sessionId}`);
+    return api.get<SessionDetails>(`/game-sessions/${sessionId}/details`).then(
+      (result) => {
+        console.log(`[gameSessionsApi] ✅ getSessionDetails success for ${sessionId}:`, {
+          participants: result.participants?.length || 0,
+          messages: result.total_messages,
+          actions: result.total_actions,
+        });
+        return result;
+      },
+      (error) => {
+        console.error(`[gameSessionsApi] ❌ getSessionDetails failed for ${sessionId}:`, {
+          error: error instanceof Error ? error.message : String(error),
+          errorCode: error instanceof Error && 'code' in error ? (error as any).code : undefined,
+        });
+        throw error;
+      }
+    );
+  },
 
   /**
    * Get paginated messages for a session
    */
-  getSessionMessages: (sessionId: string, limit: number = 50, offset: number = 0) =>
-    api.get<{ messages: SessionMessage[]; total: number }>(`/game-sessions/${sessionId}/messages`, {
+  getSessionMessages: (sessionId: string, limit: number = 50, offset: number = 0) => {
+    console.log(`[gameSessionsApi] 💬 getSessionMessages called:`, { sessionId, limit, offset });
+    return api.get<{ messages: SessionMessage[]; total: number }>(`/game-sessions/${sessionId}/messages`, {
       limit: limit.toString(),
       offset: offset.toString(),
-    }),
+    }).then(
+      (result) => {
+        console.log(`[gameSessionsApi] ✅ getSessionMessages success:`, { count: result.messages?.length, total: result.total });
+        return result;
+      },
+      (error) => {
+        console.error(`[gameSessionsApi] ❌ getSessionMessages failed:`, error);
+        throw error;
+      }
+    );
+  },
 
   /**
    * Export session data as JSON or CSV
    * Returns file download
    */
-  exportSessionData: (sessionId: string, format: 'json' | 'csv' = 'json') =>
-    api.get(`/game-sessions/${sessionId}/export`, { format }),
+  exportSessionData: (sessionId: string, format: 'json' | 'csv' = 'json') => {
+    console.log(`[gameSessionsApi] 📥 exportSessionData called:`, { sessionId, format });
+    return api.get(`/game-sessions/${sessionId}/export`, { format }).then(
+      (result) => {
+        console.log(`[gameSessionsApi] ✅ exportSessionData success`);
+        return result;
+      },
+      (error) => {
+        console.error(`[gameSessionsApi] ❌ exportSessionData failed:`, error);
+        throw error;
+      }
+    );
+  },
 
   /**
    * Close/finish a session
    */
-  closeSession: (sessionId: string) =>
-    api.post<{ success: boolean; message: string }>(`/game-sessions/${sessionId}/close`),
+  closeSession: (sessionId: string) => {
+    console.log(`[gameSessionsApi] ⏹️ closeSession called for sessionId: ${sessionId}`);
+    return api.post<{ success: boolean; message: string }>(`/game-sessions/${sessionId}/close`).then(
+      (result) => {
+        console.log(`[gameSessionsApi] ✅ closeSession success:`, result);
+        return result;
+      },
+      (error) => {
+        console.error(`[gameSessionsApi] ❌ closeSession failed:`, error);
+        throw error;
+      }
+    );
+  },
 
   /**
    * Delete a session (soft delete)
    */
-  deleteSession: (sessionId: string) =>
-    api.del<{ success: boolean; message: string }>(`/game-sessions/${sessionId}`),
+  deleteSession: (sessionId: string) => {
+    console.log(`[gameSessionsApi] 🗑️ deleteSession called for sessionId: ${sessionId}`);
+    return api.del<{ success: boolean; message: string }>(`/game-sessions/${sessionId}`).then(
+      (result) => {
+        console.log(`[gameSessionsApi] ✅ deleteSession success:`, result);
+        return result;
+      },
+      (error) => {
+        console.error(`[gameSessionsApi] ❌ deleteSession failed:`, error);
+        throw error;
+      }
+    );
+  },
 
   /**
    * Get all active sessions for an event
    */
-  getActiveSessionsForEvent: (eventId: string) =>
-    api.get<ActiveSession[]>(`/events/${eventId}/game-sessions/active`),
+  getActiveSessionsForEvent: (eventId: string) => {
+    console.log(`[gameSessionsApi] 📊 getActiveSessionsForEvent called for eventId: ${eventId}`);
+    return api.get<ActiveSession[]>(`/events/${eventId}/game-sessions/active`).then(
+      (result) => {
+        console.log(`[gameSessionsApi] ✅ getActiveSessionsForEvent success:`, { count: result.length });
+        return result;
+      },
+      (error) => {
+        console.error(`[gameSessionsApi] ❌ getActiveSessionsForEvent failed:`, error);
+        throw error;
+      }
+    );
+  },
 };

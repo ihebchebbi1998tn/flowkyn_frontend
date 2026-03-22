@@ -34,12 +34,26 @@ export function SessionDetailsPanel({
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
+  console.log(`[SessionDetailsPanel] 🎯 Rendering with sessionId: ${sessionId}, enabled: ${enabled}`);
+
   const { data: session, isLoading, error } = useSessionDetails(sessionId, enabled);
+  
+  React.useEffect(() => {
+    console.log(`[SessionDetailsPanel] 📊 State updated:`, {
+      sessionId,
+      isLoading,
+      hasError: !!error,
+      hasSession: !!session,
+      enabled,
+    });
+  }, [sessionId, isLoading, error, session, enabled]);
+
   const closeSessionMutation = useCloseSession();
   const deleteSessionMutation = useDeleteSession();
   const exportMutation = useExportSessionData();
 
   if (isLoading) {
+    console.log(`[SessionDetailsPanel] ⏳ Loading session details for: ${sessionId}`);
     return <DashboardSkeleton />;
   }
 
@@ -47,9 +61,12 @@ export function SessionDetailsPanel({
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const isNotFound = errorMessage.includes('404') || errorMessage.includes('not found');
     
-    console.error('[SessionDetailsPanel] Error loading session:', {
+    console.error('[SessionDetailsPanel] ❌ Error loading session:', {
       sessionId,
-      error: errorMessage,
+      errorMessage,
+      isNotFound,
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+      errorStack: error instanceof Error ? error.stack : undefined,
       fullError: error,
     });
 
@@ -73,7 +90,10 @@ export function SessionDetailsPanel({
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              console.log(`[SessionDetailsPanel] 🔄 User clicked retry for session: ${sessionId}`);
+              window.location.reload();
+            }}
             className="mt-4"
           >
             {t('common.retry', 'Retry')}
@@ -84,7 +104,7 @@ export function SessionDetailsPanel({
   }
 
   if (!session) {
-    console.warn('[SessionDetailsPanel] No session data received but no error thrown');
+    console.warn('[SessionDetailsPanel] ⚠️ No session data received but no error thrown', { sessionId });
     return (
       <Card className="p-6 text-center">
         <p className="text-amber-600">{t('error.noSessionData', 'No session data available')}</p>
@@ -92,9 +112,20 @@ export function SessionDetailsPanel({
     );
   }
 
+  console.log(`[SessionDetailsPanel] ✅ Session data loaded successfully:`, {
+    sessionId,
+    gameName: session.game_name,
+    status: session.status,
+    participants: session.participants?.length,
+    messages: session.total_messages,
+    actions: session.total_actions,
+  });
+
   const handleCloseSession = async () => {
     try {
+      console.log(`[SessionDetailsPanel] 📤 Attempting to close session: ${sessionId}`);
       await closeSessionMutation.mutateAsync(sessionId);
+      console.log(`[SessionDetailsPanel] ✅ Session closed successfully: ${sessionId}`);
       setShowCloseDialog(false);
       onClosed?.();
     } catch (err) {
