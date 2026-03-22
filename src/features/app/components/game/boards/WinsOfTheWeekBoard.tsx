@@ -148,6 +148,7 @@ export function WinsOfTheWeekBoard({
   const [submittingReply, setSubmittingReply] = useState<string | null>(null);
   const [liveEndTime, setLiveEndTime] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [postError, setPostError] = useState<string | null>(null);
   const [characterWarningLevel, setCharacterWarningLevel] = useState<'normal' | 'caution' | 'warning'>('normal');
   const feedRef = useRef<HTMLDivElement>(null);
 
@@ -168,6 +169,7 @@ export function WinsOfTheWeekBoard({
   const handlePost = async () => {
     if (!newPost.trim()) return;
     setIsSubmitting(true);
+    setPostError(null);
     try {
       await onPost(newPost.trim(), selectedCategory[0] || undefined, []);
       setNewPost('');
@@ -175,6 +177,7 @@ export function WinsOfTheWeekBoard({
       setCharacterWarningLevel('normal');
     } catch (error) {
       console.error('[WinsOfTheWeekBoard] handlePost error', error);
+      setPostError(t('gamePlay.winsOfWeek.postFailed', { defaultValue: 'Failed to share your win. Please try again.' }));
     } finally {
       setIsSubmitting(false);
     }
@@ -355,6 +358,14 @@ export function WinsOfTheWeekBoard({
                 </GameActionButton>
               </motion.div>
             </div>
+
+            {/* Inline error shown directly below the submit area */}
+            {postError && (
+              <p className="flex items-center gap-1.5 text-xs text-destructive mt-1.5">
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                {postError}
+              </p>
+            )}
           </div>
         </div>
       </div>
