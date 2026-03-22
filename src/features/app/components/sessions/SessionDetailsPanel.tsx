@@ -287,7 +287,7 @@ export function SessionDetailsPanel({
             {t('session.actions', 'Actions')} ({session.total_actions})
           </TabsTrigger>
           <TabsTrigger value="timeline">
-            {t('session.timeline', 'Timeline')}
+            {t('session.timelineTab', 'Timeline')}
           </TabsTrigger>
         </TabsList>
 

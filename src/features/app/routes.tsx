@@ -42,6 +42,7 @@ const EventLobby = lazy(() => import('./pages/events/EventLobby'));
 /* ─── Games / Play ─── */
 const GameList = lazy(() => import('./pages/games/GameList'));
 const GamePlay = lazy(() => import('./pages/play/GamePlay'));
+const SessionDetailsPage = lazy(() => import('./pages/sessions/SessionDetailsPage'));
 
 /* ─── Activities ─── */
 const ActivityDetail = lazy(() => import('./pages/activities/ActivityDetail'));
@@ -84,6 +85,7 @@ export const appRoutes = (
       <Route path={ROUTES.EVENT_EDIT()} element={<RouteErrorBoundary section="Edit Event"><EventForm /></RouteErrorBoundary>} />
 
       <Route path={ROUTES.GAMES} element={<RouteErrorBoundary section="Activities"><GameList /></RouteErrorBoundary>} />
+      <Route path={ROUTES.SESSION_DETAILS()} element={<RouteErrorBoundary section="Session Details"><SessionDetailsPage /></RouteErrorBoundary>} />
 
       <Route path={ROUTES.ACTIVITY_DETAIL()} element={<RouteErrorBoundary section="Activity"><ActivityDetail /></RouteErrorBoundary>} />
       <Route path={ROUTES.ACTIVITY_LAUNCH()} element={<RouteErrorBoundary section="Launch Activity"><LaunchActivity /></RouteErrorBoundary>} />

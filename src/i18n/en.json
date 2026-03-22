@@ -661,6 +661,7 @@
     "participants": "Participants",
     "messages": "Messages",
     "actions": "Actions",
+    "timelineTab": "Timeline",
     "close": "Close Session",
     "delete": "Delete Session",
     "export": "Export",

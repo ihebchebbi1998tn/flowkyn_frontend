@@ -32,6 +32,7 @@ export const ROUTES = {
 
   // Games & Play
   GAMES: '/games',
+  SESSION_DETAILS: (id = ':sessionId') => `/games/sessions/${id}`,
   /** @deprecated Use PLAY instead */
   GAME_SESSION: (id = ':id') => `/play/${id}`,
   PLAY: (id = ':id') => `/play/${id}`,
