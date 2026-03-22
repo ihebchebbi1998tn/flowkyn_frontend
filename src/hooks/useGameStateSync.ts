@@ -55,6 +55,7 @@ export function useGameStateSync({
   const stateSyncInFlightRef = useRef(false);
   const lastStateSyncStartedAtRef = useRef(0);
   const joinedGameAckRef = useRef<{ sessionId: string; at: number } | null>(null);
+  const coffeeFollowupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Reset join-ack guard when switching sessions or losing connection.
   useEffect(() => {
@@ -175,7 +176,6 @@ export function useGameStateSync({
     onGameJoinError,
     onGameDebug,
     onGameJoinAck,
-    sessionId,
   ]);
 
   const requestStateSync = useCallback(
@@ -316,11 +316,15 @@ export function useGameStateSync({
         setInitialSnapshot(payload.gameData);
         setGameData(payload.gameData);
 
-        // Coffee Roulette: schedule a follow-up sync when in chatting phase
-        // to catch any topic/state updates that may have been missed
+        // Coffee Roulette: schedule a debounced follow-up sync when in chatting phase
+        // to catch any topic/state updates that may have been missed.
         const gd = payload.gameData as { kind?: string; phase?: string };
         if (gd?.kind === 'coffee-roulette' && gd?.phase === 'chatting' && sessionId) {
-          setTimeout(() => void requestStateSync('coffee_chatting_followup'), 1500);
+          if (coffeeFollowupTimerRef.current) clearTimeout(coffeeFollowupTimerRef.current);
+          coffeeFollowupTimerRef.current = setTimeout(() => {
+            coffeeFollowupTimerRef.current = null;
+            void requestStateSync('coffee_chatting_followup');
+          }, 2000);
         }
       }
     });
@@ -375,7 +379,9 @@ export function useGameStateSync({
     if (!sessionId) return;
     if (!participantId && !hasJoined) return;
 
-    const intervalMs = 2000; // More frequent to catch shuffle/state changes from other participants
+    // 30s fallback — state is kept current by game:data push events.
+    // This interval is a safety net for missed events only, not the primary sync mechanism.
+    const intervalMs = 30000;
     const id = window.setInterval(() => {
       void requestStateSync('periodic_refresh');
     }, intervalMs);
@@ -399,11 +405,14 @@ export function useGameStateSync({
     if (joinedGameAckRef.current?.sessionId === sessionId) return;
 
     let cancelled = false;
-    const retryDelaysMs = [0, 700, 1600, 3000];
+    // Start at 300ms so the synchronous joinGameRoom() effect can win first.
+    const retryDelaysMs = [300, 1000, 2000, 3500];
     const timers: number[] = [];
 
     const attemptJoin = async (attempt: number) => {
       if (cancelled) return;
+      // Re-check inside the async callback — joinGameRoom may have acked by now.
+      if (joinedGameAckRef.current?.sessionId === sessionId) return;
       try {
         onGameDebug?.({
           type: 'game:join_retry_emit',
@@ -467,8 +476,9 @@ export function useGameStateSync({
     requestStateSync,
     sessionId,
     setActiveRoundId,
-    setGameData,
-    setInitialSnapshot,
+    applyJoinSnapshotIfNewer,
+    onGameJoinAck,
+    onGameJoinError,
     onGameDebug,
   ]);
 
