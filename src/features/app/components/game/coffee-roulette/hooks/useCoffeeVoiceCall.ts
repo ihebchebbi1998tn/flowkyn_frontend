@@ -361,6 +361,12 @@ export function useCoffeeVoiceCall(params: {
   }, [isMuted]);
 
   const startVoice = useCallback(async () => {
+    // Guard: prevent duplicate RTCPeerConnection if already active or starting.
+    if (peerRef.current) {
+      console.warn('[CoffeeVoice] startVoice called while already active, ignoring duplicate');
+      return;
+    }
+
     if (!gamesSocket?.socket || !gamesSocket.isConnected) {
       setStatus('error');
       setError('SOCKET_DISCONNECTED');

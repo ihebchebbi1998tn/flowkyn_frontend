@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { getSafeImageUrl } from '@/features/app/utils/assets';
 import { useRoomTheme, useThemeVariables } from '../theme/RoomThemeContext';
 import { useCoffeeVoiceCall } from '../hooks/useCoffeeVoiceCall';
+import { VoiceCallModal, type VoiceCallModalData } from '../modals/VoiceCallModal';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { GameActionButton } from '../../shared';
 
@@ -71,6 +72,8 @@ export function MeetingRoom({
   const [displayTime, setDisplayTime] = useState(formatTime(timeRemaining));
   const [isWarning, setIsWarning] = useState(false);
   const [showReShuffleConfirm, setShowReShuffleConfirm] = useState(false);
+  const [voiceCallModalData, setVoiceCallModalData] = useState<VoiceCallModalData | null>(null);
+  const [isVoiceCallModalOpen, setIsVoiceCallModalOpen] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [remoteVolume, setRemoteVolume] = useState(0.8);
@@ -167,8 +170,87 @@ export function MeetingRoom({
     }
   })();
 
+  // ─── Socket listeners for voice call modal ───
+  useEffect(() => {
+    if (!gamesSocket) return;
+
+    // When this user receives a voice call request (direct or fallback broadcast)
+    const handleVoiceCallModal = (data: VoiceCallModalData) => {
+      // Fallback broadcasts include toParticipantId — filter out events not meant for us.
+      if (data.toParticipantId && data.toParticipantId !== myParticipantId) return;
+      console.log('[VoiceCall] Received voice call modal:', data);
+      setVoiceCallModalData(data);
+      setIsVoiceCallModalOpen(true);
+    };
+
+    // When the receiver accepts — start voice on both sides.
+    // startVoice has an internal guard against duplicate calls.
+    const handleVoiceCallAccepted = () => {
+      console.log('[VoiceCall] Call accepted, starting voice...');
+      setIsVoiceCallModalOpen(false);
+      // Small delay to let both modals close before WebRTC negotiation starts.
+      setTimeout(() => {
+        void startVoice();
+      }, 300);
+    };
+
+    // When the receiver declines
+    const handleVoiceCallDeclined = () => {
+      console.log('[VoiceCall] Call declined, closing modal');
+      setIsVoiceCallModalOpen(false);
+      setVoiceCallModalData(null);
+    };
+
+    // When the initiator cancels their own pending request
+    const handleVoiceCallCancelled = (data: { sessionId: string; pairId: string; toParticipantId?: string }) => {
+      if (data.sessionId !== sessionId || data.pairId !== pairId) return;
+      if (data.toParticipantId && data.toParticipantId !== myParticipantId) return;
+      console.log('[VoiceCall] Call cancelled by initiator, closing modal');
+      setIsVoiceCallModalOpen(false);
+      setVoiceCallModalData(null);
+    };
+
+    gamesSocket.on('coffee:voice_call_modal', handleVoiceCallModal);
+    gamesSocket.on('coffee:voice_call_accepted', handleVoiceCallAccepted);
+    gamesSocket.on('coffee:voice_call_declined', handleVoiceCallDeclined);
+    gamesSocket.on('coffee:voice_call_cancelled', handleVoiceCallCancelled);
+
+    return () => {
+      gamesSocket.off('coffee:voice_call_modal', handleVoiceCallModal);
+      gamesSocket.off('coffee:voice_call_accepted', handleVoiceCallAccepted);
+      gamesSocket.off('coffee:voice_call_declined', handleVoiceCallDeclined);
+      gamesSocket.off('coffee:voice_call_cancelled', handleVoiceCallCancelled);
+    };
+  }, [gamesSocket, myParticipantId, pairId, sessionId, startVoice]);
+
   return (
     <div style={themeVars as React.CSSProperties}>
+      <VoiceCallModal
+        isOpen={isVoiceCallModalOpen}
+        data={voiceCallModalData}
+        onAccept={() => {
+          // Modal closes when server sends coffee:voice_call_accepted
+        }}
+        onDecline={() => {
+          setIsVoiceCallModalOpen(false);
+          setVoiceCallModalData(null);
+        }}
+        onCancel={() => {
+          // Initiator cancelled — notify server so receiver's modal closes too
+          if (gamesSocket && sessionId && voiceCallModalData?.pairId) {
+            void gamesSocket.emit('coffee:voice_call_cancel', {
+              sessionId,
+              pairId: voiceCallModalData.pairId,
+            }).catch(() => {});
+          }
+        }}
+        onClose={() => {
+          setIsVoiceCallModalOpen(false);
+          setVoiceCallModalData(null);
+        }}
+        gamesSocket={gamesSocket}
+      />
+
       <Dialog
         open={showEnableVoicePrompt && voiceStatus === 'idle'}
         onOpenChange={(open) => {
@@ -569,7 +651,21 @@ export function MeetingRoom({
                   <GameActionButton
                     disabled={!sessionId}
                     onClick={async () => {
-                      await startVoice();
+                      // Initiate voice call request — backend sends coffee:voice_call_modal
+                      // back to both parties, so we don't need to set the modal manually here.
+                      if (!gamesSocket || !sessionId) {
+                        console.error('[VoiceCall] Missing socket or sessionId');
+                        return;
+                      }
+
+                      try {
+                        await gamesSocket.emit('coffee:voice_call_request', {
+                          sessionId,
+                          pairId,
+                        });
+                      } catch (error) {
+                        console.error('[VoiceCall] Request error:', error);
+                      }
                     }}
                     size="lg"
                     className="gap-2 font-bold shadow-md hover:shadow-xl transition-all px-6"
