@@ -185,7 +185,15 @@ export function MeetingRoom({
 
     // When the receiver accepts — start voice on both sides.
     // startVoice has an internal guard against duplicate calls.
-    const handleVoiceCallAccepted = () => {
+    const handleVoiceCallAccepted = (data: { sessionId: string; pairId: string; toParticipantId?: string }) => {
+      if (data.sessionId !== sessionId || data.pairId !== pairId) return;
+      if (data.toParticipantId && data.toParticipantId !== myParticipantId) return;
+      console.log('[VoiceCall][QA] accepted event matched recipient', {
+        sessionId: data.sessionId,
+        pairId: data.pairId,
+        toParticipantId: data.toParticipantId || null,
+        myParticipantId,
+      });
       console.log('[VoiceCall] Call accepted, starting voice...');
       setIsVoiceCallModalOpen(false);
       // Small delay to let both modals close before WebRTC negotiation starts.
@@ -195,7 +203,15 @@ export function MeetingRoom({
     };
 
     // When the receiver declines
-    const handleVoiceCallDeclined = () => {
+    const handleVoiceCallDeclined = (data: { sessionId: string; pairId: string; toParticipantId?: string }) => {
+      if (data.sessionId !== sessionId || data.pairId !== pairId) return;
+      if (data.toParticipantId && data.toParticipantId !== myParticipantId) return;
+      console.log('[VoiceCall][QA] declined event matched recipient', {
+        sessionId: data.sessionId,
+        pairId: data.pairId,
+        toParticipantId: data.toParticipantId || null,
+        myParticipantId,
+      });
       console.log('[VoiceCall] Call declined, closing modal');
       setIsVoiceCallModalOpen(false);
       setVoiceCallModalData(null);
