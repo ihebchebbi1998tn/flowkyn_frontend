@@ -154,6 +154,27 @@ export function useCoffeeVoiceCall(params: {
       remoteMicComfortRef.current = 'quiet';
       remoteMicQuietSinceRef.current = null;
       remoteMicLoudSinceRef.current = null;
+
+      // Directly tear down AudioContext nodes — do not rely on the status-watch
+      // useEffect which won't fire after component unmount.
+      if (meterRafRef.current) { cancelAnimationFrame(meterRafRef.current); meterRafRef.current = null; }
+      try { micSourceRef.current?.disconnect(); } catch { /**/ }
+      micSourceRef.current = null;
+      try { analyserRef.current?.disconnect(); } catch { /**/ }
+      analyserRef.current = null;
+      void audioContextRef.current?.close().catch(() => {});
+      audioContextRef.current = null;
+      micDataRef.current = null;
+
+      if (remoteMeterRafRef.current) { cancelAnimationFrame(remoteMeterRafRef.current); remoteMeterRafRef.current = null; }
+      try { remoteSourceRef.current?.disconnect(); } catch { /**/ }
+      remoteSourceRef.current = null;
+      try { remoteAnalyserRef.current?.disconnect(); } catch { /**/ }
+      remoteAnalyserRef.current = null;
+      void remoteAudioContextRef.current?.close().catch(() => {});
+      remoteAudioContextRef.current = null;
+      remoteMicDataRef.current = null;
+
       setStatus('idle');
       setError(null);
     },
