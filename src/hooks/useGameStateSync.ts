@@ -115,7 +115,6 @@ export function useGameStateSync({
   );
 
   const joinGameRoom = useCallback(() => {
-    if (!participantId && !hasJoined) return;
     if (gamesSocket.isConnected && sessionId) {
       // Avoid repeated game:join emissions once we already got an ACK for this session.
       if (joinedGameAckRef.current?.sessionId === sessionId) return;
@@ -377,7 +376,6 @@ export function useGameStateSync({
   useEffect(() => {
     if (!gamesSocket.isConnected) return;
     if (!sessionId) return;
-    if (!participantId && !hasJoined) return;
 
     // 30s fallback — state is kept current by game:data push events.
     // This interval is a safety net for missed events only, not the primary sync mechanism.
@@ -400,7 +398,6 @@ export function useGameStateSync({
 
   useEffect(() => {
     if (!gamesSocket.isConnected || !sessionId) return;
-    if (!participantId && !hasJoined) return;
     // Stop retry spam once we already got an ACK for this session.
     if (joinedGameAckRef.current?.sessionId === sessionId) return;
 
