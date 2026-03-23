@@ -11,6 +11,9 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useEvent, useEventParticipants, useJoinEvent, useInviteToEvent, usePauseEvent, useStopEvent, useDeleteEvent } from '@/hooks/queries';
+import { useQuery } from '@tanstack/react-query';
+import { gamesApi } from '@/features/app/api/games';
+import { GAME_KEY_TO_CONFIG_ID } from '@/features/app/pages/play/gameTypes';
 import { ErrorState } from '@/components/common/ErrorState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ROUTES } from '@/constants/routes';
@@ -54,6 +57,16 @@ function EventDetailSkeleton() {
   );
 }
 
+function buildJoinLink(eventId: string, gameId?: string) {
+  const base = `${window.location.origin}/join/${eventId}`;
+  return gameId ? `${base}?game=${gameId}` : base;
+}
+
+function buildPlayLink(eventId: string, gameId?: string) {
+  const base = `${window.location.origin}/play/${eventId}`;
+  return gameId ? `${base}?game=${gameId}` : base;
+}
+
 function InviteDialog({ eventId }: { eventId: string }) {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
@@ -62,22 +75,43 @@ function InviteDialog({ eventId }: { eventId: string }) {
   const lang = navigator.language?.split('-')[0] || 'en';
   const { showError } = useApiError();
 
+  const { data: activeSession } = useQuery({
+    queryKey: ['active-session', eventId],
+    queryFn: () => gamesApi.getActiveSession(eventId),
+    enabled: open && !!eventId,
+  });
+  const gameId = activeSession?.game_type_key
+    ? (GAME_KEY_TO_CONFIG_ID[activeSession.game_type_key as keyof typeof GAME_KEY_TO_CONFIG_ID] || activeSession.game_type_key)
+    : '1';
+
+  const joinLink = buildJoinLink(eventId, gameId);
+  const playLink = buildPlayLink(eventId, gameId);
+
   const handleInvite = () => {
     if (!email.trim()) return;
     inviteMutation.mutate(
-      { eventId, email: email.trim(), lang },
+      { eventId, email: email.trim(), lang, gameId },
       {
         onSuccess: () => {
           setEmail('');
           setOpen(false);
         },
         onError: (err) => {
-          // Component-level error handler: log + rich toast with code/requestId
           console.error('Invite error:', err);
           showError(err, t('events.inviteFailed'));
         },
       }
     );
+  };
+
+  const copyLink = async (url: string, type: 'join' | 'play') => {
+    const success = await copyToClipboard(url);
+    if (success) {
+      trackEvent(TRACK.EVENT_LINK_COPIED, { eventId, type });
+      toast.success(t('events.linkCopied'));
+    } else {
+      toast.error(t('common.copyFailed', { defaultValue: 'Failed to copy link. Please manually copy the URL.' }));
+    }
   };
 
   return (
@@ -106,28 +140,42 @@ function InviteDialog({ eventId }: { eventId: string }) {
               {t('common.send')}
             </Button>
           </div>
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-muted/40 border border-border/50">
-            <Input
-              value={`${window.location.origin}/join/${eventId}`}
-              readOnly
-              className="h-8 text-label-xs bg-background/60 flex-1 border-border/50"
-            />
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 text-label-xs gap-1 shrink-0 rounded-lg"
-              onClick={async () => {
-                const success = await copyToClipboard(`${window.location.origin}/join/${eventId}`);
-                if (success) {
-                  trackEvent(TRACK.EVENT_LINK_COPIED, { eventId });
-                  toast.success(t('events.linkCopied'));
-                } else {
-                  toast.error(t('common.copyFailed', { defaultValue: 'Failed to copy link. Please manually copy the URL.' }));
-                }
-              }}
-            >
-              <Copy className="h-3 w-3" /> {t('events.copy')}
-            </Button>
+          <div className="space-y-2">
+            <p className="text-[11px] text-muted-foreground font-medium">
+              {t('events.shareLink', { defaultValue: 'Share links (include ?game= so recipients land on the correct activity)' })}
+            </p>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/40 border border-border/50">
+                <Input
+                  value={joinLink}
+                  readOnly
+                  className="h-8 text-label-xs bg-background/60 flex-1 border-border/50"
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-label-xs gap-1 shrink-0 rounded-lg"
+                  onClick={() => copyLink(joinLink, 'join')}
+                >
+                  <Copy className="h-3 w-3" /> {t('events.copy')}
+                </Button>
+              </div>
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/40 border border-border/50">
+                <Input
+                  value={playLink}
+                  readOnly
+                  className="h-8 text-label-xs bg-background/60 flex-1 border-border/50"
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-label-xs gap-1 shrink-0 rounded-lg"
+                  onClick={() => copyLink(playLink, 'play')}
+                >
+                  <Copy className="h-3 w-3" /> {t('events.copy')}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>
@@ -154,6 +202,7 @@ function ActionConfirmDialog({
   confirmText: string;
   isDangerous?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">

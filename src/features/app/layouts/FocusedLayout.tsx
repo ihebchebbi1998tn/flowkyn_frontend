@@ -41,7 +41,7 @@ export function FocusedLayout() {
   );
   const joinLink = useMemo(() => {
     if (!header?.eventId) return '';
-    return `${window.location.origin}/join/${header.eventId}${gameId ? `?game=${gameId}` : ''}`;
+    return `${window.location.origin}/join/${header.eventId}?game=${gameId || '1'}`;
   }, [header?.eventId, gameId]);
 
   const formatTime = (s: number) => {

@@ -108,8 +108,8 @@ export function useInviteToEvent() {
   const { showError } = useApiError();
 
   return useMutation({
-    mutationFn: ({ eventId, email, lang }: { eventId: string; email: string; lang?: string }) =>
-      eventsApi.invite(eventId, email, lang),
+    mutationFn: ({ eventId, email, lang, gameId }: { eventId: string; email: string; lang?: string; gameId?: string }) =>
+      eventsApi.invite(eventId, email, lang, gameId),
     onSuccess: () => toast.success('Invitation sent'),
     onError: (err) => showError(err),
   });

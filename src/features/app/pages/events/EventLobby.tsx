@@ -127,7 +127,7 @@ export default function EventLobby() {
     tJoinRoomFailed: t('events.errors.joinRoomFailed', { defaultValue: 'Failed to join event room' }),
   });
 
-  const joinLink = `${window.location.origin}/join/${id}${gameParam ? `?game=${gameParam}` : ''}`;
+  const joinLink = `${window.location.origin}/join/${id}?game=${gameParam || '1'}`;
   const participants = (participantsData as any)?.data ?? [];
   const shouldShowYouPill =
     !!(hasJoined && profile) &&

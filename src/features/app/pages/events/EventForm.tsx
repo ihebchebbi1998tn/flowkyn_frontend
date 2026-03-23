@@ -15,6 +15,7 @@ import { organizationsApi } from '@/features/app/api/organizations';
 import { JoinAfterCreateModal } from '@/features/app/components/events/JoinAfterCreateModal';
 import { DateTimePicker } from '@/components/ui/date-time-picker';
 import type { Department } from '@/types';
+import { GAME_CONFIGS } from '@/features/app/pages/play/gameTypes';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return !!v && typeof v === 'object';
@@ -39,6 +40,7 @@ export default function EventForm() {
     start_time: '',
     end_time: '',
     organization_id: '',
+    game_id: '1' as string, // Config ID for invitation links ?game= (1–7)
     allow_guests: true,
     allow_chat: true,
     auto_start_games: false,
@@ -133,6 +135,7 @@ export default function EventForm() {
         auto_start_games: existingEvent.auto_start_games ?? false,
         max_rounds: existingEvent.max_rounds ?? 5,
         allow_participant_game_control: allowGameControl,
+        game_id: isRecord(existingEvent) && typeof (existingEvent as any).game_id === 'string' ? (existingEvent as any).game_id : '1',
       });
     }
   }, [existingEvent, isEditing]);
@@ -228,6 +231,9 @@ export default function EventForm() {
       }
       if (enableUserInvites && selectedMembers.length > 0) {
         createPayload.invites = selectedMembers;
+      }
+      if (form.game_id) {
+        createPayload.game_id = form.game_id;
       }
 
       createEvent.mutate(
@@ -343,6 +349,23 @@ export default function EventForm() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-[13px]">{t('events.primaryActivity', { defaultValue: 'Primary activity' })}</Label>
+            <p className="text-[11px] text-muted-foreground">
+              {t('events.primaryActivityHelp', { defaultValue: 'Used for invitation links so recipients land on the correct game.' })}
+            </p>
+            <Select
+              value={form.game_id}
+              onValueChange={(v) => setForm((f) => ({ ...f, game_id: v }))}
+            >
+              <SelectTrigger className="h-10 text-[13px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {Object.entries(GAME_CONFIGS).map(([id, cfg]) => (
+                  <SelectItem key={id} value={id}>{t(cfg.titleKey)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1.5">
             <Label className="text-[13px]">{t('events.maxParticipants')}</Label>

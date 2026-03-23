@@ -38,6 +38,7 @@ export const eventsApi = {
     start_time?: string; end_time?: string;
     invites?: string[];
     invite_department_ids?: string[];
+    game_id?: string; // Config ID ('1','2',...) or game key for invitation links ?game=
     allow_guests?: boolean;
     allow_chat?: boolean;
     auto_start_games?: boolean;
@@ -97,8 +98,8 @@ export const eventsApi = {
   // ── Invitations ───────────────────────────────────────────────────────────
 
   /** Send invitation email to a participant */
-  invite: (eventId: string, email: string, lang?: string) =>
-    api.post<{ message: string }>(`/events/${eventId}/invitations`, { email, lang }),
+  invite: (eventId: string, email: string, lang?: string, gameId?: string) =>
+    api.post<{ message: string }>(`/events/${eventId}/invitations`, { email, lang, ...(gameId ? { game_id: gameId } : {}) }),
 
   /** Accept an invitation (logged-in user) */
   acceptInvitation: (eventId: string, token: string) =>

@@ -71,7 +71,7 @@ export function GamePlayShell({
   const joinedCount = participants.filter(p => p.status === 'joined').length;
   const pendingCount = participants.filter(p => p.status === 'pending').length;
   const totalInvited = participants.length;
-  const joinLink = `${window.location.origin}/join/${eventId}${gameId ? `?game=${gameId}` : ''}`;
+  const joinLink = `${window.location.origin}/join/${eventId}?game=${gameId || '1'}`;
   const isLobby = joinedCount < 2;
   const sessionStatusLabel =
     gameType === 'sync'
