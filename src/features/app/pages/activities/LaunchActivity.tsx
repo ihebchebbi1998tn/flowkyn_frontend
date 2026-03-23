@@ -212,6 +212,9 @@ export default function LaunchActivity() {
         start_time: startTimeIso,
         end_time: endTimeIso,
         allow_guests: allowNickname,
+        // Include the activity/game ID so invitation emails include ?game=<id>
+        // allowing recipients to land directly on the correct game screen.
+        ...(id ? { game_id: id } : {}),
         ...(enableDepartmentInvites && selectedDepartmentIds.length > 0
           ? { invite_department_ids: selectedDepartmentIds }
           : {}),

@@ -28,7 +28,7 @@ import { useApiError } from '@/hooks/useApiError';
 import { eventsApi } from '@/features/app/api/events';
 import { gamesApi } from '@/features/app/api/games';
 import { GameBoardRouter } from './GameBoardRouter';
-import { GAME_CONFIGS } from './gameTypes';
+import { GAME_CONFIGS, GAME_KEY_TO_CONFIG_ID } from './gameTypes';
 import { useSetGameHeader } from '@/features/app/layouts/gameHeaderContext';
 import { ActivityFeedbackModal } from '@/features/app/components/game/shared/ActivityFeedbackModal';
 import type { ActivityFeedbackSource } from '@/features/app/api/activityFeedbacks';
@@ -53,8 +53,14 @@ function GamePlayWithoutBoundary() {
   const { showError } = useApiError();
   const setGameHeader = useSetGameHeader();
 
-  const gameTypeId = searchParams.get('game') || '1';
-  const urlConfig = GAME_CONFIGS[gameTypeId] || GAME_CONFIGS['1'];
+  const rawGameParam = searchParams.get('game') || '1';
+  // Accept both numeric config IDs ('1','2'...) and game-type keys ('coffee-roulette'...).
+  // The backend individual-invite flow auto-detects from DB and sends the key string;
+  // LaunchActivity sends the numeric ID. Support both so links always land on the right game.
+  const gameTypeId = GAME_CONFIGS[rawGameParam]
+    ? rawGameParam
+    : (GAME_KEY_TO_CONFIG_ID[rawGameParam as keyof typeof GAME_KEY_TO_CONFIG_ID] ?? '1');
+  const urlConfig = GAME_CONFIGS[gameTypeId] ?? GAME_CONFIGS['1'];
 
   // ─── Current user identity (server-driven) ─────────────────────────────────
   const identity = useEventIdentity(eventId || undefined);
