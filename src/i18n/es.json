@@ -1627,6 +1627,14 @@
           "notNow": "Ahora no"
         }
       },
+      "voiceCall": {
+        "initiating": "Llamando…",
+        "incoming": "Llamada entrante",
+        "waitingForResponse": "Esperando respuesta…",
+        "expiringIn": "Expira en {{seconds}} segundos",
+        "decline": "Rechazar",
+        "accept": "Aceptar"
+      },
       "complete": {
         "title": "¡Gran conexión! ☕",
         "duration": "Duración",

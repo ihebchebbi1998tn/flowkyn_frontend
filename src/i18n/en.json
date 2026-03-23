@@ -1327,6 +1327,14 @@
           "notNow": "Not now"
         }
       },
+      "voiceCall": {
+        "initiating": "Calling…",
+        "incoming": "Incoming call",
+        "waitingForResponse": "Waiting for response…",
+        "expiringIn": "Expiring in {{seconds}} seconds",
+        "decline": "Decline",
+        "accept": "Accept"
+      },
       "complete": {
         "title": "Great Connection! ☕",
         "duration": "Duration",

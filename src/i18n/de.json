@@ -2396,6 +2396,14 @@
           "notNow": "Nicht jetzt"
         }
       },
+      "voiceCall": {
+        "initiating": "Anruf wird hergestellt…",
+        "incoming": "Eingehender Anruf",
+        "waitingForResponse": "Warte auf Antwort…",
+        "expiringIn": "Läuft in {{seconds}} Sekunden ab",
+        "decline": "Ablehnen",
+        "accept": "Annehmen"
+      },
       "complete": {
         "title": "Tolle Verbindung! ☕",
         "duration": "Dauer",
