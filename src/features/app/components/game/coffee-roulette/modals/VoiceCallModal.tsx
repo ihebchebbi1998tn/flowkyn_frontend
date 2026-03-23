@@ -151,27 +151,18 @@ export function VoiceCallModal({
               : 'border-green-300 dark:border-green-700'
           )}>
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <DialogHeader className="flex-1">
-                <DialogTitle className={cn(
-                  'text-lg font-bold flex items-center gap-2',
-                  isInitiator ? 'text-blue-700 dark:text-blue-400' : 'text-green-700 dark:text-green-400'
-                )}>
-                  <Phone className={cn(
-                    'h-5 w-5',
-                    isInitiator ? 'text-blue-600' : 'text-green-600 animate-pulse'
-                  )} />
-                  {isInitiator ? t('gamePlay.coffeeRoulette.voiceCall.initiating') : t('gamePlay.coffeeRoulette.voiceCall.incoming')}
-                </DialogTitle>
-              </DialogHeader>
-              <button
-                onClick={handleClose}
-                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-                disabled={isLoading}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
+            <DialogHeader>
+              <DialogTitle className={cn(
+                'text-lg font-bold flex items-center gap-2',
+                isInitiator ? 'text-blue-700 dark:text-blue-400' : 'text-green-700 dark:text-green-400'
+              )}>
+                <Phone className={cn(
+                  'h-5 w-5',
+                  isInitiator ? 'text-blue-600' : 'text-green-600 animate-pulse'
+                )} />
+                {isInitiator ? t('gamePlay.coffeeRoulette.voiceCall.initiating') : t('gamePlay.coffeeRoulette.voiceCall.incoming')}
+              </DialogTitle>
+            </DialogHeader>
 
             {/* Partner Info */}
             <div className="flex flex-col items-center gap-4 py-2">
