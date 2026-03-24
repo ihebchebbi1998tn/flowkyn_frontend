@@ -428,7 +428,7 @@ function GamePlayWithoutBoundary() {
       gamesApi.getActiveSession(eventId).then((s: any) => {
         if (s?.id) setSessionId(s.id);
       }).catch(() => {});
-    }, 2000);
+    }, 1000);
     return () => clearInterval(pollId);
   }, [eventId, sessionId]);
 
@@ -485,6 +485,12 @@ function GamePlayWithoutBoundary() {
         const sessionIdFromPayload = data.payload?.sessionId;
         if (sessionIdFromPayload) {
           setSessionId(sessionIdFromPayload);
+          // Trigger an immediate state sync after a short delay to allow game:join to complete.
+          // This ensures the player gets the latest snapshot right away instead of waiting
+          // for the next periodic sync or game:data broadcast.
+          setTimeout(() => {
+            requestStateSync?.('session_created_notification');
+          }, 800);
         } else {
           // Fallback: resolve latest active session from API
           gamesApi.getActiveSession(eventId).then((s: any) => setSessionId(s ? s.id : null)).catch(() => {});
@@ -494,7 +500,7 @@ function GamePlayWithoutBoundary() {
 
     const unsub = eventsSocket.on('event:notification', handleEventNotification);
     return unsub;
-  }, [eventsSocket.isConnected, eventId, refetchParticipants, refetchPosts]);
+  }, [eventsSocket.isConnected, eventId, refetchParticipants, refetchPosts, requestStateSync]);
 
   useParticipantProfileRealtimeSync({
     eventId: eventId || undefined,

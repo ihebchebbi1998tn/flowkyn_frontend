@@ -369,6 +369,25 @@ export function useGameStateSync({
     onGameDebug,
   ]);
 
+  // Immediate state sync when a new session is discovered.
+  // When sessionId transitions from null to a value, the player may have missed
+  // the initial game:data broadcast. This triggers a fast catch-up sync.
+  const prevSessionIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!sessionId || !gamesSocket.isConnected) {
+      prevSessionIdRef.current = sessionId;
+      return;
+    }
+    // Only fire when sessionId transitions from null/different to a new value
+    if (prevSessionIdRef.current !== sessionId) {
+      prevSessionIdRef.current = sessionId;
+      const timer = window.setTimeout(() => {
+        void requestStateSync('session_discovered');
+      }, 500);
+      return () => window.clearTimeout(timer);
+    }
+  }, [sessionId, gamesSocket.isConnected, requestStateSync]);
+
   // Extra periodic safety refresh:
   // If a client briefly missed a state update during join/room reconnect,
   // periodic state_sync helps keep phase timers stable (no "reset on reload")

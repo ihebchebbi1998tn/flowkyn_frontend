@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameResults, CountdownOverlay, type GamePhase, InsightsModal } from '../shared';
 import {
@@ -84,8 +84,19 @@ export function TwoTruthsBoard({
   const [lieIndex, setLieIndex] = useState(2);
   const voted = !!votes[currentUserId];
   const [showCountdown, setShowCountdown] = useState(false);
+  const [showStartingTransition, setShowStartingTransition] = useState(false);
   const [activeSubmissionPhase, setActiveSubmissionPhase] = useState<'input' | 'review' | null>(null);
   const [animatingReveal, setAnimatingReveal] = useState(false);
+
+  const prevPhaseRef = useRef(phase);
+
+  useEffect(() => {
+    // If phase transitions from waiting to submit, and we didn't initiate it (we are not showing the host countdown)
+    if (prevPhaseRef.current === 'waiting' && phase === 'submit' && !showCountdown) {
+      setShowStartingTransition(true);
+    }
+    prevPhaseRef.current = phase;
+  }, [phase, showCountdown]);
 
   // Presenter doesn't need to "select a lie" again during the vote phase.
   useEffect(() => {
@@ -172,6 +183,7 @@ export function TwoTruthsBoard({
     <div className="space-y-4">
       <HowItWorksModal open={howOpen} onOpenChange={setHowOpen} baseKey="gameHowItWorks.twoTruths" />
       <CountdownOverlay active={showCountdown} onComplete={handleCountdownDone} />
+      <CountdownOverlay active={showStartingTransition} onComplete={() => setShowStartingTransition(false)} />
       
       <TwoTruthsHeader
         round={round}
