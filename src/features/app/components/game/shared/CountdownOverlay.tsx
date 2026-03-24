@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { playCountBeep, playGoBeep } from './audio';
@@ -47,6 +47,11 @@ export function CountdownOverlay({
     setShowParticles(false);
   }, []);
 
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
   useEffect(() => {
     if (!active) { reset(); return; }
 
@@ -65,13 +70,13 @@ export function CountdownOverlay({
             setShowFinal(true);
             setShowParticles(true);
             playGoBeep();
-            setTimeout(() => { setShowFinal(false); setShowParticles(false); onComplete(); }, 1000);
+            setTimeout(() => { setShowFinal(false); setShowParticles(false); onCompleteRef.current(); }, 1000);
           }
         }, i * 900)
       );
     }
     return () => intervals.forEach(clearTimeout);
-  }, [active, from, onComplete, reset]);
+  }, [active, from, reset]);
 
   if (!active && !count && !showFinal) return null;
 
