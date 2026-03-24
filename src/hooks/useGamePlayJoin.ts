@@ -118,8 +118,8 @@ export function useGamePlayJoin({
   useEffect(() => {
     if (isIdentityLoading) return;
     if (participantId) return;
-    if (profile && !showProfileEdit && !hasJoined && !isJoining) handleJoin();
-  }, [profile, showProfileEdit, hasJoined, isJoining, participantId, handleJoin, isIdentityLoading]);
+    if (profile && !showProfileEdit && !hasJoined && !isJoining && !joinError) handleJoin();
+  }, [profile, showProfileEdit, hasJoined, isJoining, joinError, participantId, handleJoin, isIdentityLoading]);
 
   return { hasJoined, setHasJoined, isJoining, joinError, handleJoin };
 }

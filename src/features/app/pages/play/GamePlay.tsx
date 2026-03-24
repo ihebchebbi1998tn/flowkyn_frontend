@@ -127,6 +127,15 @@ function GamePlayWithoutBoundary() {
   const currentUserName = profile?.displayName || displayName;
   const currentUserAvatarUrl = profile?.avatarUrl || avatarUrl;
 
+  // If there's a join error (e.g., name taken), force the profile edit modal open 
+  // so the user can change their name and retry.
+  useEffect(() => {
+    if (joinError) {
+      setShowProfileEdit(true);
+      showError(new Error(joinError), joinError);
+    }
+  }, [joinError, showError]);
+
   const handleProfileSave = useCallback(async (data: ProfileSetupData) => {
     if (!eventId) return;
     await upsertProfile.mutateAsync({ display_name: data.displayName, avatar_url: data.avatarUrl || null });
@@ -422,15 +431,16 @@ function GamePlayWithoutBoundary() {
   }, [eventId]);
 
   // Poll for session when we don't have one (guest may have missed game:session_created via socket)
+  // CRITICAL: Only poll if hasJoined is true, otherwise it triggers a 401 loop
   useEffect(() => {
-    if (!eventId || sessionId) return;
+    if (!eventId || sessionId || !hasJoined) return;
     const pollId = setInterval(() => {
       gamesApi.getActiveSession(eventId).then((s: any) => {
         if (s?.id) setSessionId(s.id);
       }).catch(() => {});
     }, 1000);
     return () => clearInterval(pollId);
-  }, [eventId, sessionId]);
+  }, [eventId, sessionId, hasJoined]);
 
   // Reconnect backfill: when events socket reconnects, refetch messages/participants/posts
   const wasEventsConnectedRef = useRef(false);
