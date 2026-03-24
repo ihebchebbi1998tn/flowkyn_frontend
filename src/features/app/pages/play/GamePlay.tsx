@@ -486,6 +486,7 @@ function GamePlayWithoutBoundary() {
     setInitialSnapshot,
     setGameData,
     setIsGameAdmin,
+    currentPhase: (gameData as any)?.phase || null,
     onGameJoinError: (err) => {
       const exact = (err as any)?.message || (err as any)?.code || (err as any)?.error || String(err);
       setGamesSocketError(String(exact));

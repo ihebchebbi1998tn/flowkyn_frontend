@@ -30,6 +30,7 @@ interface UseGameStateSyncOptions {
   onGameJoinError?: (err: unknown) => void;
   onGameDebug?: (evt: { type: string; detail?: string; data?: unknown }) => void;
   onGameJoinAck?: (payload: any) => void;
+  currentPhase?: string | null;
 }
 
 /**
@@ -48,6 +49,7 @@ export function useGameStateSync({
   onGameJoinError,
   onGameDebug,
   onGameJoinAck,
+  currentPhase,
 }: UseGameStateSyncOptions): { requestStateSync: (reason: string) => Promise<void> } {
   const lastServerGameUpdateAtRef = useRef<number>(Date.now());
   const lastSnapshotRevisionIdRef = useRef<string | null>(null);
@@ -56,6 +58,7 @@ export function useGameStateSync({
   const lastStateSyncStartedAtRef = useRef(0);
   const joinedGameAckRef = useRef<{ sessionId: string; at: number } | null>(null);
   const coffeeFollowupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastPhaseRef = useRef<string | null>(null);
 
   // Reset join-ack guard when switching sessions or losing connection.
   useEffect(() => {
@@ -99,6 +102,7 @@ export function useGameStateSync({
       lastSnapshotRevisionIdRef.current =
         typeof data?.snapshotRevisionId === 'string' ? data.snapshotRevisionId : lastSnapshotRevisionIdRef.current;
       lastServerGameUpdateAtRef.current = Date.now();
+      lastPhaseRef.current = (data.snapshot as any)?.phase || null;
 
       setInitialSnapshot(data.snapshot);
       setGameData(data.snapshot);
@@ -255,6 +259,7 @@ export function useGameStateSync({
         lastSnapshotRevisionTimeRef.current = incomingRevisionTime || currentRevisionTime;
         lastSnapshotRevisionIdRef.current = incomingRevisionId;
         lastServerGameUpdateAtRef.current = Date.now();
+        lastPhaseRef.current = snap.phase || null;
         console.log('[GamePlay] Updating game state from game:state event:', snap.kind, {
           incomingRevisionId,
           incomingRevisionTime,
@@ -300,6 +305,7 @@ export function useGameStateSync({
         lastSnapshotRevisionTimeRef.current = incomingRevisionTime || currentRevisionTime;
         lastSnapshotRevisionIdRef.current = incomingRevisionId;
         lastServerGameUpdateAtRef.current = Date.now();
+        lastPhaseRef.current = (payload.gameData as any)?.phase || null;
         console.log('[GamePlay] Received game:data event:', payload.gameData.kind, {
           incomingRevisionId,
           incomingRevisionTime,
@@ -396,15 +402,27 @@ export function useGameStateSync({
     if (!gamesSocket.isConnected) return;
     if (!sessionId) return;
 
-    // 30s fallback — state is kept current by game:data push events.
-    // This interval is a safety net for missed events only, not the primary sync mechanism.
-    const intervalMs = 30000;
+    // 30s standard fallback, but 5s if we are in 'waiting' phase to catch game start quickly.
+    const intervalMs = currentPhase === 'waiting' ? 5000 : 30000;
+    
     const id = window.setInterval(() => {
       void requestStateSync('periodic_refresh');
     }, intervalMs);
 
     return () => clearInterval(id);
-  }, [gamesSocket.isConnected, sessionId, participantId, hasJoined, requestStateSync]);
+  }, [gamesSocket.isConnected, sessionId, participantId, hasJoined, requestStateSync, currentPhase]);
+
+  // Tab Visibility Sync Trigger
+  useEffect(() => {
+    if (!sessionId) return;
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && gamesSocket.isConnected) {
+        void requestStateSync('tab_visibility_visible');
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [sessionId, gamesSocket.isConnected, requestStateSync]);
 
   // When another player joins the game room, sync immediately (shuffle may have just happened)
   useEffect(() => {
