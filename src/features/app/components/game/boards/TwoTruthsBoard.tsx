@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GameResults, CountdownOverlay, type GamePhase, InsightsModal } from '../shared';
 import {
@@ -39,7 +39,6 @@ export interface TwoTruthsBoardProps extends BaseGameBoardProps {
   currentUserAvatar: string;
   activeRoundId: string | null;
   onEmitAction: (actionType: string, payload?: unknown) => Promise<void>;
-  isAdmin?: boolean;
 }
 
 function isTwoTruthsSnapshot(value: unknown): value is TwoTruthsSnapshot {
@@ -58,7 +57,6 @@ export function TwoTruthsBoard({
   initialSnapshot,
   onEmitAction,
   gameData,
-  isAdmin = false,
 }: TwoTruthsBoardProps) {
   const { t } = useTranslation();
   const [howOpen, setHowOpen] = useState(false);
@@ -83,6 +81,14 @@ export function TwoTruthsBoard({
   const [selectedVote, setSelectedVote] = useState<'s0' | 's1' | 's2' | null>(null);
   const [lieIndex, setLieIndex] = useState(2);
   const voted = !!votes[currentUserId];
+  const eligibleVoterCount = useMemo(
+    () =>
+      presenterId ? participants.filter((p) => p.id !== presenterId).length : 0,
+    [participants, presenterId],
+  );
+  const voteCount = Object.keys(votes).length;
+  const allNonPresentersHaveVoted =
+    eligibleVoterCount === 0 || voteCount >= eligibleVoterCount;
   const [showCountdown, setShowCountdown] = useState(false);
   const [showStartingTransition, setShowStartingTransition] = useState(false);
   const [activeSubmissionPhase, setActiveSubmissionPhase] = useState<'input' | 'review' | null>(null);
@@ -206,11 +212,7 @@ export function TwoTruthsBoard({
 
       {/* WAITING */}
       {phase === 'waiting' && (
-        <TwoTruthsWaitingSection 
-          onStart={startGame} 
-          isAdmin={isAdmin}
-          rounds={totalRounds}
-        />
+        <TwoTruthsWaitingSection onStart={startGame} rounds={totalRounds} />
       )}
 
       {/* SUBMIT */}
@@ -255,14 +257,25 @@ export function TwoTruthsBoard({
         />
       )}
 
-      {phase === 'vote' && (isPresenter || isAdmin) && (
-        <div className="flex justify-end">
+      {phase === 'vote' && isPresenter && (
+        <div className="flex flex-col items-end gap-1">
           <button
-            className="text-[11px] text-muted-foreground hover:text-foreground underline"
+            type="button"
+            disabled={!allNonPresentersHaveVoted}
+            className="text-[11px] text-muted-foreground hover:text-foreground underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
             onClick={reveal}
           >
-            {t('gamePlay.twoTruths.revealHost', { defaultValue: 'Reveal (host)' })}
+            {t('gamePlay.twoTruths.revealAnswers', { defaultValue: 'Reveal answers' })}
           </button>
+          {!allNonPresentersHaveVoted && eligibleVoterCount > 0 && (
+            <p className="text-[10px] text-muted-foreground text-right max-w-xs">
+              {t('gamePlay.twoTruths.waitForAllVotes', {
+                defaultValue: 'Wait for every player to vote ({{count}}/{{total}}).',
+                count: voteCount,
+                total: eligibleVoterCount,
+              })}
+            </p>
+          )}
         </div>
       )}
 
@@ -275,7 +288,7 @@ export function TwoTruthsBoard({
           selectedVote={votes[currentUserId] || selectedVote}
           showDrumroll={false}
           onNextRound={nextRound}
-          canAdvance={isAdmin}
+          canAdvance={isPresenter}
           isLastRound={round >= totalRounds}
         />
       )}

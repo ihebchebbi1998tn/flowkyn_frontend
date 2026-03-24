@@ -67,13 +67,11 @@ export function TwoTruthsHeader({
 
 interface WaitingSectionProps {
   onStart: () => void;
-  isAdmin?: boolean;
   rounds: number;
 }
 
 export function TwoTruthsWaitingSection({
   onStart,
-  isAdmin,
 }: WaitingSectionProps) {
   const { t } = useTranslation();
 
@@ -96,17 +94,10 @@ export function TwoTruthsWaitingSection({
             variant="brand"
             onClick={onStart}
             size="xl"
-            disabled={!isAdmin}
-            className="px-10 gap-2.5 shadow-lg shadow-primary/20 transform hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="px-10 gap-2.5 shadow-lg shadow-primary/20 transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             <Zap className="h-5 w-5" /> {t('gamePlay.twoTruths.startRound', { round: 1 })}
           </Button>
-
-          {!isAdmin && (
-            <p className="mt-3 text-[11px] text-muted-foreground">
-              {t('gamePlay.twoTruths.waitingForHostToStart', { defaultValue: 'Waiting for the host to start the game…' })}
-            </p>
-          )}
         </div>
       </div>
     </div>
@@ -640,7 +631,9 @@ export function TwoTruthsRevealSection({
           </GameActionButton>
         ) : (
           <span className="text-[11px] text-muted-foreground">
-            {t('gamePlay.twoTruths.waitForHost', { defaultValue: 'Waiting for the host…' })}
+            {t('gamePlay.twoTruths.waitForPresenter', {
+              defaultValue: 'Waiting for the presenter to continue…',
+            })}
           </span>
         )}
       </div>

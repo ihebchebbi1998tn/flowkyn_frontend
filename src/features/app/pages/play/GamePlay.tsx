@@ -234,7 +234,7 @@ function GamePlayWithoutBoundary() {
   const [activeRoundId, setActiveRoundId] = useState<string | null>(null);
   const [initialSnapshot, setInitialSnapshot] = useState<unknown>(null);
   const [gameData, setGameData] = useState<unknown>(null);
-  const [isGameAdmin, setIsGameAdmin] = useState<boolean>(false);
+  const [, setIsGameAdmin] = useState<boolean>(false);
 
   // Log gameData changes for debugging
   useEffect(() => {
@@ -850,7 +850,6 @@ function GamePlayWithoutBoundary() {
           setInitialSnapshot={setInitialSnapshot}
           gameData={gameData}
           setGameData={setGameData}
-          isGameAdmin={isGameAdmin}
           winsPosts={winsPosts}
           canPostWins={canPostWins}
           winsEndTimeIso={winsEndTimeIso}

@@ -124,7 +124,13 @@ export function useGameActionEmitter({
           if (backendCode === 'SESSION_NOT_ACTIVE') {
             showError(err, t('games.errors.sessionNotActive', 'Cannot start a game because the event is not active yet. Ask your workspace admin or host to start the event first.'));
           } else if (backendCode === 'INSUFFICIENT_PERMISSIONS' || backendCode === 'FORBIDDEN') {
-            showError(err, t('games.errors.notAuthorizedToStart', 'Only event admins or moderators can start this game. Ask your facilitator to launch it for the group.'));
+            showError(
+              err,
+              t(
+                'games.errors.notAuthorizedToStart',
+                "You can't start this game yet. Join the event as a participant, or ask an event admin.",
+              ),
+            );
           } else if (backendCode === 'NOT_A_MEMBER') {
             showError(err, t('games.errors.notMember', 'You are not a member of this workspace for this event. Please contact your admin if this feels wrong.'));
           } else {

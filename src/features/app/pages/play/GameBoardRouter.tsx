@@ -32,7 +32,6 @@ interface GameBoardRouterProps {
   setInitialSnapshot: (snap: unknown) => void;
   gameData: unknown;
   setGameData: (data: unknown) => void;
-  isGameAdmin: boolean;
   winsPosts: Array<{
     id: string;
     authorName: string;
@@ -67,7 +66,6 @@ export function GameBoardRouter({
   setInitialSnapshot,
   gameData,
   setGameData,
-  isGameAdmin,
   winsPosts,
   canPostWins,
   winsEndTimeIso,
@@ -116,7 +114,6 @@ export function GameBoardRouter({
           initialSnapshot={initialSnapshot}
           gameData={gameData}
           onEmitAction={onEmitAction}
-          isAdmin={isGameAdmin}
         />
       );
     case GAME_TYPES.COFFEE_ROULETTE:
