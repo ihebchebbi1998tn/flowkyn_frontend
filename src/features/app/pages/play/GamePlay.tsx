@@ -467,6 +467,27 @@ function GamePlayWithoutBoundary() {
     return () => clearInterval(interval);
   }, [eventId, hasJoined, refetchParticipants]);
 
+  const { requestStateSync } = useGameStateSync({
+    gamesSocket: gamesSocket as any,
+    sessionId,
+    hasJoined,
+    participantId,
+    setActiveRoundId,
+    setInitialSnapshot,
+    setGameData,
+    setIsGameAdmin,
+    onGameJoinError: (err) => {
+      const exact = (err as any)?.message || (err as any)?.code || (err as any)?.error || String(err);
+      setGamesSocketError(String(exact));
+      setGamesSocketErrorCode((err as any)?.code ? String((err as any).code) : null);
+      setGamesSocketErrorDetails((err as any)?.details ?? null);
+      showError(err, String(exact));
+    },
+    onGameJoinAck: () => {
+      setGameJoinAckReceived(true);
+    },
+  });
+
   // Listen for event notifications (participant join, game session, posts)
   useEffect(() => {
     if (!eventsSocket.isConnected || !eventId) return;
@@ -574,26 +595,6 @@ function GamePlayWithoutBoundary() {
     t,
   ]);
 
-  const { requestStateSync } = useGameStateSync({
-    gamesSocket: gamesSocket as any,
-    sessionId,
-    hasJoined,
-    participantId,
-    setActiveRoundId,
-    setInitialSnapshot,
-    setGameData,
-    setIsGameAdmin,
-    onGameJoinError: (err) => {
-      const exact = (err as any)?.message || (err as any)?.code || (err as any)?.error || String(err);
-      setGamesSocketError(String(exact));
-      setGamesSocketErrorCode((err as any)?.code ? String((err as any).code) : null);
-      setGamesSocketErrorDetails((err as any)?.details ?? null);
-      showError(err, String(exact));
-    },
-    onGameJoinAck: () => {
-      setGameJoinAckReceived(true);
-    },
-  });
 
   const chatReady = eventsSocket.status === 'connected' && eventRoomJoined;
   const gamesReady =
