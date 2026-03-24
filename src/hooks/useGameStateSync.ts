@@ -57,6 +57,7 @@ export function useGameStateSync({
   const stateSyncInFlightRef = useRef(false);
   const lastStateSyncStartedAtRef = useRef(0);
   const joinedGameAckRef = useRef<{ sessionId: string; at: number } | null>(null);
+  const joinInFlightRef = useRef<string | null>(null);
   const coffeeFollowupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastPhaseRef = useRef<string | null>(null);
 
@@ -64,10 +65,12 @@ export function useGameStateSync({
   useEffect(() => {
     if (!sessionId) {
       joinedGameAckRef.current = null;
+      joinInFlightRef.current = null;
       return;
     }
     if (gamesSocket.status !== 'connected') {
       joinedGameAckRef.current = null;
+      joinInFlightRef.current = null;
     }
   }, [sessionId, gamesSocket.status]);
 
@@ -119,9 +122,14 @@ export function useGameStateSync({
   );
 
   const joinGameRoom = useCallback(() => {
+    // Don't join until identity/join lifecycle is complete; otherwise backend rejects with FORBIDDEN.
+    if (!hasJoined && !participantId) return;
     if (gamesSocket.isConnected && sessionId) {
       // Avoid repeated game:join emissions once we already got an ACK for this session.
       if (joinedGameAckRef.current?.sessionId === sessionId) return;
+      // Prevent overlapping emits for the same session during reconnect/jitter.
+      if (joinInFlightRef.current === sessionId) return;
+      joinInFlightRef.current = sessionId;
       console.log('[GamePlay] Emitting game:join for', sessionId);
       onGameDebug?.({
         type: 'game:join_emit',
@@ -163,6 +171,11 @@ export function useGameStateSync({
             detail: err?.message || String(err),
             data: err,
           });
+        })
+        .finally(() => {
+          if (joinInFlightRef.current === sessionId) {
+            joinInFlightRef.current = null;
+          }
         });
     }
   }, [
@@ -435,6 +448,7 @@ export function useGameStateSync({
 
   useEffect(() => {
     if (!gamesSocket.isConnected || !sessionId) return;
+    if (!hasJoined && !participantId) return;
     // Stop retry spam once we already got an ACK for this session.
     if (joinedGameAckRef.current?.sessionId === sessionId) return;
 
