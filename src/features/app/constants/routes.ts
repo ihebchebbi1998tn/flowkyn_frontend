@@ -56,6 +56,9 @@ export const ROUTES = {
   SETTINGS: '/settings',
 
   // Dev/Testing
+  AI_IDEA_CHAT: '/ai/idea-chat',
+
+  // Dev/Testing
   UI_TESTS: '/uitests',
   UI_TESTS_ALT: '/ui-tests',
 

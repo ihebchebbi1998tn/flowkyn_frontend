@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutGrid, Gamepad2, Building, TrendingUp, BellDot,
-  UsersRound, Cog, LogOut, X, LifeBuoy,
+  UsersRound, Cog, LogOut, X, LifeBuoy, Sparkles,
 } from 'lucide-react';
 import { NavLink } from '@/components/navigation/NavLink';
 import {
@@ -30,6 +30,7 @@ export function AppSidebar() {
     { title: t('nav.games'), url: ROUTES.GAMES, icon: Gamepad2, id: 'tour-games' },
     { title: t('nav.organizations'), url: ROUTES.ORGANIZATIONS, icon: Building, id: 'tour-organizations' },
     { title: t('nav.analytics'), url: ROUTES.ANALYTICS, icon: TrendingUp, id: 'tour-analytics' },
+    { title: t('nav.aiIdeaChat', { defaultValue: 'AI Idea Chat' }), url: ROUTES.AI_IDEA_CHAT, icon: Sparkles, id: 'tour-ai-idea-chat' },
   ];
 
   const manageNav = [

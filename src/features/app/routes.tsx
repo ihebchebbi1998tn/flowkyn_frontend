@@ -44,6 +44,9 @@ const GameList = lazy(() => import('./pages/games/GameList'));
 const GamePlay = lazy(() => import('./pages/play/GamePlay'));
 const SessionDetailsPage = lazy(() => import('./pages/sessions/SessionDetailsPage'));
 
+/* ─── Dev / Testing ─── */
+const IdeaChatPage = lazy(() => import('./pages/ai/IdeaChatPage'));
+
 /* ─── Activities ─── */
 const ActivityDetail = lazy(() => import('./pages/activities/ActivityDetail'));
 const LaunchActivity = lazy(() => import('./pages/activities/LaunchActivity'));
@@ -89,6 +92,9 @@ export const appRoutes = (
 
       <Route path={ROUTES.ACTIVITY_DETAIL()} element={<RouteErrorBoundary section="Activity"><ActivityDetail /></RouteErrorBoundary>} />
       <Route path={ROUTES.ACTIVITY_LAUNCH()} element={<RouteErrorBoundary section="Launch Activity"><LaunchActivity /></RouteErrorBoundary>} />
+
+      {/* Dev / Testing */}
+      <Route path={ROUTES.AI_IDEA_CHAT} element={<RouteErrorBoundary section="AI Idea Chat"><IdeaChatPage /></RouteErrorBoundary>} />
 
       {/* Support & Bug Reports */}
       <Route path={ROUTES.SUPPORT_REPORT} element={<RouteErrorBoundary section="Support"><SupportPage /></RouteErrorBoundary>} />
