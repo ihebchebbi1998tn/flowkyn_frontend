@@ -277,7 +277,7 @@ export default function EventDetail() {
     {
       icon: Gamepad2,
       label: 'events.gameType',
-      value: event.game_type_name || event.game_type || t('events.gameTypeUnknown', { defaultValue: 'Not configured' }),
+      value: (event as any).game_type_name || (event as any).game_type || t('events.gameTypeUnknown', { defaultValue: 'Not configured' }),
       gradient: 'primary' as const,
     },
     {

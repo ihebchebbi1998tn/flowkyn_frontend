@@ -9,6 +9,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -23,6 +24,7 @@ interface TopicQuestionsMapperProps {
 }
 
 export function TopicQuestionsMapper({ eventId, configId }: TopicQuestionsMapperProps) {
+  const { t } = useTranslation();
   const [topics, setTopics] = useState<CoffeeRouletteTopic[]>([]);
   const [questions, setQuestions] = useState<CoffeeRouletteQuestion[]>([]);
   const [topicQuestions, setTopicQuestions] = useState<Map<string, CoffeeRouletteQuestion[]>>(new Map());

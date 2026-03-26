@@ -30,7 +30,6 @@ export function AppSidebar() {
     { title: t('nav.games'), url: ROUTES.GAMES, icon: Gamepad2, id: 'tour-games' },
     { title: t('nav.organizations'), url: ROUTES.ORGANIZATIONS, icon: Building, id: 'tour-organizations' },
     { title: t('nav.analytics'), url: ROUTES.ANALYTICS, icon: TrendingUp, id: 'tour-analytics' },
-    { title: t('nav.aiIdeaChat', { defaultValue: 'AI Idea Chat' }), url: ROUTES.AI_IDEA_CHAT, icon: Sparkles, id: 'tour-ai-idea-chat' },
   ];
 
   const manageNav = [
@@ -58,21 +57,25 @@ export function AppSidebar() {
           <NavLink to={item.url} end={item.url === ROUTES.DASHBOARD}
             onClick={handleNavClick}
             className={cn(
-              "group flex items-center gap-3 rounded-lg text-body-sm font-medium transition-colors duration-150",
-              collapsed ? "justify-center px-0 py-2.5" : "px-3 py-2",
+              "group relative flex items-center gap-2.5 rounded-md text-[13px] font-medium transition-colors duration-150",
+              collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
               active
                 ? "bg-primary/10 text-primary"
                 : "text-sidebar-foreground hover:text-foreground hover:bg-sidebar-accent",
             )}
-            activeClassName="bg-primary/10 text-primary font-medium"
+            activeClassName="bg-primary/10 text-primary font-semibold"
           >
+            {/* Active indicator */}
+            {active && !collapsed && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-primary" />
+            )}
             <item.icon className={cn(
-              "h-4 w-4 shrink-0 transition-colors duration-150",
+              "h-[18px] w-[18px] shrink-0 transition-colors",
               active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-            )} strokeWidth={active ? 2 : 1.7} />
+            )} strokeWidth={active ? 2 : 1.5} />
             {!collapsed && <span className="flex-1 truncate">{item.title}</span>}
             {!collapsed && item.badge ? (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-label-xs font-bold text-destructive-foreground">
+              <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
                 {item.badge}
               </span>
             ) : null}
@@ -83,16 +86,16 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar-background">
       <SidebarHeader className="px-3 py-4">
         <div className="flex items-center justify-between">
-          <Link to={ROUTES.DASHBOARD} onClick={handleNavClick} className="flex items-center justify-center w-full py-2">
-            <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className={cn("object-contain transition-all duration-200", collapsed ? "h-10 w-10" : "h-16 w-16")} />
+          <Link to={ROUTES.DASHBOARD} onClick={handleNavClick} className="flex items-center justify-center w-full py-0.5">
+            <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className={cn("object-contain transition-all", collapsed ? "h-8 w-8" : "h-10 w-10")} />
           </Link>
           {isMobile && (
             <button
               onClick={() => setOpenMobile(false)}
-              className="absolute right-3 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+              className="absolute right-3 top-4 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -103,7 +106,7 @@ export function AppSidebar() {
       <SidebarContent className={cn("py-1", collapsed ? "px-1.5" : "px-2")}>
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-label-xs uppercase tracking-widest text-muted-foreground/50 px-3 mb-1">
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground/50 px-2.5 mb-1">
               {t('nav.menu', { defaultValue: 'Menu' })}
             </SidebarGroupLabel>
           )}
@@ -114,11 +117,13 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className={cn("my-2 h-px bg-sidebar-border/50", collapsed ? "mx-2" : "mx-3")} />
+        <div className={cn("my-2", collapsed ? "mx-2" : "mx-2.5")}>
+          <div className="h-px bg-sidebar-border" />
+        </div>
 
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-label-xs uppercase tracking-widest text-muted-foreground/50 px-3 mb-1">
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground/50 px-2.5 mb-1">
               {t('nav.manage', { defaultValue: 'Manage' })}
             </SidebarGroupLabel>
           )}
@@ -130,25 +135,29 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-2 border-t border-sidebar-border/50">
+      <SidebarFooter className="p-2.5 border-t border-sidebar-border">
         {user && (
-          <div className={cn("flex items-center gap-2 w-full rounded-lg p-2", collapsed && "flex-col")}>
-            <div className={cn("flex items-center gap-3 flex-1 min-w-0", collapsed && "justify-center")}>
+          <div className={cn(
+            "flex items-center gap-2 w-full rounded-md p-2 transition-colors",
+            "hover:bg-sidebar-accent",
+            collapsed && "flex-col p-1.5"
+          )}>
+            <div className={cn("flex items-center gap-2.5 flex-1 min-w-0", collapsed && "justify-center")}>
               <Avatar className="h-7 w-7 shrink-0">
-                <AvatarFallback className="bg-primary/10 text-primary text-label-xs font-semibold">
+                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">
                   {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
               {!collapsed && (
                 <div className="flex-1 min-w-0 text-left">
-                  <p className="text-body-sm font-medium text-foreground truncate">{user.name}</p>
-                  <p className="text-label-xs text-muted-foreground truncate">{user.email}</p>
+                  <p className="text-[13px] font-medium text-foreground truncate">{user.name}</p>
+                  <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
                 </div>
               )}
             </div>
             <button
               onClick={handleLogout}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               title={t('nav.logout')}
             >
               <LogOut className="h-3.5 w-3.5" />

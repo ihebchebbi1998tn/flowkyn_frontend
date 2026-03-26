@@ -1,49 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   FLOWKYN DESIGN SYSTEM v2 — Premium Enterprise SaaS
+   FLOWKYN DESIGN SYSTEM v4 — Premium SaaS × Discord Gaming
    
-   Inspired by Kahoot's energy + Stripe's precision + Linear's sophistication.
-   
-   Color reference:
-   Primary:    #6C5CE7  →  248 76% 64%
-   Dark:       #5848D6  →  248 63% 56%
-   Accent:     #A29BFE  →  245 98% 81%
-   Background: #F8F9FC  →  228 40% 98%
-   Surface:    #FFFFFF  →  0 0% 100%
-   Border:     #E8EAF0  →  228 28% 93%
-   Text:       #111827  →  221 39% 11%
-   Text Sec:   #6B7280  →  220 9% 46%
-   
-   Spacing scale: 4 · 8 · 12 · 16 · 24 · 32 · 40 · 48
-   Border radius: 6px (sm) · 8px (md) · 10px (lg) · 12px (xl) · 16px (2xl)
+   Dense, layered surfaces. Indigo-purple brand. Professional but alive.
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    /* ─── Core surfaces ─── */
-    --background: 228 40% 98%;
-    --foreground: 221 39% 11%;
+    /* ─── Core surfaces — Warm gray, barely tinted ─── */
+    --background: 220 14% 96%;
+    --foreground: 224 71% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 221 39% 11%;
+    --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 221 39% 11%;
+    --popover-foreground: 224 71% 4%;
 
-    /* ─── Brand ─── */
-    --primary: 248 76% 64%;
+    /* ─── Brand — Purple, matching Flowkyn logo ─── */
+    --primary: 265 84% 58%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 248 90% 72%;
-    --secondary: 228 20% 95%;
-    --secondary-foreground: 221 39% 11%;
-    --accent: 245 98% 81%;
-    --accent-foreground: 248 63% 56%;
+    --primary-glow: 265 85% 68%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 71% 4%;
+    --accent: 265 30% 94%;
+    --accent-foreground: 265 84% 48%;
 
     /* ─── Semantic ─── */
-    --muted: 228 20% 96%;
+    --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -51,106 +39,106 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 38 92% 14%;
-    --info: 210 90% 56%;
+    --info: 217 91% 60%;
     --info-foreground: 0 0% 100%;
 
     /* ─── Chrome ─── */
-    --border: 228 28% 93%;
-    --input: 228 24% 92%;
-    --ring: 248 76% 64%;
-    --radius: 0.5rem;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 252 87% 58%;
+    --radius: 0.625rem;
 
     /* ─── Auth panel ─── */
-    --auth-panel: 248 63% 56%;
+    --auth-panel: 252 60% 50%;
     --auth-panel-foreground: 0 0% 100%;
 
     /* ─── Legacy brand aliases ─── */
-    --brand-pink: 0 84% 60%;
-    --brand-purple: 248 76% 64%;
-    --brand-violet: 248 63% 56%;
+    --brand-pink: 252 70% 62%;
+    --brand-purple: 252 87% 58%;
+    --brand-violet: 258 72% 52%;
     --brand-orange: 38 92% 50%;
 
     /* ─── Sidebar ─── */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 220 9% 46%;
-    --sidebar-primary: 248 76% 64%;
+    --sidebar-primary: 252 87% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 248 14% 96%;
-    --sidebar-accent-foreground: 248 63% 56%;
-    --sidebar-border: 228 24% 92%;
-    --sidebar-ring: 248 76% 64%;
+    --sidebar-accent: 252 20% 96%;
+    --sidebar-accent-foreground: 252 70% 48%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 252 87% 58%;
     --sidebar-muted-foreground: 220 9% 46%;
 
     /* ─── Charts ─── */
-    --chart-1: 248 76% 64%;
+    --chart-1: 252 87% 58%;
     --chart-2: 160 84% 39%;
     --chart-3: 38 92% 50%;
-    --chart-4: 210 90% 56%;
-    --chart-5: 0 84% 60%;
+    --chart-4: 217 91% 60%;
+    --chart-5: 258 72% 52%;
   }
 
   .dark {
-    /* ─── Core surfaces ─── */
-    --background: 224 22% 6%;
-    --foreground: 220 14% 92%;
-    --card: 224 20% 9%;
-    --card-foreground: 220 14% 92%;
-    --popover: 224 20% 9%;
-    --popover-foreground: 220 14% 92%;
+    /* ─── Core surfaces — Rich dark with subtle warmth ─── */
+    --background: 230 11% 9%;
+    --foreground: 210 20% 92%;
+    --card: 230 11% 12%;
+    --card-foreground: 210 20% 92%;
+    --popover: 230 11% 12%;
+    --popover-foreground: 210 20% 92%;
 
     /* ─── Brand ─── */
-    --primary: 248 76% 70%;
+    --primary: 265 84% 65%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 248 90% 78%;
-    --secondary: 224 14% 14%;
-    --secondary-foreground: 220 14% 92%;
-    --accent: 248 40% 18%;
-    --accent-foreground: 248 76% 80%;
+    --primary-glow: 265 85% 72%;
+    --secondary: 230 11% 15%;
+    --secondary-foreground: 210 20% 92%;
+    --accent: 265 20% 18%;
+    --accent-foreground: 252 80% 78%;
 
-    /* ─── Semantic — WCAG AA contrast-checked ─── */
-    --muted: 224 14% 12%;
-    --muted-foreground: 220 9% 58%;
-    --destructive: 0 72% 55%;
+    /* ─── Semantic ─── */
+    --muted: 230 11% 14%;
+    --muted-foreground: 220 7% 48%;
+    --destructive: 0 63% 55%;
     --destructive-foreground: 0 0% 100%;
-    --success: 160 72% 45%;
+    --success: 160 72% 46%;
     --success-foreground: 0 0% 100%;
     --warning: 38 80% 55%;
     --warning-foreground: 38 92% 14%;
-    --info: 210 80% 64%;
+    --info: 217 80% 64%;
     --info-foreground: 0 0% 100%;
 
     /* ─── Chrome ─── */
-    --border: 224 14% 16%;
-    --input: 224 14% 18%;
-    --ring: 248 76% 70%;
+    --border: 230 10% 17%;
+    --input: 230 10% 17%;
+    --ring: 252 87% 65%;
 
     /* ─── Auth panel ─── */
-    --auth-panel: 224 20% 7%;
-    --auth-panel-foreground: 220 14% 88%;
+    --auth-panel: 230 11% 10%;
+    --auth-panel-foreground: 210 20% 92%;
 
     /* ─── Legacy brand aliases ─── */
-    --brand-pink: 0 72% 55%;
-    --brand-purple: 248 76% 70%;
-    --brand-violet: 248 63% 60%;
+    --brand-pink: 252 70% 62%;
+    --brand-purple: 252 87% 65%;
+    --brand-violet: 258 72% 60%;
     --brand-orange: 38 80% 55%;
 
-    /* ─── Sidebar ─── */
-    --sidebar-background: 224 24% 5%;
-    --sidebar-foreground: 220 10% 60%;
-    --sidebar-primary: 248 76% 70%;
+    /* ─── Sidebar — Deep ─── */
+    --sidebar-background: 230 11% 7%;
+    --sidebar-foreground: 220 7% 48%;
+    --sidebar-primary: 252 87% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 248 16% 14%;
-    --sidebar-accent-foreground: 220 14% 88%;
-    --sidebar-border: 224 14% 14%;
-    --sidebar-ring: 248 76% 70%;
-    --sidebar-muted-foreground: 220 9% 52%;
+    --sidebar-accent: 252 14% 16%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 230 10% 13%;
+    --sidebar-ring: 252 87% 65%;
+    --sidebar-muted-foreground: 220 7% 42%;
 
     /* ─── Charts ─── */
-    --chart-1: 248 76% 70%;
-    --chart-2: 160 72% 45%;
-    --chart-3: 38 80% 55%;
-    --chart-4: 210 80% 64%;
-    --chart-5: 0 72% 55%;
+    --chart-1: 252 87% 68%;
+    --chart-2: 160 72% 48%;
+    --chart-3: 38 80% 58%;
+    --chart-4: 217 80% 66%;
+    --chart-5: 258 72% 62%;
   }
 }
 
@@ -171,140 +159,162 @@
     -moz-osx-font-smoothing: grayscale;
     font-size: 14px;
     line-height: 1.6;
-    letter-spacing: -0.006em;
+    letter-spacing: -0.011em;
   }
 
-  /* ─── Typography scale ─── */
-  h1 { @apply text-2xl font-bold tracking-tight leading-tight; }
-  h2 { @apply text-xl font-bold tracking-tight leading-snug; }
-  h3 { @apply text-base font-semibold leading-snug; }
+  h1 { @apply text-2xl font-bold tracking-tight leading-tight; letter-spacing: -0.025em; }
+  h2 { @apply text-xl font-bold tracking-tight leading-snug; letter-spacing: -0.02em; }
+  h3 { @apply text-base font-semibold leading-snug; letter-spacing: -0.015em; }
   h4 { @apply text-sm font-semibold leading-snug; }
 
-  /* ─── Focus ring system ─── */
   :focus-visible {
-    outline: 2px solid hsl(var(--ring));
+    outline: 2px solid hsl(var(--ring) / 0.4);
     outline-offset: 2px;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.15);
+    color: hsl(var(--foreground));
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   UTILITY CLASSES
+   SCROLLBAR
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-/* ─── Scrollbar ─── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.12);
-  border-radius: 999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.25);
-}
-
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / 0.12); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.25); }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── Brand gradient ─── */
+/* ═══════════════════════════════════════════════════════════════════════════════
+   UTILITY CLASSES — Premium SaaS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
 .brand-gradient {
-  background: linear-gradient(135deg, hsl(248 76% 64%), hsl(248 63% 56%));
+  background: linear-gradient(135deg, hsl(252 87% 58%), hsl(258 72% 52%));
 }
 .brand-gradient-text {
-  background: linear-gradient(135deg, hsl(248 76% 64%), hsl(245 98% 81%));
+  background: linear-gradient(135deg, hsl(252 87% 58%), hsl(258 72% 62%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .brand-gradient-subtle {
-  background: linear-gradient(135deg, hsl(248 76% 64% / 0.06), hsl(248 76% 64% / 0.02));
+  background: linear-gradient(135deg, hsl(252 87% 58% / 0.06), hsl(258 72% 52% / 0.02));
 }
 
-/* ─── Glass card ─── */
+/* Subtle glow — used sparingly for active states */
+.neon-glow {
+  box-shadow: 0 0 0 1px hsl(252 87% 58% / 0.12), 0 2px 8px hsl(252 87% 58% / 0.08);
+}
+.neon-border {
+  border-color: hsl(252 87% 58% / 0.2);
+}
+
+/* Surface layering — Discord-inspired depth */
+.surface-raised {
+  @apply bg-card border border-border;
+  box-shadow: 0 1px 3px hsl(220 7% 5% / 0.04), 0 1px 2px hsl(220 7% 5% / 0.02);
+}
+.dark .surface-raised {
+  box-shadow: 0 1px 4px hsl(220 7% 3% / 0.4), 0 0 0 1px hsl(0 0% 100% / 0.02);
+}
+
+/* Glass — premium */
 .glass-card {
   background: hsl(var(--card) / 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid hsl(var(--border) / 0.8);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid hsl(var(--border) / 0.6);
 }
 
-/* ─── Shadow system ─── */
+/* Shadow system — layered and rich */
 .shadow-card {
-  box-shadow: 
-    0 1px 2px hsl(var(--foreground) / 0.04),
-    0 1px 3px hsl(var(--foreground) / 0.02);
+  box-shadow: 0 1px 2px hsl(var(--foreground) / 0.03), 0 2px 4px hsl(var(--foreground) / 0.02);
 }
 .shadow-card-hover {
   box-shadow: 
-    0 4px 6px hsl(var(--foreground) / 0.04),
-    0 8px 24px hsl(var(--foreground) / 0.06);
+    0 2px 4px hsl(var(--foreground) / 0.03),
+    0 8px 16px hsl(var(--foreground) / 0.05),
+    0 0 0 1px hsl(var(--primary) / 0.06);
 }
 .shadow-elevated {
   box-shadow: 
-    0 8px 16px hsl(var(--foreground) / 0.05),
-    0 16px 48px hsl(var(--foreground) / 0.08);
-}
-.shadow-glow-primary {
-  box-shadow: 
-    0 0 0 1px hsl(var(--primary) / 0.1),
-    0 4px 16px hsl(var(--primary) / 0.15),
-    0 8px 32px hsl(var(--primary) / 0.1);
+    0 4px 8px hsl(var(--foreground) / 0.04),
+    0 12px 32px hsl(var(--foreground) / 0.08),
+    0 0 0 1px hsl(var(--border) / 0.5);
 }
 
-/* ─── Animations ─── */
+/* Premium card hover with glow */
+.premium-card {
+  @apply rounded-xl border border-border bg-card overflow-hidden;
+  @apply transition-all duration-300 ease-out;
+  box-shadow: 0 1px 3px hsl(var(--foreground) / 0.03);
+}
+.premium-card:hover {
+  @apply border-primary/20;
+  box-shadow: 
+    0 4px 12px hsl(var(--primary) / 0.06),
+    0 8px 24px hsl(var(--foreground) / 0.04),
+    0 0 0 1px hsl(var(--primary) / 0.08);
+  transform: translateY(-2px);
+}
+
+/* Animations */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-slide-up {
-  animation: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
+.animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
 
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent 25%, hsl(var(--primary) / 0.08) 50%, transparent 75%);
+  background: linear-gradient(90deg, transparent 25%, hsl(var(--primary) / 0.06) 50%, transparent 75%);
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }
 
-/* ─── Label utility ─── */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+/* Label utility */
 .label-sm {
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: hsl(var(--muted-foreground));
 }
 
-/* ─── Interactive card base ─── */
+/* Interactive card */
 .interactive-card {
   @apply rounded-xl border border-border bg-card overflow-hidden;
-  @apply transition-all duration-300 ease-out;
-  @apply hover:border-primary/25 hover:shadow-card-hover hover:-translate-y-0.5;
+  @apply transition-all duration-200 ease-out;
+  @apply hover:border-primary/20 hover:shadow-card-hover;
 }
 
-/* ─── Stat chip ─── */
+/* Stat chip */
 .stat-chip {
   @apply inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-caption font-medium;
   @apply bg-muted/60 text-muted-foreground;
 }
 
-/* ─── Screen Shake Animations ─── */
+/* Screen Shake Animations */
 @keyframes screen-shake-light {
   0%, 100% { transform: translate(0); }
   20% { transform: translate(-2px, 1px); }
@@ -324,17 +334,10 @@
   80% { transform: translate(1px, -1px) rotate(0.1deg); }
   90% { transform: translate(-1px, 1px); }
 }
-.screen-shake-light {
-  animation: screen-shake-light 0.3s ease-out;
-}
-.screen-shake-heavy {
-  animation: screen-shake-heavy 0.6s ease-out;
-}
+.screen-shake-light { animation: screen-shake-light 0.3s ease-out; }
+.screen-shake-heavy { animation: screen-shake-heavy 0.6s ease-out; }
 
-/* ─── Motion toggle utility ────────────────────────────────────────────────
-   Wired from Settings → Appearance (Motion & animations).
-   When disabled, we reduce CSS transitions/animations across the app.
-*/
+/* Motion toggle */
 .reduce-motion,
 .reduce-motion *::before,
 .reduce-motion *::after,

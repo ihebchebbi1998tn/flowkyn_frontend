@@ -84,7 +84,7 @@ export function useElevatorRiseAnimation(): Variants {
       y: -500, // Rise up (you adjust this based on viewport)
       transition: {
         duration: ANIMATION_CONFIG.elevatorRise.duration,
-        ease: ANIMATION_CONFIG.elevatorRise.easing,
+        ease: ANIMATION_CONFIG.elevatorRise.easing as any,
       },
     },
   };
@@ -105,7 +105,7 @@ export function useDecelerationAnimation(): Variants {
       y: -520,
       transition: {
         duration: ANIMATION_CONFIG.decelerate.duration,
-        ease: ANIMATION_CONFIG.decelerate.easing,
+        ease: ANIMATION_CONFIG.decelerate.easing as any,
       },
     },
   };
@@ -126,7 +126,7 @@ export function useBounceAnimation(): Variants {
       y: -500,
       transition: {
         duration: ANIMATION_CONFIG.bounce.duration,
-        ease: ANIMATION_CONFIG.bounce.easing,
+        ease: ANIMATION_CONFIG.bounce.easing as any,
       },
     },
   };
@@ -173,7 +173,7 @@ export function useRoomEntryAnimation(): Variants {
       scale: 1,
       transition: {
         duration: ANIMATION_CONFIG.fadeIn.duration,
-        ease: ANIMATION_CONFIG.fadeIn.easing,
+        ease: ANIMATION_CONFIG.fadeIn.easing as any,
       },
     },
   };

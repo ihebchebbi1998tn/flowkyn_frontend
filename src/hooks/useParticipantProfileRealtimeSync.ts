@@ -86,8 +86,8 @@ export function useParticipantProfileRealtimeSync({
       : undefined;
 
     return () => {
-      unsubEvents?.();
-      unsubGames?.();
+      if (typeof unsubEvents === 'function') unsubEvents();
+      if (typeof unsubGames === 'function') unsubGames();
     };
   }, [
     eventId,

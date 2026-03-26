@@ -97,10 +97,10 @@ export function useEventLobbyPresence({
     const unsubLeft = eventsSocket.on('event:user_left', handleUserLeft);
 
     return () => {
-      unsubNotification?.();
-      unsubPresence?.();
-      unsubJoined?.();
-      unsubLeft?.();
+      if (typeof unsubNotification === 'function') unsubNotification();
+      if (typeof unsubPresence === 'function') unsubPresence();
+      if (typeof unsubJoined === 'function') unsubJoined();
+      if (typeof unsubLeft === 'function') unsubLeft();
     };
   }, [eventsSocket.isConnected, eventId, refetchParticipants, eventsSocket, setOnlineCount]);
 

@@ -132,7 +132,7 @@ export function useJoinEvent() {
     onError: (err) => {
       // Joining is idempotent from a UX perspective; if the backend says we're already a participant,
       // don't show an error toast. The calling code will handle 409s as a "success" case.
-      if (ApiError.is?.(err) && err.statusCode === 409 && err.code === 'ALREADY_PARTICIPANT') {
+      if ((err as any)?.statusCode === 409 && (err as any)?.code === 'ALREADY_PARTICIPANT') {
         return;
       }
       showError(err);
@@ -217,7 +217,7 @@ export function usePauseEvent() {
   const { showError } = useApiError();
 
   return useMutation({
-    mutationFn: (eventId: string) => eventsApi.update(eventId, { status: 'paused' }),
+    mutationFn: (eventId: string) => eventsApi.update(eventId, { status: 'paused' as any }),
     onSuccess: (_, eventId) => {
       queryClient.invalidateQueries({ queryKey: eventKeys.detail(eventId) });
       toast.success('Event paused');

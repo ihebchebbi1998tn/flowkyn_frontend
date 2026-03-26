@@ -27,8 +27,6 @@ import { HeroSection } from '@/features/landing/components/HeroSection';
 import { ProblemSection } from '@/features/landing/components/ProblemSection';
 import { FeaturesSection } from '@/features/landing/components/FeaturesSection';
 import { HowItWorksSection } from '@/features/landing/components/HowItWorksSection';
-import { StatsSection } from '@/features/landing/components/StatsSection';
-import { TestimonialsSection } from '@/features/landing/components/TestimonialsSection';
 import { FAQSection } from '@/features/landing/components/FAQSection';
 import { PricingSection } from '@/features/landing/components/PricingSection';
 import { CTASection } from '@/features/landing/components/CTASection';
@@ -51,8 +49,6 @@ export default function Landing() {
       <ProblemSection />
       <FeaturesSection />
       <HowItWorksSection />
-      <StatsSection />
-      <TestimonialsSection />
       <FAQSection />
       <PricingSection />
       <CTASection />

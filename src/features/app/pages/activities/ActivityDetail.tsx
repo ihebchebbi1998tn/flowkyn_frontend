@@ -1,21 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Users, Timer, CheckCircle,
-  Lightbulb, Play, BookOpen, ListChecks,
-  ArrowRight, Shield, Radio, Clock, Star, Package,
+  ArrowLeft, Users, Timer, Play, Radio, Clock, Shield,
+  ChevronDown, ChevronUp,
 } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { ACTIVITIES, categoryGradient } from '@/features/app/data/activities';
+import { ACTIVITIES, categoryColors } from '@/features/app/data/activities';
 import { ROUTES } from '@/constants/routes';
 
 export default function ActivityDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
+  const [showGuide, setShowGuide] = useState(false);
 
   const activity = ACTIVITIES.find(a => a.id === id);
   if (!activity) {
@@ -24,236 +24,151 @@ export default function ActivityDetail() {
   }
 
   const Icon = activity.icon;
-  const gradient = categoryGradient[activity.category] || 'from-primary/60 to-primary';
   const isComingSoon = !!activity.comingSoon;
 
-  const infoItems = [
-    {
-      label: t('games.detail.category'),
-      value: t(`games.categories.${activity.category}`),
-      icon: Icon,
-      color: activity.color,
-    },
-    {
-      label: t('games.detail.teamSize'),
-      value: activity.teamSize,
-      icon: Users,
-      color: 'text-muted-foreground',
-    },
-    {
-      label: t('games.detail.materials'),
-      value: activity.materials || t('games.detail.materialsNone'),
-      icon: Package,
-      color: 'text-muted-foreground',
-    },
-    {
-      label: t('games.detail.difficulty'),
-      value:
-        activity.difficulty === 'beginner'
-          ? t('games.detail.difficultyBeginner')
-          : activity.difficulty === 'intermediate'
-            ? t('games.detail.difficultyIntermediate')
-            : t('games.detail.difficultyAdvanced'),
-      icon: Shield,
-      color: 'text-muted-foreground',
-    },
-  ];
+  const name = activity.i18nKey ? t(`${activity.i18nKey}.name`, { defaultValue: activity.name }) : activity.name;
+  const description = activity.i18nKey ? t(`${activity.i18nKey}.description`, { defaultValue: activity.description }) : activity.description;
+
+  const diffLabel = activity.difficulty === 'beginner'
+    ? t('games.detail.difficultyBeginner')
+    : activity.difficulty === 'intermediate'
+      ? t('games.detail.difficultyIntermediate')
+      : t('games.detail.difficultyAdvanced');
 
   return (
-    <div className="space-y-3 sm:space-y-4 w-full">
-      {/* Back + header */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => navigate(ROUTES.GAMES)}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-foreground truncate">
-            {activity.i18nKey ? t(`${activity.i18nKey}.name`, { defaultValue: activity.name }) : activity.name}
-          </h1>
-          <p className="text-[12px] sm:text-[13px] text-muted-foreground mt-0.5">
-            {t(`games.categories.${activity.category}`)} ·{' '}
-            {activity.type === 'sync'
-              ? t('games.detail.typeSync')
-              : t('games.detail.typeAsync')}{' '}
-            · ⏱️ {activity.duration}
-          </p>
-        </div>
-      </div>
+    <div className="space-y-4">
+      {/* Back */}
+      <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs text-muted-foreground -ml-2" onClick={() => navigate(ROUTES.GAMES)}>
+        <ArrowLeft className="h-3 w-3" /> {t('common.back', { defaultValue: 'Back' })}
+      </Button>
 
-      {/* Hero card */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className={cn("h-1.5 w-full bg-gradient-to-r", gradient)} />
-        <div className="p-3.5 sm:p-5">
-          <div className="flex items-start gap-3 sm:gap-3.5 mb-3.5 sm:mb-4">
-            <div className={cn("flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-2xl shrink-0", activity.bgColor)}>
-              <Icon className={cn("h-5 w-5 sm:h-7 sm:w-7", activity.color)} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] sm:text-[14px] text-foreground leading-relaxed">
-                {activity.i18nKey
-                  ? t(`${activity.i18nKey}.description`, { defaultValue: activity.description })
-                  : activity.description}
-              </p>
-              <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-2.5 flex-wrap">
-                <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-[12px] text-muted-foreground">
-                  <Timer className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {activity.duration}
-                </div>
-                <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-[12px] text-muted-foreground">
-                  <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {activity.teamSize}
-                </div>
-                <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-[12px] text-muted-foreground hidden sm:flex">
-                  <Shield className="h-3.5 w-3.5" />{' '}
-                  {activity.difficulty === 'beginner'
-                    ? t('games.detail.difficultyBeginner')
-                    : activity.difficulty === 'intermediate'
-                      ? t('games.detail.difficultyIntermediate')
-                      : t('games.detail.difficultyAdvanced')}
-                </div>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    "text-[9px] sm:text-[10px] gap-0.5",
-                    activity.type === 'sync'
-                      ? 'border-primary/20 text-primary bg-primary/5'
-                      : 'border-success/20 text-success bg-success/5'
-                  )}
-                >
-                  {activity.type === 'sync' ? (
-                    <>
-                      <Radio className="h-2.5 w-2.5" /> {t('games.detail.badgeSync')}
-                    </>
-                  ) : (
-                    <>
-                      <Clock className="h-2.5 w-2.5" /> {t('games.detail.badgeAsync')}
-                    </>
-                  )}
+      {/* Hero — compact card */}
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
+        <div className="flex flex-col sm:flex-row">
+          {/* Image */}
+          <div className="w-full sm:w-56 shrink-0">
+            {activity.image ? (
+              <img src={activity.image} alt={name} className="w-full h-40 sm:h-full object-cover" />
+            ) : (
+              <div className="w-full h-40 sm:h-full bg-muted flex items-center justify-center">
+                <Icon className="h-10 w-10 text-muted-foreground/20" />
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 min-w-0 p-4 flex flex-col justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-1.5 mb-2">
+                <Badge variant="outline" className={cn('text-[9px] px-1.5 h-4 border', categoryColors[activity.category])}>
+                  {t(`games.categories.${activity.category}`)}
                 </Badge>
+                <Badge variant="outline" className={cn(
+                  'text-[9px] px-1.5 h-4 gap-0.5',
+                  activity.type === 'sync' ? 'text-primary border-primary/20' : 'text-success border-success/20'
+                )}>
+                  {activity.type === 'sync' ? <><Radio className="h-2 w-2" /> Live</> : <><Clock className="h-2 w-2" /> Async</>}
+                </Badge>
+                {activity.popular && (
+                  <Badge className="bg-primary text-primary-foreground border-0 text-[9px] px-1.5 h-4">Popular</Badge>
+                )}
               </div>
+
+              <h1 className="text-lg font-semibold text-foreground tracking-tight mb-1">{name}</h1>
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{description}</p>
             </div>
-          </div>
 
-          {/* Info grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-2.5 mb-3.5 sm:mb-4">
-            {infoItems.map(item => (
-              <div key={item.label} className="rounded-lg bg-muted/30 p-2 sm:p-2.5">
-                <p className="text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-1">{item.label}</p>
-                <p className="text-[11px] sm:text-[12px] font-medium text-foreground">{item.value}</p>
-              </div>
-            ))}
-          </div>
-
-          <Separator className="my-3 sm:my-4" />
-
-          {/* Why it works */}
-          <div className="mb-3.5 sm:mb-4.5">
-            <div className="flex items-center gap-2 mb-2 sm:mb-2.5">
-              <Lightbulb className="h-4 w-4 text-warning" />
-              <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">
-                {t('games.detail.whyThisWorks')}
-              </h3>
-            </div>
-            <p className="text-[12px] sm:text-[13px] text-muted-foreground leading-relaxed pl-6">{activity.whyItWorks}</p>
-          </div>
-
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5">
-            <Button
-              onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))}
-              className="h-10 px-6 text-[13px] gap-2 shadow-sm"
-              disabled={isComingSoon}
-            >
-              <Play className="h-4 w-4" /> {isComingSoon ? t('games.comingSoon.title', { defaultValue: 'Coming soon' }) : t('games.detail.launchActivity')}
-            </Button>
-            <Button variant="outline" className="h-10 px-5 text-[13px]">
-              <BookOpen className="h-4 w-4 mr-2" /> {t('games.detail.saveToLibrary')}
-            </Button>
-          </div>
-          {isComingSoon && (
-            <p className="text-[12px] text-muted-foreground mt-2">
-              {t('games.comingSoonDescription', { defaultValue: 'This activity is coming soon.' })}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* How to Run It */}
-      <div className="grid gap-2.5 sm:gap-3 md:grid-cols-3 lg:grid-cols-3">
-        {[
-          { key: 'before', label: t('games.detail.sectionBefore'), items: activity.before, icon: ListChecks, color: 'text-info', bg: 'bg-info/10', gradient: 'from-info/60 to-info', ItemIcon: CheckCircle },
-          { key: 'during', label: t('games.detail.sectionDuring'), items: activity.during, icon: Play, color: 'text-success', bg: 'bg-success/10', gradient: 'from-success/60 to-success', ItemIcon: null },
-          { key: 'after', label: t('games.detail.sectionAfter'), items: activity.after, icon: CheckCircle, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-warning/60 to-warning', ItemIcon: CheckCircle },
-        ].map((section) => (
-          <div key={section.key} className="rounded-xl border border-border bg-card overflow-hidden">
-            <div className={cn("h-1 w-full bg-gradient-to-r", section.gradient)} />
-            <div className="p-3.5 sm:p-4">
-              <div className="flex items-center gap-2 mb-3 sm:mb-4">
-                <div className={cn("flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg", section.bg)}>
-                  <section.icon className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", section.color)} />
+            {/* Stats row */}
+            <div className="flex flex-wrap gap-3">
+              {[
+                { icon: Timer, value: activity.duration },
+                { icon: Users, value: activity.teamSize },
+                { icon: Shield, value: diffLabel },
+              ].map((s, i) => (
+                <div key={i} className="flex items-center gap-1 text-[11px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-md">
+                  <s.icon className="h-3 w-3" /> {s.value}
                 </div>
-                <h3 className="text-[12px] sm:text-[13px] font-semibold text-foreground">{section.label}</h3>
-              </div>
-              <div className="space-y-2 sm:space-y-2.5">
-                {section.items.map((step, i) => (
-                  <div key={i} className="flex items-start gap-2 sm:gap-2.5">
-                    {section.ItemIcon ? (
-                      <section.ItemIcon className={cn("h-3 w-3 sm:h-3.5 sm:w-3.5 mt-0.5 shrink-0", section.color)} />
-                    ) : (
-                      <span className={cn("flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full text-[8px] sm:text-[9px] font-bold shrink-0 mt-0.5", section.bg, section.color)}>{i + 1}</span>
-                    )}
-                    <p className="text-[11px] sm:text-[12px] text-muted-foreground leading-relaxed">{step}</p>
-                  </div>
-                ))}
-              </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))}
+                className="h-8 px-4 text-xs gap-1.5"
+                disabled={isComingSoon}
+              >
+                <Play className="h-3.5 w-3.5" />
+                {isComingSoon ? t('games.comingSoon.title', { defaultValue: 'Coming soon' }) : t('games.detail.launchActivity')}
+              </Button>
             </div>
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* Pro Tips */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="h-1 w-full bg-gradient-to-r from-primary/60 to-primary" />
-        <div className="p-3.5 sm:p-4">
-          <div className="flex items-center gap-2 mb-3 sm:mb-3.5">
-            <div className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-primary/10">
-              <Lightbulb className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-            </div>
-            <h3 className="text-[12px] sm:text-[13px] font-semibold text-foreground">
-              {t('games.detail.proTips')}
-            </h3>
+      {/* Why it works — one-liner */}
+      {activity.whyItWorks && (
+        <div className="rounded-lg border border-border bg-card px-4 py-3 flex items-start gap-2.5">
+          <div className="h-6 w-6 rounded bg-warning/10 flex items-center justify-center shrink-0 mt-0.5">
+            <Icon className="h-3 w-3 text-warning" />
           </div>
-          <div className="grid gap-2 sm:gap-2.5 md:grid-cols-2 lg:grid-cols-3">
+          <p className="text-xs text-muted-foreground leading-relaxed">{activity.whyItWorks}</p>
+        </div>
+      )}
+
+      {/* Facilitator Guide — collapsible */}
+      <button
+        type="button"
+        onClick={() => setShowGuide(v => !v)}
+        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors w-full"
+      >
+        <span className="font-medium">{t('games.detail.facilitatorGuide', { defaultValue: 'Facilitator guide' })}</span>
+        {showGuide ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+        <div className="flex-1 h-px bg-border" />
+      </button>
+
+      {showGuide && (
+        <div className="grid gap-3 md:grid-cols-3 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+          {[
+            { key: 'before', label: t('games.detail.sectionBefore'), items: activity.before, color: 'text-info', bg: 'bg-info/10' },
+            { key: 'during', label: t('games.detail.sectionDuring'), items: activity.during, color: 'text-success', bg: 'bg-success/10' },
+            { key: 'after', label: t('games.detail.sectionAfter'), items: activity.after, color: 'text-warning', bg: 'bg-warning/10' },
+          ].map((section) => (
+            <div key={section.key} className="rounded-lg border border-border bg-card p-3">
+              <h3 className={cn('text-[11px] font-semibold uppercase tracking-wider mb-2', section.color)}>
+                {section.label}
+              </h3>
+              <ul className="space-y-1.5">
+                {section.items.map((step, i) => (
+                  <li key={i} className="flex items-start gap-1.5">
+                    <span className={cn('text-[9px] font-bold mt-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0', section.bg, section.color)}>
+                      {i + 1}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{step}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Tips — collapsed inside guide */}
+      {showGuide && activity.tips.length > 0 && (
+        <div className="rounded-lg border border-border bg-card p-3 animate-in fade-in-0 duration-200">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-primary mb-2">
+            {t('games.detail.proTips')}
+          </h3>
+          <div className="grid gap-1.5 sm:grid-cols-2">
             {activity.tips.map((tip, i) => (
-              <div key={i} className="flex items-start gap-2 sm:gap-2.5 p-2.5 sm:p-3 rounded-lg bg-muted/30">
-                <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary mt-0.5 shrink-0" />
-                <p className="text-[11px] sm:text-[12px] text-muted-foreground leading-relaxed">{tip}</p>
-              </div>
+              <p key={i} className="text-[11px] text-muted-foreground leading-relaxed flex items-start gap-1.5">
+                <span className="text-primary/60 mt-0.5">•</span>
+                {tip}
+              </p>
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Bottom CTA */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl border border-primary/20 bg-primary/[0.03]">
-        <div>
-          <h3 className="text-[13px] sm:text-[14px] font-semibold text-foreground">
-            {t('games.detail.readyTitle', {
-              name: activity.i18nKey
-                ? t(`${activity.i18nKey}.name`, { defaultValue: activity.name })
-                : activity.name,
-            })}
-          </h3>
-          <p className="text-[11px] sm:text-[12px] text-muted-foreground mt-0.5">
-            {t('games.detail.readySubtitle')}
-          </p>
-        </div>
-        <Button
-          onClick={() => navigate(ROUTES.ACTIVITY_LAUNCH(id))}
-          className="h-9 sm:h-10 px-5 sm:px-6 text-[12px] sm:text-[13px] gap-2 shadow-sm shrink-0"
-          disabled={isComingSoon}
-        >
-          {isComingSoon ? t('games.comingSoon.title', { defaultValue: 'Coming soon' }) : t('games.detail.launchNow')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-        </Button>
-      </div>
+      )}
     </div>
   );
 }

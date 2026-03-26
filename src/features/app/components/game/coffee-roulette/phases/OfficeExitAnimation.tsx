@@ -186,7 +186,7 @@ export function OfficeExitAnimation({
                 transition={{ duration: 0.4, delay: 0.7 }}
                 className="flex flex-col items-center gap-1.5"
               >
-                <Avatar className="w-12 h-12 md:w-14 md:h-14 ring-2" style={{ ringColor: 'var(--color-primary)' }}>
+                <Avatar className="w-12 h-12 md:w-14 md:h-14 ring-2" style={{ '--tw-ring-color': 'var(--color-primary)' } as any}>
                   <AvatarImage
                     src={getSafeImageUrl(person1.avatarUrl)}
                     alt={person1.name}
@@ -223,7 +223,7 @@ export function OfficeExitAnimation({
                 transition={{ duration: 0.4, delay: 0.7 }}
                 className="flex flex-col items-center gap-1.5"
               >
-                <Avatar className="w-12 h-12 md:w-14 md:h-14 ring-2" style={{ ringColor: 'var(--color-primary)' }}>
+                <Avatar className="w-12 h-12 md:w-14 md:h-14 ring-2" style={{ '--tw-ring-color': 'var(--color-primary)' } as any}>
                   <AvatarImage
                     src={getSafeImageUrl(person2.avatarUrl)}
                     alt={person2.name}

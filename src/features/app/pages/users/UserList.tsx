@@ -43,7 +43,7 @@ export default function UserList() {
       key: 'role', header: t('users.role'), sortable: true,
       render: (m) => (
         <Badge variant={m.role === 'owner' ? 'default' : 'outline'} className="text-[11px]">
-          {t(`organizations.roles.${m.role}`, m.role)}
+          {String(t(`organizations.roles.${m.role}`, m.role))}
         </Badge>
       ),
     },

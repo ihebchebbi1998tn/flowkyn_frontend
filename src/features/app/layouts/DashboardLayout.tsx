@@ -14,8 +14,8 @@ export function DashboardLayout() {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <Topbar />
-          <main className="flex-1 overflow-auto">
-            <div className="w-full px-1.5 sm:px-3 lg:px-6 py-1.5 sm:py-3">
+          <main className="flex-1 overflow-auto bg-background">
+            <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-5 animate-fade-in">
               <Suspense fallback={<PageSkeleton />}>
                 <Outlet />
               </Suspense>

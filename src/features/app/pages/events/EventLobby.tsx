@@ -107,7 +107,7 @@ export default function EventLobby() {
     acceptInvitation,
     getOrCreateGuestIdentityKey,
     setGuestToken,
-    t,
+    t: t as any,
     onJoinSuccess: ({ eventId: eid, viaInvitation, guestName: gname }) => {
       trackEvent(TRACK.EVENT_JOINED, { eventId: eid, viaInvitation });
       if (gname) trackEvent(TRACK.EVENT_GUEST_JOINED, { eventId: eid, guestName: gname });

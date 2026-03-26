@@ -36,8 +36,8 @@ export function useParticipantPresenceSync({
     const unsubJoin = eventsSocket.on('event:user_joined', triggerRefetch);
     const unsubLeave = eventsSocket.on('event:user_left', triggerRefetch);
     return () => {
-      unsubJoin?.();
-      unsubLeave?.();
+      if (typeof unsubJoin === 'function') unsubJoin();
+      if (typeof unsubLeave === 'function') unsubLeave();
     };
   }, [eventsSocket, eventsSocket.isConnected, eventId, refetchParticipants]);
 
@@ -64,8 +64,8 @@ export function useParticipantPresenceSync({
     const unsubJoin = gamesSocket.on('game:player_joined', triggerRefetchOnJoin);
     const unsubLeave = gamesSocket.on('game:player_left', triggerRefetchOnLeave);
     return () => {
-      unsubJoin?.();
-      unsubLeave?.();
+      if (typeof unsubJoin === 'function') unsubJoin();
+      if (typeof unsubLeave === 'function') unsubLeave();
     };
   }, [gamesSocket, gamesSocket.isConnected, refetchParticipants, sessionId]);
 

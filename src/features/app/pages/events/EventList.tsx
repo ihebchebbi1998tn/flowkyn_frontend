@@ -169,7 +169,7 @@ export default function EventList() {
                       className="h-7 px-2 text-[11px] gap-1"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(ROUTES.JOIN(event.id));
+                        navigate(ROUTES.EVENT_LOBBY(event.id));
                       }}
                     >
                       <ArrowRight className="h-3 w-3" />

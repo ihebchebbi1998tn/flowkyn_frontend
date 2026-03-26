@@ -69,7 +69,7 @@ export function SecuritySection() {
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
     try {
-      await api.delete('/users/me');
+      await api.del('/users/me');
       toast.success(t('settings.accountDeleted'));
       logout();
       navigate(ROUTES.LOGIN);

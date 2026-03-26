@@ -7,7 +7,7 @@ export { ActivityFilters, type ActivityFilterState } from './activities/Activity
 export { EventChat, type ChatMessage } from './chat/EventChat';
 export { GamePlayShell, type GameParticipant } from './game/shell';
 export { LeaderboardSidebar } from './game/shell';
-export { TwoTruthsBoard, CoffeeRouletteBoard, WinsOfTheWeekBoard } from './game/boards';
+export { TwoTruthsBoard, WinsOfTheWeekBoard } from './game/boards';
 export {
   PageShell, PageHeader, DashStat, ChartCard, RankedItem, InfoCard, EmptyState,
   chartTooltipStyle, chartAxisProps, chartGridProps,

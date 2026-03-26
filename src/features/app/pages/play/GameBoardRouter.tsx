@@ -133,6 +133,7 @@ export function GameBoardRouter({
     case GAME_TYPES.WINS_OF_WEEK:
       return (
         <WinsOfTheWeekBoard
+          organizationId=""
           prompt={config.promptKey ? t(config.promptKey) : undefined}
           currentUserId={participantId || ''}
           currentUserName={currentUserName || ''}
@@ -188,7 +189,7 @@ export function GameBoardRouter({
           onSessionCreated={(newSessionId: string) => {
             setSessionId(newSessionId);
           }}
-          onEmitSocketAction={onEmitAction}
+          onEmitSocketAction={onEmitAction as any}
         />
       );
     case GAME_TYPES.TRIVIA:

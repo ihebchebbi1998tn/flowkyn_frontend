@@ -81,7 +81,7 @@ export function useGamePlayEventRoom({
         } else {
           const fallback = 'event:join rejected (no participantId returned)';
           const exactFromAck = resp?.error || resp?.code || fallback;
-          setChatSocketError((prev) => (prev && prev !== fallback ? prev : String(exactFromAck)));
+          setChatSocketError(String(exactFromAck));
           setChatSocketErrorCode(resp?.code ? String(resp.code) : null);
           setChatSocketErrorDetails(resp?.details ?? resp?.data?.details ?? null);
           const nextAttempt = eventJoinAttemptsRef.current + 1;

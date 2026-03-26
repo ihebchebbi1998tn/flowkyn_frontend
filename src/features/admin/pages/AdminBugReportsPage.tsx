@@ -6,15 +6,15 @@ import {
 } from 'lucide-react';
 import { LogoLoader } from '@/components/loading/LogoLoader';
 import { bugReportsApi } from '@/features/app/api/bugReports';
-import type { BugReportListItem, BugReportStats } from '@/features/app/api/bugReports';
+import type { BugReport, BugReportStatus, BugReportPriority } from '@/features/app/api/bugReports';
 
 type StatusFilter = 'all' | 'open' | 'in_progress' | 'resolved' | 'closed';
 type PriorityFilter = 'all' | 'low' | 'medium' | 'high' | 'critical';
 
 export const AdminBugReportsPage: React.FC = () => {
   const { t } = useTranslation();
-  const [reports, setReports] = useState<BugReportListItem[]>([]);
-  const [stats, setStats] = useState<BugReportStats | null>(null);
+  const [reports, setReports] = useState<BugReport[]>([]);
+  const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -73,8 +73,8 @@ export const AdminBugReportsPage: React.FC = () => {
     setUpdatingReportId(reportId);
     try {
       await bugReportsApi.update(reportId, {
-        status: updates.status,
-        priority: updates.priority,
+        status: updates.status as BugReportStatus | undefined,
+        priority: updates.priority as BugReportPriority | undefined,
       });
       await loadReports();
       await loadStats();

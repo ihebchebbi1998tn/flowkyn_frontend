@@ -156,7 +156,7 @@ export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }:
               {/* Left Door - STAGE 1: Close / STAGE 5: Open */}
               <motion.div
                 initial={{ x: 0 }}
-                animate={stage === 'animating' ? [{ x: 0 }, { x: -50 }, { x: 50 }] : { x: 0 }}
+                animate={(stage === 'animating' ? [{ x: 0 }, { x: -50 }, { x: 50 }] : { x: 0 }) as any}
                 transition={{
                   times: [0, 0.1, 0.9],
                   duration: TOTAL_ANIMATION_DURATION,
@@ -181,7 +181,7 @@ export function ElevatorSequence({ pairNumber, totalPairs, onSequenceComplete }:
               {/* Right Door - STAGE 1: Close / STAGE 5: Open */}
               <motion.div
                 initial={{ x: 0 }}
-                animate={stage === 'animating' ? [{ x: 0 }, { x: 50 }, { x: -50 }] : { x: 0 }}
+                animate={(stage === 'animating' ? [{ x: 0 }, { x: 50 }, { x: -50 }] : { x: 0 }) as any}
                 transition={{
                   times: [0, 0.1, 0.9],
                   duration: TOTAL_ANIMATION_DURATION,
