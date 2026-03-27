@@ -19,7 +19,7 @@ export default {
       /* ─── Typography ─── */
       fontFamily: {
         sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "system-ui", "sans-serif"],
-        heading: ["Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        heading: ["'Plus Jakarta Sans'", "Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
         mono: ["'JetBrains Mono'", "'SF Mono'", "'Fira Code'", "monospace"],
       },
       fontSize: {
@@ -63,6 +63,7 @@ export default {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
           glow: "hsl(var(--primary-glow))",
+          muted: "hsl(var(--primary-muted))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -130,6 +131,7 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xs: "3px",
       },
 
       /* ─── Shadows — subtle, professional ─── */

@@ -14,8 +14,10 @@ export function DashboardLayout() {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <Topbar />
-          <main className="flex-1 overflow-auto bg-background">
-            <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-5 animate-fade-in">
+          <main className="flex-1 overflow-auto bg-background relative">
+            {/* Subtle radial gradient accent behind content */}
+            <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-primary/[0.02] blur-3xl" />
+            <div className="relative w-full px-4 sm:px-6 lg:px-8 py-5 sm:py-6 animate-fade-in">
               <Suspense fallback={<PageSkeleton />}>
                 <Outlet />
               </Suspense>

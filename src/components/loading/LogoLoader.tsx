@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import logoImg from '@/assets/flowkyn-logo.png';
+import logoImg from '@/assets/flowkyn-logo-full.png';
 
 interface LogoLoaderProps {
   className?: string;

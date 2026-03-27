@@ -108,13 +108,13 @@ export function Topbar() {
   const recentNotifications = notifications.slice(0, 5);
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 items-center gap-2 border-b border-border bg-card/95 backdrop-blur-sm px-3 sm:px-4">
+    <header className="sticky top-0 z-30 flex h-12 items-center gap-2 border-b border-border/60 bg-card/70 backdrop-blur-2xl px-3 sm:px-5">
       <div className="flex items-center gap-1.5">
         {isMobile && (
           <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-6 w-6 object-contain mr-0.5" />
         )}
-        <SidebarTrigger className="text-muted-foreground hover:text-foreground hover:bg-muted h-8 w-8 rounded-md transition-colors">
-          <PanelLeft className="h-4 w-4" />
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground hover:bg-muted/80 h-8 w-8 rounded-md transition-colors">
+          <PanelLeft className="h-4.5 w-4.5" />
         </SidebarTrigger>
       </div>
 
@@ -136,7 +136,7 @@ export function Topbar() {
               onChange={e => setQuery(e.target.value)}
               onFocus={() => setFocused(true)}
               placeholder={t('common.search')}
-              className="h-8 pl-9 pr-20 w-[280px] text-[13px] bg-muted/50 border-border focus-visible:ring-1 focus-visible:ring-primary/30 rounded-md"
+              className="h-8 pl-9 pr-20 w-[300px] text-[13px] bg-muted/40 border-border/60 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/30 rounded-lg placeholder:text-muted-foreground/50"
             />
             <div className="absolute right-2 flex items-center gap-1">
               {query && (
@@ -153,7 +153,7 @@ export function Topbar() {
         )}
 
         {showDropdown && isExpanded && (
-          <div className="absolute top-full left-0 mt-1.5 w-[380px] rounded-lg border border-border bg-popover shadow-elevated overflow-hidden z-50">
+          <div className="absolute top-full left-0 mt-1.5 w-[400px] rounded-lg border border-border/60 bg-popover/95 backdrop-blur-xl shadow-elevated overflow-hidden z-50">
             {hasResults ? (
               <div className="max-h-[400px] overflow-y-auto">
                 {results.activities.length > 0 && (
@@ -233,7 +233,7 @@ export function Topbar() {
       <div className="flex-1" />
 
       {isMobile && (
-        <Button size="sm" onClick={() => navigate(ROUTES.EVENT_NEW)} className="h-8 px-3 text-[12px] gap-1.5 rounded-md">
+        <Button size="sm" onClick={() => navigate(ROUTES.EVENT_NEW)} className="h-8 px-3 text-[12px] gap-1.5 rounded-lg shadow-neon">
           <Plus className="h-3.5 w-3.5" />
           {t('nav.newEvent', 'New Event')}
         </Button>
@@ -261,7 +261,7 @@ export function Topbar() {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-[360px] p-0 rounded-lg border-border shadow-elevated" sideOffset={6}>
+          <PopoverContent align="end" className="w-[380px] p-0 rounded-lg border-border/60 bg-popover/95 backdrop-blur-xl shadow-elevated" sideOffset={8}>
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <div className="flex items-center gap-2">
                 <Bell className="h-4 w-4 text-muted-foreground" />

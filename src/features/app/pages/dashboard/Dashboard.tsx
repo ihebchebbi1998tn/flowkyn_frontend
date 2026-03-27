@@ -12,10 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/constants/routes';
 import {
-  PageShell, PageHeader, DashStat, ChartCard, RankedItem, EmptyState,
+  PageShell, DashStat, ChartCard, RankedItem, EmptyState,
   EngagementChart, UpcomingEvents,
   chartTooltipStyle, chartAxisProps, chartGridProps,
 } from '@/features/app/components/dashboard';
+import { WelcomeHero } from '@/features/app/components/dashboard/WelcomeHero';
 import { ActivityBreakdownSection, PerformanceSection, RecentActivitySection } from '@/features/app/components/dashboard/sections';
 import { DashboardSkeleton } from '@/components/loading';
 import { useDashboardStats, useAnalyticsOverview } from '@/hooks/queries/useAnalyticsQueries';
@@ -45,13 +46,6 @@ export default function Dashboard() {
   const { data: overview, isLoading: overviewLoading } = useAnalyticsOverview(months);
 
   const isLoading = statsLoading || overviewLoading;
-
-  const greeting = () => {
-    const h = new Date().getHours();
-    if (h < 12) return t('dashboard.goodMorning', 'Good morning');
-    if (h < 18) return t('dashboard.goodAfternoon', 'Good afternoon');
-    return t('dashboard.goodEvening', 'Good evening');
-  };
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -95,7 +89,6 @@ export default function Dashboard() {
   const completionRate = analyticsStats.completionRate ?? 0;
   const hasAnalyticsData = analyticsStats.totalSessions > 0;
 
-  /* ─── Overview tab stat items ─── */
   const overviewStats = [
     { label: t('dashboard.activeSessions'), value: String(stats?.activeSessions ?? 0), icon: Play, gradient: 'primary' as const },
     { label: t('dashboard.teamMembers'), value: String(stats?.teamMembers ?? 0), icon: Users, gradient: 'info' as const },
@@ -103,7 +96,6 @@ export default function Dashboard() {
     { label: t('dashboard.completion'), value: `${completionRate}%`, icon: Gauge, gradient: 'warning' as const },
   ];
 
-  /* ─── Insights tab stat items ─── */
   const insightsStats = [
     { label: t('analyticsPage.totalSessions'), value: String(analyticsStats.totalSessions), icon: Layers, gradient: 'primary' as const },
     { label: t('analyticsPage.participants'), value: String(analyticsStats.totalParticipants), icon: Users, gradient: 'info' as const },
@@ -113,26 +105,22 @@ export default function Dashboard() {
 
   return (
     <PageShell>
-      <PageHeader
-        title={`${greeting()}, ${user?.name?.split(' ')[0] || ''}`}
-        subtitle=""
-        actions={
-          <div className="flex items-center gap-2">
-            <Button size="sm" onClick={() => navigate(ROUTES.GAMES)} className="h-8 px-3 text-xs gap-1.5">
-              <Zap className="h-3.5 w-3.5" /> {t('dashboard.launchActivity')}
-            </Button>
-          </div>
-        }
+      {/* Welcome hero with quick actions */}
+      <WelcomeHero
+        userName={user?.name?.split(' ')[0] || ''}
+        activeSessions={stats?.activeSessions ?? 0}
+        totalEvents={stats?.totalEvents ?? 0}
+        teamMembers={stats?.teamMembers ?? 0}
       />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          <TabsList className="h-9">
-            <TabsTrigger value="overview" className="text-xs gap-1.5 px-3">
+          <TabsList className="h-9 bg-muted/50 border border-border/50">
+            <TabsTrigger value="overview" className="text-[12px] gap-1.5 px-3 data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <Play className="h-3.5 w-3.5" />
               {t('dashboard.tabs.overview', 'Overview')}
             </TabsTrigger>
-            <TabsTrigger value="insights" className="text-xs gap-1.5 px-3">
+            <TabsTrigger value="insights" className="text-[12px] gap-1.5 px-3 data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <BarChart3 className="h-3.5 w-3.5" />
               {t('dashboard.tabs.insights', 'Insights')}
             </TabsTrigger>
@@ -140,7 +128,7 @@ export default function Dashboard() {
 
           {activeTab === 'insights' && (
             <Select value={range} onValueChange={setRange}>
-              <SelectTrigger className="w-[130px] h-8 text-xs">
+              <SelectTrigger className="w-[130px] h-8 text-[12px] border-border/60">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -155,9 +143,9 @@ export default function Dashboard() {
 
         {/* ═══════════════ OVERVIEW TAB ═══════════════ */}
         <TabsContent value="overview" className="mt-4 space-y-4">
-          <div className="grid gap-2.5 grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
             {overviewStats.map((stat, i) => (
-              <motion.div key={stat.label} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.15, delay: i * 0.03 }}>
+              <motion.div key={stat.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: i * 0.04 }}>
                 <DashStat {...stat} />
               </motion.div>
             ))}
@@ -165,9 +153,9 @@ export default function Dashboard() {
 
           <motion.div
             className="grid gap-3 lg:grid-cols-5"
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: 0.12 }}
+            transition={{ duration: 0.25, delay: 0.16 }}
           >
             <EngagementChart data={engagementData} onViewDetails={() => setActiveTab('insights')} />
             <UpcomingEvents events={(stats?.upcomingEvents ?? []) as any} stats={{
@@ -178,21 +166,19 @@ export default function Dashboard() {
           </motion.div>
 
           <ActivityBreakdownSection data={activityBreakdown} />
-
           <PerformanceSection
             totalSessions={analyticsStats.totalSessions ?? 0}
             totalParticipants={analyticsStats.totalParticipants ?? 0}
             completionRate={completionRate}
           />
-
           <RecentActivitySection sessions={stats?.recentActivity ?? []} />
         </TabsContent>
 
         {/* ═══════════════ INSIGHTS TAB ═══════════════ */}
         <TabsContent value="insights" className="mt-4 space-y-4">
-          <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
             {insightsStats.map((stat, i) => (
-              <motion.div key={stat.label} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.15, delay: i * 0.03 }}>
+              <motion.div key={stat.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: i * 0.04 }}>
                 <DashStat {...stat} />
               </motion.div>
             ))}
@@ -206,8 +192,7 @@ export default function Dashboard() {
             />
           ) : (
             <>
-              {/* Row 1: Engagement trend + Activity breakdown */}
-              <div className="grid gap-5 lg:grid-cols-5">
+              <div className="grid gap-4 lg:grid-cols-5">
                 <ChartCard title={t('analytics.engagement')} subtitle={t('analyticsPage.sessionsOverTime')} className="lg:col-span-3">
                   <ResponsiveContainer width="100%" height={220}>
                     <AreaChart data={engagementData}>
@@ -246,8 +231,7 @@ export default function Dashboard() {
                 </ChartCard>
               </div>
 
-              {/* Row 2: Category split + Completion + Top activities */}
-              <div className="grid gap-5 lg:grid-cols-3">
+              <div className="grid gap-4 lg:grid-cols-3">
                 <ChartCard title={t('analyticsPage.categorySplit')} subtitle={t('analyticsPage.distribution')}>
                   <div className="flex items-center gap-6">
                     <ResponsiveContainer width={140} height={140}>

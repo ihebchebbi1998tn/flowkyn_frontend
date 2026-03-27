@@ -187,15 +187,15 @@ export const ACTIVITIES: Activity[] = [
 ];
 
 export const categoryGradient: Record<string, string> = {
-  icebreaker: 'from-primary/60 to-primary',
-  connection: 'from-info/60 to-info',
-  wellness: 'from-warning/60 to-warning',
-  competition: 'from-destructive/60 to-destructive',
+  icebreaker: 'from-primary to-primary-glow',
+  connection: 'from-info to-info/70',
+  wellness: 'from-warning to-warning/70',
+  competition: 'from-destructive to-destructive/70',
 };
 
 export const categoryColors: Record<string, string> = {
-  icebreaker: 'bg-primary/10 text-primary border-primary/20',
-  connection: 'bg-info/10 text-info border-info/20',
-  wellness: 'bg-warning/10 text-warning border-warning/20',
-  competition: 'bg-destructive/10 text-destructive border-destructive/20',
+  icebreaker: 'bg-primary/10 text-primary border-primary/15',
+  connection: 'bg-info/10 text-info border-info/15',
+  wellness: 'bg-warning/10 text-warning border-warning/15',
+  competition: 'bg-destructive/10 text-destructive border-destructive/15',
 };

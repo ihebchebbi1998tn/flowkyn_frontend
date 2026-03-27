@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
   LayoutGrid, Gamepad2, Building, BellDot,
   UsersRound, Cog, LogOut, X, LifeBuoy, Sparkles,
+  ChevronRight,
 } from 'lucide-react';
 import { NavLink } from '@/components/navigation/NavLink';
 import {
@@ -14,7 +15,8 @@ import { useNotifications } from '@/context/NotificationContext';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
-import logoImg from '@/assets/logo.png';
+import logoIcon from '@/assets/logo.png';
+import logoFull from '@/assets/flowkyn-logo-full.png';
 
 export function AppSidebar() {
   const { t } = useTranslation();
@@ -56,21 +58,21 @@ export function AppSidebar() {
           <NavLink to={item.url} end={item.url === ROUTES.DASHBOARD}
             onClick={handleNavClick}
             className={cn(
-              "group relative flex items-center gap-2.5 rounded-md text-[13px] font-medium transition-colors duration-150",
+              "group relative flex items-center gap-2.5 rounded-md text-[13px] font-medium transition-all duration-150",
               collapsed ? "justify-center px-0 py-2" : "px-2.5 py-1.5",
               active
-                ? "bg-primary/10 text-primary"
-                : "text-sidebar-foreground hover:text-foreground hover:bg-sidebar-accent",
+                ? "bg-sidebar-accent text-sidebar-primary"
+                : "text-sidebar-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent/50",
             )}
-            activeClassName="bg-primary/10 text-primary font-semibold"
+            activeClassName="bg-sidebar-accent text-sidebar-primary font-semibold"
           >
-            {/* Active indicator */}
+            {/* Neon active indicator */}
             {active && !collapsed && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-primary" />
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 rounded-r-full bg-sidebar-primary shadow-[0_0_8px_hsl(265_87%_65%_/_0.5)]" />
             )}
             <item.icon className={cn(
               "h-[18px] w-[18px] shrink-0 transition-colors",
-              active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+              active ? "text-sidebar-primary" : "text-sidebar-muted-foreground group-hover:text-sidebar-accent-foreground"
             )} strokeWidth={active ? 2 : 1.5} />
             {!collapsed && <span className="flex-1 truncate">{item.title}</span>}
             {!collapsed && item.badge ? (
@@ -86,15 +88,32 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar-background">
-      <SidebarHeader className="px-3 py-4">
+      {/* Brand header with subtle gradient */}
+      <SidebarHeader className={cn("px-3", collapsed ? "py-3" : "py-4")}>
         <div className="flex items-center justify-between">
-          <Link to={ROUTES.DASHBOARD} onClick={handleNavClick} className="flex items-center justify-center w-full py-0.5">
-            <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className={cn("object-contain transition-all", collapsed ? "h-8 w-8" : "h-10 w-10")} />
+          <Link to={ROUTES.DASHBOARD} onClick={handleNavClick} className="flex items-center justify-center w-full">
+            <div className="relative group/logo">
+              {collapsed ? (
+                <img
+                  src={logoIcon}
+                  alt={t('brand.name', { defaultValue: 'Flowkyn' })}
+                  className="h-9 w-9 object-contain transition-all duration-300 group-hover/logo:scale-105"
+                />
+              ) : (
+                <img
+                  src={logoFull}
+                  alt={t('brand.name', { defaultValue: 'Flowkyn' })}
+                  className="h-14 w-auto object-contain transition-all duration-300 group-hover/logo:scale-[1.03] drop-shadow-[0_0_12px_hsl(265_87%_65%_/_0.25)]"
+                />
+              )}
+              {/* Ambient glow */}
+              <div className="absolute inset-0 rounded-full bg-sidebar-primary/10 blur-2xl -z-10 transition-opacity group-hover/logo:bg-sidebar-primary/20" />
+            </div>
           </Link>
           {isMobile && (
             <button
               onClick={() => setOpenMobile(false)}
-              className="absolute right-3 top-4 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+              className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-md text-sidebar-muted-foreground hover:text-sidebar-accent-foreground hover:bg-sidebar-accent transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -105,7 +124,7 @@ export function AppSidebar() {
       <SidebarContent className={cn("py-1", collapsed ? "px-1.5" : "px-2")}>
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground/50 px-2.5 mb-1">
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.12em] font-semibold text-sidebar-muted-foreground/60 px-2.5 mb-1">
               {t('nav.menu', { defaultValue: 'Menu' })}
             </SidebarGroupLabel>
           )}
@@ -116,13 +135,13 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className={cn("my-2", collapsed ? "mx-2" : "mx-2.5")}>
+        <div className={cn("my-2.5", collapsed ? "mx-2" : "mx-2.5")}>
           <div className="h-px bg-sidebar-border" />
         </div>
 
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.1em] font-semibold text-muted-foreground/50 px-2.5 mb-1">
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.12em] font-semibold text-sidebar-muted-foreground/60 px-2.5 mb-1">
               {t('nav.manage', { defaultValue: 'Manage' })}
             </SidebarGroupLabel>
           )}
@@ -134,32 +153,36 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-2.5 border-t border-sidebar-border">
+      <SidebarFooter className="p-2 border-t border-sidebar-border">
         {user && (
           <div className={cn(
-            "flex items-center gap-2 w-full rounded-md p-2 transition-colors",
-            "hover:bg-sidebar-accent",
+            "flex items-center gap-2 w-full rounded-lg p-2 transition-all duration-200",
+            "hover:bg-sidebar-accent/60 group/footer",
             collapsed && "flex-col p-1.5"
           )}>
             <div className={cn("flex items-center gap-2.5 flex-1 min-w-0", collapsed && "justify-center")}>
-              <Avatar className="h-7 w-7 shrink-0">
-                <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">
-                  {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-7 w-7 shrink-0 ring-1 ring-sidebar-primary/20 transition-all group-hover/footer:ring-sidebar-primary/40">
+                  <AvatarFallback className="bg-sidebar-primary/15 text-sidebar-primary text-[10px] font-semibold">
+                    {user.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                {/* Online indicator */}
+                <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-success ring-2 ring-sidebar-background" />
+              </div>
               {!collapsed && (
                 <div className="flex-1 min-w-0 text-left">
-                  <p className="text-[13px] font-medium text-foreground truncate">{user.name}</p>
-                  <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                  <p className="text-[12px] font-medium text-sidebar-accent-foreground truncate">{user.name}</p>
+                  <p className="text-[10px] text-sidebar-muted-foreground truncate">{user.email}</p>
                 </div>
               )}
             </div>
             <button
               onClick={handleLogout}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-sidebar-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover/footer:opacity-100"
               title={t('nav.logout')}
             >
-              <LogOut className="h-3.5 w-3.5" />
+              <LogOut className="h-3 w-3" />
             </button>
           </div>
         )}
