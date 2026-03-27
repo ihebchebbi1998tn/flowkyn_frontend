@@ -110,11 +110,45 @@ export function UpcomingEvents({ events, stats }: UpcomingEventsProps) {
           })}
         </div>
       ) : (
-        <EmptyState
-          icon={Calendar}
-          message={t('dashboard.noUpcomingEvents')}
-          description={t('dashboard.noUpcomingEventsDesc')}
-        />
+        <div className="relative">
+          {/* Demo placeholder events */}
+          <div className="opacity-40 divide-y divide-border/50">
+            {[
+              { title: t('dashboard.demoEvent1', 'Friday Team Icebreaker'), month: 'Apr', day: '4', mode: 'sync', count: 8, max: 15 },
+              { title: t('dashboard.demoEvent2', 'Monthly Wellness Check'), month: 'Apr', day: '11', mode: 'async', count: 12, max: 20 },
+            ].map((evt, i) => (
+              <div key={i} className="flex items-center gap-3 w-full px-4 py-3">
+                <div className="flex flex-col items-center justify-center w-11 h-11 rounded-lg bg-muted/60 border border-border/50 shrink-0">
+                  <span className="text-[10px] font-bold uppercase text-foreground leading-none">{evt.month}</span>
+                  <span className="text-[15px] font-bold text-foreground leading-tight">{evt.day}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium text-foreground truncate">{evt.title}</p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <Badge variant="outline" className={cn('text-[9px] px-1.5 py-0 h-[18px] border',
+                      evt.mode === 'sync' ? 'border-primary/20 text-primary bg-primary/5' : 'border-success/20 text-success bg-success/5'
+                    )}>
+                      {evt.mode === 'sync' ? 'Live' : 'Async'}
+                    </Badge>
+                    <div className="flex items-center gap-1.5">
+                      <Users className="h-3 w-3 text-muted-foreground/50" />
+                      <div className="h-1.5 w-12 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${Math.round((evt.count / evt.max) * 100)}%` }} />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{evt.count}/{evt.max}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+            <div className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-lg px-4 py-2.5 shadow-lg">
+              <p className="text-xs font-semibold text-foreground">{t('dashboard.sampleData', 'Sample preview')}</p>
+              <p className="text-[10px] text-muted-foreground">{t('dashboard.createFirstEvent', 'Create events to see them here')}</p>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Footer stats */}

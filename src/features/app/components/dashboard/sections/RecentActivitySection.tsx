@@ -16,6 +16,7 @@ interface RecentSession {
 interface RecentActivitySectionProps {
   sessions: RecentSession[];
   delay?: number;
+  isDemo?: boolean;
 }
 
 const statusConfig: Record<string, { icon: typeof CheckCircle2; class: string; dot: string }> = {
@@ -24,7 +25,7 @@ const statusConfig: Record<string, { icon: typeof CheckCircle2; class: string; d
   paused: { icon: Pause, class: 'bg-warning/8 text-warning border-warning/20', dot: 'bg-warning' },
 };
 
-export function RecentActivitySection({ sessions, delay = 0.8 }: RecentActivitySectionProps) {
+export function RecentActivitySection({ sessions, delay = 0.8, isDemo }: RecentActivitySectionProps) {
   const { t } = useTranslation();
 
   if (sessions.length === 0) return null;
@@ -35,8 +36,8 @@ export function RecentActivitySection({ sessions, delay = 0.8 }: RecentActivityS
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay, ease: [0.22, 1, 0.36, 1] }}
     >
-      <ChartCard title={t('dashboard.recentActivity')} subtitle={t('dashboard.latestGameSessions')} noPadding>
-        <div className="divide-y divide-border/60">
+      <ChartCard title={t('dashboard.recentActivity')} subtitle={isDemo ? t('dashboard.sampleData', 'Sample preview') : t('dashboard.latestGameSessions')} noPadding>
+        <div className={cn('divide-y divide-border/60', isDemo && 'opacity-40')}>
           {sessions.map((session, i) => {
             const config = statusConfig[session.status] || statusConfig.active;
             return (

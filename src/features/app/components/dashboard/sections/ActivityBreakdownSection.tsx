@@ -12,9 +12,10 @@ interface ActivityItem {
 interface ActivityBreakdownSectionProps {
   data: ActivityItem[];
   delay?: number;
+  isDemo?: boolean;
 }
 
-export function ActivityBreakdownSection({ data, delay = 0.5 }: ActivityBreakdownSectionProps) {
+export function ActivityBreakdownSection({ data, delay = 0.5, isDemo }: ActivityBreakdownSectionProps) {
   const { t } = useTranslation();
   const totalSessions = data.reduce((sum, d) => sum + d.value, 0);
 
@@ -27,7 +28,8 @@ export function ActivityBreakdownSection({ data, delay = 0.5 }: ActivityBreakdow
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
     >
-      <ChartCard title={t('dashboard.activityBreakdown')} subtitle={t('dashboard.sessionsByGameType')}>
+      <ChartCard title={t('dashboard.activityBreakdown')} subtitle={isDemo ? t('dashboard.sampleData', 'Sample preview') : t('dashboard.sessionsByGameType')}>
+        <div className={isDemo ? 'opacity-40' : ''}>
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={data} barSize={20}>
             <CartesianGrid {...chartGridProps} />
@@ -39,9 +41,11 @@ export function ActivityBreakdownSection({ data, delay = 0.5 }: ActivityBreakdow
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </ChartCard>
 
-      <ChartCard title={t('dashboard.categoryDistribution')} subtitle={t('dashboard.byActivityCategory')}>
+      <ChartCard title={t('dashboard.categoryDistribution')} subtitle={isDemo ? t('dashboard.sampleData', 'Sample preview') : t('dashboard.byActivityCategory')}>
+        <div className={isDemo ? 'opacity-40' : ''}>
         <div className="flex items-center gap-6">
           <div className="relative shrink-0">
             <ResponsiveContainer width={160} height={160}>
@@ -76,6 +80,7 @@ export function ActivityBreakdownSection({ data, delay = 0.5 }: ActivityBreakdow
               );
             })}
           </div>
+        </div>
         </div>
       </ChartCard>
     </motion.div>

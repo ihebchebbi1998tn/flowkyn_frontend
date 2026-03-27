@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, Users, Globe, Clock, Loader2, Mail, Send, Copy, CheckCircle, Pause, Square, Trash2, Gamepad2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, Globe, Clock, Loader2, Mail, Send, Copy, Pause, Square, Trash2, Gamepad2, MoreHorizontal, Pencil, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { InfoCard } from '@/components/cards/StatCard';
 import { DataTable, type Column } from '@/components/tables/DataTable';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useEvent, useEventParticipants, useJoinEvent, useInviteToEvent, usePauseEvent, useStopEvent, useDeleteEvent } from '@/hooks/queries';
 import { useQuery } from '@tanstack/react-query';
@@ -22,34 +22,26 @@ import { toast } from 'sonner';
 import { trackEvent, TRACK } from '@/hooks/useTracker';
 import { useApiError } from '@/hooks/useApiError';
 
-const gradientMap = {
-  primary: 'from-primary/80 to-primary',
-  success: 'from-success/80 to-success',
-  warning: 'from-warning/80 to-warning',
-  info: 'from-info/80 to-info',
+const statusColors: Record<string, string> = {
+  active: 'bg-success/15 text-success border-success/20',
+  draft: 'bg-muted text-muted-foreground border-border',
+  paused: 'bg-warning/15 text-warning border-warning/20',
+  stopped: 'bg-destructive/15 text-destructive border-destructive/20',
+  completed: 'bg-info/15 text-info border-info/20',
 };
 
 function EventDetailSkeleton() {
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-[1400px] animate-fade-in">
+    <div className="space-y-6 max-w-[960px] animate-fade-in">
       <div className="flex items-center gap-3">
         <Skeleton className="h-8 w-8 rounded-lg" />
-        <div className="space-y-2 flex-1">
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-72" />
-        </div>
+        <Skeleton className="h-6 w-48" />
       </div>
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-px grid-cols-2 lg:grid-cols-4 rounded-xl border border-border overflow-hidden">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
-            <Skeleton className="h-1 w-full" />
-            <div className="flex items-center gap-3 p-4">
-              <Skeleton className="h-10 w-10 rounded-xl" />
-              <div className="space-y-2 flex-1">
-                <Skeleton className="h-3 w-16" />
-                <Skeleton className="h-4 w-24" />
-              </div>
-            </div>
+          <div key={i} className="bg-card p-4">
+            <Skeleton className="h-3 w-16 mb-2" />
+            <Skeleton className="h-5 w-24" />
           </div>
         ))}
       </div>
@@ -92,14 +84,8 @@ function InviteDialog({ eventId }: { eventId: string }) {
     inviteMutation.mutate(
       { eventId, email: email.trim(), lang, gameId },
       {
-        onSuccess: () => {
-          setEmail('');
-          setOpen(false);
-        },
-        onError: (err) => {
-          console.error('Invite error:', err);
-          showError(err, t('events.inviteFailed'));
-        },
+        onSuccess: () => { setEmail(''); setOpen(false); },
+        onError: (err) => showError(err, t('events.inviteFailed')),
       }
     );
   };
@@ -110,20 +96,20 @@ function InviteDialog({ eventId }: { eventId: string }) {
       trackEvent(TRACK.EVENT_LINK_COPIED, { eventId, type });
       toast.success(t('events.linkCopied'));
     } else {
-      toast.error(t('common.copyFailed', { defaultValue: 'Failed to copy link. Please manually copy the URL.' }));
+      toast.error(t('common.copyFailed', { defaultValue: 'Copy failed' }));
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5 rounded-lg">
+        <Button variant="outline" size="sm" className="gap-1.5">
           <Mail className="h-3.5 w-3.5" /> {t('events.invite')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-section-title">{t('events.inviteParticipant')}</DialogTitle>
+          <DialogTitle>{t('events.inviteParticipant')}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
           <div className="flex gap-2">
@@ -132,50 +118,26 @@ function InviteDialog({ eventId }: { eventId: string }) {
               placeholder={t('events.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-10 text-body-sm"
               onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
             />
-            <Button onClick={handleInvite} disabled={!email.trim() || inviteMutation.isPending} className="h-10 px-4 gap-1.5">
+            <Button onClick={handleInvite} disabled={!email.trim() || inviteMutation.isPending} className="gap-1.5 shrink-0">
               {inviteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               {t('common.send')}
             </Button>
           </div>
           <div className="space-y-2">
-            <p className="text-[11px] text-muted-foreground font-medium">
-              {t('events.shareLink', { defaultValue: 'Share links (include ?game= so recipients land on the correct activity)' })}
-            </p>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/40 border border-border/50">
-                <Input
-                  value={joinLink}
-                  readOnly
-                  className="h-8 text-label-xs bg-background/60 flex-1 border-border/50"
-                />
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 text-label-xs gap-1 shrink-0 rounded-lg"
-                  onClick={() => copyLink(joinLink, 'join')}
-                >
-                  <Copy className="h-3 w-3" /> {t('events.copy')}
+            {[
+              { url: joinLink, label: 'Join', type: 'join' as const },
+              { url: playLink, label: 'Play', type: 'play' as const },
+            ].map(({ url, label, type }) => (
+              <div key={type} className="flex items-center gap-2 rounded-lg bg-muted/40 p-2">
+                <span className="text-[11px] font-medium text-muted-foreground w-8 shrink-0">{label}</span>
+                <Input value={url} readOnly className="h-7 text-[11px] bg-background/60 flex-1" />
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 shrink-0" onClick={() => copyLink(url, type)}>
+                  <Copy className="h-3 w-3" />
                 </Button>
               </div>
-              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/40 border border-border/50">
-                <Input
-                  value={playLink}
-                  readOnly
-                  className="h-8 text-label-xs bg-background/60 flex-1 border-border/50"
-                />
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 text-label-xs gap-1 shrink-0 rounded-lg"
-                  onClick={() => copyLink(playLink, 'play')}
-                >
-                  <Copy className="h-3 w-3" /> {t('events.copy')}
-                </Button>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </DialogContent>
@@ -184,43 +146,25 @@ function InviteDialog({ eventId }: { eventId: string }) {
 }
 
 function ActionConfirmDialog({ 
-  open, 
-  onOpenChange, 
-  onConfirm, 
-  isLoading, 
-  title, 
-  description,
-  confirmText,
-  isDangerous = false,
+  open, onOpenChange, onConfirm, isLoading, title, description, confirmText, isDangerous = false,
 }: { 
-  open: boolean; 
-  onOpenChange: (open: boolean) => void; 
-  onConfirm: () => void; 
-  isLoading: boolean; 
-  title: string;
-  description: string;
-  confirmText: string;
-  isDangerous?: boolean;
+  open: boolean; onOpenChange: (open: boolean) => void; onConfirm: () => void; isLoading: boolean;
+  title: string; description: string; confirmText: string; isDangerous?: boolean;
 }) {
   const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-section-title">{title}</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <p className="text-body-sm text-muted-foreground">{description}</p>
-        <div className="flex gap-2 justify-end pt-4">
-          <Button variant="outline" className="h-8 sm:h-9 text-caption" onClick={() => onOpenChange(false)} disabled={isLoading}>
+        <p className="text-sm text-muted-foreground">{description}</p>
+        <div className="flex gap-2 justify-end pt-2">
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {t('common.cancel', { defaultValue: 'Cancel' })}
           </Button>
-          <Button 
-            variant={isDangerous ? 'destructive' : 'default'} 
-            className="h-8 sm:h-9 text-caption" 
-            onClick={onConfirm} 
-            disabled={isLoading}
-          >
-            {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : null}
+          <Button variant={isDangerous ? 'destructive' : 'default'} size="sm" onClick={onConfirm} disabled={isLoading}>
+            {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />}
             {confirmText}
           </Button>
         </div>
@@ -242,229 +186,143 @@ export default function EventDetail() {
   const stopEvent = useStopEvent();
   const deleteEvent = useDeleteEvent();
 
-  // State for confirmation dialogs
   const [pauseConfirm, setPauseConfirm] = useState(false);
   const [stopConfirm, setStopConfirm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   if (isLoading) return <EventDetailSkeleton />;
+  if (isError) return <ErrorState message={t('events.loadFailed')} description={t('events.loadFailedDescription')} onRetry={() => refetch()} />;
+  if (!event) return <ErrorState message={t('events.notFound')} description={t('events.notFoundDescription')} />;
 
-  if (isError) {
-    return <ErrorState message={t('events.loadFailed')} description={t('events.loadFailedDescription')} onRetry={() => refetch()} />;
-  }
+  const isEventActive = event.status === 'active' || event.status === 'draft';
 
-  if (!event) {
-    return <ErrorState message={t('events.notFound')} description={t('events.notFoundDescription')} />;
-  }
+  const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
 
-  const detailCards = [
-    {
-      icon: Calendar,
-      label: 'events.startTime',
-      value: event.start_time
-        ? new Date(event.start_time).toLocaleString()
-        : '—',
-      gradient: 'primary' as const,
-    },
-    {
-      icon: Clock,
-      label: 'events.endTime',
-      value: event.end_time
-        ? new Date(event.end_time).toLocaleString()
-        : '—',
-      gradient: 'info' as const,
-    },
-    {
-      icon: Gamepad2,
-      label: 'events.gameType',
-      value: (event as any).game_type_name || (event as any).game_type || t('events.gameTypeUnknown', { defaultValue: 'Not configured' }),
-      gradient: 'primary' as const,
-    },
-    {
-      icon: Globe,
-      label: 'events.mode',
-      value: event.event_mode === 'sync'
-        ? t('events.liveSync')
-        : t('events.async'),
-      gradient: 'warning' as const,
-    },
-    {
-      icon: Users,
-      label: 'events.participants',
-      value: `${participants.length} / ${event.max_participants}`,
-      gradient: 'success' as const,
-    },
+  const stats = [
+    { icon: Calendar, label: t('events.startTime'), value: formatDate(event.start_time) },
+    { icon: Clock, label: t('events.endTime'), value: formatDate(event.end_time) },
+    { icon: Gamepad2, label: t('events.gameType'), value: (event as any).game_type_name || (event as any).game_type || t('events.gameTypeUnknown', { defaultValue: '—' }) },
+    { icon: Users, label: t('events.participants'), value: `${participants.length} / ${event.max_participants}` },
   ];
 
   const columns: Column<any>[] = [
     {
       key: 'name', header: t('organizations.name'), sortable: true,
       render: (p: any) => (
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Avatar className="h-6 w-6 sm:h-7 sm:w-7"><AvatarFallback className="bg-primary/10 text-primary text-label-xs font-semibold">{(p.name || '?')[0]}</AvatarFallback></Avatar>
-          <span className="text-body-sm font-medium truncate">{p.name}</span>
+        <div className="flex items-center gap-2">
+          <Avatar className="h-6 w-6">
+            <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-semibold">
+              {(p.name || '?')[0]}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-sm font-medium truncate">{p.name}</span>
         </div>
       ),
     },
+    { key: 'type', header: t('events.participants'), sortable: true, hideOnMobile: true },
     {
-      key: 'type',
-      header: t('events.participants'),
-      sortable: true,
-      hideOnMobile: true,
-    },
-    {
-      key: 'joined_at',
-      header: t('events.joined'),
-      sortable: true,
-      hideOnMobile: true,
-      render: (p: any) => (
-        <span className="text-body-sm text-muted-foreground">
-          {p.joined_at ? new Date(p.joined_at).toLocaleString() : '—'}
-        </span>
-      ),
+      key: 'joined_at', header: t('events.joined'), sortable: true, hideOnMobile: true,
+      render: (p: any) => <span className="text-sm text-muted-foreground">{formatDate(p.joined_at)}</span>,
     },
   ];
 
-  const handleJoin = () => {
-    if (!id) return;
-    joinEvent.mutate(id, {
-      onSuccess: () => trackEvent(TRACK.EVENT_JOINED, { eventId: id }),
-    });
-  };
-
-  const handlePause = () => {
-    if (!id) return;
-    pauseEvent.mutate(id, {
-      onSuccess: () => {
-        setPauseConfirm(false);
-        trackEvent(TRACK.EVENT_PAUSED, { eventId: id });
-      },
-    });
-  };
-
-  const handleStop = () => {
-    if (!id) return;
-    stopEvent.mutate(id, {
-      onSuccess: () => {
-        setStopConfirm(false);
-        trackEvent(TRACK.EVENT_STOPPED, { eventId: id });
-      },
-    });
-  };
-
-  const handleDelete = () => {
-    if (!id) return;
-    deleteEvent.mutate(id, {
-      onSuccess: () => {
-        trackEvent(TRACK.EVENT_DELETED, { eventId: id });
-        navigate(ROUTES.EVENTS);
-      },
-    });
-  };
-
-  const isEventActive = event.status === 'active' || event.status === 'draft';
+  const handleJoin = () => { if (id) joinEvent.mutate(id, { onSuccess: () => trackEvent(TRACK.EVENT_JOINED, { eventId: id }) }); };
+  const handlePause = () => { if (id) pauseEvent.mutate(id, { onSuccess: () => { setPauseConfirm(false); trackEvent(TRACK.EVENT_PAUSED, { eventId: id }); } }); };
+  const handleStop = () => { if (id) stopEvent.mutate(id, { onSuccess: () => { setStopConfirm(false); trackEvent(TRACK.EVENT_STOPPED, { eventId: id }); } }); };
+  const handleDelete = () => { if (id) deleteEvent.mutate(id, { onSuccess: () => { trackEvent(TRACK.EVENT_DELETED, { eventId: id }); navigate(ROUTES.EVENTS); } }); };
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-[1400px] animate-fade-in">
-      <div className="flex items-center gap-2 sm:gap-3">
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(ROUTES.EVENTS)} aria-label={t('common.backToEvents')}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-section-title truncate">{event.title}</h1>
-            {event.status && (
-              <Badge variant={event.status === 'active' ? 'default' : 'secondary'} className="text-label-xs">
+    <div className="space-y-6 max-w-[960px] animate-fade-in">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3 min-w-0">
+          <Button variant="ghost" size="icon" className="h-8 w-8 mt-0.5 shrink-0" onClick={() => navigate(ROUTES.EVENTS)}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl font-semibold text-foreground truncate">{event.title}</h1>
+              <Badge className={cn('text-[10px] px-2 py-0 border shrink-0', statusColors[event.status || ''] || statusColors.draft)}>
                 {t(`events.status.${event.status}`)}
               </Badge>
+            </div>
+            {event.description && (
+              <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{event.description}</p>
             )}
           </div>
-          <p className="text-body-sm text-muted-foreground">{event.description}</p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 shrink-0">
+          <Button size="sm" onClick={handleJoin} disabled={joinEvent.isPending} className="gap-1.5">
+            {joinEvent.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {t('events.joinEvent')}
+          </Button>
+          <InviteDialog eventId={id!} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem onClick={() => navigate(ROUTES.EVENT_EDIT(id))}>
+                <Pencil className="h-3.5 w-3.5 mr-2" /> {t('common.edit')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(ROUTES.EVENT_LOBBY(id))}>
+                <ExternalLink className="h-3.5 w-3.5 mr-2" /> {t('events.openLobby')}
+              </DropdownMenuItem>
+              {isEventActive && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setPauseConfirm(true)} disabled={pauseEvent.isPending}>
+                    <Pause className="h-3.5 w-3.5 mr-2" /> {t('events.pause')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStopConfirm(true)} disabled={stopEvent.isPending}>
+                    <Square className="h-3.5 w-3.5 mr-2" /> {t('events.stop')}
+                  </DropdownMenuItem>
+                </>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setDeleteConfirm(true)} className="text-destructive focus:text-destructive" disabled={deleteEvent.isPending}>
+                <Trash2 className="h-3.5 w-3.5 mr-2" /> {t('events.delete')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
-      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
-        {detailCards.map((card) => (
-          <div key={card.label} className="rounded-xl border border-border bg-card overflow-hidden hover:shadow-sm transition-shadow">
-            <div className={cn("h-1 w-full bg-gradient-to-r", gradientMap[card.gradient])} />
-            <div className="flex items-center gap-2.5 sm:gap-3 p-3 sm:p-4">
-              <div className={cn("flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm shrink-0", gradientMap[card.gradient])}>
-                <card.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-label-xs text-muted-foreground uppercase tracking-wider font-medium truncate">{t(card.label)}</p>
-                <p className="text-body font-semibold text-card-foreground truncate">{card.value}</p>
-              </div>
+      {/* Stats — compact row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px rounded-xl border border-border overflow-hidden bg-border">
+        {stats.map(({ icon: Icon, label, value }) => (
+          <div key={label} className="bg-card p-3.5 flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shrink-0">
+              <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] text-muted-foreground truncate">{label}</p>
+              <p className="text-sm font-medium text-foreground truncate">{value}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 sm:gap-3">
-        <Button
-          className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5"
-          onClick={handleJoin}
-          disabled={joinEvent.isPending}
-        >
-          {joinEvent.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-          {t('events.joinEvent')}
-        </Button>
-        <InviteDialog eventId={id!} />
-        <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm" onClick={() => navigate(ROUTES.EVENT_EDIT(id))}>{t('common.edit')}</Button>
-        <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm" onClick={() => navigate(ROUTES.EVENT_LOBBY(id))}>
-          {t('events.openLobby')}
-        </Button>
-        
-        {isEventActive && (
-          <>
-            <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5" onClick={() => setPauseConfirm(true)} disabled={pauseEvent.isPending}>
-              <Pause className="h-3.5 w-3.5" /> {t('events.pause')}
-            </Button>
-            <Button variant="outline" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5" onClick={() => setStopConfirm(true)} disabled={stopEvent.isPending}>
-              <Square className="h-3.5 w-3.5" /> {t('events.stop')}
-            </Button>
-          </>
-        )}
-        
-        <Button variant="destructive" className="h-8 sm:h-9 text-caption sm:text-body-sm gap-1.5" onClick={() => setDeleteConfirm(true)} disabled={deleteEvent.isPending}>
-          <Trash2 className="h-3.5 w-3.5" /> {t('events.delete')}
-        </Button>
+      {/* Participants */}
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <h2 className="text-sm font-semibold text-foreground">{t('events.participants')}</h2>
+          <span className="text-xs text-muted-foreground">{participants.length} / {event.max_participants}</span>
+        </div>
+        <DataTable columns={columns} data={participants} searchable />
       </div>
 
-      <InfoCard title={t('events.participants')} gradient="primary">
-        <DataTable columns={columns} data={participants} searchable />
-      </InfoCard>
-
-      <ActionConfirmDialog
-        open={pauseConfirm}
-        onOpenChange={setPauseConfirm}
-        onConfirm={handlePause}
-        isLoading={pauseEvent.isPending}
-        title={t('events.pauseEvent')}
-        description={t('events.pauseEventDescription')}
-        confirmText={t('events.pause')}
-      />
-
-      <ActionConfirmDialog
-        open={stopConfirm}
-        onOpenChange={setStopConfirm}
-        onConfirm={handleStop}
-        isLoading={stopEvent.isPending}
-        title={t('events.stopEvent')}
-        description={t('events.stopEventDescription')}
-        confirmText={t('events.stop')}
-      />
-
-      <ActionConfirmDialog
-        open={deleteConfirm}
-        onOpenChange={setDeleteConfirm}
-        onConfirm={handleDelete}
-        isLoading={deleteEvent.isPending}
-        title={t('events.deleteEvent')}
-        description={t('events.deleteEventDescription')}
-        confirmText={t('events.delete')}
-        isDangerous
-      />
+      {/* Confirm dialogs */}
+      <ActionConfirmDialog open={pauseConfirm} onOpenChange={setPauseConfirm} onConfirm={handlePause} isLoading={pauseEvent.isPending}
+        title={t('events.pauseEvent')} description={t('events.pauseEventDescription')} confirmText={t('events.pause')} />
+      <ActionConfirmDialog open={stopConfirm} onOpenChange={setStopConfirm} onConfirm={handleStop} isLoading={stopEvent.isPending}
+        title={t('events.stopEvent')} description={t('events.stopEventDescription')} confirmText={t('events.stop')} />
+      <ActionConfirmDialog open={deleteConfirm} onOpenChange={setDeleteConfirm} onConfirm={handleDelete} isLoading={deleteEvent.isPending}
+        title={t('events.deleteEvent')} description={t('events.deleteEventDescription')} confirmText={t('events.delete')} isDangerous />
     </div>
   );
 }

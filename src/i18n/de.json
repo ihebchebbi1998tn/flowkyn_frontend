@@ -939,7 +939,8 @@
       "title": "Veranstaltung erfolgreich erstellt!",
       "description": "Ihre Veranstaltung wurde erstellt und Einladungen wurden versandt. Möchten Sie der Lobby jetzt beitreten?",
       "joinButton": "Lobby beitreten",
-      "closeButton": "Zum Dashboard"
+      "closeButton": "Zu Veranstaltungen",
+      "inviteLink": "Einladungslink"
     },
     "yourGameProfile": "Ihr Spielprofil",
     "joinedCount": "beigetreten",

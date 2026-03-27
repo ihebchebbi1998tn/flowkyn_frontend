@@ -950,7 +950,8 @@
       "title": "¡Evento creado con éxito!",
       "description": "Tu evento se ha creado y se han enviado las invitaciones. ¿Quieres unirte al lobby ahora?",
       "joinButton": "Unirse al lobby",
-      "closeButton": "Ir al panel"
+      "closeButton": "Ir a eventos",
+      "inviteLink": "Enlace de invitación"
     },
     "yourGameProfile": "Tu perfil de juego",
     "joinedCount": "unidos",

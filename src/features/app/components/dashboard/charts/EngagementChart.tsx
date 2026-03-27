@@ -7,10 +7,20 @@ import { ArrowUpRight } from 'lucide-react';
 interface EngagementChartProps {
   data: Array<{ month: string; sessions: number; completed: number }>;
   onViewDetails?: () => void;
+  isDemo?: boolean;
 }
 
-export function EngagementChart({ data, onViewDetails }: EngagementChartProps) {
+export function EngagementChart({ data, onViewDetails, isDemo }: EngagementChartProps) {
   const { t } = useTranslation();
+
+  const demoOverlay = isDemo && (
+    <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+      <div className="bg-card/80 backdrop-blur-sm border border-border/60 rounded-lg px-4 py-2.5 shadow-lg pointer-events-auto">
+        <p className="text-xs font-semibold text-foreground">{t('dashboard.sampleData', 'Sample preview')}</p>
+        <p className="text-[10px] text-muted-foreground">{t('dashboard.sampleDataDesc', 'Run activities to see real data')}</p>
+      </div>
+    </div>
+  );
 
   return (
     <ChartCard
@@ -30,6 +40,9 @@ export function EngagementChart({ data, onViewDetails }: EngagementChartProps) {
         )
       }
     >
+      <div className="relative">
+        {demoOverlay}
+        <div className={isDemo ? 'opacity-40' : ''}>
       <ResponsiveContainer width="100%" height={210}>
         <AreaChart data={data}>
           <defs>
@@ -69,6 +82,8 @@ export function EngagementChart({ data, onViewDetails }: EngagementChartProps) {
           />
         </AreaChart>
       </ResponsiveContainer>
+        </div>
+      </div>
       {/* Legend */}
       <div className="flex items-center gap-5 mt-3 px-1">
         <div className="flex items-center gap-2">

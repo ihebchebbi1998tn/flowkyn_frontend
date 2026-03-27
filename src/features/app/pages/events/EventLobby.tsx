@@ -223,33 +223,48 @@ export default function EventLobby() {
   // ── Main lobby ───────────────────────────────────────────────────────────
   return (
     <ErrorBoundary>
+      <>
         <div className="min-h-[80vh] flex items-center justify-center animate-fade-in">
-        <EventLobbyCard
-          event={event as any}
-          showProfileForm={showProfileForm}
-          hasJoined={hasJoined}
-          profile={profile}
-          joinError={joinError}
-          onClearJoinError={() => setJoinError('')}
-          onEditProfile={() => setShowProfileForm(true)}
-          participants={participants}
-          shouldShowYouPill={shouldShowYouPill}
-          inviteToken={inviteToken}
-          joinLink={joinLink}
-          copied={copied}
-          onCopyLink={copyLink}
-          isJoining={isJoining}
-          isAuthenticated={isAuthenticated}
-          onJoin={handleJoin}
-          onJumpToGame={jumpToGame}
-          eventsSocketStatus={eventsSocket.status}
-          eventsSocketConnected={eventsSocket.isConnected}
-          onlineCount={onlineCount}
-          isSyncing={isSyncing}
-          participantId={identity.participantId || null}
-          t={t}
-                  />
-                </div>
+          <EventLobbyCard
+            event={event as any}
+            showProfileForm={showProfileForm}
+            hasJoined={hasJoined}
+            profile={profile}
+            joinError={joinError}
+            onClearJoinError={() => setJoinError('')}
+            onEditProfile={() => setShowProfileForm(true)}
+            participants={participants}
+            shouldShowYouPill={shouldShowYouPill}
+            inviteToken={inviteToken}
+            joinLink={joinLink}
+            copied={copied}
+            onCopyLink={copyLink}
+            isJoining={isJoining}
+            isAuthenticated={isAuthenticated}
+            onJoin={handleJoin}
+            onJumpToGame={jumpToGame}
+            eventsSocketStatus={eventsSocket.status}
+            eventsSocketConnected={eventsSocket.isConnected}
+            onlineCount={onlineCount}
+            isSyncing={isSyncing}
+            participantId={identity.participantId || null}
+            gameId={gameParam}
+            t={t}
+          />
+        </div>
+
+        {showProfileForm && hasJoined && (
+          <UserProfileSetup
+            title={t('profileSetup.editProfile')}
+            defaultName={profile?.displayName || serverBackedProfile?.displayName || ''}
+            defaultAvatarUrl={profile?.avatarUrl || serverBackedProfile?.avatarUrl}
+            submitLabel={t('common.save')}
+            asModal
+            onClose={() => setShowProfileForm(false)}
+            onSubmit={handleProfileComplete}
+          />
+        )}
+      </>
     </ErrorBoundary>
   );
 }

@@ -49,13 +49,38 @@ export default function Dashboard() {
 
   if (isLoading) return <DashboardSkeleton />;
 
-  const engagementData = (overview?.engagementTrend ?? []).map(d => ({
+  // Demo/placeholder data for empty states
+  const demoEngagement = [
+    { month: 'Jan', sessions: 12, completed: 9 },
+    { month: 'Feb', sessions: 18, completed: 14 },
+    { month: 'Mar', sessions: 24, completed: 19 },
+    { month: 'Apr', sessions: 15, completed: 12 },
+    { month: 'May', sessions: 28, completed: 22 },
+    { month: 'Jun', sessions: 32, completed: 26 },
+  ];
+
+  const demoActivityBreakdown = [
+    { name: 'Two Truths', value: 14, participants: 42, sessions: 14, category: 'icebreaker', fill: 'hsl(var(--primary))' },
+    { name: 'Coffee Roulette', value: 10, participants: 30, sessions: 10, category: 'connection', fill: 'hsl(var(--chart-3))' },
+    { name: 'Wins of Week', value: 8, participants: 24, sessions: 8, category: 'wellness', fill: 'hsl(var(--chart-4))' },
+    { name: 'Strategic Escape', value: 6, participants: 18, sessions: 6, category: 'competition', fill: 'hsl(var(--chart-5))' },
+  ];
+
+  const demoRecentActivity = [
+    { id: 'demo-1', game_type_name: 'Two Truths & a Lie', event_title: 'Friday Icebreaker', current_round: 3, status: 'active' },
+    { id: 'demo-2', game_type_name: 'Coffee Roulette', event_title: 'Monday Connect', current_round: 1, status: 'finished' },
+    { id: 'demo-3', game_type_name: 'Wins of the Week', event_title: 'Team Standup', current_round: 2, status: 'active' },
+  ];
+
+  const rawEngagement = (overview?.engagementTrend ?? []).map(d => ({
     month: d.month,
     sessions: parseInt(d.sessions),
     completed: parseInt(d.completed),
   }));
+  const engagementData = rawEngagement.length > 0 ? rawEngagement : demoEngagement;
+  const isEngagementDemo = rawEngagement.length === 0;
 
-  const activityBreakdown = (overview?.activityBreakdown ?? []).map(d => ({
+  const rawActivityBreakdown = (overview?.activityBreakdown ?? []).map(d => ({
     name: d.name,
     value: parseInt(d.sessions),
     participants: parseInt(d.participants),
@@ -65,6 +90,12 @@ export default function Dashboard() {
           d.category === 'connection' ? 'hsl(var(--chart-3))' :
           d.category === 'wellness' ? 'hsl(var(--chart-4))' : 'hsl(var(--chart-5))',
   }));
+  const activityBreakdown = rawActivityBreakdown.length > 0 ? rawActivityBreakdown : demoActivityBreakdown;
+  const isActivityDemo = rawActivityBreakdown.length === 0;
+
+  const rawRecentActivity = stats?.recentActivity ?? [];
+  const recentActivity = rawRecentActivity.length > 0 ? rawRecentActivity : demoRecentActivity;
+  const isRecentDemo = rawRecentActivity.length === 0;
 
   const categoryData = Object.entries(
     activityBreakdown.reduce((acc, d) => {
@@ -157,7 +188,7 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.16 }}
           >
-            <EngagementChart data={engagementData} onViewDetails={() => setActiveTab('insights')} />
+            <EngagementChart data={engagementData} onViewDetails={() => setActiveTab('insights')} isDemo={isEngagementDemo} />
             <UpcomingEvents events={(stats?.upcomingEvents ?? []) as any} stats={{
               activeSessions: stats?.activeSessions ?? 0,
               totalEvents: stats?.totalEvents ?? 0,
@@ -165,13 +196,13 @@ export default function Dashboard() {
             }} />
           </motion.div>
 
-          <ActivityBreakdownSection data={activityBreakdown} />
+          <ActivityBreakdownSection data={activityBreakdown} isDemo={isActivityDemo} />
           <PerformanceSection
             totalSessions={analyticsStats.totalSessions ?? 0}
             totalParticipants={analyticsStats.totalParticipants ?? 0}
             completionRate={completionRate}
           />
-          <RecentActivitySection sessions={stats?.recentActivity ?? []} />
+          <RecentActivitySection sessions={recentActivity as any} isDemo={isRecentDemo} />
         </TabsContent>
 
         {/* ═══════════════ INSIGHTS TAB ═══════════════ */}

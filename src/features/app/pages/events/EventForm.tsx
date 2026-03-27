@@ -472,6 +472,8 @@ export default function EventForm() {
         isOpen={showJoinModal}
         onClose={handleCloseModal}
         onJoin={handleJoinEvent}
+        eventId={createdEventId}
+        gameId={form.game_id}
       />
     </div>
   );

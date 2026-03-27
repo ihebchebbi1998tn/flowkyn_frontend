@@ -19,26 +19,16 @@ export interface ProfileSetupData {
 }
 
 interface UserProfileSetupProps {
-  /** Title shown at top */
   title?: string;
-  /** Subtitle / description */
   subtitle?: string;
-  /** Pre-filled name (e.g., from auth user) */
   defaultName?: string;
-  /** Pre-filled avatar URL */
   defaultAvatarUrl?: string;
-  /** Label for the submit button */
   submitLabel?: string;
-  /** Whether the form is loading / pending */
   isPending?: boolean;
-  /** On submit with the chosen profile data */
   onSubmit: (data: ProfileSetupData) => void | Promise<void>;
-  /** Optional back button */
   onBack?: () => void;
-  /** Show as a modal overlay (used in-game) */
   asModal?: boolean;
   onClose?: () => void;
-  /** Show email field (guests only) */
   showEmail?: boolean;
   email?: string;
   onEmailChange?: (v: string) => void;
@@ -66,8 +56,6 @@ export function UserProfileSetup({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmittingLocal, setIsSubmittingLocal] = useState(false);
 
-  const resolvedTitle = title ?? t('profileSetup.chooseIdentity');
-  const resolvedSubtitle = subtitle ?? t('profileSetup.pickNickname');
   const resolvedSubmitLabel = submitLabel ?? t('profileSetup.continue');
   const nameTrimmed = name.trim();
   const MIN_NAME_LEN = 2;
@@ -87,7 +75,6 @@ export function UserProfileSetup({
       await Promise.resolve(
         onSubmit({ displayName: name.trim(), avatarUrl: avatarUrl || '' }),
       );
-
       if (asModal) {
         setSaved(true);
         setTimeout(() => {
@@ -107,103 +94,76 @@ export function UserProfileSetup({
   };
 
   const inner = (
-    <div className={cn("w-full max-w-lg space-y-6", !asModal && "mx-auto")}>
-      {/* Header */}
+    <div className={cn("w-full max-w-md space-y-5", !asModal && "mx-auto")}>
+      {/* Compact header — no icon block, just text */}
       {!asModal && (
-        <div className="text-center space-y-2">
-          <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <User className="h-7 w-7 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">{resolvedTitle}</h1>
-          <p className="text-sm text-muted-foreground">{resolvedSubtitle}</p>
+        <div className="text-center space-y-1">
+          <h1 className="text-lg font-bold text-foreground">{title ?? t('profileSetup.chooseIdentity')}</h1>
+          {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
         </div>
       )}
 
-      <div className={cn("rounded-2xl border border-border bg-card space-y-5", asModal ? "p-5" : "p-6")}>
+      <div className={cn("rounded-2xl border border-border bg-card space-y-4", asModal ? "p-5" : "p-5")}>
         {/* Nickname */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold text-foreground uppercase tracking-wider">{t('profileSetup.nickname')}</Label>
+          <Label className="text-xs font-medium text-muted-foreground">{t('profileSetup.nickname')}</Label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="" className="absolute left-2.5 top-1/2 -translate-y-1/2 h-5 w-5 rounded-full object-cover" />
+            ) : (
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            )}
             <Input
               placeholder={t('profileSetup.nicknamePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="pl-10 h-11"
+              className="pl-10 h-10"
               autoFocus
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             />
           </div>
-          {nameError && (
-            <p className="text-[11px] text-destructive">{nameError}</p>
-          )}
         </div>
 
         {/* Email (guests only) */}
         {showEmail && onEmailChange && (
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-foreground uppercase tracking-wider">{t('profileSetup.emailOptional')}</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t('profileSetup.emailOptional')}</Label>
             <Input
               type="email"
               placeholder={t('profileSetup.emailPlaceholder')}
               value={email}
               onChange={(e) => onEmailChange(e.target.value)}
-              className="h-11"
+              className="h-10"
             />
           </div>
         )}
 
-        {/* Avatar picker */}
-        <div className="space-y-2">
+        {/* Avatar picker — 4 rows × 6 cols */}
+        <div className="space-y-1.5">
           <AvatarPicker
             seed={name || 'player'}
             onSelect={setAvatarUrl}
             selectedUri={avatarUrl}
-            count={27}
-            cols={9}
+            count={24}
+            cols={6}
           />
         </div>
 
-        {/* Preview */}
-        <AnimatePresence>
-          {(name.trim() || avatarUrl) && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/5 border border-primary/15"
-            >
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={t('profileSetup.yourAvatar')} className="h-10 w-10 rounded-xl object-cover shrink-0" />
-              ) : (
-                <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center text-sm font-bold text-primary shrink-0">
-                  {(name || '?').slice(0, 2).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">{name || t('profileSetup.yourName')}</p>
-                <p className="text-[10px] text-muted-foreground">{t('profileSetup.appearInGame')}</p>
-              </div>
-              {canSubmit && <CheckCircle className="h-4 w-4 text-success ml-auto shrink-0" />}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {submitError && (
-          <div className="mt-3 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-[12px] text-destructive">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-2.5 text-[11px] text-destructive">
             {submitError}
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-1">
           {onBack && !asModal && (
-            <Button variant="outline" onClick={onBack} className="flex-1 h-11">
+            <Button variant="outline" onClick={onBack} className="flex-1 h-10">
               {t('profileSetup.back')}
             </Button>
           )}
           <Button
-            className={cn("h-11 gap-2 font-semibold", (!onBack || asModal) && "w-full")}
+            className={cn("h-10 gap-2 font-semibold", (!onBack || asModal) && "w-full")}
             disabled={!canSubmit || isPending || isSubmittingLocal}
             onClick={() => void handleSubmit()}
           >
@@ -234,12 +194,12 @@ export function UserProfileSetup({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-lg"
+          className="w-full max-w-md"
         >
           <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-2xl">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-border">
               <div className="flex items-center gap-2">
-                <Pencil className="h-4 w-4 text-primary" />
+                <Pencil className="h-3.5 w-3.5 text-primary" />
                 <h2 className="text-sm font-bold text-foreground">{t('profileSetup.editProfile')}</h2>
               </div>
               {onClose && (

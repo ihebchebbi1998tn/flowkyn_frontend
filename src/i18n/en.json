@@ -948,7 +948,8 @@
       "title": "Event Created Successfully!",
       "description": "Your event has been created and invitations have been sent. Would you like to join the lobby now?",
       "joinButton": "Join Lobby",
-      "closeButton": "Go to Dashboard"
+      "closeButton": "Go to Events",
+      "inviteLink": "Invite link"
     },
     "yourGameProfile": "Your game profile",
     "joinedCount": "joined",

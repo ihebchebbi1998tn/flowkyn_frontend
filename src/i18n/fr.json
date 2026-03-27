@@ -939,7 +939,8 @@
       "title": "Événement créé avec succès !",
       "description": "Votre événement a été créé et les invitations ont été envoyées. Souhaitez-vous rejoindre le salon maintenant ?",
       "joinButton": "Rejoindre le salon",
-      "closeButton": "Aller au tableau de bord"
+      "closeButton": "Aller aux événements",
+      "inviteLink": "Lien d'invitation"
     },
     "yourGameProfile": "Votre profil de jeu",
     "joinedCount": "inscrits",
