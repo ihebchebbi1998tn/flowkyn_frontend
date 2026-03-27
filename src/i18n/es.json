@@ -2287,6 +2287,10 @@
         "title": "Idioma e imagen de marca",
         "description": "Últimos detalles"
       },
+      "pulse": {
+        "title": "Salud del equipo",
+        "description": "Ayúdanos a entender el estado actual de tu equipo"
+      },
       "teamInvite": {
         "title": "Invita a tu equipo",
         "description": "Añade compañeros para colaborar (opcional)"
@@ -2369,6 +2373,32 @@
       }
     },
     "selected": "Seleccionados:",
+    "pulse": {
+      "hint": "Valora el estado actual de tu equipo — esto nos ayuda a medir tu progreso",
+      "teamConnectedness": {
+        "label": "¿Cómo de conectado está tu equipo?",
+        "description": "¿Los miembros sienten que forman parte de un grupo unido?"
+      },
+      "relationshipQuality": {
+        "label": "¿Cómo son las relaciones del equipo?",
+        "description": "¿Las interacciones son positivas, solidarias y colaborativas?"
+      },
+      "teamFamiliarity": {
+        "label": "¿La gente se conoce bien entre sí?",
+        "description": "Más allá del trabajo — ¿conocen los intereses y orígenes de cada uno?"
+      },
+      "expectations": {
+        "label": "¿Qué esperas de Flowkyn?",
+        "description": "Dinos qué resultados son más importantes para ti (opcional)",
+        "placeholder": "ej. Quiero que mi equipo cree lazos más fuertes, se divierta más y se sienta más conectado en el trabajo remoto..."
+      },
+      "levels": {
+        "low": "Necesita mejorar",
+        "moderate": "Moderado",
+        "good": "Bueno",
+        "excellent": "Excelente"
+      }
+    },
     "preferredLanguage": "Idioma preferido",
     "orgLogo": "Logo de la organización",
     "changeLogo": "Cambiar logo",

@@ -216,6 +216,21 @@ export const adminApi = {
   deleteOrganization: (id: string) =>
     adminClient.del(`/admin/organizations/${id}`),
 
+  /** Get onboarding pulse survey results for an organization */
+  getOrgPulseSurvey: (orgId: string) =>
+    adminClient.get<Array<{
+      id: string;
+      organization_id: string;
+      submitted_by_user_id: string;
+      submitted_by_name: string;
+      submitted_by_email: string;
+      team_connectedness: number;
+      relationship_quality: number;
+      team_familiarity: number;
+      expectations: string | null;
+      created_at: string;
+    }>>(`/admin/organizations/${orgId}/pulse-survey`),
+
   // Game sessions
   listGameSessions: (page = 1, limit = 20) =>
     adminClient.get<PaginatedResponse<GameSession>>('/admin/game-sessions', {

@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import {
   Building2, Briefcase, Target, Globe, Users, ArrowRight, ArrowLeft,
-  Check, Sparkles, AlertCircle, X,
+  Check, Sparkles, AlertCircle, X, HeartPulse,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
@@ -33,13 +33,13 @@ import { trackEvent, TRACK } from '@/hooks/useTracker';
 import logoImg from '@/assets/logo.png';
 
 import type { OnboardingData } from './types';
-import { OrgInfoStep, IndustryStep, GoalsStep, BrandingStep, TeamInviteStep } from './steps';
+import { OrgInfoStep, IndustryStep, GoalsStep, BrandingStep, TeamPulseStep, TeamInviteStep } from './steps';
 import { CelebrationScreen } from './CelebrationScreen';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const STEP_ICONS = [Building2, Briefcase, Target, Globe, Users];
-const STEP_I18N_KEYS = ['org', 'industry', 'goals', 'branding', 'teamInvite'];
+const STEP_ICONS = [Building2, Briefcase, Target, Globe, HeartPulse, Users];
+const STEP_I18N_KEYS = ['org', 'industry', 'goals', 'branding', 'pulse', 'teamInvite'];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -68,6 +68,10 @@ export default function Onboarding() {
     logoFile: null,
     logoPreview: null,
     teamInvites: [],
+    teamConnectedness: 5,
+    relationshipQuality: 5,
+    teamFamiliarity: 5,
+    expectations: '',
   });
 
   // ── Handlers ──────────────────────────────────────────────────────────────
@@ -101,7 +105,8 @@ export default function Onboarding() {
       case 1: return data.industry && data.companySize;
       case 2: return data.goals.length > 0;
       case 3: return true;
-      case 4: return true; // Team invites are optional
+      case 4: return true; // Pulse survey always valid (defaults are fine)
+      case 5: return true; // Team invites are optional
       default: return false;
     }
   };
@@ -176,10 +181,23 @@ export default function Onboarding() {
         }
       }
 
-      // 4. Update user language
+      // 4. Save team pulse survey data
+      try {
+        await organizationsApi.savePulseSurvey(org.id, {
+          team_connectedness: data.teamConnectedness,
+          relationship_quality: data.relationshipQuality,
+          team_familiarity: data.teamFamiliarity,
+          expectations: data.expectations || undefined,
+        });
+      } catch (err) {
+        console.warn('Pulse survey not saved:', err);
+        // Don't fail the whole onboarding due to survey
+      }
+
+      // 5. Update user language
       await usersApi.updateProfile({ language: data.language });
 
-      // 5. Mark onboarding complete
+      // 6. Mark onboarding complete
       const updatedUser = await authApi.completeOnboarding();
       if (updatedUser) setUser(updatedUser);
       trackEvent(TRACK.ONBOARDING_COMPLETED, { 
@@ -246,7 +264,8 @@ export default function Onboarding() {
       case 1: return <IndustryStep data={data} onChange={updateData} />;
       case 2: return <GoalsStep data={data} onToggleGoal={toggleGoal} />;
       case 3: return <BrandingStep data={data} onChange={updateData} onLogoUpload={handleLogoUpload} />;
-      case 4: return <TeamInviteStep data={data} onChange={updateData} inviteResults={inviteResults} />;
+      case 4: return <TeamPulseStep data={data} onChange={updateData} />;
+      case 5: return <TeamInviteStep data={data} onChange={updateData} inviteResults={inviteResults} />;
       default: return null;
     }
   };

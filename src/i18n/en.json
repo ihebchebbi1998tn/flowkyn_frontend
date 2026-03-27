@@ -2529,6 +2529,7 @@
       "industry": { "title": "Industry & Size", "description": "Help us personalize your experience" },
       "goals": { "title": "Your Goals", "description": "What do you want to achieve?" },
       "branding": { "title": "Language & Branding", "description": "Final touches" },
+      "pulse": { "title": "Team Health Check", "description": "Help us understand your team's current state" },
       "teamInvite": { "title": "Invite Your Team", "description": "Add teammates to collaborate together (optional)" }
     },
     "errors": {
@@ -2575,6 +2576,32 @@
       "wellness": { "label": "Wellness & Wellbeing", "description": "Support mental health and work-life balance" }
     },
     "selected": "Selected:",
+    "pulse": {
+      "hint": "Rate your team's current state — this helps us measure your progress over time",
+      "teamConnectedness": {
+        "label": "How connected is your team?",
+        "description": "Do team members feel like part of a unified group?"
+      },
+      "relationshipQuality": {
+        "label": "How are team relationships?",
+        "description": "Are interactions positive, supportive, and collaborative?"
+      },
+      "teamFamiliarity": {
+        "label": "How well do people know each other?",
+        "description": "Beyond work — do they know personal interests and backgrounds?"
+      },
+      "expectations": {
+        "label": "What do you expect from Flowkyn?",
+        "description": "Tell us what outcomes matter most to you (optional)",
+        "placeholder": "e.g., I want my team to build stronger bonds, have more fun together, and feel more connected during remote work..."
+      },
+      "levels": {
+        "low": "Needs work",
+        "moderate": "Moderate",
+        "good": "Good",
+        "excellent": "Excellent"
+      }
+    },
     "preferredLanguage": "Preferred Language",
     "orgLogo": "Organization Logo",
     "changeLogo": "Change logo",

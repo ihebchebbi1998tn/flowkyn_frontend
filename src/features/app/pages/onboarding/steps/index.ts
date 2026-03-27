@@ -6,10 +6,12 @@
  * - Step 1: IndustryStep — Industry & company size selection
  * - Step 2: GoalsStep — Platform usage goals
  * - Step 3: BrandingStep — Language preference & logo upload
- * - Step 4: TeamInviteStep — Optional team member invitations
+ * - Step 4: TeamPulseStep — Team health baseline survey
+ * - Step 5: TeamInviteStep — Optional team member invitations
  */
 export { OrgInfoStep } from './OrgInfoStep';
 export { IndustryStep } from './IndustryStep';
 export { GoalsStep } from './GoalsStep';
 export { BrandingStep } from './BrandingStep';
+export { TeamPulseStep } from './TeamPulseStep';
 export { TeamInviteStep } from './TeamInviteStep';

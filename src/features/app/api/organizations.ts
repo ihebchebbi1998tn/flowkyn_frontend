@@ -104,4 +104,13 @@ export const organizationsApi = {
     formData.append('logo', file);
     return api.upload<Organization>(`/organizations/${orgId}/logo`, formData);
   },
+
+  /** Save onboarding pulse survey results */
+  savePulseSurvey: (orgId: string, data: {
+    team_connectedness: number;
+    relationship_quality: number;
+    team_familiarity: number;
+    expectations?: string;
+  }) =>
+    api.post<{ message: string }>(`/organizations/${orgId}/pulse-survey`, data),
 };

@@ -2063,6 +2063,10 @@
         "title": "Sprache & Branding",
         "description": "Letzte Feinheiten"
       },
+      "pulse": {
+        "title": "Team-Gesundheitscheck",
+        "description": "Helfen Sie uns, den aktuellen Zustand Ihres Teams zu verstehen"
+      },
       "teamInvite": {
         "title": "Laden Sie Ihr Team ein",
         "description": "Fügen Sie Teamkollegen hinzu, um zusammenzuarbeiten (optional)"
@@ -2135,6 +2139,32 @@
       }
     },
     "selected": "Ausgewählt:",
+    "pulse": {
+      "hint": "Bewerten Sie den aktuellen Zustand Ihres Teams — das hilft uns, Ihren Fortschritt zu messen",
+      "teamConnectedness": {
+        "label": "Wie verbunden ist Ihr Team?",
+        "description": "Fühlen sich Teammitglieder als Teil einer vereinten Gruppe?"
+      },
+      "relationshipQuality": {
+        "label": "Wie sind die Teambeziehungen?",
+        "description": "Sind die Interaktionen positiv, unterstützend und kollaborativ?"
+      },
+      "teamFamiliarity": {
+        "label": "Wie gut kennen sich die Leute?",
+        "description": "Über die Arbeit hinaus — kennen sie persönliche Interessen und Hintergründe?"
+      },
+      "expectations": {
+        "label": "Was erwarten Sie von Flowkyn?",
+        "description": "Sagen Sie uns, welche Ergebnisse Ihnen am wichtigsten sind (optional)",
+        "placeholder": "z. B. Ich möchte, dass mein Team stärkere Bindungen aufbaut, mehr Spaß hat und sich im Remote-Arbeiten verbundener fühlt..."
+      },
+      "levels": {
+        "low": "Verbesserungsbedarf",
+        "moderate": "Mittel",
+        "good": "Gut",
+        "excellent": "Ausgezeichnet"
+      }
+    },
     "preferredLanguage": "Bevorzugte Sprache",
     "orgLogo": "Organisationslogo",
     "changeLogo": "Logo ändern",

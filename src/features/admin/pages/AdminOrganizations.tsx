@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { Search, MoreHorizontal, Trash2, Eye, Users, Loader, AlertCircle } from 'lucide-react';
+import { Search, MoreHorizontal, Trash2, Eye, Users, Loader, AlertCircle, HeartPulse } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { adminApi } from '@/api/admin';
+import { Progress } from '@/components/ui/progress';
 import { PageHeader } from '@/components/common/PageHeader';
 import { TableSkeleton } from '@/components/loading/Skeletons';
 import type { Organization, PaginatedResponse } from '@/types';
@@ -56,6 +57,11 @@ export default function AdminOrganizations() {
   const [editFormData, setEditFormData] = useState<Partial<Organization>>({});
   const [savingEdit, setSavingEdit] = useState(false);
   const [statusChangeLoading, setStatusChangeLoading] = useState<string | null>(null);
+  const [pulseSurveys, setPulseSurveys] = useState<Array<{
+    id: string; submitted_by_name: string; submitted_by_email: string;
+    team_connectedness: number; relationship_quality: number; team_familiarity: number;
+    expectations: string | null; created_at: string;
+  }>>([]);
 
   const fetchOrgs = useCallback(async () => {
     setLoading(true);
@@ -75,8 +81,12 @@ export default function AdminOrganizations() {
 
   const handleViewDetails = async (org: Organization) => {
     try {
-      const fullOrg = await adminApi.getOrganization(org.id);
+      const [fullOrg, surveys] = await Promise.all([
+        adminApi.getOrganization(org.id),
+        adminApi.getOrgPulseSurvey(org.id).catch(() => []),
+      ]);
       setEditingOrg(fullOrg);
+      setPulseSurveys(surveys);
       setEditFormData({
         name: fullOrg.name,
         description: fullOrg.description,
@@ -255,7 +265,7 @@ export default function AdminOrganizations() {
 
       {/* Edit Organization Modal */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Organization</DialogTitle>
           </DialogHeader>
@@ -306,6 +316,53 @@ export default function AdminOrganizations() {
                   className="mt-1.5 h-9"
                 />
               </div>
+
+              {/* Pulse Survey Results */}
+              {pulseSurveys.length > 0 && (
+                <div className="border-t border-border pt-4 mt-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <HeartPulse className="h-4 w-4 text-primary" />
+                    <Label className="text-[13px] font-semibold">Team Pulse Survey</Label>
+                  </div>
+                  {pulseSurveys.map((survey) => (
+                    <div key={survey.id} className="space-y-3 rounded-lg border border-border bg-muted/20 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] text-muted-foreground">
+                          Submitted by <span className="font-medium text-foreground">{survey.submitted_by_name}</span>
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(survey.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+
+                      {[
+                        { label: 'Team Connectedness', value: survey.team_connectedness },
+                        { label: 'Relationship Quality', value: survey.relationship_quality },
+                        { label: 'Team Familiarity', value: survey.team_familiarity },
+                      ].map(({ label, value }) => (
+                        <div key={label} className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[12px] text-foreground">{label}</span>
+                            <span className={`text-[12px] font-bold tabular-nums ${
+                              value <= 3 ? 'text-red-500' : value <= 6 ? 'text-amber-500' : value <= 8 ? 'text-emerald-500' : 'text-primary'
+                            }`}>{value}/10</span>
+                          </div>
+                          <Progress value={value * 10} className="h-1.5" />
+                        </div>
+                      ))}
+
+                      {survey.expectations && (
+                        <div className="mt-2">
+                          <span className="text-[11px] font-medium text-muted-foreground">Expectations:</span>
+                          <p className="text-[12px] text-foreground mt-1 bg-background rounded p-2 border border-border/50">
+                            {survey.expectations}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

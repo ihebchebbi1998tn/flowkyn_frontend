@@ -29,4 +29,12 @@ export interface OnboardingData {
   logoPreview: string | null;
   /** Team member email invitations (optional) */
   teamInvites: TeamInvite[];
+  /** Team connectivity rating 1-10 */
+  teamConnectedness: number;
+  /** Relationship quality rating 1-10 */
+  relationshipQuality: number;
+  /** How well team members know each other 1-10 */
+  teamFamiliarity: number;
+  /** What user expects from the app (free text, max 500) */
+  expectations: string;
 }

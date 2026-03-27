@@ -2063,6 +2063,10 @@
         "title": "Langue & Image",
         "description": "Les dernières touches"
       },
+      "pulse": {
+        "title": "Bilan de l'équipe",
+        "description": "Aidez-nous à comprendre l'état actuel de votre équipe"
+      },
       "teamInvite": {
         "title": "Invitez Votre Équipe",
         "description": "Ajoutez des collègues pour collaborer ensemble (optionnel)"
@@ -2135,6 +2139,32 @@
       }
     },
     "selected": "Sélectionnés :",
+    "pulse": {
+      "hint": "Évaluez l'état actuel de votre équipe — cela nous aide à mesurer vos progrès",
+      "teamConnectedness": {
+        "label": "À quel point votre équipe est-elle connectée ?",
+        "description": "Les membres se sentent-ils partie d'un groupe uni ?"
+      },
+      "relationshipQuality": {
+        "label": "Comment sont les relations d'équipe ?",
+        "description": "Les interactions sont-elles positives, solidaires et collaboratives ?"
+      },
+      "teamFamiliarity": {
+        "label": "Les gens se connaissent-ils bien ?",
+        "description": "Au-delà du travail — connaissent-ils les intérêts et parcours de chacun ?"
+      },
+      "expectations": {
+        "label": "Qu'attendez-vous de Flowkyn ?",
+        "description": "Dites-nous quels résultats comptent le plus pour vous (optionnel)",
+        "placeholder": "ex. Je veux que mon équipe tisse des liens plus forts, s'amuse davantage et se sente plus connectée en télétravail..."
+      },
+      "levels": {
+        "low": "À améliorer",
+        "moderate": "Moyen",
+        "good": "Bon",
+        "excellent": "Excellent"
+      }
+    },
     "preferredLanguage": "Langue préférée",
     "orgLogo": "Logo de l'organisation",
     "changeLogo": "Changer le logo",
