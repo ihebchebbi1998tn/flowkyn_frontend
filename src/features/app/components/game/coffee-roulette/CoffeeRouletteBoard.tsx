@@ -321,7 +321,7 @@ export function CoffeeRouletteBoard({
           transition={{ duration: 0.25 }}
           className="flex items-center justify-center h-full min-h-0"
         >
-          <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-white/80 px-4 py-3 shadow-sm">
+          <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-card/80 px-4 py-3 shadow-sm">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
             <p className="text-sm font-medium text-foreground">
               {t('gamePlay.coffeeRoulette.matching.matching', { defaultValue: 'Connecting you to your match...' })}
@@ -419,7 +419,7 @@ export function CoffeeRouletteBoard({
                 defaultValue: 'Pair not found',
               })}
         </p>
-        <p className="text-sm text-gray-600">Phase: {phase}</p>
+        <p className="text-sm text-muted-foreground">{t('gamePlay.coffeeRoulette.currentPhase', { defaultValue: 'Phase: {{phase}}', phase })}</p>
       </div>
     </div>
   );

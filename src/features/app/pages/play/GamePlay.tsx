@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence } from 'framer-motion';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { SocketReconnectionBanner } from '@/components/game/SocketReconnectionBanner';
 import { GamePlayShell } from '@/features/app/components/game/shell';
 import type { GameParticipant } from '@/features/app/components/game/shell';
 import { EventChat, type ChatMessage } from '@/features/app/components/chat/EventChat';
@@ -385,6 +386,7 @@ function GamePlayWithoutBoundary() {
     authorAvatarUrl: getSafeImageUrl(p.author_avatar) || null,
     content: p.content,
     timestamp: p.created_at,
+    parentPostId: p.parent_post_id || null,
     reactions: (p.reactions || []).map((r: any) => ({
       type: r.type,
       count: r.count,
@@ -835,6 +837,11 @@ function GamePlayWithoutBoundary() {
         disconnectedBadgeCount={disconnectedBadgeCount}
         hideHeader
       >
+        <SocketReconnectionBanner
+          status={gamesSocket.status}
+          onReconnect={() => gamesSocket.connect()}
+          className="mb-2"
+        />
         <GameBoardRouter
           config={activeConfig}
           eventId={eventId || ''}

@@ -394,10 +394,22 @@
       }
     },
     "stats": {
-      "stat1": { "value": "41%", "label": "Increase in team engagement" },
-      "stat2": { "value": "2×", "label": "More cross-team collaboration" },
-      "stat3": { "value": "1k+", "label": "Activities run monthly" },
-      "stat4": { "value": "50%", "label": "Reduction in onboarding time" }
+      "stat1": {
+        "value": "41%",
+        "label": "Increase in team engagement"
+      },
+      "stat2": {
+        "value": "2×",
+        "label": "More cross-team collaboration"
+      },
+      "stat3": {
+        "value": "1k+",
+        "label": "Activities run monthly"
+      },
+      "stat4": {
+        "value": "50%",
+        "label": "Reduction in onboarding time"
+      }
     },
     "testimonials": {
       "sectionLabel": "Testimonials",
@@ -424,11 +436,26 @@
       "sectionLabel": "FAQ",
       "title": "Frequently Asked Questions",
       "items": [
-        { "question": "Is Flowkyn really free?", "answer": "Yes! Flowkyn is free for teams up to 10 members. For larger teams, we offer affordable plans starting at €4/user/month." },
-        { "question": "Do we need a facilitator?", "answer": "No. Every activity comes with clear, step-by-step instructions that any team lead can follow. No external facilitator needed." },
-        { "question": "Does it work across time zones?", "answer": "Absolutely. Flowkyn supports both live (synchronous) and async activities, making it perfect for globally distributed teams." },
-        { "question": "How long do activities take?", "answer": "Activities range from 5-minute icebreakers to 60-minute deep-dive sessions. You can filter by duration to find what fits your schedule." },
-        { "question": "Can I track engagement?", "answer": "Yes. Flowkyn provides detailed analytics dashboards showing participation rates, engagement trends, and activity effectiveness over time." }
+        {
+          "question": "Is Flowkyn really free?",
+          "answer": "Yes! Flowkyn is free for teams up to 10 members. For larger teams, we offer affordable plans starting at €4/user/month."
+        },
+        {
+          "question": "Do we need a facilitator?",
+          "answer": "No. Every activity comes with clear, step-by-step instructions that any team lead can follow. No external facilitator needed."
+        },
+        {
+          "question": "Does it work across time zones?",
+          "answer": "Absolutely. Flowkyn supports both live (synchronous) and async activities, making it perfect for globally distributed teams."
+        },
+        {
+          "question": "How long do activities take?",
+          "answer": "Activities range from 5-minute icebreakers to 60-minute deep-dive sessions. You can filter by duration to find what fits your schedule."
+        },
+        {
+          "question": "Can I track engagement?",
+          "answer": "Yes. Flowkyn provides detailed analytics dashboards showing participation rates, engagement trends, and activity effectiveness over time."
+        }
       ]
     },
     "cta": {
@@ -494,33 +521,81 @@
       "title": "Privacy Policy",
       "lastUpdated": "Last updated: March 1, 2026",
       "sections": [
-        { "title": "Information We Collect", "content": "We collect information you provide directly, such as your name, email address, and organization details when you create an account. We also collect usage data to improve our services." },
-        { "title": "How We Use Your Information", "content": "We use your information to provide and improve Flowkyn, communicate with you about your account, and send relevant product updates. We never sell your personal data to third parties." },
-        { "title": "Data Storage & Security", "content": "Your data is stored on secure, encrypted servers within the European Union. We implement industry-standard security measures to protect your information." },
-        { "title": "Cookies", "content": "We use essential cookies to maintain your session and preferences. We do not use tracking cookies for advertising purposes." },
-        { "title": "Your Rights", "content": "You have the right to access, correct, or delete your personal data at any time. You can also request a full export of your data. Contact us at privacy@flowkyn.com for any requests." },
-        { "title": "Contact", "content": "For privacy-related inquiries, contact us at privacy@flowkyn.com." }
+        {
+          "title": "Information We Collect",
+          "content": "We collect information you provide directly, such as your name, email address, and organization details when you create an account. We also collect usage data to improve our services."
+        },
+        {
+          "title": "How We Use Your Information",
+          "content": "We use your information to provide and improve Flowkyn, communicate with you about your account, and send relevant product updates. We never sell your personal data to third parties."
+        },
+        {
+          "title": "Data Storage & Security",
+          "content": "Your data is stored on secure, encrypted servers within the European Union. We implement industry-standard security measures to protect your information."
+        },
+        {
+          "title": "Cookies",
+          "content": "We use essential cookies to maintain your session and preferences. We do not use tracking cookies for advertising purposes."
+        },
+        {
+          "title": "Your Rights",
+          "content": "You have the right to access, correct, or delete your personal data at any time. You can also request a full export of your data. Contact us at privacy@flowkyn.com for any requests."
+        },
+        {
+          "title": "Contact",
+          "content": "For privacy-related inquiries, contact us at privacy@flowkyn.com."
+        }
       ]
     },
     "terms": {
       "title": "Terms of Service",
       "lastUpdated": "Last updated: March 1, 2026",
       "sections": [
-        { "title": "Acceptance of Terms", "content": "By accessing or using Flowkyn, you agree to be bound by these Terms of Service. If you do not agree, please do not use the platform." },
-        { "title": "Use of Service", "content": "Flowkyn provides a platform for team engagement activities. You agree to use the service only for lawful purposes and in accordance with these terms." },
-        { "title": "Accounts", "content": "You are responsible for maintaining the confidentiality of your account credentials. You must notify us immediately of any unauthorized access." },
-        { "title": "Intellectual Property", "content": "All content on Flowkyn, including activity descriptions, designs, and branding, is owned by Flowkyn and protected by copyright law." },
-        { "title": "Limitation of Liability", "content": "Flowkyn is provided 'as is' without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform." },
-        { "title": "Termination", "content": "We may terminate or suspend your account at any time for violation of these terms. You may delete your account at any time through your settings." }
+        {
+          "title": "Acceptance of Terms",
+          "content": "By accessing or using Flowkyn, you agree to be bound by these Terms of Service. If you do not agree, please do not use the platform."
+        },
+        {
+          "title": "Use of Service",
+          "content": "Flowkyn provides a platform for team engagement activities. You agree to use the service only for lawful purposes and in accordance with these terms."
+        },
+        {
+          "title": "Accounts",
+          "content": "You are responsible for maintaining the confidentiality of your account credentials. You must notify us immediately of any unauthorized access."
+        },
+        {
+          "title": "Intellectual Property",
+          "content": "All content on Flowkyn, including activity descriptions, designs, and branding, is owned by Flowkyn and protected by copyright law."
+        },
+        {
+          "title": "Limitation of Liability",
+          "content": "Flowkyn is provided 'as is' without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform."
+        },
+        {
+          "title": "Termination",
+          "content": "We may terminate or suspend your account at any time for violation of these terms. You may delete your account at any time through your settings."
+        }
       ]
     },
     "security": {
       "title": "Security",
       "subtitle": "Protecting your data is our top priority. Here's how we keep Flowkyn secure.",
-      "encryption": { "title": "Encryption", "description": "All data is encrypted in transit (TLS 1.3) and at rest (AES-256). Your information is never stored in plain text." },
-      "infrastructure": { "title": "Infrastructure", "description": "Hosted on enterprise-grade EU infrastructure with automated backups, failover protection, and 99.9% uptime SLA." },
-      "compliance": { "title": "Compliance", "description": "GDPR-compliant by design. We follow data minimization principles and provide full data export and deletion capabilities." },
-      "privacy": { "title": "Privacy by Default", "description": "No tracking cookies, no data selling, no third-party advertising. Your team's data stays yours." }
+      "encryption": {
+        "title": "Encryption",
+        "description": "All data is encrypted in transit (TLS 1.3) and at rest (AES-256). Your information is never stored in plain text."
+      },
+      "infrastructure": {
+        "title": "Infrastructure",
+        "description": "Hosted on enterprise-grade EU infrastructure with automated backups, failover protection, and 99.9% uptime SLA."
+      },
+      "compliance": {
+        "title": "Compliance",
+        "description": "GDPR-compliant by design. We follow data minimization principles and provide full data export and deletion capabilities."
+      },
+      "privacy": {
+        "title": "Privacy by Default",
+        "description": "No tracking cookies, no data selling, no third-party advertising. Your team's data stays yours."
+      }
     }
   },
   "layout": {
@@ -632,7 +707,7 @@
     "verifying": "Verifying…",
     "resendIn": "Resend in {{seconds}}s",
     "emailVerified": "Email Verified!",
-      "emailVerifiedSuccess": "Your email has been successfully verified.",
+    "emailVerifiedSuccess": "Your email has been successfully verified.",
     "settingUpAccount": "Setting up your account…",
     "codeResent": "Verification code resent! Check your email.",
     "alreadyVerified": "Account already verified. Try logging in.",
@@ -723,7 +798,12 @@
     "owner": "Owner",
     "members": "Members",
     "role": "Role",
-    "roles": { "owner": "Owner", "admin": "Admin", "member": "Member", "viewer": "Viewer" },
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member",
+      "viewer": "Viewer"
+    },
     "inviteMember": "Invite Member",
     "inviteEmail": "Email address",
     "inviteEmailPlaceholder": "colleague@company.com",
@@ -781,9 +861,24 @@
     "startTime": "Start Time",
     "endTime": "End Time",
     "participants": "Participants",
-    "modes": { "online": "Online", "inPerson": "In Person", "hybrid": "Hybrid" },
-    "visibilities": { "public": "Public", "private": "Private", "organization": "Workspace Only" },
-    "filters": { "all": "All", "upcoming": "Upcoming", "past": "Past", "active": "Active", "draft": "Draft", "completed": "Completed" },
+    "modes": {
+      "online": "Online",
+      "inPerson": "In Person",
+      "hybrid": "Hybrid"
+    },
+    "visibilities": {
+      "public": "Public",
+      "private": "Private",
+      "organization": "Workspace Only"
+    },
+    "filters": {
+      "all": "All",
+      "upcoming": "Upcoming",
+      "past": "Past",
+      "active": "Active",
+      "draft": "Draft",
+      "completed": "Completed"
+    },
     "joinEvent": "Join Event",
     "leaveEvent": "Leave Event",
     "guestJoin": "Join as Guest",
@@ -980,7 +1075,14 @@
     "tableActions": "Actions",
     "submitAction": "Submit",
     "gameStatus": "Status",
-    "statuses": { "waiting": "Waiting", "inProgress": "In progress", "completed": "Completed", "cancelled": "Cancelled", "active": "Active", "paused": "Paused" },
+    "statuses": {
+      "waiting": "Waiting",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "active": "Active",
+      "paused": "Paused"
+    },
     "round": "Round",
     "score": "Score",
     "activeCount": "{{count}} active",
@@ -1462,7 +1564,8 @@
           "step4": "4. Map questions to topics",
           "step5": "5. Launch Coffee Roulette with your event!"
         }
-      }
+      },
+      "currentPhase": "Phase: {{phase}}"
     },
     "winsOfWeek": {
       "defaultPrompt": "Share your win from this week — work or personal, big or small!",
@@ -1495,7 +1598,13 @@
       "reply": "Reply",
       "writeReply": "Write a reply...",
       "replyCount": "{{count}} reply",
-      "repliesCount": "{{count}} replies"
+      "repliesCount": "{{count}} replies",
+      "newPosts": "{{count}} new post(s)",
+      "milestone": "🎉 Incredible! {{count}} wins celebrated this week!",
+      "reactionCount": "{{count}} reaction(s)",
+      "addReaction": "Add {{type}} reaction",
+      "sharing": "Sharing…",
+      "postFailed": "Failed to share your win. Please try again."
     },
     "wins": {
       "title": "Wins",
@@ -2036,7 +2145,12 @@
     "markAsRead": "Mark as Read",
     "markAllRead": "Mark All as Read",
     "noNotifications": "No notifications",
-    "types": { "eventReminder": "Event Reminder", "gameUpdate": "Activity Update", "invitation": "Invitation", "system": "System" },
+    "types": {
+      "eventReminder": "Event Reminder",
+      "gameUpdate": "Activity Update",
+      "invitation": "Invitation",
+      "system": "System"
+    },
     "timeAgo": "ago",
     "unread": "Unread",
     "readAll": "All",
@@ -2457,7 +2571,11 @@
     "teamLeaderboard": "Team Leaderboard",
     "teamActive": "Team is active",
     "newActivity": "New Activity",
-    "thisMonth": "This month"
+    "thisMonth": "This month",
+    "tabs": {
+      "overview": "Overview",
+      "insights": "Insights"
+    }
   },
   "gameShell": {
     "invite": "Invite",
@@ -2525,12 +2643,30 @@
   "onboarding": {
     "stepOf": "Step {{current}} of {{total}}",
     "steps": {
-      "org": { "title": "Your Organization", "description": "Tell us about your company" },
-      "industry": { "title": "Industry & Size", "description": "Help us personalize your experience" },
-      "goals": { "title": "Your Goals", "description": "What do you want to achieve?" },
-      "branding": { "title": "Language & Branding", "description": "Final touches" },
-      "pulse": { "title": "Team Health Check", "description": "Help us understand your team's current state" },
-      "teamInvite": { "title": "Invite Your Team", "description": "Add teammates to collaborate together (optional)" }
+      "org": {
+        "title": "Your Organization",
+        "description": "Tell us about your company"
+      },
+      "industry": {
+        "title": "Industry & Size",
+        "description": "Help us personalize your experience"
+      },
+      "goals": {
+        "title": "Your Goals",
+        "description": "What do you want to achieve?"
+      },
+      "branding": {
+        "title": "Language & Branding",
+        "description": "Final touches"
+      },
+      "pulse": {
+        "title": "Team Health Check",
+        "description": "Help us understand your team's current state"
+      },
+      "teamInvite": {
+        "title": "Invite Your Team",
+        "description": "Add teammates to collaborate together (optional)"
+      }
     },
     "errors": {
       "checkInfoAndRetry": "Please check your information and try again.",
@@ -2560,20 +2696,53 @@
     "industry": "Industry",
     "companySize": "Company Size",
     "sizes": {
-      "1-10": { "label": "1–10", "description": "Small team" },
-      "11-50": { "label": "11–50", "description": "Growing team" },
-      "51-200": { "label": "51–200", "description": "Mid-size" },
-      "201-500": { "label": "201–500", "description": "Large" },
-      "500+": { "label": "500+", "description": "Enterprise" }
+      "1-10": {
+        "label": "1–10",
+        "description": "Small team"
+      },
+      "11-50": {
+        "label": "11–50",
+        "description": "Growing team"
+      },
+      "51-200": {
+        "label": "51–200",
+        "description": "Mid-size"
+      },
+      "201-500": {
+        "label": "201–500",
+        "description": "Large"
+      },
+      "500+": {
+        "label": "500+",
+        "description": "Enterprise"
+      }
     },
     "goalsHint": "Select all that apply — this helps us recommend the right activities",
     "goals": {
-      "team_bonding": { "label": "Team Bonding", "description": "Build stronger connections between teammates" },
-      "icebreakers": { "label": "Icebreakers", "description": "Help new members integrate faster" },
-      "engagement": { "label": "Employee Engagement", "description": "Boost morale and satisfaction" },
-      "remote_culture": { "label": "Remote Culture", "description": "Bridge the gap for distributed teams" },
-      "onboarding": { "label": "New Hire Onboarding", "description": "Make onboarding fun and memorable" },
-      "wellness": { "label": "Wellness & Wellbeing", "description": "Support mental health and work-life balance" }
+      "team_bonding": {
+        "label": "Team Bonding",
+        "description": "Build stronger connections between teammates"
+      },
+      "icebreakers": {
+        "label": "Icebreakers",
+        "description": "Help new members integrate faster"
+      },
+      "engagement": {
+        "label": "Employee Engagement",
+        "description": "Boost morale and satisfaction"
+      },
+      "remote_culture": {
+        "label": "Remote Culture",
+        "description": "Bridge the gap for distributed teams"
+      },
+      "onboarding": {
+        "label": "New Hire Onboarding",
+        "description": "Make onboarding fun and memorable"
+      },
+      "wellness": {
+        "label": "Wellness & Wellbeing",
+        "description": "Support mental health and work-life balance"
+      }
     },
     "selected": "Selected:",
     "pulse": {
@@ -2778,8 +2947,7 @@
     "skip": "Skip Tour",
     "close": "Close",
     "last": "Finish"
-  }
-  ,
+  },
   "activityFeedback": {
     "categories": {
       "experience": "Overall experience",

@@ -785,7 +785,11 @@
     "teamLeaderboard": "Clasificación del equipo",
     "teamActive": "El equipo está activo",
     "newActivity": "Nueva actividad",
-    "thisMonth": "Este mes"
+    "thisMonth": "Este mes",
+    "tabs": {
+      "overview": "Resumen",
+      "insights": "Análisis"
+    }
   },
   "organizations": {
     "title": "Espacio de trabajo",
@@ -1824,7 +1828,8 @@
       "error": {
         "notFound": "Pareja de Coffee Roulette no encontrada"
       },
-      "unmatched": "Sin emparejar"
+      "unmatched": "Sin emparejar",
+      "currentPhase": "Fase: {{phase}}"
     },
     "winsOfWeek": {
       "defaultPrompt": "¡Comparte tus logros de esta semana!",
@@ -1858,7 +1863,12 @@
       "writeReply": "Escribe una respuesta...",
       "replyCount": "{{count}} respuesta",
       "repliesCount": "{{count}} respuestas",
-      "sharing": "Compartiendo…"
+      "sharing": "Compartiendo…",
+      "newPosts": "{{count}} nueva(s) publicación(es)",
+      "milestone": "🎉 ¡Increíble! ¡{{count}} logros celebrados esta semana!",
+      "reactionCount": "{{count}} reacción(es)",
+      "addReaction": "Añadir reacción {{type}}",
+      "postFailed": "Error al compartir. Inténtalo de nuevo."
     },
     "results": {
       "gameComplete": "¡Juego terminado!",

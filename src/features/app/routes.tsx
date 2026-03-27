@@ -28,7 +28,7 @@ const Profile = lazy(() => import('./pages/users/Profile'));
 const UserList = lazy(() => import('./pages/users/UserList'));
 const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
 const NotificationsPage = lazy(() => import('./pages/notifications/NotificationsPage'));
-const AnalyticsDashboard = lazy(() => import('./pages/analytics/AnalyticsDashboard'));
+// AnalyticsDashboard merged into Dashboard
 
 /* ─── Organizations ─── */
 const OrgDetail = lazy(() => import('./pages/organizations/OrgDetail'));
@@ -78,7 +78,8 @@ export const appRoutes = (
       <Route path={ROUTES.USERS} element={<RouteErrorBoundary section="Users"><UserList /></RouteErrorBoundary>} />
       <Route path={ROUTES.SETTINGS} element={<RouteErrorBoundary section="Settings"><SettingsPage /></RouteErrorBoundary>} />
       <Route path={ROUTES.NOTIFICATIONS} element={<RouteErrorBoundary section="Notifications"><NotificationsPage /></RouteErrorBoundary>} />
-      <Route path={ROUTES.ANALYTICS} element={<RouteErrorBoundary section="Analytics"><AnalyticsDashboard /></RouteErrorBoundary>} />
+      {/* Analytics merged into Dashboard — keep route as redirect */}
+      <Route path={ROUTES.ANALYTICS} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
 
       <Route path={ROUTES.ORGANIZATIONS} element={<RouteErrorBoundary section="Organization"><OrgDetail /></RouteErrorBoundary>} />
 

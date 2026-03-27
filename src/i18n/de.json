@@ -785,7 +785,11 @@
     "keyMetrics": "Key metrics",
     "participants": "Participants",
     "sessionCompletionRate": "{{rate}}% session completion rate",
-    "latestGameSessions": "Latest game sessions"
+    "latestGameSessions": "Latest game sessions",
+    "tabs": {
+      "overview": "Überblick",
+      "insights": "Erkenntnisse"
+    }
   },
   "organizations": {
     "title": "Arbeitsbereich",
@@ -2631,7 +2635,8 @@
       "error": {
         "notFound": "Coffee-Roulette-Paar nicht gefunden"
       },
-      "unmatched": "Nicht gepaart"
+      "unmatched": "Nicht gepaart",
+      "currentPhase": "Phase: {{phase}}"
     },
     "winsOfWeek": {
       "thisWeeksPrompt": "Das Thema dieser Woche",
@@ -2665,7 +2670,12 @@
       "defaultPrompt": "Teilen Sie Ihre Erfolge dieser Woche!",
       "emptyTitle": "Keine Erfolge",
       "emptySubtitle": "Noch keine Erfolge geteilt.",
-      "sharing": "Wird geteilt…"
+      "sharing": "Wird geteilt…",
+      "newPosts": "{{count}} neue(r) Beitrag/Beiträge",
+      "milestone": "🎉 Unglaublich! {{count}} Erfolge diese Woche gefeiert!",
+      "reactionCount": "{{count}} Reaktion(en)",
+      "addReaction": "{{type}}-Reaktion hinzufügen",
+      "postFailed": "Teilen fehlgeschlagen. Bitte erneut versuchen."
     },
     "results": {
       "gameComplete": "Spiel beendet!",

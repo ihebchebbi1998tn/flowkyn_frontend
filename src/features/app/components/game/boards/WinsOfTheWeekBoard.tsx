@@ -113,13 +113,14 @@ export interface WinsOfTheWeekBoardProps {
     timestamp: string;
     category?: string;
     tags?: string[];
+    parentPostId?: string | null;
     reactions: { type: string; count: number; reacted: boolean }[];
   }[];
   canPost: boolean;
   canReact?: boolean;
   endsAt?: string;
   postingClosed?: boolean;
-  onPost: (content: string, category?: string, tags?: string[]) => Promise<void> | void;
+  onPost: (content: string, category?: string, tags?: string[], parentPostId?: string) => Promise<void> | void;
   onToggleReaction: (postId: string, reactionType: string) => Promise<void> | void;
 }
 
@@ -204,15 +205,14 @@ export function WinsOfTheWeekBoard({
   };
 
   /**
-   * Replies are stored as regular posts prefixed with @authorName.
-   * This keeps all content persistent on the server without a separate replies table.
+   * Replies are now stored as posts with parent_post_id for proper threading.
    */
-  const handleReply = async (postId: string, authorName: string) => {
+  const handleReply = async (postId: string, _authorName: string) => {
     const text = replyInputs[postId]?.trim();
     if (!text || !canPost) return;
     setSubmittingReply(postId);
     try {
-      await onPost(`@${authorName}: ${text}`);
+      await onPost(text, undefined, undefined, postId);
       setReplyInputs(prev => ({ ...prev, [postId]: '' }));
       setShowReplyFor(null);
     } finally {
@@ -326,8 +326,8 @@ export function WinsOfTheWeekBoard({
               <motion.span 
                 className={cn(
                   'text-[10px] transition-all',
-                  characterWarningLevel === 'warning' && 'text-red-500 font-bold',
-                  characterWarningLevel === 'caution' && 'text-orange-500 font-medium',
+                  characterWarningLevel === 'warning' && 'text-destructive font-bold',
+                  characterWarningLevel === 'caution' && 'text-warning font-medium',
                   characterWarningLevel === 'normal' && 'text-muted-foreground'
                 )}
                 animate={characterWarningLevel === 'warning' ? { scale: [1, 1.05, 1] } : {}}
@@ -393,7 +393,7 @@ export function WinsOfTheWeekBoard({
                 ↓
               </motion.div>
               <span>
-                {newPostsCount} new {newPostsCount === 1 ? 'post' : 'posts'}
+                {t('gamePlay.winsOfWeek.newPosts', { defaultValue: '{{count}} new post(s)', count: newPostsCount })}
               </span>
             </motion.button>
           )}
@@ -416,7 +416,7 @@ export function WinsOfTheWeekBoard({
                 <CheckCircle2 className="h-5 w-5" />
               </motion.div>
               <span>
-                🎉 Incredible! {currentMilestone} wins celebrated this week!
+                {t('gamePlay.winsOfWeek.milestone', { defaultValue: '🎉 Incredible! {{count}} wins celebrated this week!', count: currentMilestone })}
               </span>
             </motion.div>
           )}
@@ -433,14 +433,17 @@ export function WinsOfTheWeekBoard({
           </div>
         )}
         <AnimatePresence>
-          {posts.map(post => (
+          {/* Render top-level posts only; replies are nested */}
+          {posts.filter(p => !p.parentPostId).map(post => {
+            const replies = posts.filter(r => r.parentPostId === post.id);
+            return (
+            <div key={post.id} className="space-y-1">
             <motion.div
               layout
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: -20 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              key={post.id}
               className="rounded-xl border border-border bg-card overflow-hidden hover:border-border/80 transition-colors"
             >
               <div className="p-4">
@@ -495,7 +498,7 @@ export function WinsOfTheWeekBoard({
                           'flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium transition-all',
                           r.reacted ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/50 text-muted-foreground hover:bg-muted border border-transparent'
                         )}
-                        title={`${r.count} reaction${r.count > 1 ? 's' : ''}`}
+                        title={t('gamePlay.winsOfWeek.reactionCount', { defaultValue: '{{count}} reaction(s)', count: r.count })}
                       >
                         <motion.div
                           animate={r.reacted ? { scale: [1, 1.2, 1] } : {}}
@@ -526,7 +529,7 @@ export function WinsOfTheWeekBoard({
                           whileTap={{ scale: 0.9 }}
                           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                           className="p-1 rounded text-muted-foreground/40 hover:text-muted-foreground transition-colors"
-                          title={`Add ${type} reaction`}
+                          title={t('gamePlay.winsOfWeek.addReaction', { defaultValue: 'Add {{type}} reaction', type })}
                         >
                           <Icon className="h-3 w-3" />
                         </motion.button>
@@ -538,12 +541,16 @@ export function WinsOfTheWeekBoard({
                       onClick={() => setShowReplyFor(showReplyFor === post.id ? null : post.id)}
                       className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <MessageCircle className="h-3 w-3" /> {t('gamePlay.winsOfWeek.reply', { defaultValue: 'Reply' })}
+                      <MessageCircle className="h-3 w-3" />
+                      {replies.length > 0
+                        ? t('gamePlay.winsOfWeek.replyCount', { defaultValue: '{{count}} replies', count: replies.length })
+                        : t('gamePlay.winsOfWeek.reply', { defaultValue: 'Reply' })
+                      }
                     </button>
                   )}
                 </div>
 
-                {/* Reply input (persists reply as a new post on the server) */}
+                {/* Reply input */}
                 {showReplyFor === post.id && (
                   <motion.div 
                     initial={{ opacity: 0, y: -10, height: 0 }}
@@ -589,7 +596,35 @@ export function WinsOfTheWeekBoard({
                 )}
               </div>
             </motion.div>
-          ))}
+
+            {/* Threaded replies */}
+            {replies.length > 0 && (
+              <div className="pl-8 space-y-1.5">
+                {replies.map(reply => (
+                  <motion.div
+                    key={reply.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="rounded-lg border border-border/60 bg-muted/20 p-3"
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Avatar className="h-6 w-6 shrink-0">
+                        {reply.authorAvatarUrl ? <AvatarImage src={reply.authorAvatarUrl} alt={reply.authorName} /> : null}
+                        <AvatarFallback className="bg-primary/10 text-primary text-[8px] font-semibold">{reply.authorAvatar}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-[12px] font-medium text-foreground">{reply.authorName}</span>
+                      <time className="text-[10px] text-muted-foreground" dateTime={reply.timestamp}>
+                        {formatTimeAgo({ timestamp: reply.timestamp, t, locale: i18n.language })}
+                      </time>
+                    </div>
+                    <p className="text-[12px] text-foreground leading-relaxed pl-8">{reply.content}</p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+            </div>
+            );
+          })}
         </AnimatePresence>
       </div>
     </div>

@@ -145,9 +145,13 @@ export const eventsApi = {
 
   // ── Posts ──────────────────────────────────────────────────────────────────
 
-  /** Create an activity post */
-  createPost: (eventId: string, participantId: string, content: string) =>
-    api.post(`/events/${eventId}/posts`, { participant_id: participantId, content }, eventId),
+  /** Create an activity post (optionally as a reply) */
+  createPost: (eventId: string, participantId: string, content: string, parentPostId?: string) =>
+    api.post(`/events/${eventId}/posts`, {
+      participant_id: participantId,
+      content,
+      ...(parentPostId ? { parent_post_id: parentPostId } : {}),
+    }, eventId),
 
   // ── Identity helpers ────────────────────────────────────────────────────────
 

@@ -785,7 +785,11 @@
     "keyMetrics": "Key metrics",
     "participants": "Participants",
     "sessionCompletionRate": "{{rate}}% session completion rate",
-    "latestGameSessions": "Latest game sessions"
+    "latestGameSessions": "Latest game sessions",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "insights": "Analyses"
+    }
   },
   "organizations": {
     "title": "Espace de travail",
@@ -2631,7 +2635,8 @@
       "error": {
         "notFound": "Paire Coffee Roulette non trouvée"
       },
-      "unmatched": "Non apparié"
+      "unmatched": "Non apparié",
+      "currentPhase": "Phase : {{phase}}"
     },
     "winsOfWeek": {
       "thisWeeksPrompt": "Le sujet de la semaine",
@@ -2665,7 +2670,12 @@
       "defaultPrompt": "Partagez vos réussites de cette semaine !",
       "emptyTitle": "Aucune réussite",
       "emptySubtitle": "Aucune réussite n'a encore été partagée.",
-      "sharing": "Partage en cours…"
+      "sharing": "Partage en cours…",
+      "newPosts": "{{count}} nouveau(x) post(s)",
+      "milestone": "🎉 Incroyable ! {{count}} victoires célébrées cette semaine !",
+      "reactionCount": "{{count}} réaction(s)",
+      "addReaction": "Ajouter une réaction {{type}}",
+      "postFailed": "Échec du partage. Veuillez réessayer."
     },
     "results": {
       "gameComplete": "Partie terminée !",

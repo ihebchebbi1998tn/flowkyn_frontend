@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import {
-  LayoutGrid, Gamepad2, Building, TrendingUp, BellDot,
+  LayoutGrid, Gamepad2, Building, BellDot,
   UsersRound, Cog, LogOut, X, LifeBuoy, Sparkles,
 } from 'lucide-react';
 import { NavLink } from '@/components/navigation/NavLink';
@@ -29,7 +29,6 @@ export function AppSidebar() {
     { title: t('nav.dashboard'), url: ROUTES.DASHBOARD, icon: LayoutGrid, id: 'tour-dashboard' },
     { title: t('nav.games'), url: ROUTES.GAMES, icon: Gamepad2, id: 'tour-games' },
     { title: t('nav.organizations'), url: ROUTES.ORGANIZATIONS, icon: Building, id: 'tour-organizations' },
-    { title: t('nav.analytics'), url: ROUTES.ANALYTICS, icon: TrendingUp, id: 'tour-analytics' },
   ];
 
   const manageNav = [
