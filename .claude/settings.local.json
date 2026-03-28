@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(find /c/Users/ihebc/OneDrive/Desktop/fullapp/flowkyn_frontend -type f -name *.env*)"
-    ]
-  }
-}
