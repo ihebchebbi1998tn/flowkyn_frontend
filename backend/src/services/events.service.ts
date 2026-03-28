@@ -41,7 +41,6 @@ export class EventsService {
     event_mode?: string; visibility?: string; max_participants?: number;
     start_time?: string; end_time?: string; allow_guests?: boolean;
     allow_chat?: boolean; auto_start_games?: boolean; max_rounds?: number;
-    allow_participant_game_control?: boolean;
     default_session_duration_minutes?: number;
     two_truths_submit_seconds?: number;
     two_truths_vote_seconds?: number;
@@ -53,7 +52,6 @@ export class EventsService {
     const allowChat = data.allow_chat ?? true;
     const autoStartGames = data.auto_start_games ?? false;
     const maxRounds = data.max_rounds ?? 30;
-    const allowParticipantGameControl = data.allow_participant_game_control ?? true;
     const defaultSessionDurationMinutes = data.default_session_duration_minutes ?? 30;
     const twoTruthsSubmitSeconds = data.two_truths_submit_seconds ?? 30;
     const twoTruthsVoteSeconds = data.two_truths_vote_seconds ?? 20;
@@ -79,13 +77,13 @@ export class EventsService {
       );
       await client.query(
         `INSERT INTO event_settings (
-          event_id, allow_guests, allow_chat, auto_start_games, max_rounds, allow_participant_game_control,
+          event_id, allow_guests, allow_chat, auto_start_games, max_rounds,
           default_session_duration_minutes, two_truths_submit_seconds, two_truths_vote_seconds,
           coffee_chat_duration_minutes, strategic_discussion_duration_minutes
         )
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
         [
-          eventId, allowGuests, allowChat, autoStartGames, maxRounds, allowParticipantGameControl,
+          eventId, allowGuests, allowChat, autoStartGames, maxRounds,
           defaultSessionDurationMinutes, twoTruthsSubmitSeconds, twoTruthsVoteSeconds,
           coffeeChatDurationMinutes, strategicDiscussionDurationMinutes,
         ]
@@ -109,7 +107,7 @@ export class EventsService {
    */
   async getById(eventId: string) {
     const event = await queryOne<EventRow>(
-      `SELECT e.*, es.allow_guests, es.allow_chat, es.auto_start_games, es.max_rounds, es.allow_participant_game_control,
+      `SELECT e.*, es.allow_guests, es.allow_chat, es.auto_start_games, es.max_rounds,
               es.default_session_duration_minutes, es.two_truths_submit_seconds, es.two_truths_vote_seconds,
               es.coffee_chat_duration_minutes, es.strategic_discussion_duration_minutes
        FROM events e LEFT JOIN event_settings es ON es.event_id = e.id

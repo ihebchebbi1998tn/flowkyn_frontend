@@ -27,7 +27,6 @@ export default function AuthContainer() {
     const token = searchParams.get('token');
     const view = (searchParams.get('view') as AuthView | null);
 
-    // Prioritize explicit view query param if set
     if (view) {
       setCurrentView(view);
     } else if (token && location.pathname === '/reset-password') {
@@ -41,14 +40,12 @@ export default function AuthContainer() {
     }
   }, [searchParams, location.pathname]);
 
-  // Redirect if already authenticated (check AFTER all hooks are declared)
   if (isAuthenticated) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
   const switchView = (view: AuthView) => {
     setCurrentView(view);
-    // Update URL for deep linking/bookmarking
     if (view === 'reset') {
       const token = searchParams.get('token');
       if (token) {
@@ -59,7 +56,6 @@ export default function AuthContainer() {
     }
   };
 
-  // Determine branding panel mode
   let brandingMode: 'login' | 'register' | 'forgot' | 'reset' = 'login';
   if (currentView === 'register') brandingMode = 'register';
   else if (currentView === 'forgot') brandingMode = 'forgot';
@@ -69,66 +65,91 @@ export default function AuthContainer() {
     <AuthSwitchContext.Provider value={{ currentView, switchView }}>
       <div className="min-h-screen flex animate-in fade-in duration-500 relative">
         <AuthBrandingPanel mode={brandingMode} />
-        <div className="flex-1 flex items-center justify-center bg-background p-6 overflow-hidden relative">
-          <div className="absolute top-4 right-4 z-[9999]">
+
+        {/* ── Form side ── */}
+        <div className="flex-1 flex flex-col bg-background relative overflow-hidden">
+          {/* Subtle background texture */}
+          <div
+            className="absolute inset-0 opacity-[0.015]"
+            style={{
+              backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 0.5px, transparent 0)',
+              backgroundSize: '32px 32px',
+            }}
+          />
+
+          {/* Top bar with language */}
+          <div className="relative z-10 flex items-center justify-end p-4">
             <LanguageSelector align="end" />
           </div>
-          <motion.div
-            className="w-full max-w-[380px]"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <AnimatePresence mode="wait">
-              {currentView === 'login' && (
-                <motion.div
-                  key="login"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Login />
-                </motion.div>
-              )}
 
-              {currentView === 'register' && (
-                <motion.div
-                  key="register"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Register />
-                </motion.div>
-              )}
+          {/* Centered form area */}
+          <div className="flex-1 flex items-center justify-center px-6 pb-8 relative z-10">
+            <motion.div
+              className="w-full max-w-[400px]"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <AnimatePresence mode="wait">
+                {currentView === 'login' && (
+                  <motion.div
+                    key="login"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                  >
+                    <Login />
+                  </motion.div>
+                )}
 
-              {currentView === 'forgot' && (
-                <motion.div
-                  key="forgot"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ForgotPassword />
-                </motion.div>
-              )}
+                {currentView === 'register' && (
+                  <motion.div
+                    key="register"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                  >
+                    <Register />
+                  </motion.div>
+                )}
 
-              {currentView === 'reset' && (
-                <motion.div
-                  key="reset"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ResetPassword />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                {currentView === 'forgot' && (
+                  <motion.div
+                    key="forgot"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                  >
+                    <ForgotPassword />
+                  </motion.div>
+                )}
+
+                {currentView === 'reset' && (
+                  <motion.div
+                    key="reset"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                  >
+                    <ResetPassword />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+
+          {/* Bottom trust line */}
+          <div className="relative z-10 flex items-center justify-center gap-3 pb-5 text-[10px] text-muted-foreground/40">
+            <span>🔒 Encrypted</span>
+            <span>·</span>
+            <span>No credit card required</span>
+            <span>·</span>
+            <span>Free to start</span>
+          </div>
         </div>
       </div>
     </AuthSwitchContext.Provider>

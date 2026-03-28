@@ -1447,6 +1447,13 @@ const migrations: { version: number; name: string; sql: string }[] = [
         ON onboarding_pulse_surveys(organization_id);
     `,
   },
+  {
+    version: 27,
+    name: 'drop_allow_participant_game_control',
+    sql: `
+      ALTER TABLE event_settings DROP COLUMN IF EXISTS allow_participant_game_control;
+    `,
+  },
 ];
 
 /**

@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import logoImg from '@/assets/logo.png';
 import { ACTIVITIES } from '@/features/app/data/activities';
+import { GAME_ART } from '@/assets/game-art';
+import { GAME_CONFIGS } from '@/features/app/pages/play/gameTypes';
 
 type ProfileSetupData = { displayName: string; avatarUrl: string };
 type EventLobbyData = Record<string, any>;
@@ -69,12 +71,26 @@ export function EventLobbyCard({
 }: Props) {
   const isConnected = eventsSocketStatus === 'connected';
   const activityImage = gameId ? ACTIVITIES.find(a => a.id === gameId)?.image : undefined;
+  const gameTypeKey = gameId ? GAME_CONFIGS[gameId]?.gameTypeKey : undefined;
+  const gameArtSrc = gameTypeKey ? GAME_ART[gameTypeKey] : undefined;
 
   return (
     <div className="w-full max-w-xl space-y-4">
       {/* Card */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="p-5 sm:p-6 space-y-5">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden relative">
+        {/* Decorative game art background */}
+        {gameArtSrc && (
+          <img
+            src={gameArtSrc}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            width={512}
+            height={512}
+            className="pointer-events-none absolute -right-6 -bottom-6 h-52 w-52 opacity-[0.04] select-none blur-[0.5px]"
+          />
+        )}
+        <div className="relative p-5 sm:p-6 space-y-5">
           {/* Error */}
           {joinError && (
             <div className="flex items-center gap-2 p-2.5 rounded-lg border border-destructive/30 bg-destructive/5 text-[12px] text-destructive">

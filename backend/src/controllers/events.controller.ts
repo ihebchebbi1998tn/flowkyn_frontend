@@ -282,7 +282,6 @@ export class EventsController {
         allow_chat,
         auto_start_games,
         max_rounds,
-        allow_participant_game_control,
         default_session_duration_minutes,
         two_truths_submit_seconds,
         two_truths_vote_seconds,
@@ -302,7 +301,6 @@ export class EventsController {
         allow_chat !== undefined ||
         auto_start_games !== undefined ||
         max_rounds !== undefined ||
-        allow_participant_game_control !== undefined ||
         default_session_duration_minutes !== undefined ||
         two_truths_submit_seconds !== undefined ||
         two_truths_vote_seconds !== undefined ||
@@ -328,10 +326,6 @@ export class EventsController {
         if (max_rounds !== undefined) {
           fields.push(`max_rounds = $${idx++}`);
           values.push(Number(max_rounds));
-        }
-        if (allow_participant_game_control !== undefined) {
-          fields.push(`allow_participant_game_control = $${idx++}`);
-          values.push(!!allow_participant_game_control);
         }
         if (default_session_duration_minutes !== undefined) {
           fields.push(`default_session_duration_minutes = $${idx++}`);

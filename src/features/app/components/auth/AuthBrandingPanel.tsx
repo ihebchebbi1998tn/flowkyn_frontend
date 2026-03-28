@@ -2,16 +2,11 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Globe, BarChart3, Sparkles } from 'lucide-react';
 import logoImg from '@/assets/logo.png';
+import authBg from '@/assets/auth-bg.jpg';
 
 interface AuthBrandingPanelProps {
   mode: 'login' | 'register' | 'forgot' | 'reset';
 }
-
-const featureIcons = {
-  activities: Users,
-  liveAsync: Globe,
-  analytics: BarChart3,
-};
 
 export function AuthBrandingPanel({ mode }: AuthBrandingPanelProps) {
   const { t } = useTranslation();
@@ -22,7 +17,6 @@ export function AuthBrandingPanel({ mode }: AuthBrandingPanelProps) {
     { icon: BarChart3, text: t('auth.branding.features.analytics') },
   ];
 
-  // Helper to get branding data
   const getBranding = (m: string) => ({
     badge: t(`auth.branding.${m}.tagline`, { defaultValue: t('auth.branding.tagline') }),
     title: t(`auth.branding.${m}.title`),
@@ -32,101 +26,83 @@ export function AuthBrandingPanel({ mode }: AuthBrandingPanelProps) {
   const c = getBranding(mode);
 
   return (
-    <div
-      className="hidden lg:flex lg:w-[45%] relative flex-col justify-between p-10 overflow-hidden"
-      style={{ background: 'hsl(var(--auth-panel))' }}
-    >
-      {/* Dot grid */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--auth-panel-foreground)) 1px, transparent 0)',
-          backgroundSize: '24px 24px',
-        }}
-      />
-      {/* Gradient orbs */}
-      <div
-        className="absolute -top-24 -left-24 w-80 h-80 rounded-full opacity-[0.08]"
-        style={{ background: 'radial-gradient(circle, hsl(var(--primary-glow)), transparent 70%)' }}
-      />
-      <div
-        className="absolute bottom-20 right-10 w-60 h-60 rounded-full opacity-[0.05]"
-        style={{ background: 'radial-gradient(circle, hsl(var(--accent)), transparent 70%)' }}
+    <div className="hidden lg:flex lg:w-[48%] relative flex-col overflow-hidden">
+      {/* ── Full background image ── */}
+      <img
+        src={authBg}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
       />
 
-      <div className="relative z-10 flex flex-col justify-between h-full">
+      {/* ── Lighter overlay — more transparent ── */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/60 to-black/75" />
+
+      {/* ── Subtle purple tint ── */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{ background: 'linear-gradient(135deg, hsl(265 60% 30%), hsl(280 50% 20%))' }}
+      />
+
+      {/* ── Content ── */}
+      <div className="relative z-10 flex flex-col justify-between h-full p-10">
         {/* Logo */}
-        <div className="flex items-center">
-          <img src={logoImg} alt={t('brand.name', { defaultValue: 'Flowkyn' })} className="h-14 w-14 object-contain brightness-0 invert" />
+        <div>
+          <img src={logoImg} alt="Flowkyn" className="h-24 w-24 object-contain brightness-0 invert" />
         </div>
 
-        {/* Animated content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={mode}
-            initial={{ opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 16 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="space-y-7"
-          >
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span
-                  className="text-[11px] font-semibold uppercase tracking-widest"
-                  style={{ color: 'hsl(var(--auth-panel-foreground) / 0.4)' }}
-                >
-                  {c.badge}
-                </span>
-              </div>
-              <h2
-                className="text-[32px] font-extrabold leading-[1.15] tracking-[-0.02em]"
-                style={{ color: 'hsl(var(--auth-panel-foreground))' }}
-              >
-                {c.title}
-              </h2>
-            </div>
-            <p
-              className="text-[15px] max-w-[360px] leading-[1.8]"
-              style={{ color: 'hsl(var(--auth-panel-foreground) / 0.5)' }}
+        {/* Main content */}
+        <div className="space-y-7">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={mode}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="space-y-5"
             >
-              {c.subtitle}
-            </p>
-            <div className="space-y-3.5 pt-1">
-              {features.map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-3">
-                  <div
-                    className="h-8 w-8 rounded-lg flex items-center justify-center"
-                    style={{ background: 'hsl(0 0% 100% / 0.1)' }}
-                  >
-                    <Icon className="h-4 w-4" style={{ color: 'hsl(var(--auth-panel-foreground) / 0.8)' }} />
-                  </div>
-                  <span
-                    className="text-[13px] font-medium"
-                    style={{ color: 'hsl(var(--auth-panel-foreground) / 0.55)' }}
-                  >
-                    {text}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="h-3.5 w-3.5 text-white/40" />
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40">
+                    {c.badge}
                   </span>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        </AnimatePresence>
+                <h2 className="text-[32px] font-extrabold leading-[1.1] tracking-[-0.03em] text-white">
+                  {c.title}
+                </h2>
+              </div>
+              <p className="text-[15px] max-w-[380px] leading-[1.7] text-white/50">
+                {c.subtitle}
+              </p>
+            </motion.div>
+          </AnimatePresence>
 
-        <div className="flex items-center justify-between">
-          <p className="text-[12px]" style={{ color: 'hsl(var(--auth-panel-foreground) / 0.2)' }}>
-            {t('auth.branding.copyright')}
-          </p>
-          <div className="flex items-center gap-1">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div
-                key={i}
-                className="h-1 w-1 rounded-full"
-                style={{ background: `hsl(var(--auth-panel-foreground) / ${0.05 + i * 0.03})` }}
-              />
+          {/* Feature list */}
+          <div className="space-y-3">
+            {features.map(({ icon: Icon, text }, i) => (
+              <motion.div
+                key={text}
+                className="flex items-center gap-3"
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
+              >
+                <div className="h-9 w-9 rounded-xl flex items-center justify-center backdrop-blur-md bg-white/[0.08] border border-white/[0.06]">
+                  <Icon className="h-4 w-4 text-white/70" />
+                </div>
+                <span className="text-[13px] font-medium text-white/55">
+                  {text}
+                </span>
+              </motion.div>
             ))}
           </div>
         </div>
+
+        {/* Footer */}
+        <p className="text-[11px] text-white/20">
+          {t('auth.branding.copyright')}
+        </p>
       </div>
     </div>
   );

@@ -171,15 +171,9 @@ async function isEventAdmin(sessionId: string, userId: string): Promise<boolean>
   return ['owner', 'admin', 'moderator'].includes(row.role_name) || row.member_id === row.created_by_member_id;
 }
 
-async function allowParticipantGameControlForSession(sessionId: string): Promise<boolean> {
-  const row = await queryOne<{ allow: boolean }>(
-    `SELECT COALESCE(es.allow_participant_game_control, true) as allow
-     FROM game_sessions gs
-     LEFT JOIN event_settings es ON es.event_id = gs.event_id
-     WHERE gs.id = $1`,
-    [sessionId]
-  );
-  return row ? !!row.allow : true;
+async function allowParticipantGameControlForSession(_sessionId: string): Promise<boolean> {
+  // Any participant can control game sessions — admins only create events
+  return true;
 }
 
 export async function canControlGameFlow(

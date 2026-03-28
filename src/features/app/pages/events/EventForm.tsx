@@ -48,7 +48,6 @@ export default function EventForm() {
     allow_chat: true,
     auto_start_games: false,
     max_rounds: 5,
-    allow_participant_game_control: true,
   });
 
   const [orgIdError, setOrgIdError] = useState('');
@@ -76,10 +75,6 @@ export default function EventForm() {
 
   useEffect(() => {
     if (existingEvent && isEditing) {
-      const allowGameControl =
-        isRecord(existingEvent) && typeof (existingEvent as any).allow_participant_game_control === 'boolean'
-          ? (existingEvent as any).allow_participant_game_control
-          : true;
       setForm({
         title: existingEvent.title || '',
         description: existingEvent.description || '',
@@ -93,7 +88,6 @@ export default function EventForm() {
         allow_chat: existingEvent.allow_chat ?? true,
         auto_start_games: existingEvent.auto_start_games ?? false,
         max_rounds: existingEvent.max_rounds ?? 5,
-        allow_participant_game_control: allowGameControl,
         game_id: isRecord(existingEvent) && typeof (existingEvent as any).game_id === 'string' ? (existingEvent as any).game_id : '1',
       });
     }
@@ -433,7 +427,6 @@ export default function EventForm() {
                 { key: 'allow_guests', label: t('events.settings.allowGuestsLabel') },
                 { key: 'allow_chat', label: t('events.settings.allowChatLabel') },
                 { key: 'auto_start_games', label: t('events.settings.autoStartGamesLabel') },
-                { key: 'allow_participant_game_control', label: t('events.settings.allowParticipantGameControlLabel') },
               ].map(({ key, label }) => (
                 <div key={key} className="flex items-center justify-between gap-3">
                   <Label className="text-xs font-normal text-muted-foreground">{label}</Label>

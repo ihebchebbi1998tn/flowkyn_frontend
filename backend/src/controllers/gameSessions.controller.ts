@@ -3,14 +3,27 @@
  *
  * Handles HTTP requests for viewing and managing game session details,
  * including retrieval, export, and action operations.
+ * All endpoints require authenticated users with admin/moderator roles.
  */
 
 import { Response, NextFunction } from 'express';
 import { SessionDetailsService, ExportData } from '../services/sessionDetails.service';
 import { AuthRequest } from '../types';
 import { AppError } from '../middleware/errorHandler';
+import { assertCanViewSessionAdmin, assertCanControlGameSession, allowParticipantGameControlForEvent } from './helpers/gamesAccess';
+import { queryOne } from '../config/database';
 
 const sessionDetailsService = new SessionDetailsService();
+
+/** Resolve the event_id for a given game session. */
+async function getSessionEventId(sessionId: string): Promise<string> {
+  const row = await queryOne<{ event_id: string }>(
+    'SELECT event_id FROM game_sessions WHERE id = $1',
+    [sessionId]
+  );
+  if (!row) throw new AppError('Session not found', 404, 'NOT_FOUND');
+  return row.event_id;
+}
 
 export class GameSessionsController {
   /**
@@ -20,21 +33,15 @@ export class GameSessionsController {
   async getSessionDetails(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { sessionId } = req.params;
+      if (!sessionId) throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
+      if (!req.user) throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
 
-      if (!sessionId) {
-        throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
-      }
+      const eventId = await getSessionEventId(sessionId);
+      await assertCanViewSessionAdmin(eventId, req.user.userId);
 
-      console.log(`[GameSessionsController.getSessionDetails] Fetching details for session: ${sessionId}`);
       const details = await sessionDetailsService.getSessionDetails(sessionId);
-      console.log(`[GameSessionsController.getSessionDetails] Successfully fetched details with ${details.participants?.length || 0} participants`);
       res.json(details);
     } catch (err) {
-      console.error('[GameSessionsController.getSessionDetails] Error:', {
-        sessionId: req.params.sessionId,
-        errorMessage: err instanceof Error ? err.message : String(err),
-        errorCode: err instanceof AppError ? err.code : undefined,
-      });
       next(err);
     }
   }
@@ -46,13 +53,14 @@ export class GameSessionsController {
   async getSessionMessages(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { sessionId } = req.params;
+      if (!sessionId) throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
+      if (!req.user) throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
+
+      const eventId = await getSessionEventId(sessionId);
+      await assertCanViewSessionAdmin(eventId, req.user.userId);
+
       const limit = Math.min(parseInt(req.query.limit as string) || 50, 200);
       const offset = parseInt(req.query.offset as string) || 0;
-
-      if (!sessionId) {
-        throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
-      }
-
       const result = await sessionDetailsService.getSessionMessages(sessionId, limit, offset);
       res.json(result);
     } catch (err) {
@@ -67,12 +75,13 @@ export class GameSessionsController {
   async exportSessionData(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { sessionId } = req.params;
+      if (!sessionId) throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
+      if (!req.user) throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
+
+      const eventId = await getSessionEventId(sessionId);
+      await assertCanViewSessionAdmin(eventId, req.user.userId);
+
       const format = (req.query.format as string) || 'json';
-
-      if (!sessionId) {
-        throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
-      }
-
       if (!['json', 'csv'].includes(format)) {
         throw new AppError('Invalid format. Use "json" or "csv"', 400, 'VALIDATION_FAILED');
       }
@@ -103,13 +112,14 @@ export class GameSessionsController {
   async closeSession(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { sessionId } = req.params;
+      if (!sessionId) throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
+      if (!req.user) throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
 
-      if (!sessionId) {
-        throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
-      }
+      const eventId = await getSessionEventId(sessionId);
+      const allow = await allowParticipantGameControlForEvent(eventId);
+      await assertCanControlGameSession(eventId, req.user.userId, allow);
 
       await sessionDetailsService.closeSession(sessionId);
-
       res.json({ success: true, message: 'Session closed successfully' });
     } catch (err) {
       next(err);
@@ -123,13 +133,13 @@ export class GameSessionsController {
   async deleteSession(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { sessionId } = req.params;
+      if (!sessionId) throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
+      if (!req.user) throw new AppError('Authentication required', 401, 'AUTH_REQUIRED');
 
-      if (!sessionId) {
-        throw new AppError('Session ID is required', 400, 'VALIDATION_FAILED');
-      }
+      const eventId = await getSessionEventId(sessionId);
+      await assertCanViewSessionAdmin(eventId, req.user.userId);
 
       await sessionDetailsService.deleteSession(sessionId);
-
       res.json({ success: true, message: 'Session deleted successfully' });
     } catch (err) {
       next(err);

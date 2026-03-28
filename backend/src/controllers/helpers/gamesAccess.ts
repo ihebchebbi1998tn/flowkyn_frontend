@@ -5,14 +5,9 @@ import { queryOne } from '../../config/database';
 import { AppError } from '../../middleware/errorHandler';
 import { AuthRequest } from '../../types';
 
-export async function allowParticipantGameControlForEvent(eventId: string): Promise<boolean> {
-  const row = await queryOne<{ allow: boolean }>(
-    `SELECT COALESCE(allow_participant_game_control, true) as allow
-     FROM event_settings
-     WHERE event_id = $1`,
-    [eventId]
-  );
-  return row ? !!row.allow : true;
+export async function allowParticipantGameControlForEvent(_eventId: string): Promise<boolean> {
+  // Any participant can start / end game sessions — admins only create events
+  return true;
 }
 
 /**

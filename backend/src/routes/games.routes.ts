@@ -77,12 +77,13 @@ router.post('/strategic-sessions/:sessionId/start-debrief', authenticate, debrie
 // Game actions — supports BOTH authenticated users AND guests via authenticateOrGuest
 router.post('/game-actions', authenticateOrGuest, validate(submitActionSchema), ctrl.submitAction);
 
-// Game Session Details — view comprehensive session data
+// Game Session Details — view comprehensive session data (admin-only)
 router.get('/game-sessions/:sessionId/details', authenticate, validate(sessionIdParam, 'params'), sessionCtrl.getSessionDetails);
 router.get('/game-sessions/:sessionId/messages', authenticate, validate(sessionIdParam, 'params'), sessionCtrl.getSessionMessages);
 router.get('/game-sessions/:sessionId/export', authenticate, validate(sessionIdParam, 'params'), sessionCtrl.exportSessionData);
 router.post('/game-sessions/:sessionId/close', authenticate, validate(sessionIdParam, 'params'), sessionCtrl.closeSession);
 router.delete('/game-sessions/:sessionId', authenticate, validate(sessionIdParam, 'params'), sessionCtrl.deleteSession);
-router.get('/events/:eventId/game-sessions/active', authenticate, validate(eventIdParam, 'params'), sessionCtrl.getActiveSessionsForEvent);
+// NOTE: GET /events/:eventId/game-sessions/active is already registered above (line 51) with authenticateOrGuest support.
+// Do NOT duplicate it here. Use the route on line 51 which supports both authenticated users and guests.
 
 export { router as gamesRoutes };
