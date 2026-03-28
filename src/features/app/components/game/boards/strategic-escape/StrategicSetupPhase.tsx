@@ -10,6 +10,7 @@ import { ApiError } from '@/lib/apiError';
 import { INDUSTRY_OPTIONS, CRISIS_OPTIONS, DIFFICULTY_OPTIONS } from '../strategicEscape.constants';
 import type { StrategicEscapeSnapshot } from '../strategicEscape.types';
 import type { GameParticipant } from '../../shell';
+import type { EmitActionOpts } from '@/hooks/useGameActionEmitter';
 
 interface Props {
   isHost: boolean;
@@ -17,7 +18,7 @@ interface Props {
   sessionId: string | null;
   snapshot: StrategicEscapeSnapshot | null;
   onSessionCreated: (sessionId: string) => void;
-  onEmitSocketAction: (actionType: string, payload?: unknown, opts?: { sessionId?: string }) => Promise<void>;
+  onEmitSocketAction: (actionType: string, payload?: unknown, opts?: EmitActionOpts) => Promise<void>;
 }
 
 export function StrategicSetupPhase({ isHost, eventId, sessionId, snapshot, onSessionCreated, onEmitSocketAction }: Props) {

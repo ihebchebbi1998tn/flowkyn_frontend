@@ -230,8 +230,9 @@ function GamePlayWithoutBoundary() {
   // ─── Game header ───────────────────────────────────────────────────────────
   useEffect(() => {
     if (!eventId) return;
-    const eventTitle = eventPublicObj && typeof eventPublicObj.title === 'string' ? eventPublicObj.title as string : t(activeConfig.titleKey);
-    const eventSubtitle = eventPublicObj && typeof eventPublicObj.description === 'string' ? eventPublicObj.description as string : t(activeConfig.subtitleKey);
+    // Issue 8 fix: guard activeConfig access — it should always be defined but be defensive
+    const eventTitle = eventPublicObj && typeof eventPublicObj.title === 'string' ? eventPublicObj.title as string : t(activeConfig?.titleKey ?? 'gamePlay.twoTruthsTitle');
+    const eventSubtitle = eventPublicObj && typeof eventPublicObj.description === 'string' ? eventPublicObj.description as string : t(activeConfig?.subtitleKey ?? 'gamePlay.twoTruthsSubtitle');
     const lobbyModeRaw = eventPublicObj && typeof eventPublicObj.event_mode === 'string' ? String(eventPublicObj.event_mode) : null;
     const lobbyGameType: 'sync' | 'async' = lobbyModeRaw === 'sync' ? 'sync' : 'async';
     setGameHeader({
@@ -245,7 +246,7 @@ function GamePlayWithoutBoundary() {
       sessionStartedAt,
     });
     return () => setGameHeader(null);
-  }, [eventId, activeConfig.titleKey, activeConfig.subtitleKey, participants, currentUserName, currentUserAvatarUrl,
+  }, [eventId, activeConfig?.titleKey, activeConfig?.subtitleKey, participants, currentUserName, currentUserAvatarUrl,
     requestActivityExitWithFeedback, setGameHeader, eventPublicObj?.organization_logo, eventPublicObj?.organization_name,
     eventPublicObj?.event_mode, eventPublicObj?.title, eventPublicObj?.description, disconnectedBadgeCount, sessionStartedAt, t]);
 
@@ -289,8 +290,8 @@ function GamePlayWithoutBoundary() {
   return (
     <div className="h-full min-h-0 flex flex-col">
       <GamePlayShell
-        title={t(activeConfig.titleKey)} subtitle={t(activeConfig.subtitleKey)}
-        gameType={activeConfig.type} eventId={eventId || ''} participants={participants}
+        title={t(activeConfig?.titleKey ?? 'gamePlay.twoTruthsTitle')} subtitle={t(activeConfig?.subtitleKey ?? 'gamePlay.twoTruthsSubtitle')}
+        gameType={activeConfig?.type ?? 'sync'} eventId={eventId || ''} participants={participants}
         onEnd={() => requestActivityExitWithFeedback('end_clicked')} sidebar={chatSidebar}
         currentUserId={currentUserId} currentUserName={currentUserName} currentUserAvatarUrl={currentUserAvatarUrl}
         onEditProfile={() => setShowProfileEdit(true)}

@@ -25,7 +25,8 @@ function isGameSessionRow(v: unknown): v is GameSessionRow {
 
 type GamesSocket = ReturnType<typeof import('@/hooks/useSocket')['useGamesSocket']>;
 
-export type EmitActionOpts = { sessionIdOverride?: string };
+// Issue 5 fix: accept both `sessionIdOverride` (internal) and `sessionId` (StrategicEscape sub-components)
+export type EmitActionOpts = { sessionIdOverride?: string; sessionId?: string };
 
 export type UseGameActionEmitterParams = {
   gameTypeKey: GameTypeKey;
@@ -57,7 +58,8 @@ export function useGameActionEmitter({
 
   const onEmitAction = useCallback(
     async (actionType: string, payload?: unknown, opts?: EmitActionOpts) => {
-      const forcedSid = opts?.sessionIdOverride;
+      // Support both `sessionIdOverride` (primary) and `sessionId` (alias used by StrategicEscape sub-components)
+      const forcedSid = opts?.sessionIdOverride ?? opts?.sessionId;
       let sid = forcedSid ?? sessionId;
 
       // Auto-create session if none exists

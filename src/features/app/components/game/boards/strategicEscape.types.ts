@@ -1,5 +1,6 @@
 import type { GameParticipant } from '../shell';
 import type { BaseGameBoardProps } from '../types';
+import type { EmitActionOpts } from '@/hooks/useGameActionEmitter';
 
 export type StrategicPhase = 'setup' | 'roles_assignment' | 'discussion' | 'debrief';
 
@@ -31,7 +32,7 @@ export interface StrategicEscapeBoardProps extends BaseGameBoardProps {
   onEmitSocketAction: (
     actionType: string,
     payload?: unknown,
-    opts?: { sessionId?: string },
+    opts?: EmitActionOpts,
   ) => Promise<void>;
 }
 

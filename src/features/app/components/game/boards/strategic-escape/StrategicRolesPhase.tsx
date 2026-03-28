@@ -8,6 +8,7 @@ import { ApiError } from '@/lib/apiError';
 import { useCountdown } from '@/hooks/useCountdown';
 import { StrategicRoleRevealCard } from './StrategicRoleRevealCard';
 import type { StrategicEscapeSnapshot } from '../strategicEscape.types';
+import type { EmitActionOpts } from '@/hooks/useGameActionEmitter';
 
 interface Props {
   isHost: boolean;
@@ -18,7 +19,7 @@ interface Props {
   currentUserName?: string;
   currentUserAvatar: string;
   currentUserAvatarUrl?: string | null;
-  onEmitSocketAction: (actionType: string, payload?: unknown, opts?: { sessionId?: string }) => Promise<void>;
+  onEmitSocketAction: (actionType: string, payload?: unknown, opts?: EmitActionOpts) => Promise<void>;
 }
 
 export function StrategicRolesPhase({

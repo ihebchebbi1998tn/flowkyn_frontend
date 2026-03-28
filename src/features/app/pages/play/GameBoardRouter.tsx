@@ -206,7 +206,7 @@ export function GameBoardRouter({
             onSessionCreated={(newSessionId: string) => {
               setSessionId(newSessionId);
             }}
-            onEmitSocketAction={onEmitAction as any}
+            onEmitSocketAction={onEmitAction}
           />
         </GameErrorBoundary>
       );

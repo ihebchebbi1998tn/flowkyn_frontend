@@ -4,7 +4,7 @@
  * Extracted from GamePlay.tsx to keep the orchestrator lean.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { gamesApi } from '@/features/app/api/games';
 import { useGameStateSync } from '@/hooks/useGameStateSync';
 import { GAME_CONFIGS, GAME_KEY_TO_CONFIG_ID } from '../gameTypes';
@@ -48,6 +48,10 @@ export function useGameSession({
   const [gamesSocketErrorDetails, setGamesSocketErrorDetails] = useState<unknown>(null);
   const [gameJoinAckReceived, setGameJoinAckReceived] = useState(false);
 
+  // Issue 7 fix: validate phase at runtime instead of blindly casting
+  const rawPhase = (gameData as Record<string, unknown>)?.phase;
+  const currentPhase: string | null = typeof rawPhase === 'string' ? rawPhase : null;
+
   // Game state sync (join room, sync snapshots, etc.)
   const { requestStateSync } = useGameStateSync({
     gamesSocket,
@@ -58,7 +62,7 @@ export function useGameSession({
     setInitialSnapshot,
     setGameData,
     setIsGameAdmin,
-    currentPhase: (gameData as Record<string, unknown>)?.phase as string | null ?? null,
+    currentPhase,
     onGameJoinError: (err) => {
       const errObj = err as Record<string, unknown> | null;
       const exact = errObj?.message || errObj?.code || errObj?.error || String(err);
@@ -109,17 +113,26 @@ export function useGameSession({
   }, [eventId]);
 
   // Poll for session when we don't have one (every 3s to reduce network load)
+  // Issue 4 fix: surface errors + Issue 9 fix: `found` flag stops extra calls after session found
   useEffect(() => {
     if (!eventId || sessionId || !hasJoined) return;
+    let found = false;
     const pollId = setInterval(() => {
+      if (found) return;
       gamesApi.getActiveSession(eventId).then((s) => {
-        if (s?.id) {
+        if (s?.id && !found) {
+          found = true;
           setSessionId(s.id);
           setSessionStartedAt(s.started_at || null);
         }
-      }).catch(() => {});
+      }).catch((err) => {
+        console.warn('[useGameSession] Poll for active session failed:', err instanceof Error ? err.message : err);
+      });
     }, 3000);
-    return () => clearInterval(pollId);
+    return () => {
+      found = true; // prevent in-flight callbacks from setting state after cleanup
+      clearInterval(pollId);
+    };
   }, [eventId, sessionId, hasJoined]);
 
   // Listen for event notifications (participant join, game session, posts)
@@ -141,7 +154,9 @@ export function useGameSession({
           // Fetch full session to get started_at for the timer
           gamesApi.getActiveSession(eventId).then((s) => {
             if (s?.started_at) setSessionStartedAt(s.started_at);
-          }).catch(() => {});
+          }).catch((err) => {
+            console.warn('[useGameSession] Failed to fetch session after session_created:', err instanceof Error ? err.message : err);
+          });
           setTimeout(() => {
             requestStateSync?.('session_created_notification');
           }, 800);
@@ -153,13 +168,17 @@ export function useGameSession({
             } else {
               setSessionId(null);
             }
-          }).catch(() => {});
+          }).catch((err) => {
+            console.warn('[useGameSession] Failed to resolve session from notification fallback:', err instanceof Error ? err.message : err);
+          });
         }
       }
     };
 
+    // Issue 6 fix: always return a cleanup function — if on() returns undefined the listener would
+    // never be unsubscribed, causing it to fire after unmount
     const unsub = eventsSocket.on('event:notification', handleEventNotification);
-    return unsub;
+    return () => { unsub?.(); };
   }, [eventsSocket.isConnected, eventId, refetchParticipants, refetchPosts, requestStateSync]);
 
   // Game state sync from WebSocket

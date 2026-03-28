@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"socket\\\\.io\\\\|Socket\\\\|WebSocket\" /c/Users/ihebc/OneDrive/Desktop/fullapp/flowkyn_frontend/src/features/app/types --include=*.ts)"
+    ]
+  }
+}

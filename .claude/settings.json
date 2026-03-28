@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"TODO\\\\|FIXME\\\\|HACK\\\\|BUG\" /c/Users/ihebc/OneDrive/Desktop/fullapp/flowkyn_frontend/src --include=*.ts --include=*.tsx)",
+      "Bash(grep -r import.meta.env /c/Users/ihebc/OneDrive/Desktop/fullapp/flowkyn_frontend/src --include=*.ts --include=*.tsx)"
+    ]
+  }
+}
