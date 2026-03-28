@@ -1,0 +1,3106 @@
+{
+  "common": {
+    "appName": "Flowkyn",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "confirm": "Confirmer",
+    "add": "Ajouter",
+    "remove": "Supprimer",
+    "back": "Retour",
+    "next": "Suivant",
+    "search": "Rechercher...",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "loading": "Chargement...",
+    "noData": "Aucune donnée disponible",
+    "actions": "Actions",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "all": "Tout",
+    "yes": "Oui",
+    "no": "Non",
+    "submit": "Soumettre",
+    "send": "Envoyer",
+    "close": "Fermer",
+    "view": "Voir",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "refresh": "Actualiser",
+    "rows": "lignes",
+    "page": "Page",
+    "of": "de",
+    "previous": "Précédent",
+    "showing": "Affichage de",
+    "to": "à",
+    "entries": "entrées",
+    "perPage": "par page",
+    "success": "Succès",
+    "error": "Erreur",
+    "rounds": "manches",
+    "warning": "Attention",
+    "info": "Info",
+    "tbd": "À définir",
+    "backToEvents": "Retour aux événements",
+    "live": "En direct",
+    "async": "Asynchrone",
+    "copyFailed": "Échec de la copie. Veuillez copier l’URL manuellement.",
+    "emDash": "—",
+    "host": "Hôte",
+    "language": "Langue",
+    "unknown": "Inconnu",
+    "you": "Vous",
+    "pagination": {
+      "showing": "Affichage de {{from}} à {{to}} sur {{total}}"
+    },
+    "clearAll": "Effacer tout"
+  },
+  "errors": {
+    "eventEnded": "Cette activité est terminée. Les publications sont désormais fermées.",
+    "postFailed": "Échec de la publication. Veuillez réessayer.",
+    "reactionFailed": "Échec de la réaction. Veuillez réessayer."
+  },
+  "gameHowItWorks": {
+    "common": {
+      "title": "Comment ça marche",
+      "goalTitle": "Objectif",
+      "timeTitle": "Durée",
+      "howTitle": "Comment ça marche",
+      "rulesTitle": "Règles",
+      "tipsTitle": "Conseils",
+      "hostTitle": "Contrôles du facilitateur",
+      "privacyTitle": "Confidentialité"
+    },
+    "strategicEscape": {
+      "title": "Défi d'évasion stratégique",
+      "goal": "S’entraîner à décider sous pression en explorant la même crise depuis des rôles différents.",
+      "time": {
+        "title": "Durée",
+        "body": "Activité asynchrone. Les rôles sont révélés d’abord, puis le facilitateur lance la discussion quand tout le monde est prêt."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Le facilitateur configure le scénario (industrie, crise, difficulté) et crée la session.",
+          "Les rôles sont attribués aux participants.",
+          "Chaque participant révèle son rôle secret dans l’app.",
+          "Après la révélation, vous pouvez indiquer “Je suis prêt”, voir des prompts par rôle et écrire des notes privées.",
+          "Le facilitateur démarre la discussion asynchrone une fois tout le monde prêt.",
+          "À la fin, faites un débrief et définissez des actions concrètes."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Votre rôle est privé. Ne le partagez pas directement sauf demande du facilitateur.",
+          "Argumentez depuis votre rôle et rendez les arbitrages explicites.",
+          "Soyez concret : nommez risques, responsables, délais et ce que vous coupez."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Utilisez vos notes privées pour suivre les risques visibles uniquement par votre rôle.",
+          "Utilisez les prompts pour éviter de répéter les mêmes arguments.",
+          "En cas de désaccord, proposez une alternative avec des coûts clairs."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Attribuez les rôles une fois que les participants ont rejoint.",
+          "Suivez la progression (rôles révélés et statut prêt) avant de lancer la discussion.",
+          "Lancez la discussion quand l’équipe est prête et terminez-la quand vous avez assez d’inputs."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Vos notes privées sont enregistrées par session et visibles uniquement par vous. Le facilitateur ne voit que la progression agrégée (comptes), pas qui est prêt ni quel rôle il a."
+      }
+    },
+    "coffeeRoulette": {
+      "title": "Coffee Roulette",
+      "goal": "Créer des connexions 1:1 rapides en appariant des coéquipiers avec un sujet de conversation.",
+      "time": {
+        "title": "Durée",
+        "body": "Activité en direct. Le timer démarre lorsque les paires sont créées."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Attendez qu’au moins 2 participants rejoignent.",
+          "Lancez le shuffle pour générer des paires 1:1.",
+          "Tout le monde passe dans un chat chronométré avec un sujet partagé.",
+          "Utilisez les prompts “Sujet suivant” pendant le chat.",
+          "Après quelques prompts, vous pouvez continuer ou terminer le chat.",
+          "Terminez pour clôturer la session pour tous."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Soyez respectueux et inclusif : l’objectif est la connexion.",
+          "Restez sur un sujet à la fois pour que chacun participe.",
+          "Si vous terminez le chat, cela met fin à la session."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Activez la caméra si possible : cela renforce la connexion.",
+          "Posez des questions de relance ; ne passez pas trop vite au sujet suivant.",
+          "Si vous voulez un nouvel appariement, terminez puis relancez un shuffle."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Lancez le shuffle une fois assez de participants présents.",
+          "Vous pouvez terminer la session (ou laisser un participant terminer selon les réglages de l’événement)."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Les paires et sujets sont partagés dans la session. Aucun rôle secret ou donnée privée n’est généré."
+      }
+    },
+    "twoTruths": {
+      "title": "Deux vérités et un mensonge",
+      "goal": "Briser la glace en devinant quelle affirmation est le mensonge.",
+      "time": {
+        "title": "Durée",
+        "body": "Manches en direct : soumission → vote → révélation, répété sur plusieurs manches."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Un joueur est le présentateur de la manche.",
+          "Le présentateur soumet trois affirmations et choisit laquelle est le mensonge.",
+          "Tout le monde vote pour l’affirmation qu’il pense être le mensonge.",
+          "La révélation affiche la bonne réponse et les scores se mettent à jour.",
+          "Passez à la manche suivante jusqu’à la fin du jeu."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Deux affirmations doivent être vraies, une doit être fausse.",
+          "Gardez les affirmations courtes et compréhensibles.",
+          "Votez avant la fin du timer."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Rendez les vérités surprenantes et le mensonge crédible.",
+          "En tant que votant, cherchez les détails qui ne collent pas.",
+          "Profitez de la révélation pour apprendre quelque chose de nouveau sur l’équipe."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Démarrez le jeu et avancez les manches si nécessaire.",
+          "Choisissez le nombre de manches de la session."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Toutes les affirmations et votes sont visibles par les participants de la session."
+      }
+    },
+    "winsOfWeek": {
+      "title": "Victoires de la semaine",
+      "goal": "Créer une dynamique en partageant une victoire et en célébrant celles des autres.",
+      "time": {
+        "title": "Durée",
+        "body": "Activité asynchrone. Les publications restent ouvertes jusqu’à la fin de l’activité."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "steps": [
+          "Lisez le prompt de la semaine en haut du fil.",
+          "Publiez votre victoire (pro ou perso).",
+          "Réagissez aux victoires des autres avec des réactions rapides.",
+          "Répondez aux posts pour poser des questions ou féliciter.",
+          "Quand l’activité se termine, les nouvelles publications sont désactivées (lecture seule)."
+        ]
+      },
+      "rules": {
+        "title": "Règles",
+        "items": [
+          "Gardez un ton bienveillant et respectueux.",
+          "Partagez uniquement ce que vous êtes à l’aise de partager avec le groupe."
+        ]
+      },
+      "tips": {
+        "title": "Conseils",
+        "items": [
+          "Soyez précis sur ce qui a changé et pourquoi c’est important.",
+          "Célébrez les autres : les réactions rendent le fil vivant.",
+          "Si vous hésitez, partagez une petite victoire (apprentissage, aide, progrès)."
+        ]
+      },
+      "host": {
+        "title": "Contrôles du facilitateur",
+        "items": [
+          "Définissez le prompt et la durée de l’activité.",
+          "Fermez les publications une fois la fenêtre de temps terminée."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Les posts et réactions sont visibles par les participants de l’événement."
+      }
+    },
+    "comingSoon": {
+      "title": "Bientôt disponible",
+      "goal": "Cette activité est en cours de finalisation.",
+      "how": {
+        "title": "À quoi s’attendre",
+        "steps": [
+          "Nous peaufinons le déroulé et l’interface.",
+          "Nous validons l’expérience avec des testeurs.",
+          "Elle apparaîtra ici dès sa sortie."
+        ]
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "body": "Aucune donnée n’est collectée pour cette activité tant qu’elle n’est pas activée."
+      }
+    }
+  },
+  "landing": {
+    "nav": {
+      "features": "Fonctionnalités",
+      "howItWorks": "Comment ça marche",
+      "pricing": "Tarifs",
+      "login": "Connexion",
+      "getStarted": "Essayer gratuitement"
+    },
+    "hero": {
+      "title": "Construisez des équipes connectées,",
+      "titleHighlight": "où qu'elles travaillent.",
+      "subtitle": "Flowkyn aide les équipes distribuées à renforcer leurs liens grâce à des activités structurées, des brise-glaces et des rituels de bien-être — le tout depuis une seule plateforme.",
+      "cta": "Commencer gratuitement",
+      "ctaSecondary": "Voir comment ça marche",
+      "noCard": "Gratuit jusqu'à 10 membres · Sans carte bancaire",
+      "trustedBy": "Utilisé par plus de 500 équipes à distance dans le monde"
+    },
+    "problem": {
+      "sectionLabel": "Le Problème",
+      "title": "Les équipes distantes sont en difficulté",
+      "subtitle": "Des équipes désengagées nuisent à la productivité, la culture et la rétention.",
+      "symptoms": {
+        "title": "Les Symptômes",
+        "items": [
+          "Caméras éteintes, réunions sans énergie",
+          "Collaboration minimale en dehors des tâches",
+          "Le team building semble forcé ou gênant",
+          "Les employés se sentent déconnectés",
+          "Érosion de la culture dans les équipes distribuées"
+        ]
+      },
+      "impact": {
+        "title": "L'Impact Business",
+        "items": [
+          "Productivité et performance en baisse",
+          "Coûts de turnover élevés (réduction de 36% possible)",
+          "L'innovation souffre sans confiance",
+          "Recrutement plus difficile (signaux culturels faibles)",
+          "Le management ne peut pas mesurer l'engagement"
+        ]
+      },
+      "punchline": "Les solutions actuelles échouent : 3 à 5 heures de recherche en ligne OU 500 à 2 000 € de facilitateurs"
+    },
+    "features": {
+      "sectionLabel": "Fonctionnalités",
+      "title": "Tout ce qu'il faut pour",
+      "titleHighlight": "engager votre équipe à distance",
+      "subtitle": "Des brise-glaces rapides aux rituels de bien-être récurrents, Flowkyn offre une boîte à outils complète pour l'engagement d'équipe.",
+      "activities": {
+        "label": "Bibliothèque d'activités",
+        "title": "50+ activités prêtes à lancer",
+        "description": "Choisissez parmi des brise-glaces, quiz, café roulette, cercles de gratitude et bien plus. Chacune conçue et testée pour les équipes à distance avec des instructions étape par étape."
+      },
+      "liveAsync": {
+        "label": "Modes flexibles",
+        "title": "En direct & asynchrone — pour tous les fuseaux horaires",
+        "description": "Animez des activités en temps réel avec des votes et minuteries, ou lancez des rituels asynchrones comme « Les victoires de la semaine » adaptés à tous les emplois du temps."
+      },
+      "analytics": {
+        "label": "Analytique",
+        "title": "Mesurez l'engagement, prouvez le ROI",
+        "description": "Suivez les taux de participation, tendances d'engagement et efficacité des activités avec des tableaux de bord détaillés et des rapports exportables."
+      },
+      "management": {
+        "label": "Gestion d'événements",
+        "title": "Planifiez, invitez et gérez en un seul endroit",
+        "description": "Planifiez les activités, envoyez les invitations, gérez les événements récurrents et coordonnez plusieurs équipes — depuis un tableau de bord unique et intuitif."
+      },
+      "activitiesGrid": {
+        "title": "Four flagship activities, ready on day one",
+        "subtitle": "Start with battle‑tested formats your team will recognize and love — then expand with more templates over time.",
+        "strategicEscape": {
+          "tag": "Strategic escape",
+          "title": "Strategic Escape Game",
+          "description": "Asynchronous crisis simulation where each participant plays a different leadership role. Great for cross‑functional thinking and decision‑making."
+        },
+        "coffeeRoulette": {
+          "tag": "Connections",
+          "title": "Coffee Roulette",
+          "description": "Smart 1:1 pairing for virtual coffees. Perfect for onboarding, cross‑team connection, and breaking silos in hybrid organizations."
+        },
+        "twoTruths": {
+          "tag": "Icebreaker",
+          "title": "Two Truths & a Lie",
+          "description": "Fast, fun game to warm up meetings. Players submit prompts, vote, and reveal together — with built‑in scoring and animations."
+        },
+        "winsOfWeek": {
+          "tag": "Async ritual",
+          "title": "Wins of the Week",
+          "description": "Lightweight async check‑in where everyone shares a weekly win. Builds recognition, momentum, and a positive team narrative."
+        }
+      }
+    },
+    "howItWorks": {
+      "sectionLabel": "Comment ça marche",
+      "title": "Opérationnel",
+      "titleHighlight": "en quelques minutes",
+      "subtitle": "Trois étapes simples pour transformer votre culture d'équipe.",
+      "step1": {
+        "title": "Créez votre espace",
+        "description": "Inscrivez-vous, invitez votre équipe et configurez les paramètres de votre organisation. En moins de 2 minutes."
+      },
+      "step2": {
+        "title": "Choisissez une activité",
+        "description": "Parcourez la bibliothèque, filtrez par taille d'équipe, durée ou type (en direct ou asynchrone) et planifiez-la."
+      },
+      "step3": {
+        "title": "Engagez et mesurez",
+        "description": "Votre équipe participe, vous suivez l'engagement au fil du temps et observez vos indicateurs s'améliorer."
+      }
+    },
+    "stats": {
+      "stat1": {
+        "value": "41%",
+        "label": "Augmentation de l'engagement"
+      },
+      "stat2": {
+        "value": "2×",
+        "label": "Plus de collaboration inter-équipes"
+      },
+      "stat3": {
+        "value": "1k+",
+        "label": "Activités réalisées par mois"
+      },
+      "stat4": {
+        "value": "50%",
+        "label": "Réduction du temps d'intégration"
+      }
+    },
+    "testimonials": {
+      "sectionLabel": "Témoignages",
+      "title": "Apprécié par les équipes partout",
+      "items": [
+        {
+          "quote": "Flowkyn a transformé la façon dont notre organisation de 120 ingénieurs se connecte. Nos scores d'engagement ont augmenté de 34 % en trois mois.",
+          "author": "Sarah Chen",
+          "role": "VP Ingénierie, TechScale Inc."
+        },
+        {
+          "quote": "Nous sommes passés de moments forcés et gênants à de vrais instants d'équipe. Les activités asynchrones sont un game-changer pour notre équipe mondiale.",
+          "author": "Marcus Oliveira",
+          "role": "Directeur RH, NovaBridge"
+        },
+        {
+          "quote": "Enfin une plateforme qui ne nécessite ni facilitateur ni gros budget. Nos managers adorent l'approche en libre-service.",
+          "author": "Lena Hoffmann",
+          "role": "Chief of Staff, Klarity GmbH"
+        }
+      ]
+    },
+    "faq": {
+      "sectionLabel": "FAQ",
+      "title": "Questions fréquemment posées",
+      "items": [
+        {
+          "question": "Flowkyn est-il vraiment gratuit ?",
+          "answer": "Oui ! Flowkyn est gratuit pour les équipes jusqu'à 10 membres. Pour les équipes plus grandes, nous proposons des plans abordables à partir de 4 €/utilisateur/mois."
+        },
+        {
+          "question": "Avons-nous besoin d'un facilitateur ?",
+          "answer": "Non. Chaque activité est accompagnée d'instructions claires étape par étape que tout team lead peut suivre. Aucun facilitateur externe nécessaire."
+        },
+        {
+          "question": "Ça fonctionne avec plusieurs fuseaux horaires ?",
+          "answer": "Absolument. Flowkyn supporte les activités en direct (synchrones) et asynchrones, parfait pour les équipes distribuées à l'échelle mondiale."
+        },
+        {
+          "question": "Combien de temps durent les activités ?",
+          "answer": "Les activités vont de 5 minutes (brise-glaces) à 60 minutes (sessions approfondies). Vous pouvez filtrer par durée pour trouver ce qui convient à votre emploi du temps."
+        },
+        {
+          "question": "Puis-je suivre l'engagement ?",
+          "answer": "Oui. Flowkyn fournit des tableaux de bord analytiques détaillés montrant les taux de participation, les tendances d'engagement et l'efficacité des activités au fil du temps."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Prêt à transformer votre",
+      "titleHighlight": "culture d'équipe à distance ?",
+      "subtitle": "Rejoignez des centaines d'équipes qui utilisent déjà Flowkyn pour garder leurs collaborateurs connectés, engagés et épanouis.",
+      "button": "Commencer gratuitement",
+      "noCard": "Gratuit jusqu'à 10 membres · Sans carte bancaire"
+    },
+    "footer": {
+      "description": "La plateforme d'engagement d'équipe pour les équipes distribuées modernes.",
+      "product": "Produit",
+      "company": "Entreprise",
+      "legal": "Mentions légales",
+      "features": "Fonctionnalités",
+      "activities": "Activités",
+      "pricing": "Tarifs",
+      "about": "À propos",
+      "contact": "Contact",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "security": "Sécurité",
+      "copyright": "© 2026 Flowkyn. Tous droits réservés."
+    }
+  },
+  "static": {
+    "about": {
+      "title": "À propos de Flowkyn",
+      "intro": "Flowkyn est une plateforme d'engagement d'équipe conçue pour les équipes distribuées modernes. Nous aidons les organisations distantes et hybrides à renforcer leur culture grâce à des activités de team building sélectionnées et en libre-service.",
+      "missionTitle": "Notre Mission",
+      "mission": "Nous croyons que chaque équipe mérite une culture connectée — quelle que soit la géographie. Notre mission est de rendre le team building accessible, abordable et efficace pour les organisations de toutes tailles.",
+      "storyTitle": "Notre Histoire",
+      "story": "Flowkyn est né de la frustration. Nous passions des heures à chercher des activités pour équipes à distance, pour ne trouver que des listes génériques ou des facilitateurs coûteux. Nous savions qu'il devait y avoir une meilleure solution. Nous l'avons donc construite.",
+      "valuesTitle": "Nos Valeurs",
+      "values": [
+        "Accessibilité — le team building ne devrait pas nécessiter un budget ou un expert",
+        "Inclusivité — des activités conçues pour chaque fuseau horaire et type de personnalité",
+        "Simplicité — des instructions claires, pas de complexité, juste de la connexion",
+        "Mesurabilité — savoir ce qui fonctionne grâce aux données d'engagement"
+      ]
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "subtitle": "Une question ou un retour ? Nous serions ravis de vous entendre.",
+      "emailLabel": "E-mail",
+      "locationLabel": "Localisation",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Dites-nous comment nous pouvons vous aider...",
+      "nameLabel": "Nom complet",
+      "namePlaceholder": "Jean Dupont",
+      "emailPlaceholder": "jean@entreprise.com",
+      "subjectLabel": "Sujet",
+      "subjectPlaceholder": "De quoi s'agit-il ?",
+      "sectionLabel": "Nous contacter",
+      "sectionTitle": "Parlons",
+      "sectionTitleHighlight": "Ensemble",
+      "sectionSubtitle": "Une question, une suggestion ou simplement envie de dire bonjour ? Envoyez-nous un message.",
+      "sendButton": "Envoyer le message",
+      "successMessage": "Message envoyé ! Nous vous répondrons bientôt.",
+      "orReachUs": "Ou contactez-nous directement"
+    },
+    "privacy": {
+      "title": "Politique de Confidentialité",
+      "lastUpdated": "Dernière mise à jour : 1er mars 2026",
+      "sections": [
+        {
+          "title": "Informations collectées",
+          "content": "Nous collectons les informations que vous fournissez directement, comme votre nom, adresse e-mail et détails d'organisation lors de la création de votre compte. Nous collectons également des données d'utilisation pour améliorer nos services."
+        },
+        {
+          "title": "Utilisation de vos informations",
+          "content": "Nous utilisons vos informations pour fournir et améliorer Flowkyn, communiquer avec vous concernant votre compte et envoyer des mises à jour produit pertinentes. Nous ne vendons jamais vos données personnelles à des tiers."
+        },
+        {
+          "title": "Stockage et sécurité des données",
+          "content": "Vos données sont stockées sur des serveurs sécurisés et chiffrés au sein de l'Union européenne. Nous mettons en œuvre des mesures de sécurité standard de l'industrie."
+        },
+        {
+          "title": "Cookies",
+          "content": "Nous utilisons des cookies essentiels pour maintenir votre session et vos préférences. Nous n'utilisons pas de cookies de suivi à des fins publicitaires."
+        },
+        {
+          "title": "Vos droits",
+          "content": "Vous avez le droit d'accéder, de corriger ou de supprimer vos données personnelles à tout moment. Vous pouvez également demander une exportation complète de vos données. Contactez-nous à privacy@flowkyn.com."
+        },
+        {
+          "title": "Contact",
+          "content": "Pour toute question relative à la confidentialité, contactez-nous à privacy@flowkyn.com."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Conditions d'Utilisation",
+      "lastUpdated": "Dernière mise à jour : 1er mars 2026",
+      "sections": [
+        {
+          "title": "Acceptation des conditions",
+          "content": "En accédant ou en utilisant Flowkyn, vous acceptez d'être lié par ces Conditions d'utilisation. Si vous n'êtes pas d'accord, veuillez ne pas utiliser la plateforme."
+        },
+        {
+          "title": "Utilisation du service",
+          "content": "Flowkyn fournit une plateforme pour les activités d'engagement d'équipe. Vous acceptez d'utiliser le service uniquement à des fins légales et conformément à ces conditions."
+        },
+        {
+          "title": "Comptes",
+          "content": "Vous êtes responsable de la confidentialité de vos identifiants de compte. Vous devez nous informer immédiatement de tout accès non autorisé."
+        },
+        {
+          "title": "Propriété intellectuelle",
+          "content": "Tout le contenu de Flowkyn, y compris les descriptions d'activités, les designs et le branding, est la propriété de Flowkyn et protégé par le droit d'auteur."
+        },
+        {
+          "title": "Limitation de responsabilité",
+          "content": "Flowkyn est fourni 'en l'état' sans garantie d'aucune sorte. Nous ne sommes pas responsables des dommages indirects, accessoires ou consécutifs."
+        },
+        {
+          "title": "Résiliation",
+          "content": "Nous pouvons résilier ou suspendre votre compte à tout moment en cas de violation de ces conditions. Vous pouvez supprimer votre compte à tout moment via vos paramètres."
+        }
+      ]
+    },
+    "security": {
+      "title": "Sécurité",
+      "subtitle": "La protection de vos données est notre priorité absolue. Voici comment nous sécurisons Flowkyn.",
+      "encryption": {
+        "title": "Chiffrement",
+        "description": "Toutes les données sont chiffrées en transit (TLS 1.3) et au repos (AES-256). Vos informations ne sont jamais stockées en clair."
+      },
+      "infrastructure": {
+        "title": "Infrastructure",
+        "description": "Hébergé sur une infrastructure européenne de qualité entreprise avec sauvegardes automatisées, protection contre les pannes et SLA de 99,9 %."
+      },
+      "compliance": {
+        "title": "Conformité",
+        "description": "Conforme au RGPD dès la conception. Nous suivons les principes de minimisation des données et offrons des capacités complètes d'exportation et de suppression des données."
+      },
+      "privacy": {
+        "title": "Confidentialité par défaut",
+        "description": "Pas de cookies de suivi, pas de vente de données, pas de publicité tierce. Les données de votre équipe restent les vôtres."
+      }
+    }
+  },
+  "layout": {
+    "liveExperience": "Expérience en direct"
+  },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français",
+    "de": "Allemand",
+    "es": "Espagnol"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "organizations": "Espace de travail",
+    "events": "Événements",
+    "games": "Activités",
+    "suppliers": "Fournisseurs",
+    "notifications": "Notifications",
+    "analytics": "Analytique",
+    "users": "Utilisateurs",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "email": "Admin e-mail",
+    "support": "Support",
+    "logout": "Déconnexion",
+    "language": "Langue",
+    "manage": "Gérer",
+    "menu": "Menu",
+    "newEvent": "Nouvel événement"
+  },
+  "auth": {
+    "branding": {
+      "tagline": "Plateforme d'engagement d'équipe",
+      "login": {
+        "title": "Renforcez vos équipes avec de meilleures expériences.",
+        "description": "Engagez votre équipe grâce à des événements interactifs, des jeux et des analyses en temps réel — le tout sur une seule plateforme."
+      },
+      "register": {
+        "tagline": "Commencez gratuitement",
+        "title": "Rejoignez la plateforme que les équipes adorent.",
+        "description": "Créez votre compte et commencez à organiser des activités d'équipe engageantes en quelques minutes."
+      },
+      "forgot": {
+        "tagline": "Récupération de compte",
+        "title": "Réinitialisez votre mot de passe en toute sécurité.",
+        "description": "Nous vous enverrons un lien sécurisé pour réinitialiser votre mot de passe et retrouver votre équipe."
+      },
+      "reset": {
+        "tagline": "Presque fini",
+        "title": "Définissez votre nouveau mot de passe.",
+        "description": "Choisissez un mot de passe fort pour garder votre compte en sécurité."
+      },
+      "features": {
+        "activities": "Plus de 50 activités d'équipe sélectionnées",
+        "liveAsync": "En direct & asynchrone pour tous les fuseaux horaires",
+        "analytics": "Analyses & rapports d'engagement"
+      },
+      "copyright": "© 2026 Flowkyn. Tous droits réservés."
+    },
+    "login": "Connexion",
+    "register": "Inscription",
+    "email": "E-mail",
+    "emailPlaceholder": "nom@entreprise.com",
+    "password": "Mot de passe",
+    "passwordMask": "••••••••",
+    "confirmPassword": "Confirmer le mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "sendResetLink": "Envoyer le lien",
+    "verifyOTP": "Vérifier le code",
+    "otpCode": "Code de vérification",
+    "otpSent": "Un code de vérification a été envoyé à votre e-mail.",
+    "resendOTP": "Renvoyer le code",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Vous avez déjà un compte ?",
+    "loginTitle": "Bon retour",
+    "loginSubtitle": "Connectez-vous à votre espace Flowkyn",
+    "registerTitle": "Créer votre espace",
+    "registerSubtitle": "Renforcez vos équipes à distance dès aujourd'hui",
+    "forgotTitle": "Réinitialiser votre mot de passe",
+    "forgotSubtitle": "Nous vous enverrons un lien de réinitialisation",
+    "otpTitle": "Vérifiez votre e-mail",
+    "resetTitle": "Définir un nouveau mot de passe",
+    "resetSubtitle": "Choisissez un mot de passe fort",
+    "createOrg": "Créer un espace de travail",
+    "orgName": "Nom de l'espace de travail",
+    "optional": "Facultatif",
+    "errors": {
+      "invalidEmail": "Veuillez entrer un e-mail valide",
+      "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordMatch": "Les mots de passe ne correspondent pas",
+      "required": "Ce champ est requis",
+      "loginFailed": "E-mail ou mot de passe invalide",
+      "registerFailed": "L'inscription a échoué. Veuillez réessayer.",
+      "verificationFailed": "La vérification a échoué. Veuillez vérifier le code et réessayer.",
+      "resetFailed": "Échec de la réinitialisation. Le lien a peut-être expiré.",
+      "resetSendFailed": "Échec de l'envoi du lien. Veuillez réessayer.",
+      "missingToken": "Jeton invalide ou manquant. Veuillez demander un nouveau lien.",
+      "orgRequired": "L'organisation est requise. Veuillez d'abord compléter l'intégration.",
+      "orgBanned": "Votre organisation a été suspendue et n'est plus accessible.",
+      "orgBannedWithReason": "Votre organisation a été suspendue : {{reason}}"
+    },
+    "passwordRules": {
+      "title": "Le mot de passe doit contenir :",
+      "minLength": "Au moins 7 caractères",
+      "number": "Au moins 1 chiffre",
+      "uppercase": "Au moins 1 lettre majuscule"
+    },
+    "passwordPlaceholder": "Min. 7 caractères",
+    "secureVerification": "Vérification sécurisée",
+    "verifying": "Vérification…",
+    "resendIn": "Renvoyer dans {{seconds}}s",
+    "emailVerified": "E-mail vérifié !",
+    "emailVerifiedSuccess": "Votre e-mail a été vérifié avec succès.",
+    "settingUpAccount": "Configuration de votre compte…",
+    "codeResent": "Code renvoyé ! Vérifiez votre e-mail.",
+    "alreadyVerified": "Compte déjà vérifié. Essayez de vous connecter.",
+    "resendFailed": "Échec du renvoi du code. Veuillez réessayer.",
+    "changeEmail": "Changer l'adresse e-mail",
+    "enterNewEmail": "Entrez votre nouvelle adresse e-mail",
+    "newEmailPlaceholder": "nouveau@entreprise.com",
+    "updateEmail": "Mettre à jour l'adresse e-mail",
+    "emailChanging": "Mise à jour de l'adresse e-mail…",
+    "resetLinkSent": "Lien envoyé ! Vérifiez votre e-mail.",
+    "passwordResetSuccess": "Mot de passe réinitialisé avec succès. Veuillez vous connecter.",
+    "verifyingEmail": "Vérification de votre e-mail...",
+    "pleaseWait": "Veuillez patienter un instant",
+    "redirectingToLogin": "Redirection vers la connexion...",
+    "verificationFailedTitle": "Échec de la vérification",
+    "missingVerificationToken": "Jeton de vérification manquant. Vérifiez votre lien.",
+    "verificationExpired": "La vérification a échoué. Le lien a peut-être expiré.",
+    "goToLogin": "Aller à la connexion",
+    "or": "ou",
+    "backTo": "Retour à"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour",
+    "subtitle": "Voici ce qui se passe avec votre équipe aujourd'hui.",
+    "activeEvents": "Événements actifs",
+    "teamMembers": "Membres de l'équipe",
+    "activitiesRun": "Activités réalisées",
+    "engagementRate": "Taux d'engagement",
+    "totalMembers": "Membres totaux",
+    "gameSessions": "Sessions de jeu",
+    "unreadNotifications": "Non lues",
+    "recentActivity": "Activité récente",
+    "upcomingEvents": "Événements à venir",
+    "upcomingActivities": "Activités à venir",
+    "quickActions": "Actions rapides",
+    "createEvent": "Créer un événement",
+    "createEventDesc": "Planifier une nouvelle activité d'équipe",
+    "inviteMembers": "Inviter l'équipe",
+    "inviteMembersDesc": "Ajouter des collègues à votre espace",
+    "startGame": "Lancer une activité",
+    "startGameDesc": "Démarrer un brise-glace ou un jeu",
+    "viewAnalytics": "Voir l'analytique",
+    "viewAnalyticsDesc": "Consulter les métriques d'engagement",
+    "trend": "vs le mois dernier",
+    "noEvents": "Aucun événement à venir",
+    "teamEngagement": "Engagement de l'équipe",
+    "teamLeaderboard": "Classement de l'équipe",
+    "teamActive": "L'équipe est active",
+    "newActivity": "Nouvelle activité",
+    "thisMonth": "Ce mois-ci",
+    "activitiesCompleted": "activités",
+    "points": "pts",
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening",
+    "launchActivity": "Launch Activity",
+    "analytics": "Analytics",
+    "activeSessions": "Active Sessions",
+    "totalEvents": "Total Events",
+    "completion": "Completion",
+    "lastSixMonths": "Last 6 months",
+    "details": "Details",
+    "started": "Started",
+    "completed": "Completed",
+    "noActivityData": "No activity data yet",
+    "noActivityDataDesc": "Start running team activities to see engagement trends here.",
+    "noUpcomingEvents": "No upcoming events",
+    "noUpcomingEventsDesc": "Create your first event to get started.",
+    "active": "Active",
+    "events": "Events",
+    "activityBreakdown": "Activity Breakdown",
+    "sessionsByGameType": "Sessions by game type",
+    "categoryDistribution": "Category Distribution",
+    "byActivityCategory": "By activity category",
+    "sessions": "Sessions",
+    "performanceOverview": "Performance Overview",
+    "keyMetrics": "Key metrics",
+    "participants": "Participants",
+    "sessionCompletionRate": "{{rate}}% session completion rate",
+    "latestGameSessions": "Latest game sessions",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "insights": "Analyses"
+    }
+  },
+  "organizations": {
+    "title": "Espace de travail",
+    "myOrg": "Mon espace de travail",
+    "name": "Nom",
+    "slug": "Slug",
+    "owner": "Propriétaire",
+    "members": "Membres",
+    "role": "Rôle",
+    "roles": {
+      "owner": "Propriétaire",
+      "admin": "Administrateur",
+      "member": "Membre",
+      "viewer": "Lecteur"
+    },
+    "inviteMember": "Inviter un membre",
+    "inviteEmail": "Adresse e-mail",
+    "inviteRole": "Rôle",
+    "inviteSent": "Invitation envoyée avec succès",
+    "pendingInvites": "Invitations en attente",
+    "noPendingInvites": "Ajoutez des emails ci-dessus pour inviter des personnes.",
+    "invitesSomeFailed": "Certaines invitations ont échoué ({{count}}).",
+    "toast": {
+      "created": "Espace de travail créé",
+      "updated": "Espace de travail mis à jour",
+      "invitationAccepted": "Invitation acceptée",
+      "memberRemoved": "Membre retiré",
+      "logoUpdated": "Logo mis à jour",
+      "invitationsSent": "Invitations envoyées",
+      "invitationsPartial": "{{success}} invité(s), {{failed}} échec(s)",
+      "invitationsNone": "Aucune invitation n’a été envoyée"
+    },
+    "removeMember": "Retirer le membre",
+    "removeConfirm": "Êtes-vous sûr de vouloir retirer ce membre ?",
+    "changeRole": "Changer le rôle",
+    "memberSince": "Membre depuis",
+    "totalMembers": "Nombre total de membres",
+    "admin": {
+      "status": "Statut",
+      "statusActive": "Actif",
+      "statusBanned": "Suspendu",
+      "actions": "Actions",
+      "ban": "Suspendre l'organisation",
+      "unban": "Réactiver l'organisation",
+      "bannedAt": "Suspendu le",
+      "banReason": "Raison de la suspension",
+      "banReasonPlaceholder": "Entrez la raison de la suspension...",
+      "confirmBan": "Êtes-vous sûr de vouloir suspendre cette organisation ? Les utilisateurs ne pourront pas se connecter.",
+      "confirmUnban": "Êtes-vous sûr de vouloir réactiver cette organisation ? Les utilisateurs pourront se connecter à nouveau.",
+      "banSuccess": "Organisation suspendue avec succès",
+      "unbanSuccess": "Organisation réactivée avec succès",
+      "banFailed": "Échec de la suspension de l'organisation",
+      "unbanFailed": "Échec de la réactivation de l'organisation",
+      "bannedBadge": "SUSPENDU",
+      "activeBadge": "ACTIF"
+    },
+    "company": "Company",
+    "inviteEmailPlaceholder": "colleague@company.com",
+    "invitedMember": "Invited",
+    "invitedPending": "Pending"
+  },
+  "events": {
+    "title": "Événements",
+    "subtitle": "Gérez vos événements et activités de team building",
+    "errors": {
+      "nameTaken": "Ce nom est déjà utilisé dans ce salon. Veuillez en choisir un autre.",
+      "full": "Cet événement est complet. Demandez à votre hôte d'augmenter la limite.",
+      "guestsNotAllowed": "Cet événement est réservé aux membres. Veuillez vous connecter ou demander l'accès à votre hôte.",
+      "notMember": "Vous n'êtes pas membre de cet espace pour cet événement.",
+      "notActive": "Cet événement n'est pas encore actif — votre hôte doit le démarrer.",
+      "joinRoomFailed": "Failed to join event room"
+    },
+    "createEvent": "Créer un événement",
+    "editEvent": "Modifier l'événement",
+    "eventTitle": "Titre",
+    "description": "Description",
+    "visibility": "Visibilité",
+    "maxParticipants": "Participants max",
+    "startTime": "Heure de début",
+    "endTime": "Heure de fin",
+    "participants": "Participants",
+    "modes": {
+      "online": "En ligne",
+      "inPerson": "En présentiel",
+      "hybrid": "Hybride"
+    },
+    "visibilities": {
+      "public": "Public",
+      "private": "Privé",
+      "organization": "Espace uniquement"
+    },
+    "filters": {
+      "all": "Tous",
+      "upcoming": "À venir",
+      "past": "Passés",
+      "active": "Actifs",
+      "draft": "Brouillon",
+      "completed": "Terminés"
+    },
+    "joinEvent": "Rejoindre",
+    "leaveEvent": "Quitter",
+    "guestJoin": "Rejoindre en invité",
+    "invite": "Inviter",
+    "noEvents": "Aucun événement trouvé",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet événement ?",
+    "noEventsDescription": "Créez votre premier événement pour engager votre équipe avec des activités interactives.",
+    "inviteParticipant": "Inviter un participant",
+    "linkCopied": "Lien copié !",
+    "openLobby": "Ouvrir le salon",
+    "loadFailed": "Impossible de charger l'événement",
+    "loadFailedDescription": "L'événement n'a pas pu être chargé. Veuillez réessayer.",
+    "notFound": "Événement introuvable",
+    "notFoundDescription": "Cet événement a peut-être été supprimé ou vous n'y avez pas accès.",
+    "createFailed": "Échec de la création. Veuillez réessayer.",
+    "updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
+    "liveSync": "En direct (Sync)",
+    "async": "Asynchrone",
+    "ongoing": "En cours",
+    "hostedBy": "Organisé par",
+    "joined": "Inscrits",
+    "connected": "Connecté",
+    "waitingToStart": "En attente du démarrage",
+    "waitingForOthers": "En attente des autres…",
+    "validInvitation": "Vous avez une invitation valide — vous pouvez rejoindre cet événement",
+    "copied": "Copié !",
+    "copy": "Copier",
+    "signInToJoin": "Se connecter pour rejoindre",
+    "enterGame": "Entrer dans le jeu",
+    "poweredBy": "Propulsé par Flowkyn",
+    "you": "Vous",
+    "yourAvatarForEvent": "Votre avatar pour cet événement",
+    "enterYourName": "Entrez votre nom",
+    "yourName": "Votre nom",
+    "emailOptional": "E-mail (facultatif)",
+    "guest": "Invité",
+    "backToLobby": "← Retour au salon",
+    "badgeLive": "LIVE",
+    "badgeAsync": "ASYNC",
+    "badgeLiveShort": "● En direct",
+    "badgeAsyncShort": "○ Asynchrone",
+    "setupGameProfile": "Configurez votre profil de jeu",
+    "chooseAppearIn": "Choisissez comment vous apparaîtrez dans « {{eventTitle}} »",
+    "continueToLobby": "Continuer vers le salon",
+    "invalidInvitationToken": "Jeton d'invitation invalide. Vérifiez le lien.",
+    "joinFailed": "Impossible de rejoindre. Veuillez réessayer.",
+    "postCreate": {
+      "title": "Événement créé avec succès !",
+      "description": "Votre événement a été créé et les invitations ont été envoyées. Souhaitez-vous rejoindre le salon maintenant ?",
+      "joinButton": "Rejoindre le salon",
+      "closeButton": "Aller aux événements",
+      "inviteLink": "Lien d'invitation"
+    },
+    "yourGameProfile": "Votre profil de jeu",
+    "joinedCount": "inscrits",
+    "invitedCount": "invités",
+    "invitedCountFull": "{{count}} invités",
+    "maxParticipantsShort": "Max {{count}}",
+    "selectTeamMembers": "Sélectionner les membres",
+    "selectDepartments": "Sélectionner les départements",
+    "departmentsSelected": "{{count}} département(s) sélectionné(s)",
+    "inviteByDepartmentsHelp": "Les invitations seront envoyées à toutes les personnes des départements sélectionnés (membres + invitations en attente).",
+    "inviteByDepartments": "Inviter par départements",
+    "inviteByUsers": "Inviter par utilisateurs",
+    "inviteByUsersHelp": "Les invitations seront envoyées aux membres sélectionnés.",
+    "invited": "Invité",
+    "active": "Actif",
+    "emailPlaceholder": "collegue@entreprise.com",
+    "emailPlaceholderGuest": "vous@email.com",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "pause": "Pause",
+    "stop": "Arrêter",
+    "delete": "Supprimer",
+    "pauseEvent": "Mettre l'événement en pause",
+    "pauseEventDescription": "Mettez cet événement en pause temporairement. Les participants peuvent toujours le consulter, mais aucune nouvelle activité ne démarrera.",
+    "stopEvent": "Arrêter l'événement",
+    "stopEventDescription": "Arrêtez cet événement immédiatement. Il sera marqué comme terminé et les participants ne pourront plus rejoindre.",
+    "deleteEvent": "Supprimer l'événement",
+    "deleteEventDescription": "Supprimez définitivement cet événement et toutes les données connexes. Cette action ne peut pas être annulée.",
+    "presets": {
+      "title": "Commencer avec un modèle",
+      "onboarding": "Onboarding d'équipe",
+      "onboardingTitle": "Session d'onboarding d'équipe",
+      "onboardingDescription": "Session de 30 minutes avec brise-glaces légers et victoires de la semaine.",
+      "weeklyWins": "Victoires de la semaine",
+      "weeklyWinsTitle": "Célébration des victoires de la semaine",
+      "weeklyWinsDescription": "Check-in asynchrone où chacun partage ses victoires de la semaine.",
+      "icebreakers": "Session brise-glace",
+      "icebreakersTitle": "Session brise-glace",
+      "icebreakersDescription": "Brise-glaces rapides pour aider l'équipe à se connecter."
+    },
+    "settings": {
+      "sectionTitle": "Paramètres jeux & collaboration",
+      "sectionDescription": "Contrôlez qui peut rejoindre, discuter et comment les jeux démarrent pour cet événement.",
+      "allowGuestsLabel": "Autoriser les participants invités",
+      "allowGuestsHelp": "Les invités peuvent rejoindre avec un simple pseudo (sans compte).",
+      "allowChatLabel": "Activer le chat pour cet événement",
+      "allowChatHelp": "Les participants peuvent envoyer des messages dans le chat de l'événement.",
+      "autoStartGamesLabel": "Lancer automatiquement les jeux en direct",
+      "autoStartGamesHelp": "Lorsque tout le monde a rejoint, démarrez automatiquement les jeux en direct.",
+      "allowParticipantGameControlLabel": "Autoriser tous les participants à gérer les jeux en direct",
+      "allowParticipantGameControlHelp": "Si activé, n’importe quel participant peut démarrer/avancer/terminer les jeux (pas seulement les admins).",
+      "maxRoundsLabel": "Tours maximum par jeu en direct",
+      "maxRoundsHelp": "Recommandé : 3 à 5 tours pour la plupart des équipes."
+    },
+    "gameType": "Jeu",
+    "gameTypeUnknown": "Non configuré",
+    "status": {
+      "draft": "Brouillon",
+      "active": "Actif",
+      "paused": "En pause",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "lifecycle": {
+      "draftNext": "Configurez et invitez, puis démarrez quand vous êtes prêt.",
+      "activeNext": "En cours — ouvrez le salon pour jouer et discuter.",
+      "completedNext": "Cet événement est terminé — consultez le récapitulatif et les résultats.",
+      "startEvent": "Démarrer l’événement",
+      "enterLobby": "Entrer dans le salon",
+      "viewRecap": "Voir le récapitulatif",
+      "startedToast": "Événement démarré",
+      "startFailed": "Impossible de démarrer l’événement. Veuillez réessayer.",
+      "draftBannerTitle": "Votre facilitateur n’a pas encore démarré",
+      "draftBannerBody": "Vous pouvez quand même rejoindre le salon, discuter et vous préparer en attendant."
+    },
+    "steps": {
+      "profile": "1. Profil",
+      "join": "2. Rejoindre",
+      "play": "3. Entrer dans le jeu"
+    },
+    "returning": {
+      "welcomeBack": "Bon retour, {{name}} — vous pouvez reprendre le jeu.",
+      "jumpIntoGame": "Reprendre le jeu"
+    },
+    "guidance": {
+      "nextTitle": "Que se passe-t-il ensuite ?",
+      "step1": "1) Attendez que tout le monde rejoigne ({{count}} déjà inscrits).",
+      "step2": "2) Votre hôte démarrera l’activité.",
+      "step3": "3) Vous verrez automatiquement le jeu au démarrage.",
+      "hostPinHint": "Astuce hôte : épinglez un message avec les consignes clés pour que tout le monde le voie."
+    },
+    "emptyParticipants": {
+      "title": "Vous êtes le premier ici",
+      "body": "Partagez le lien ci-dessous pour inviter votre équipe, puis revenez ici pour démarrer ensemble."
+    },
+    "mode": "Mode",
+    "online": "Online",
+    "offline": "Offline",
+    "reconnecting": "Reconnecting…",
+    "syncing": "Syncing…",
+    "membersOnly": "Members only",
+    "guestsAllowed": "Guests allowed",
+    "host": "Host",
+    "statusLabel": "Status",
+    "inviteFailed": "Failed to invite. Please try again.",
+    "selectedAvatarAlt": "Selected avatar"
+  },
+  "profileSetup": {
+    "chooseIdentity": "Choisissez votre identité",
+    "pickNickname": "Choisissez un surnom et un avatar avant de rejoindre.",
+    "continue": "Continuer",
+    "nickname": "Surnom *",
+    "nicknamePlaceholder": "Comment voulez-vous qu'on vous appelle ?",
+    "emailOptional": "E-mail (facultatif)",
+    "emailPlaceholder": "vous@email.com",
+    "yourAvatar": "Votre avatar",
+    "yourName": "Votre nom",
+    "appearInGame": "C'est ainsi que vous apparaîtrez dans le jeu",
+    "saved": "Enregistré !",
+    "editProfile": "Modifier votre profil",
+    "back": "Retour",
+    "errors": {
+      "nameTooShort": "Le nom doit contenir au moins {{min}} caractères"
+    },
+    "submitFailed": "Échec de la soumission du profil"
+  },
+  "games": {
+    "title": "Activités",
+    "subtitle": "Activités de team building pour renforcer votre équipe à distance",
+    "gameTypes": "Types d'activités",
+    "createSession": "Créer une activité",
+    "joinSession": "Rejoindre",
+    "startActivity": "Lancer",
+    "activeSessions": "Sessions actives",
+    "sessionDashboard": "Tableau de bord de session",
+    "participants": "Participants",
+    "tableActions": "Actions",
+    "submitAction": "Soumettre",
+    "gameStatus": "Statut",
+    "statuses": {
+      "waiting": "En attente",
+      "inProgress": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "active": "Actif",
+      "paused": "En pause"
+    },
+    "round": "Tour",
+    "score": "Score",
+    "activeCount": "{{count}} actives",
+    "noGames": "Aucune activité disponible",
+    "categories": {
+      "all": "Toutes",
+      "icebreaker": "Brise-glace",
+      "connection": "Connexion",
+      "wellness": "Bien-être",
+      "competition": "Compétition"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher des activités...",
+      "type": "Type",
+      "teamSize": "Taille d'équipe",
+      "duration": "Durée",
+      "difficulty": "Difficulté",
+      "allTypes": "Tous les types",
+      "sync": "En direct (Sync)",
+      "async": "Asynchrone",
+      "allSizes": "Toutes les tailles",
+      "pairs": "Binômes (2)",
+      "smallTeam": "Petite (4–15)",
+      "mediumTeam": "Moyenne (5–30)",
+      "largeTeam": "Grande (6–40+)",
+      "anySize": "Toute taille",
+      "allDurations": "Toutes les durées",
+      "quick": "Rapide (≤20 min)",
+      "mediumDuration": "Moyenne (25–30 min)",
+      "longDuration": "Longue (45+ min)",
+      "ongoing": "Continue",
+      "allLevels": "Tous les niveaux",
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé",
+      "clearAll": "Effacer les filtres",
+      "showingAll": "Affichage des {{count}} activités",
+      "showingFiltered": "{{count}} sur {{total}} activités",
+      "noResults": "Aucune activité ne correspond à vos filtres",
+      "noResultsHint": "Essayez d'ajuster vos filtres ou votre recherche"
+    },
+    "actions": {
+      "start": "Démarrer",
+      "resume": "Reprendre"
+    },
+    "toasts": {
+      "launching": "Nous lançons {{gameName}} pour cet événement. Patientez — votre écran va se mettre à jour."
+    },
+    "detail": {
+      "category": "Catégorie",
+      "teamSize": "Taille d'équipe",
+      "materials": "Matériel",
+      "materialsNone": "Aucun",
+      "difficulty": "Difficulté",
+      "difficultyBeginner": "Accessible aux débutants",
+      "difficultyIntermediate": "Intermédiaire",
+      "difficultyAdvanced": "Avancé",
+      "typeSync": "Sync (En direct)",
+      "typeAsync": "Async (Flexible)",
+      "badgeSync": "En direct",
+      "badgeAsync": "Async",
+      "whyThisWorks": "Pourquoi ça fonctionne",
+      "launchActivity": "Lancer cette activité",
+      "saveToLibrary": "Enregistrer dans la bibliothèque",
+      "sectionBefore": "📋 Avant l'activité",
+      "sectionDuring": "▶️ Pendant l'activité",
+      "sectionAfter": "✅ Après l'activité",
+      "proTips": "💡 Conseils pro",
+      "readyTitle": "Prêt à lancer {{name}} ?",
+      "readySubtitle": "Configurez votre session, invitez votre équipe et lancez en quelques minutes.",
+      "launchNow": "Lancer maintenant"
+    },
+    "comingSoonDescription": "This activity is coming soon.",
+    "comingSoon": {
+      "milestones": {
+        "researchDesign": "Research & design",
+        "alphaTesting": "Alpha testing",
+        "finalPolish": "Final polish"
+      },
+      "title": "Bientôt disponible"
+    },
+    "errors": {
+      "actionFailed": "Action failed. Please try again.",
+      "genericStartFailed": "Failed to start. Please try again.",
+      "notAuthorizedToStart": "You’re not authorized to start this activity.",
+      "notMember": "You’re not a member of this workspace.",
+      "sessionNotActive": "This session is not active."
+    },
+    "coffeeRoulette": {
+      "admin": {
+        "mapping": {
+          "assignDesc": "Mappez les sujets aux questions de conversation pour cette configuration",
+          "assignTitle": "Mappeur de questions",
+          "chooseQuestion": "Choisir une question",
+          "chooseTopic": "Choisir un sujet",
+          "noQuestionsAssigned": "Aucune question assignée",
+          "selectQuestion": "Sélectionner une question",
+          "selectTopic": "Sélectionner un sujet",
+          "subtitle": "Choisissez quelles questions apparaissent pour chaque sujet",
+          "title": "Mappeur Sujet-Question"
+        },
+        "questions": {
+          "createdLabel": "Créé",
+          "id": "ID",
+          "noMatches": "Aucune question trouvée",
+          "showing": "Affichage de {{count}} questions",
+          "subtitle": "Gérez les questions de conversation pour Coffee Roulette",
+          "title": "Questions",
+          "updatedLabel": "Mis à jour"
+        },
+        "settings": {
+          "advanced": "Avancé",
+          "allowGeneral": "Autoriser les questions générales comme secours",
+          "basicSettings": "Paramètres de base",
+          "chatDuration": "Durée du chat (minutes)",
+          "configurationDetails": "Détails de configuration",
+          "configurationId": "ID de configuration",
+          "configureDescription": "Configurez comment Coffee Roulette apparie les participants et sélectionne les sujets",
+          "create": "Créer une configuration",
+          "createdAt": "Créé le",
+          "eventId": "ID d'événement",
+          "failedToCreate": "Échec de la création de la configuration",
+          "failedToLoad": "Échec du chargement de la configuration",
+          "failedToUpdate": "Échec de la mise à jour de la configuration",
+          "gameConfiguration": "Configuration du jeu",
+          "maxPrompts": "Sujets maximum",
+          "questionStrategy": "Stratégie de sélection des questions",
+          "random": "Aléatoire - Sélection complètement aléatoire à chaque fois",
+          "reset": "Réinitialiser",
+          "savedSuccessfully": "Configuration enregistrée avec succès",
+          "selectionStrategies": "Stratégies de sélection",
+          "sequential": "Séquentiel - Rotation cyclique à travers tous les éléments",
+          "shuffleOnRepeat": "Mélanger les sujets à la répétition",
+          "title": "Paramètres de Coffee Roulette",
+          "topicStrategy": "Stratégie de sélection des sujets",
+          "update": "Mettre à jour la configuration",
+          "updatedAt": "Mis à jour le",
+          "weighted": "Pondéré - Basé sur les poids d'élément et les probabilités"
+        },
+        "topics": {
+          "active": "Actif",
+          "addTopic": "Ajouter un sujet",
+          "createTopic": "Créer un sujet",
+          "createdDate": "Date de création",
+          "deleteConfirm": "Êtes-vous certain de vouloir supprimer ce sujet ?",
+          "editTopic": "Modifier le sujet",
+          "failedToCreate": "Échec de la création du sujet",
+          "failedToDelete": "Échec de la suppression du sujet",
+          "failedToLoad": "Échec du chargement des sujets",
+          "failedToUpdate": "Échec de la mise à jour du sujet",
+          "noTopics": "Aucun sujet trouvé",
+          "title": "Sujets de conversation",
+          "topicDescription": "Description du sujet",
+          "topicIcon": "Icône du sujet",
+          "topicTitle": "Titre du sujet",
+          "weight": "Poids (probabilité)"
+        }
+      }
+    },
+    "coffeeRouletteTitle": "Coffee Roulette",
+    "strategicEscapeTitle": "Défi d'évasion stratégique",
+    "twoTruthsTitle": "Deux vérités et un mensonge",
+    "winsOfWeekTitle": "Réussites de la semaine"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAsRead": "Marquer comme lu",
+    "markAllRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification",
+    "types": {
+      "eventReminder": "Rappel d'événement",
+      "gameUpdate": "Mise à jour d'activité",
+      "invitation": "Invitation",
+      "system": "Système"
+    },
+    "timeAgo": "il y a",
+    "unread": "Non lues",
+    "readAll": "Toutes",
+    "eventCreated": {
+      "title": "Événement créé",
+      "message": "Votre événement \"{{eventTitle}}\" a été créé avec succès."
+    },
+    "eventJoined": {
+      "title": "Vous avez rejoint un événement",
+      "message": "Vous avez rejoint \"{{eventTitle}}\"."
+    },
+    "eventParticipantJoined": {
+      "title": "Nouveau participant",
+      "message": "{{guestName, default:Quelqu'un}} a rejoint \"{{eventTitle}}\"."
+    },
+    "errors": {
+      "fetchFailed": "Impossible de charger les notifications",
+      "markReadFailed": "Impossible de marquer la notification comme lue"
+    },
+    "viewAll": "View all"
+  },
+  "analytics": {
+    "title": "Analytique",
+    "overview": "Vue d'ensemble de l'engagement",
+    "engagement": "Engagement",
+    "participation": "Taux de participation",
+    "eventAnalytics": "Analytique des événements",
+    "gameAnalytics": "Analytique des activités",
+    "dateRange": "Période",
+    "eventFilter": "Filtrer par événement",
+    "totalEvents": "Total des événements",
+    "totalParticipants": "Total des participants",
+    "avgRating": "Note moyenne",
+    "completionRate": "Taux de complétion"
+  },
+  "emailAdmin": {
+    "title": "Admin e-mail",
+    "to": "À",
+    "subject": "Objet",
+    "body": "Contenu",
+    "sendEmail": "Envoyer l'e-mail",
+    "htmlMode": "Mode HTML",
+    "textMode": "Mode texte",
+    "emailSent": "E-mail envoyé avec succès",
+    "emailFailed": "Échec de l'envoi de l'e-mail"
+  },
+  "profile": {
+    "title": "Profil",
+    "editProfile": "Modifier le profil",
+    "avatar": "Avatar",
+    "displayName": "Nom d'affichage",
+    "bio": "Biographie",
+    "timezone": "Fuseau horaire",
+    "language": "Langue",
+    "saved": "Profil enregistré avec succès",
+    "editTitle": "Edit profile",
+    "save": "Save"
+  },
+  "users": {
+    "title": "Utilisateurs",
+    "name": "Nom",
+    "email": "E-mail",
+    "role": "Rôle",
+    "joined": "Inscrit",
+    "lastActive": "Dernière activité",
+    "noMembers": "Aucun membre d'équipe",
+    "noMembersDescription": "Invitez votre premier membre pour commencer à collaborer."
+  },
+  "avatarPicker": {
+    "chooseAvatar": "Choisissez un avatar",
+    "shuffle": "Mélanger"
+  },
+  "settings": {
+    "subtitle": "Gérez votre compte et vos préférences",
+    "profile": "Profil",
+    "profileDesc": "Vos informations personnelles et paramètres régionaux",
+    "displayName": "Nom d'affichage",
+    "emailLabel": "E-mail",
+    "verified": "Vérifié",
+    "locale": "Localisation",
+    "language": "Langue",
+    "timezone": "Fuseau horaire",
+    "appearance": "Apparence",
+    "appearanceDesc": "Personnalisez l'aspect de votre espace",
+    "theme": "Thème",
+    "compactMode": "Mode compact",
+    "compactModeDesc": "Réduire l'espacement pour un affichage plus dense",
+    "motionAnimations": "Animations",
+    "motionAnimationsDesc": "Activer les transitions et micro-interactions",
+    "notifications": "Notifications",
+    "notificationsDesc": "Contrôlez comment et quand vous recevez des mises à jour",
+    "emailNotifications": "Notifications par e-mail",
+    "emailNotificationsDesc": "Recevoir toutes les notifications par e-mail",
+    "eventReminders": "Rappels d'événements",
+    "eventRemindersDesc": "Être notifié 30 minutes avant les événements",
+    "activityUpdates": "Mises à jour d'activités",
+    "activityUpdatesDesc": "Quand quelqu'un rejoint ou termine une activité",
+    "weeklyDigest": "Résumé hebdomadaire",
+    "weeklyDigestDesc": "Résumé de l'engagement chaque lundi matin",
+    "productUpdates": "Mises à jour produit",
+    "productUpdatesDesc": "Nouvelles fonctionnalités, conseils et annonces",
+    "workspace": "Espace de travail",
+    "workspaceDesc": "Paramètres d'équipe, permissions et facturation",
+    "workspaceName": "Nom de l'espace",
+    "defaultMaxParticipants": "Max participants par défaut",
+    "eventVisibility": "Visibilité des événements",
+    "workspaceOnly": "Espace uniquement",
+    "inviteOnly": "Sur invitation",
+    "allowGuestAccess": "Accès invités",
+    "allowGuestAccessDesc": "Permettre aux invités de rejoindre avec un pseudo",
+    "autoSendReminders": "Rappels automatiques",
+    "autoSendRemindersDesc": "Envoyer un e-mail 30 minutes avant les événements",
+    "security": "Sécurité",
+    "securityDesc": "Gérer votre mot de passe",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "updatePassword": "Mettre à jour",
+    "passwordUpdated": "Mot de passe mis à jour avec succès",
+    "passwordUpdateFailed": "Échec de la mise à jour. Veuillez réessayer.",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordUppercase": "Le mot de passe doit contenir une majuscule",
+    "passwordNumber": "Le mot de passe doit contenir un chiffre",
+    "twoFactor": "Authentification à deux facteurs",
+    "twoFactorDesc": "Ajoutez une couche de sécurité supplémentaire",
+    "enable2FA": "Activer 2FA",
+    "activeSessions": "Sessions actives",
+    "activeSessionsDesc": "Vous êtes actuellement connecté sur cet appareil",
+    "manage": "Gérer",
+    "dangerZone": "Zone dangereuse",
+    "dangerZoneDesc": "Supprimer définitivement votre compte. Cette action est irréversible.",
+    "deleteAccount": "Supprimer le compte",
+    "saving": "Enregistrement...",
+    "saveAllChanges": "Enregistrer tout",
+    "quickNav": "Navigation rapide",
+    "quickNavHint": "Accédez directement à une section ci-dessous",
+    "deleteAccountTitle": "Delete your account",
+    "deleteAccountWarning": "This action is permanent and cannot be undone.",
+    "deleteAccountConfirm": "Type DELETE to confirm",
+    "deleteAccountConfirmHint": "This helps prevent accidental deletions.",
+    "deleteAccountPlaceholder": "Type DELETE",
+    "deleting": "Deleting…",
+    "accountDeleted": "Account deleted",
+    "accountDeleteFailed": "Failed to delete account. Please try again."
+  },
+  "bugReports": {
+    "title": "Signaler un problème",
+    "subtitle": "Aidez-nous à nous améliorer en signalant des bugs, en proposant des fonctionnalités ou en partageant vos commentaires.",
+    "reportType": "Type de rapport",
+    "bugReport": "🐛 Signalement de bug",
+    "featureRequest": "✨ Demande de fonctionnalité",
+    "issue": "⚠️ Problème",
+    "generalFeedback": "💬 Retours",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Brève description du problème",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Description détaillée du problème. Incluez les étapes à reproduire si applicable.",
+    "priorityLabel": "Priorité",
+    "priorityLow": "Basse",
+    "priorityMedium": "Moyen",
+    "priorityHigh": "Haute",
+    "priorityCritical": "Critique",
+    "attachmentsLabel": "Pièces jointes (optionnel)",
+    "attachmentsHint": "Cliquez pour sélectionner les fichiers ou glissez-déposez",
+    "attachmentsDesc": "Max 5 fichiers, 5 Mo chacun (JPG, PNG, GIF, PDF, DOC, TXT)",
+    "submitButton": "Envoyer le rapport",
+    "submitting": "Envoi...",
+    "successMessage": "Rapport soumis avec succès!",
+    "successDescription": "Merci de nous aider à nous améliorer. Notre équipe examinera votre rapport bientôt.",
+    "errorTitle": "Erreur",
+    "removeAttachment": "Supprimer",
+    "myReports": "Mes rapports",
+    "myReportsSubtitle": "Suivez tous vos signalements de bugs, demandes de fonctionnalités et retours.",
+    "newReport": "Nouveau rapport",
+    "noReports": "Aucun rapport trouvé",
+    "search": "Rechercher les rapports...",
+    "filterStatus": "Statut",
+    "filterType": "Type",
+    "allStatuses": "Tous les statuts",
+    "allTypes": "Tous les types",
+    "filterByStatus": "Tous les statuts",
+    "filterByType": "Tous les types",
+    "statusOpen": "Ouvert",
+    "statusInProgress": "En cours",
+    "statusResolved": "Résolu",
+    "statusClosed": "Fermé",
+    "typeSelection": "Type",
+    "nothingFound": "Rien trouvé",
+    "created": "Créé",
+    "lastUpdated": "Dernière mise à jour",
+    "attachmentCount_one": "1 pièce jointe",
+    "attachmentCount_other": "{{count}} pièces jointes",
+    "viewDetails": "Voir les détails",
+    "deleteReport": "Supprimer le rapport",
+    "adminTitle": "Rapports et tickets de bugs",
+    "adminSubtitle": "Gérez tous les problèmes signalés par les utilisateurs, les fonctionnalités et les retours",
+    "totalReports": "Rapports totaux",
+    "inProgress": "En cours",
+    "clearFilters": "Effacer les filtres",
+    "reporter": "Responsable",
+    "actions": "Actions",
+    "priority": "Priorité",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "stats": {
+      "totalReports": "Rapports totaux",
+      "openCount": "Ouvert",
+      "inProgressCount": "En cours",
+      "resolvedCount": "Résolu",
+      "closedCount": "Fermé",
+      "criticalCount": "Critique",
+      "averageResolutionTime": "Temps moyen de résolution"
+    },
+    "updateReport": "Mettre à jour",
+    "updating": "Mise à jour...",
+    "close": "Fermer",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce rapport?",
+    "resolutionNotes": "Notes de résolution",
+    "attachmentCount": "{{count}} attachments",
+    "errors": {
+      "loadFailed": "Failed to load reports",
+      "submitFailed": "Failed to submit report",
+      "deleteFailed": "Failed to delete report"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required",
+      "someFilesTooLarge": "Some files are too large"
+    }
+  },
+  "support": {
+    "title": "Aide & Support",
+    "description": "Trouvez des réponses aux questions courantes ou signalez un problème. Nous sommes là pour vous aider!",
+    "searchFAQ": "Rechercher des réponses...",
+    "foundResults": "{{count}} résultat(s) trouvé(s)",
+    "noResultsFound": "Aucun résultat correspondant. Essayez une autre recherche.",
+    "reportIssueTitle": "Signaler un problème",
+    "reportIssueButton": "Signaler un problème",
+    "reportBugCta": "Signaler un bug",
+    "contactSupport": "Contacter le support",
+    "stillNeedHelp": "Besoin d'aide?",
+    "stillNeedHelpDesc": "Vous ne trouvez pas ce que vous cherchez? Signalez un problème directement ou contactez notre équipe d'assistance.",
+    "card_faq_title": "Questions fréquemment posées",
+    "card_faq_desc": "Parcourez notre FAQ complète pour trouver rapidement des réponses aux questions courantes.",
+    "card_report_title": "Signaler des problèmes",
+    "card_report_desc": "Vous avez trouvé un bug ou une demande de fonctionnalité? Faites-le nous savoir et nous nous en occuperons.",
+    "card_contact_title": "Contacter le support",
+    "card_contact_desc": "Besoin d'aide supplémentaire? Contactez directement notre équipe d'assistance.",
+    "faqTitle": "Questions fréquemment posées",
+    "category_getting_started": "Premiers pas",
+    "category_events": "Événements",
+    "category_activities": "Activités",
+    "category_teams": "Équipes & Organisations",
+    "category_technical": "Support technique",
+    "faq": {
+      "getting_started": {
+        "q1": "Comment créer mon compte?",
+        "a1": "Inscrivez-vous avec votre adresse e-mail et suivez le processus de vérification. Vous pourrez créer votre première organisation immédiatement.",
+        "q2": "Quelle est la différence entre une équipe et une organisation?",
+        "a2": "Une organisation est le conteneur de haut niveau où vous gérez les membres de l'équipe et l'accès. Les équipes sont des groupes au sein de votre organisation pour des projets ou départements spécifiques.",
+        "q3": "Puis-je inviter des personnes dans mon organisation?",
+        "a3": "Oui! Allez dans votre organisation et cliquez sur 'Inviter des membres'. Vous pouvez inviter des membres de l'équipe par e-mail et leur attribuer des rôles spécifiques."
+      },
+      "events": {
+        "q1": "Comment créer un événement?",
+        "a1": "Accédez à Événements et cliquez sur 'Créer un nouvel événement'. Remplissez les détails de l'événement, la date et les activités que vous souhaitez inclure.",
+        "q2": "Puis-je planifier les événements à l'avance?",
+        "a2": "Absolument! Vous pouvez créer des événements et les planifier à n'importe quelle date future. Nous enverrons des rappels aux participants.",
+        "q3": "Comment les participants rejoignent-ils un événement?",
+        "a3": "Les participants peuvent rejoindre via un lien d'invitation, ou vous pouvez leur envoyer une invitation directe par email."
+      },
+      "activities": {
+        "q1": "Quels types d'activités puis-je créer?",
+        "a1": "Vous pouvez créer des quiz, des sondages, des jeux, des chasses au trésor et bien d'autres activités interactives.",
+        "q2": "Les activités peuvent-elles être réutilisées?",
+        "a2": "Oui! Enregistrez les activités en tant que modèles et réutilisez-les dans plusieurs événements. Vous pouvez les personnaliser à chaque fois.",
+        "q3": "Comment voir les résultats des activités?",
+        "a3": "Accédez au tableau de bord analytique de tout événement pour voir les résultats détaillés, les scores des participants et les métriques d'engagement."
+      },
+      "teams": {
+        "q1": "Combien de personnes puis-je ajouter à mon équipe?",
+        "a1": "Il n'y a pas de limite! Ajoutez autant de membres d'équipe que vous le souhaitez. Vous pouvez les organiser en groupes et leur attribuer différents rôles.",
+        "q2": "Quels sont les différents rôles d'utilisateur?",
+        "a2": "Nous avons des rôles Admin (contrôle total), Modérateur (gérer les événements et les participants) et Membre (participant uniquement).",
+        "q3": "Puis-je gérer les permissions des membres de l'équipe?",
+        "a3": "Oui, vous pouvez personnaliser les permissions en fonction des rôles et donner des accès spécifiques aux membres de l'équipe pour certains événements ou fonctionnalités."
+      },
+      "technical": {
+        "q1": "Quels navigateurs Flowkyn supporte-t-il?",
+        "a1": "Nous supportons tous les navigateurs modernes y compris Chrome, Firefox, Safari et Edge. Pour des performances optimales, veuillez mettre à jour votre navigateur.",
+        "q2": "Mes données sont-elles sécurisées sur Flowkyn?",
+        "a2": "Oui! Nous utilisons le chiffrement et les mesures de sécurité standard de l'industrie. Vos données sont protégées et ne sont jamais partagées sans votre consentement.",
+        "q3": "Que dois-je faire si je rencontre un bug?",
+        "a3": "Veuillez utiliser la fonctionnalité 'Signaler un problème' dans notre section support. Incluez autant de détails que possible et notre équipe enquêtera."
+      }
+    }
+  },
+  "gameShell": {
+    "invite": "Inviter",
+    "end": "Fin",
+    "duration": "Durée",
+    "joined": "Inscrits",
+    "pending": "En attente",
+    "participation": "Participation",
+    "copied": "Copié !",
+    "copy": "Copier"
+  },
+  "strategic": {
+    "label": "Défi d'évasion stratégique",
+    "phases": {
+      "setup": "Configuration",
+      "rolesAssignment": "Rôles",
+      "discussion": "Discussion",
+      "debrief": "Débrief"
+    },
+    "meta": {
+      "hostLabel": "Facilitateur : {{name}}",
+      "phaseLabel": "Phase : {{phase}}"
+    },
+    "howItWorks": {
+      "label": "Comment ça marche",
+      "point1": "Tout le monde reçoit un rôle secret.",
+      "point2": "Vous verrez votre rôle dans l’app avec les consignes.",
+      "point3": "Nous ferons un débrief à la fin."
+    },
+    "errors": {
+      "assignFailed": "Impossible d’attribuer les rôles. Assurez-vous que les participants ont rejoint et que vous êtes le facilitateur.",
+      "createFailed": "Failed to create strategic session. Please check your permissions and try again."
+    },
+    "actions": {
+      "assignRoles": "Attribuer les rôles",
+      "assigningRoles": "Attribution des rôles…",
+      "assignHelp": "D’abord, attribuez les rôles pour que chacun puisse voir son rôle. Ensuite, démarrez la discussion asynchrone quand vous êtes prêt.",
+      "startDiscussion": "Démarrer la discussion asynchrone",
+      "createSession": "Create strategic session",
+      "creating": "Creating session…",
+      "createHelp": "Once created, you can assign roles and start the async discussion.",
+      "endDiscussion": "End discussion & move to debrief",
+      "sessionCreated": "Session créée"
+    },
+    "rolesSection": {
+      "subtitle": "Ce rôle est privé. Gardez-le secret et utilisez-le pour guider vos décisions.",
+      "title": "Your secret role"
+    },
+    "roleReveal": {
+      "title": "Votre rôle secret",
+      "pending": "Attribution en attente",
+      "pendingHint": "En attente de l’attribution des rôles…",
+      "progress": "{{acknowledged}}/{{total}} rôles révélés",
+      "close": "J’ai compris"
+    },
+    "afterReveal": {
+      "promptsTitle": "Votre question de focus",
+      "nextPromptIn": "Suivant dans {{seconds}}s",
+      "nextPrompt": "Question suivante",
+      "advancingPrompt": "Mise à jour…",
+      "noPrompts": "Aucune question de rôle configurée pour le moment.",
+      "readyTitle": "Prêt ?",
+      "readyHint": "Cliquez sur “Je suis prêt” quand vous comprenez votre rôle. Le facilitateur peut démarrer une fois tout le monde prêt.",
+      "readyAction": "Je suis prêt",
+      "readyConfirmed": "Prêt",
+      "readyProgress": "{{ready}}/{{total}} prêts",
+      "notesTitle": "Notes privées",
+      "notesPlaceholder": "Écrivez des notes visibles uniquement par vous…",
+      "notesHint": "Les notes sont enregistrées uniquement pour vous et ne seront pas partagées.",
+      "notesSaving": "Enregistrement…",
+      "notesSaved": "Enregistré",
+      "notesNotSaved": "Pas encore enregistré"
+    },
+    "rolePrompts": {
+      "product_lead": {
+        "p1": "Protégez l’expérience client : quel est le périmètre minimal cohérent qui raconte encore une histoire forte ?",
+        "p2": "Cherchez la clarté : quelles coupes réduisent le risque sans casser la narration ?",
+        "p3": "Forcez les arbitrages : qu’allez-vous décider de NE PAS livrer, et comment le défendre ?"
+      },
+      "marketing_lead": {
+        "p1": "Protégez le récit : que pouvons-nous promettre avec confiance sans créer de défiance ?",
+        "p2": "Préparez le message : si le périmètre change, quel récit simple et honnête pour clients et parties prenantes ?",
+        "p3": "Exigez l’alignement : quelle décision doit être prise aujourd’hui pour éviter le chaos de dernière minute ?"
+      },
+      "cfo": {
+        "p1": "Nommez la dépense : où brûlons-nous de l’argent ou du temps sans impact mesurable ?",
+        "p2": "Pensez ROI : quelle option protège la trésorerie tout en permettant la croissance ?",
+        "p3": "Rendez les coûts explicites : quels coûts cachés (support, churn, rework) ignorons-nous ?"
+      },
+      "ops_lead": {
+        "p1": "Test de réalité capacité : que peut-on livrer en 7 jours sans épuiser l’équipe ?",
+        "p2": "Exposez les dépendances : qu’est-ce qui casse si l’on change périmètre ou séquence ?",
+        "p3": "Stabilisez l’exécution : quel changement de process réduirait le chaos immédiatement ?"
+      },
+      "customer_success_lead": {
+        "p1": "Protégez la confiance : que verront d’abord les clients, et où seront-ils déçus ?",
+        "p2": "Préparez le frontline : quels éléments et garde-fous pour le support et le CS ?",
+        "p3": "Réduisez les surprises : que pouvons-nous communiquer tôt pour limiter les escalades ?"
+      }
+    },
+    "roles": {
+      "product_lead": {
+        "name": "Responsable Produit",
+        "brief": "Pilote les résultats produit, les arbitrages de roadmap, et ce qui sort quand.",
+        "secret": "Vous êtes sous pression pour montrer des progrès. Vous voulez conserver un maximum du périmètre de lancement — mais vous savez que la qualité et la confiance sont en jeu. Poussez pour une petite tranche cohérente qui raconte une histoire forte."
+      },
+      "marketing_lead": {
+        "name": "Responsable Marketing",
+        "brief": "Pilote la narration, la préparation du lancement et la génération de demande.",
+        "secret": "Des campagnes sont déjà prévues et les parties prenantes observent. Vous avez besoin d’un lancement que vous pouvez assumer — même si cela signifie réduire le périmètre — et d’un message clair pour les clients si les choses changent."
+      },
+      "cfo": {
+        "name": "CFO / Finance",
+        "brief": "Pilote les garde-fous budgétaires, la trésorerie et les objectifs de croissance.",
+        "secret": "Vous vous souciez de la trésorerie, du CAC et de la prévisibilité des revenus. Vous n’êtes pas là pour dire “non” — vous êtes là pour rendre les arbitrages explicites et signaler où l’argent est brûlé en silence."
+      },
+      "ops_lead": {
+        "name": "Responsable Opérations",
+        "brief": "Pilote la transformation des plans en exécution réelle entre équipes.",
+        "secret": "Vous voyez la capacité, les dépendances et les frictions de process. Votre rôle est de montrer ce qui est réaliste dans les 7 prochains jours — et ce qui doit changer pour tenir le plan sans épuiser l’équipe."
+      },
+      "customer_success_lead": {
+        "name": "Responsable Customer Success",
+        "brief": "Pilote l’impact client en première ligne et la confiance.",
+        "secret": "Vous portez la relation avec les clients existants. Vous entendrez les plaintes en premier. Poussez des décisions qui protègent la confiance, réduisent les surprises et vous donnent des arguments honnêtes."
+      }
+    },
+    "phaseIntro": {
+      "setup": "Pour l’instant, le facilitateur configure le scénario.",
+      "rolesAssignment": "Pour l’instant, les rôles secrets sont attribués.",
+      "discussion": "Pour l’instant, partagez des perspectives et décisions dans le temps.",
+      "debrief": "Pour l’instant, transformez les enseignements en actions concrètes."
+    },
+    "configure": {
+      "title": "Customize your scenario",
+      "subtitle": "Choose an industry, crisis, and difficulty so the scenario feels real for your team.",
+      "industryLabel": "What's your industry?",
+      "crisisLabel": "Choose your crisis type",
+      "difficultyLabel": "Difficulty level"
+    },
+    "preview": {
+      "title": "What your team will experience",
+      "body": "Each participant receives a private role reveal in-app with their secret role and instructions. When they join, they see a role card that reminds them how to think and speak during the challenge.",
+      "hint": "This activity is async: people can join from any time zone, share perspectives in their own time, and then debrief together.",
+      "hostOnly": "Your facilitator is configuring the scenario. You will see your secret role here as soon as the challenge is launched.",
+      "configureHint": "Use the Configure button to choose industry, crisis, and difficulty before you launch.",
+      "summaryTitle": "Current configuration",
+      "summaryIndustry": "Industry",
+      "summaryCrisis": "Crisis type",
+      "summaryDifficulty": "Difficulty",
+      "summaryUnset": "Not set"
+    },
+    "modal": {
+      "openLabel": "Configure scenario",
+      "title": "Configure strategic scenario",
+      "subtitle": "Choose the industry, crisis, and difficulty for this async simulation."
+    },
+    "industries": {
+      "techSaaS": {
+        "label": "Tech / SaaS",
+        "description": "Product launches, outages, roadmap shifts, and high‑growth trade‑offs."
+      },
+      "finance": {
+        "label": "Finance",
+        "description": "Regulation changes, market swings, and risk versus growth decisions."
+      },
+      "healthcare": {
+        "label": "Healthcare",
+        "description": "Patient safety, compliance, and capacity planning under pressure."
+      },
+      "retail": {
+        "label": "Retail / E‑commerce",
+        "description": "Campaigns, inventory, and customer experience during peak demand."
+      },
+      "manufacturing": {
+        "label": "Manufacturing",
+        "description": "Supply chain disruptions, quality issues, and production bottlenecks."
+      },
+      "education": {
+        "label": "Education",
+        "description": "Enrollment shifts, stakeholder expectations, and blended‑learning trade‑offs."
+      }
+    },
+    "crises": {
+      "marketDisruption": {
+        "label": "Market Disruption",
+        "meta": "Difficulty: Medium · Focus: Strategy & competition",
+        "description": "A new competitor launches and threatens your market share. You must respond without overreacting or losing focus."
+      },
+      "productLaunchCrisis": {
+        "label": "Product Launch Crisis",
+        "meta": "Difficulty: Hard · Focus: Crisis management",
+        "description": "Your product launch is in 7 days and everything is going wrong. You must decide what to cut, what to save, and how to communicate."
+      },
+      "budgetCuts": {
+        "label": "Budget Cuts",
+        "meta": "Difficulty: Medium · Focus: Resource allocation",
+        "description": "The board demands a 30% cost reduction while maintaining growth targets. Every role feels the impact differently."
+      },
+      "teamConflict": {
+        "label": "Team Conflict",
+        "meta": "Difficulty: Easy · Focus: Communication & alignment",
+        "description": "Critical departments are not communicating and projects are slipping. You must rebuild trust and shared priorities."
+      }
+    },
+    "difficulties": {
+      "easy": {
+        "label": "Easy — clear right answer",
+        "hint": "Best for a first run or new teams."
+      },
+      "medium": {
+        "label": "Medium — multiple solutions",
+        "hint": "Teams must weigh trade‑offs and align on a path."
+      },
+      "hard": {
+        "label": "Hard — high ambiguity",
+        "hint": "Great for senior teams that want to stress‑test strategy under pressure."
+      }
+    },
+    "discussion": {
+      "title": "Async crisis discussion",
+      "subtitle": "Share updates, decisions, and trade‑offs in your day‑to‑day tools. Use this space to keep the scenario visible.",
+      "prompt": "Your team faces a last‑minute product launch crisis with competing priorities and limited resources.",
+      "promptHint": "Each role brings a unique lens. Capture points of tension, decisions, and risks as you go.",
+      "guidingQuestions": "Guiding questions",
+      "q1": "What is the single biggest risk if we do nothing in the next 7 days?",
+      "q2": "Where are we mis‑aligned across product, marketing, and operations?",
+      "q3": "What trade‑off are you personally willing to own?",
+      "teamInstructions": "For your team",
+      "i1": "Post updates in your existing tools (Slack, Teams, Notion, etc.).",
+      "i2": "Reply in‑thread so conversations stay connected rather than fragmented.",
+      "i3": "Capture one decision log you will review together in the debrief.",
+      "hostToolsTitle": "Host controls",
+      "hostToolsBody": "You can end the async discussion once you feel the team has explored enough perspectives."
+    },
+    "rolesMeta": {
+      "playerLabel": "You",
+      "roleNameLabel": "Role",
+      "unknownPlayer": "Participant",
+      "secret": "Secret role",
+      "loading": "Waiting for your role…",
+      "pending": "Pending assignment",
+      "pendingHint": "Your facilitator is assigning roles. Stay tuned — your perspective will matter.",
+      "secretHint": "Once you know your role, think about what only you can see that others might miss.",
+      "refreshing": "Refreshing your role…",
+      "swapTitle": "Quick swap & alignment",
+      "swapBody": "During the short swap window, teammates can agree to mentally trade roles if another perspective fits them better. Use chat or your meeting to confirm.",
+      "swapWindow": "Role swap window: {{seconds}}s",
+      "swapCountdown": "Swap window closes in {{seconds}}s",
+      "swapClosed": "Role swap window has closed. Keep your current role for the discussion."
+    },
+    "debrief": {
+      "title": "Debrief: what did we learn?",
+      "subtitle": "Use a retro or leadership session to reflect on how you made decisions, what you missed, and what this means for real work.",
+      "questionsTitle": "Suggested debrief questions",
+      "q1": "Where did we move too fast, and where did we move too slow?",
+      "q2": "Which roles saw risk earliest — and were they heard?",
+      "q3": "What would we do differently in a real incident starting tomorrow?",
+      "actionsTitle": "Turn insights into actions",
+      "a1": "Capture 2–3 concrete changes you will make to process, communication, or ownership.",
+      "a2": "Assign clear owners and deadlines for each action.",
+      "a3": "Schedule a follow‑up in 4–6 weeks to review impact.",
+      "summaryTitle": "Summary for leadership",
+      "summaryBody": "Share three bullets: what you simulated, what you learned about how you work under pressure, and what you will change as a result."
+    }
+  },
+  "activities": {
+    "launch": {
+      "defaultEventTitle": "{{activityName}} — activité d'équipe",
+      "fields": {
+        "endsAt": "Se termine le",
+        "endsAtHelp": "Après cette date/heure, les nouveaux messages et réactions seront désactivés (lecture seule).",
+        "eventTitle": "Event title",
+        "descriptionOptional": "Description (optional)",
+        "maxParticipants": "Max participants",
+        "visibility": "Visibility",
+        "whenToStart": "When to start",
+        "durationMinutes": "Duration (minutes)"
+      },
+      "schedule": {
+        "pickEndDateTime": "Sélectionnez une date et une heure de fin",
+        "pickDateTime": "Pick a date & time",
+        "startNow": "Start now",
+        "scheduleLater": "Schedule for later"
+      },
+      "errors": {
+        "endsAtAfterStart": "La date/heure de fin doit être après la date/heure de début.",
+        "inviteSomeFailed": "Certaines invitations ont échoué ({{emails}}). L’événement a été créé avec succès.",
+        "inviteAllFailed": "Impossible d’envoyer les invitations. Veuillez réessayer.",
+        "generic": "Something went wrong. Please try again.",
+        "missingOrgId": "Missing workspace. Please refresh and try again."
+      },
+      "review": {
+        "endsAt": "Se termine le",
+        "participantsLine": "{{count}} participants",
+        "participantsLine_one": "{{count}} participant",
+        "participantsLine_other": "{{count}} participants",
+        "title": "Review",
+        "subtitle": "Double-check the details before launching.",
+        "activity": "Activity",
+        "eventTitle": "Event title",
+        "participants": "Participants",
+        "invited": "Invited",
+        "inviteEmailCount": "{{count}} email(s)",
+        "moreCount": "+{{count}} more",
+        "noInvites": "No invites",
+        "signupRequired": "Signup required",
+        "nicknameJoin": "Nickname join enabled",
+        "notSet": "Not set",
+        "schedule": "Schedule",
+        "startingImmediately": "Starting immediately"
+      },
+      "title": "Launch activity",
+      "subtitle": "Set up your session, invite people, and start.",
+      "steps": {
+        "configure": "Configure",
+        "invite": "Invite",
+        "review": "Review"
+      },
+      "actions": {
+        "nextInvite": "Next: Invite",
+        "nextReview": "Next: Review",
+        "launchNow": "Launch now"
+      },
+      "untitledEvent": "Untitled event",
+      "placeholders": {
+        "eventTitle": "e.g., Weekly Wins",
+        "description": "Add a short description…"
+      },
+      "invite": {
+        "title": "Invite",
+        "subtitle": "Invite by email, or share a link.",
+        "emailAddresses": "Email addresses",
+        "emailPlaceholder": "name@company.com",
+        "pasteList": "Paste a list",
+        "pastePlaceholder": "Paste one email per line…",
+        "invitedCount": "{{count}} invited",
+        "clearAll": "Clear all",
+        "addHint": "Press Enter to add",
+        "allowNickname": "Allow nickname join",
+        "noSignup": "No signup required"
+      },
+      "visibility": {
+        "inviteOnly": "Invite only",
+        "workspace": "Workspace"
+      },
+      "progress": {
+        "creating": "Creating…",
+        "inviting": "Inviting…"
+      }
+    },
+    "twoTruths": {
+      "name": "Deux vérités et un mensonge",
+      "description": "Brise-glace classique : chacun partage trois affirmations — deux vraies et une fausse. L’équipe devine laquelle est le mensonge.",
+      "duration": "15 min",
+      "teamSize": "5–30 personnes"
+    },
+    "coffeeRoulette": {
+      "name": "Coffee Roulette",
+      "description": "Appariements aléatoires 1:1 pour des cafés virtuels. Crée des connexions inter-équipes et brise les silos via des conversations personnelles.",
+      "duration": "30 min",
+      "teamSize": "Paires (2 personnes)"
+    },
+    "winsOfWeek": {
+      "name": "Victoires de la semaine",
+      "description": "Fil Slack/Teams hebdomadaire où chacun partage une victoire de sa semaine — pro ou perso. Renforce la culture positive et célèbre les progrès.",
+      "duration": "En continu",
+      "teamSize": "Toute taille"
+    },
+    "strategicEscape": {
+      "name": "Défi d'évasion stratégique",
+      "description": "Une simulation stratégique asynchrone où votre équipe gère une crise réaliste depuis différents rôles et perspectives.",
+      "duration": "45–60 min (async)",
+      "teamSize": "4–12 personnes"
+    },
+    "decisionJam": {
+      "name": "Decision Jam",
+      "description": "Un rituel d’alignement structuré de 40 minutes pour équipes distribuées : faire émerger les blocages, débattre vite et sortir avec des responsables et prochaines actions claires.",
+      "duration": "40 min",
+      "teamSize": "4–10 personnes"
+    },
+    "cultureSnapshot": {
+      "name": "Culture Snapshot",
+      "description": "Un pulse d’équipe asynchrone qui transforme le ressenti hebdomadaire, les blocages et les petites victoires en une carte de culture partagée avec des actions concrètes.",
+      "duration": "Asynchrone hebdomadaire",
+      "teamSize": "Toute taille"
+    }
+  },
+  "chat": {
+    "title": "Discussion",
+    "messages": "messages",
+    "noMessages": "Aucun message",
+    "beFirst": "Soyez le premier à dire quelque chose !",
+    "isTyping": "{{name}} écrit...",
+    "peopleTyping": "{{count}} personnes écrivent...",
+    "newMessages": "Nouveaux messages",
+    "placeholder": "Écrivez un message...",
+    "connected": "Connected",
+    "offline": "Offline",
+    "offlinePlaceholder": "You’re offline. Messages will send when you reconnect.",
+    "reconnecting": "Reconnecting…",
+    "retry": "Retry",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "startVoice": "Start voice chat",
+    "stopVoice": "Stop voice chat",
+    "mute": "Mute microphone",
+    "unmute": "Unmute microphone",
+    "voiceActive": "{{count}} voice users",
+    "voiceParticipants": "Voice:",
+    "voiceTalking": "Talking:",
+    "errors": {
+      "generic": "Chat error",
+      "sendFailed": "Failed to send message",
+      "pinFailed": "Failed to update pinned message"
+    }
+  },
+  "invitation": {
+    "verifying": "Vérification de l'invitation...",
+    "pleaseWait": "Veuillez patienter",
+    "eventInvitation": "Invitation à un événement",
+    "teamInvitation": "Invitation d'équipe",
+    "invitedToJoin": "Vous avez été invité à rejoindre :",
+    "by": "par",
+    "accept": "Accepter l'invitation",
+    "declineGoHome": "Refuser et retourner à l'accueil",
+    "youreIn": "Vous êtes inscrit !",
+    "redirecting": "Redirection en cours...",
+    "expired": "Invitation expirée",
+    "expiredMessage": "Cette invitation a expiré ou a déjà été utilisée.",
+    "somethingWrong": "Une erreur est survenue",
+    "missingEventInfo": "Informations d'événement manquantes dans le lien d'invitation.",
+    "orgInviteTitle": "Invitation d'organisation",
+    "orgInviteDescription": "Vous avez été invité à rejoindre une organisation sur Flowkyn.",
+    "goToHomepage": "Aller à la page d'accueil",
+    "missingEventId": "Missing event id in invitation link."
+  },
+  "modals": {
+    "confirmTitle": "Confirmer l'action",
+    "confirmMessage": "Êtes-vous sûr de vouloir continuer ?",
+    "deleteTitle": "Supprimer",
+    "deleteMessage": "Cette action est irréversible."
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "apiErrors": {
+    "AUTH_INVALID_CREDENTIALS": "E-mail ou mot de passe invalide",
+    "AUTH_ACCOUNT_SUSPENDED": "Votre compte a été suspendu. Veuillez contacter le support.",
+    "AUTH_ACCOUNT_NOT_VERIFIED": "Veuillez vérifier votre adresse e-mail avant de vous connecter.",
+    "AUTH_TOKEN_EXPIRED": "Votre session a expiré. Veuillez vous reconnecter.",
+    "AUTH_TOKEN_INVALID": "Session invalide. Veuillez vous reconnecter.",
+    "AUTH_MISSING_TOKEN": "Vous devez vous connecter pour accéder à cette ressource.",
+    "AUTH_EMAIL_IN_USE": "Cet e-mail est déjà enregistré.",
+    "AUTH_EMAIL_NOT_FOUND": "Aucun compte ne correspond à cette adresse e-mail.",
+    "AUTH_ALREADY_VERIFIED": "Cet e-mail est déjà vérifié.",
+    "AUTH_VERIFICATION_EXPIRED": "Le lien de vérification a expiré. Veuillez en demander un nouveau.",
+    "AUTH_RESET_TOKEN_EXPIRED": "Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.",
+    "ORG_BANNED": "Votre organisation a été suspendue et n'est plus accessible. Veuillez contacter le support.",
+    "FORBIDDEN": "Vous n'avez pas la permission d'effectuer cette action.",
+    "INSUFFICIENT_PERMISSIONS": "Vous n'avez pas les autorisations requises.",
+    "NOT_A_MEMBER": "Vous n'êtes pas membre de cet espace de travail.",
+    "SOLE_OWNER": "Vous êtes le seul propriétaire d'une organisation. Transférez la propriété avant de supprimer votre compte.",
+    "SUPER_ADMIN_REQUIRED": "Cette action nécessite des privilèges d'administrateur.",
+    "VALIDATION_FAILED": "Veuillez vérifier vos données et réessayer.",
+    "MISSING_FIELD": "Un champ obligatoire est manquant.",
+    "INVALID_FORMAT": "Le format de votre saisie est invalide.",
+    "NOT_FOUND": "La ressource demandée est introuvable.",
+    "ALREADY_EXISTS": "Cet élément existe déjà.",
+    "CONFLICT": "Un conflit est survenu. La ressource a peut-être été modifiée.",
+    "REFERENCED_NOT_FOUND": "Une ressource référencée est introuvable.",
+    "RATE_LIMITED": "Trop de requêtes. Veuillez patienter un moment.",
+    "FILE_TOO_LARGE": "Le fichier est trop volumineux. Veuillez en choisir un plus petit.",
+    "FILE_TYPE_NOT_ALLOWED": "Ce type de fichier n'est pas pris en charge.",
+    "FILE_MISSING": "Aucun fichier n'a été fourni.",
+    "EVENT_FULL": "Cet événement est complet.",
+    "ALREADY_PARTICIPANT": "Vous participez déjà à cet événement.",
+    "NOT_PARTICIPANT": "Vous ne participez pas à cet événement.",
+    "SESSION_NOT_ACTIVE": "Cette session n'est pas active actuellement.",
+    "ROUND_NOT_ACTIVE": "Ce tour n'est pas actif actuellement.",
+    "SESSION_ALREADY_FINISHED": "Cette session est déjà terminée.",
+    "STRATEGIC_ROLE_NOT_ASSIGNED": "Votre rôle n’a pas encore été attribué. Veuillez attendre le facilitateur.",
+    "CORS_BLOCKED": "Requête bloquée par la politique de sécurité.",
+    "TIMEOUT": "La requête a expiré. Veuillez réessayer.",
+    "SERVICE_UNAVAILABLE": "Service temporairement indisponible. Veuillez réessayer.",
+    "INTERNAL_ERROR": "Une erreur est survenue. Veuillez réessayer plus tard.",
+    "UNKNOWN": "Une erreur inattendue s'est produite."
+  },
+  "onboarding": {
+    "stepOf": "Étape {{current}} sur {{total}}",
+    "steps": {
+      "org": {
+        "title": "Votre Organisation",
+        "description": "Parlez-nous de votre entreprise"
+      },
+      "industry": {
+        "title": "Secteur & Taille",
+        "description": "Aidez-nous à personnaliser votre expérience"
+      },
+      "goals": {
+        "title": "Vos Objectifs",
+        "description": "Que souhaitez-vous accomplir ?"
+      },
+      "branding": {
+        "title": "Langue & Image",
+        "description": "Les dernières touches"
+      },
+      "pulse": {
+        "title": "Bilan de l'équipe",
+        "description": "Aidez-nous à comprendre l'état actuel de votre équipe"
+      },
+      "teamInvite": {
+        "title": "Invitez Votre Équipe",
+        "description": "Ajoutez des collègues pour collaborer ensemble (optionnel)"
+      }
+    },
+    "orgName": "Nom de l'organisation",
+    "orgNamePlaceholder": "ex. Acme Inc.",
+    "orgNameHint": "C'est ainsi que votre équipe verra votre organisation",
+    "orgDescription": "Description",
+    "orgDescriptionPlaceholder": "Que fait votre organisation ?",
+    "industries": {
+      "technology": "Technologie",
+      "healthcare": "Santé",
+      "education": "Éducation",
+      "finance": "Finance",
+      "consulting": "Conseil",
+      "startup": "Startup",
+      "nonprofit": "Association",
+      "other": "Autre"
+    },
+    "industry": "Secteur d'activité",
+    "companySize": "Taille de l'entreprise",
+    "sizes": {
+      "1-10": {
+        "label": "1–10",
+        "description": "Petite équipe"
+      },
+      "11-50": {
+        "label": "11–50",
+        "description": "Équipe en croissance"
+      },
+      "51-200": {
+        "label": "51–200",
+        "description": "Moyenne"
+      },
+      "201-500": {
+        "label": "201–500",
+        "description": "Grande"
+      },
+      "500+": {
+        "label": "500+",
+        "description": "Entreprise"
+      }
+    },
+    "goalsHint": "Sélectionnez tout ce qui s'applique — cela nous aide à recommander les bonnes activités",
+    "goals": {
+      "team_bonding": {
+        "label": "Cohésion d'équipe",
+        "description": "Renforcer les liens entre coéquipiers"
+      },
+      "icebreakers": {
+        "label": "Brise-glaces",
+        "description": "Aider les nouveaux membres à s'intégrer plus vite"
+      },
+      "engagement": {
+        "label": "Engagement des employés",
+        "description": "Améliorer le moral et la satisfaction"
+      },
+      "remote_culture": {
+        "label": "Culture à distance",
+        "description": "Combler le fossé des équipes distribuées"
+      },
+      "onboarding": {
+        "label": "Intégration des recrues",
+        "description": "Rendre l'intégration fun et mémorable"
+      },
+      "wellness": {
+        "label": "Bien-être",
+        "description": "Soutenir la santé mentale et l'équilibre travail-vie"
+      }
+    },
+    "selected": "Sélectionnés :",
+    "pulse": {
+      "hint": "Évaluez l'état actuel de votre équipe — cela nous aide à mesurer vos progrès",
+      "teamConnectedness": {
+        "label": "À quel point votre équipe est-elle connectée ?",
+        "description": "Les membres se sentent-ils partie d'un groupe uni ?"
+      },
+      "relationshipQuality": {
+        "label": "Comment sont les relations d'équipe ?",
+        "description": "Les interactions sont-elles positives, solidaires et collaboratives ?"
+      },
+      "teamFamiliarity": {
+        "label": "Les gens se connaissent-ils bien ?",
+        "description": "Au-delà du travail — connaissent-ils les intérêts et parcours de chacun ?"
+      },
+      "expectations": {
+        "label": "Qu'attendez-vous de Flowkyn ?",
+        "description": "Dites-nous quels résultats comptent le plus pour vous (optionnel)",
+        "placeholder": "ex. Je veux que mon équipe tisse des liens plus forts, s'amuse davantage et se sente plus connectée en télétravail..."
+      },
+      "levels": {
+        "low": "À améliorer",
+        "moderate": "Moyen",
+        "good": "Bon",
+        "excellent": "Excellent"
+      }
+    },
+    "preferredLanguage": "Langue préférée",
+    "orgLogo": "Logo de l'organisation",
+    "changeLogo": "Changer le logo",
+    "uploadLogo": "Téléverser un logo",
+    "logoHint": "JPG, PNG, GIF ou WebP. Max 2 Mo.",
+    "teamInvite": {
+      "helperText": "💌 Vous pouvez commencer à inviter vos collègues maintenant ! Ils recevront un email et pourront rejoindre votre organisation pour collaborer sur les événements.",
+      "optional": "Cette étape est optionnelle — vous pouvez également les inviter plus tard depuis votre tableau de bord.",
+      "email": "Email du collègue",
+      "emailPlaceholder": "collegue@societe.com",
+      "emailRequired": "Veuillez entrer une adresse email",
+      "invalidEmail": "Veuillez entrer une adresse email valide",
+      "alreadyAdded": "Cet email a déjà été ajouté",
+      "bulk": {
+        "title": "Import en masse",
+        "placeholder": "Collez des emails ici (un par ligne ou séparés par des virgules)…",
+        "hint": "Nous ajoutons les emails valides, ignorons les doublons et écartons les invalides.",
+        "import": "Importer",
+        "clear": "Effacer",
+        "added": "{{count}} ajoutés",
+        "duplicates": "{{count}} doublon(s) ignoré(s)",
+        "invalid": "{{count}} invalide(s)",
+        "noneAddedInvalid": "Aucun email ajouté. {{count}} invalide(s).",
+        "noneAddedDuplicates": "Aucun email ajouté. {{count}} déjà dans la liste.",
+        "empty": "Collez un ou plusieurs emails à importer."
+      },
+      "invitedList": "Collègues invités",
+      "benefit1": "Les collègues peuvent être présélectionnés lors de la création d'événements",
+      "benefit2": "Collaboration et configuration d'événements plus rapides",
+      "excel": {
+        "title": "Importer depuis Excel",
+        "downloadTemplate": "Télécharger le modèle",
+        "importButton": "Choisir un fichier",
+        "importing": "Import en cours...",
+        "hint": "Téléchargez un fichier .xlsx, .xls ou .csv avec les colonnes Email et Nom. Téléchargez notre modèle pour commencer.",
+        "added": "{{count}} ajoutés",
+        "invalid": "{{count}} invalide(s)",
+        "duplicates": "{{count}} doublon(s) ignoré(s)",
+        "noValid": "Aucun email valide trouvé dans le fichier.",
+        "error": "Impossible d'importer le fichier. Veuillez vérifier le format et réessayer."
+      }
+    },
+    "summary": "Résumé",
+    "summaryOrg": "Organisation",
+    "summaryIndustry": "Secteur",
+    "summarySize": "Taille de l'équipe",
+    "summaryGoals": "Objectifs",
+    "summaryGoalsCount": "{{count}} sélectionnés",
+    "back": "Retour",
+    "continue": "Continuer",
+    "settingUp": "Configuration...",
+    "launch": "Lancer Flowkyn",
+    "celebrationTitle": "Bienvenue sur Flowkyn",
+    "celebrationSubtitle": "{{org}} est prêt.",
+    "redirecting": "Préparation de votre tableau de bord…",
+    "errors": {
+      "checkInfoAndRetry": "Please check your information and try again.",
+      "createOrgFailed": "Failed to create workspace. Please try again.",
+      "setupFailed": "Setup failed. Please try again."
+    },
+    "logoAlt": "Organization logo",
+    "logoUploadCta": "Upload logo",
+    "logoUploadHint": "PNG, JPG, GIF or WebP. Max 2MB.",
+    "logoUploaded": "Logo uploaded",
+    "logoUploadedHint": "You can replace it anytime."
+  },
+  "gamePlay": {
+    "twoTruths": {
+      "title": "Deux vérités et un mensonge",
+      "description": "Chaque joueur soumet deux vérités et un mensonge. L'équipe vote pour trouver le mensonge. Des points pour tromper les autres !",
+      "startRound": "Commencer le tour {{round}}",
+      "yourTurn": "À vous — Soumettez vos déclarations",
+      "makeItBelievable": "Entrez deux vérités et un mensonge. Rendez le mensonge crédible !",
+      "statementLabel": "Déclaration {{num}}",
+      "liePlaceholder": "Celle-ci pourrait être votre mensonge...",
+      "truthPlaceholder": "Entrez une vérité ou un mensonge...",
+      "submit": "Soumettre",
+      "submitted": "Déclarations soumises !",
+      "waitingForVotes": "Patientez — le vote commence bientôt...",
+      "statementsOf": "Déclarations de {{name}}",
+      "spotTheLie": "Trouvez le mensonge — choisissez bien !",
+      "lockVote": "Verrouiller le vote",
+      "voteLocked": "Vote verrouillé — en attente des résultats...",
+      "revealAsHost": "Révéler quand vous êtes prêt — vous n'avez pas besoin de verrouiller",
+      "theReveal": "La Révélation",
+      "seeVotes": "Voir les votes de chacun",
+      "lie": "MENSONGE",
+      "truth": "VÉRITÉ",
+      "yourPick": "Votre choix",
+      "votes": "{{count}} votes ({{pct}}%)",
+      "correct": "Correct ! +100 pts",
+      "greatWork": "Excellent travail de détective !",
+      "wrongGuess": "Mauvaise réponse",
+      "betterLuck": "Plus de chance au prochain tour !",
+      "viewResults": "Voir les résultats",
+      "nextRound": "Tour suivant",
+      "skipAnimation": "Passer l'animation",
+      "roundSettings": "Paramètres des manches",
+      "howManyRounds": "Combien de manches souhaitez-vous jouer ?",
+      "recommendedRounds": "Recommandé : 3 à 5 manches",
+      "defaultStatement1": "J'ai vécu dans un autre pays.",
+      "defaultStatement2": "Je sais jouer d'un instrument de musique.",
+      "defaultStatement3": "J'ai rencontré une célébrité.",
+      "findingTruth": "À la recherche de la vérité…",
+      "revealHost": "L'hôte révélera quand il sera prêt",
+      "waitingForPresenter": "En attente du présentateur…",
+      "markAsLie": "Marquer comme mensonge",
+      "waitForHost": "En attente de l'hôte",
+      "waitingForHostToStart": "En attente du démarrage par l'hôte…"
+    },
+    "coffeeRoulette": {
+      "title": "Café Roulette",
+      "subtitle": "Paires aléatoires 1:1 pour des connexions significatives",
+      "countdownFinal": "MATCH !",
+      "readyToConnect": "Prêt à se connecter ?",
+      "description": "Nous allons associer tout le monde pour un café virtuel de 30 minutes. Caméras allumées, pas d'ordre du jour — juste se connecter !",
+      "minutes": "30 minutes",
+      "needMoreParticipants": "Vous avez besoin de plus de participants pour commencer.",
+      "waitingForTeam": "En attente de votre équipe…",
+      "waitingForOthers": "En attente des autres…",
+      "shuffleMatch": "Mélanger et associer",
+      "pairsSet": "Vos paires sont prêtes !",
+      "conversationStarter": "Sujet de conversation",
+      "startChatting": "Commencer à discuter",
+      "needATopic": "💡 Besoin d'un sujet ?",
+      "nextTopic": "Sujet suivant",
+      "nextPrompt": "Sujet suivant",
+      "promptCounter": "{{current}} sur {{total}}",
+      "defaultTopic": "Qu'est-ce qui vous enthousiasme en ce moment ?",
+      "spinning": "Rotation…",
+      "spectatorTitle": "Coffee Roulette en cours",
+      "spectatorMessage": "Les paires sont en cours d'appairage. Vous verrez bientôt votre partenaire.",
+      "endChat": "Terminer le chat",
+      "endAndClose": "Terminer et fermer",
+      "greatConnection": "Belle connexion ! ☕",
+      "chattedFor": "Vous avez discuté pendant {{minutes}} minutes. Ces moments construisent de vrais liens d'équipe.",
+      "connectionMade": "Connexion établie",
+      "newPairing": "Nouveau jumelage",
+      "decision": {
+        "title": "Continuer ?",
+        "body": "Vous avez exploré {{count}} sujets. Continuer avec de nouveaux sujets ou terminer cette session ?",
+        "hint": "Vous pouvez terminer à tout moment — la progression sera enregistrée.",
+        "continue": "Continuer",
+        "end": "Terminer"
+      },
+      "topicPool": {
+        "p1": "Quelle petite habitude a amélioré votre vie ?",
+        "p2": "Qu’enseigneriez-vous dans un mini-talk de 5 minutes ?",
+        "p3": "De quoi êtes-vous curieux en ce moment ?",
+        "p4": "Quelle réussite récente vous rend fier/fière ?",
+        "p5": "Quel est votre rituel pour vous remettre sur les rails quand vous êtes bloqué(e) ?",
+        "p6": "Quel outil est indispensable pour vous au travail ?",
+        "p7": "Quel livre ou film vous a marqué récemment ?",
+        "p8": "Quel endroit aimeriez-vous visiter ?"
+      },
+      "fallbackTopics": {
+        "t1": "Qu’est-ce qui vous a appris de plus intéressant récemment ?",
+        "t2": "Si vous pouviez dîner avec n’importe qui (vivant ou décédé), ce serait qui ?",
+        "t3": "Quelle passion ou compétence aimeriez-vous apprendre ?",
+        "t4": "Quel a été votre premier emploi ? Qu’avez-vous appris ?",
+        "t5": "Si vous pouviez vivre n’importe où dans le monde pendant un an, où iriez-vous ?",
+        "t6": "Quel est le meilleur conseil que vous ayez jamais reçu ?",
+        "t7": "Quel livre ou film a complètement changé votre perspective ?",
+        "t8": "Si vous deviez manger un seul repas pour le reste de votre vie, ce serait quoi ?",
+        "t9": "Quel est le moment le plus spontané que vous ayez jamais vécu ?",
+        "t10": "Quel personnage de fiction vous ressemble le plus ?",
+        "t11": "Qu’est-ce que vous faites étonnamment bien ?"
+      },
+      "backToEvents": "Retour aux événements",
+      "you": "Vous",
+      "lobby": {
+        "title": "Vestibule du bureau",
+        "subtitle": "Bienvenue au Café Roulette ! Appariement aléatoire pour des conversations significatives.",
+        "participants": "Participants",
+        "pairs": "Paires possibles",
+        "waitingFor": "En attente de participants...",
+        "waiting": "En attente...",
+        "needMore": "Il faut {{count}} participant(s) de plus",
+        "starting": "Démarrage...",
+        "start": "Commencer le Café Roulette",
+        "ready": "Prêt à créer des paires et à mettre tout le monde en correspondance !",
+        "voiceEnabled": "Voix activée"
+      },
+      "matching": {
+        "floorCounter": "Étage {{floor}}",
+        "matching": "Recherche de votre correspondance...",
+        "doors": "Portes d'ascenseur",
+        "progress": "Progression",
+        "pairProgress": "Paire {{current}} sur {{total}}",
+        "doorsOpening": "Ouverture des portes du café…"
+      },
+      "chatting": {
+        "title": "Salle de réunion",
+        "topic": "Sujet",
+        "timeRemaining": "Temps restant",
+        "minutes": "{{minutes}}m {{seconds}}s",
+        "promptsUsed": "Questions utilisées : {{count}}",
+        "keepTalking": "Voulez-vous continuer à discuter ?",
+        "nextPrompt": "Prochaine question",
+        "continue": "Continuer à discuter",
+        "end": "Terminer la session",
+        "liveBadge": "RÉUNION EN DIRECT",
+        "topicCounter": "Sujet {{current}}/{{max}}",
+        "participantLabel": "Participant",
+        "topicCardLabel": "Sujet du jour",
+        "decisionMessage": "Temps de décider ensemble!",
+        "nextTopicButton": "Prochain sujet",
+        "keepTalkingButton": "Continuer à discuter",
+        "endMeetingButton": "Terminer la réunion",
+        "reShuffleButton": "Trouver une autre correspondance",
+        "reShuffleConfirmTitle": "Trouver une autre correspondance ?",
+        "reShuffleConfirmMessage": "Vous serez jumelé avec un autre participant. Votre discussion actuelle prendra fin.",
+        "reShuffleConfirmAction": "Trouver une autre correspondance",
+        "reShuffleConfirmCancel": "Continuer à discuter"
+      },
+      "voice": {
+        "enable": "Activer la voix",
+        "statusIdle": "Voix désactivée",
+        "statusRequestingMicrophone": "Demande du micro…",
+        "statusConnected": "Voix connectée",
+        "statusMuted": "Micro coupé",
+        "statusUnmuted": "Micro activé",
+        "debugDetails": "Détails",
+        "connecting": "Connexion vocale…",
+        "error": "Erreur de voix",
+        "mute": "Couper le son",
+        "unmute": "Rétablir le son",
+        "leave": "Quitter la voix",
+        "micLevelLabel": "Niveau du micro",
+        "micTooQuiet": "Micro trop faible",
+        "micTooLoud": "Micro trop fort",
+        "volumeLabel": "Volume : {{percent}}%",
+        "volumeDecrease": "Baisser le volume",
+        "volumeIncrease": "Augmenter le volume",
+        "errors": {
+          "unknown": "L'appel vocal a échoué. Veuillez réessayer.",
+          "SOCKET_DISCONNECTED": "Le socket vocal est déconnecté. Rechargez et réessayez.",
+          "CONNECTION_FAILED": "La connexion vocale a échoué.",
+          "MIC_OR_NEGOTIATION_FAILED": "Le micro/la négociation a échoué. Vérifiez les autorisations.",
+          "OFFER_HANDLE_FAILED": "Impossible de traiter l'offre vocale.",
+          "ANSWER_HANDLE_FAILED": "Impossible de traiter la réponse vocale.",
+          "VOICE_OFFER_ERROR": "Erreur d'offre vocale.",
+          "VOICE_REQUEST_OFFER_ERROR": "Impossible de demander une offre.",
+          "VOICE_ANSWER_ERROR": "Erreur de réponse vocale.",
+          "VOICE_ICE_ERROR": "Échec de l'échange ICE vocal.",
+          "VOICE_HANGUP_ERROR": "Échec de la fin d'appel vocal.",
+          "PARTNER_NOT_CONNECTED": "En attente que votre partenaire active la voix.",
+          "OFFER_NOT_READY": "L'offre n'est pas encore prête. Nouvelle tentative…",
+          "OFFER_EXPIRED": "L'offre a expiré. Activez la voix à nouveau.",
+          "VOICE_NOT_ACTIVE": "La voix n'est pas active pour le moment.",
+          "FORBIDDEN": "Accès refusé pour cette action vocale.",
+          "NOT_IN_PAIR": "Vous n'êtes pas dans ce binôme vocal.",
+          "VOICE_ROLE_MISMATCH": "Rôle vocal incorrect.",
+          "PARTNER_NOT_FOUND": "Partenaire introuvable."
+        },
+        "prompt": {
+          "title": "Votre partenaire veut parler",
+          "body": "Activez la voix pour répondre et vous connecter.",
+          "notNow": "Pas maintenant"
+        }
+      },
+      "voiceCall": {
+        "initiating": "Appel en cours…",
+        "incoming": "Appel entrant",
+        "waitingForResponse": "En attente de réponse…",
+        "expiringIn": "Expire dans {{seconds}} secondes",
+        "decline": "Refuser",
+        "accept": "Accepter"
+      },
+      "complete": {
+        "title": "Belle connexion ! ☕",
+        "duration": "Durée",
+        "promptsUsed": "Questions utilisées",
+        "topicDiscussed": "Sujet discuté",
+        "minutes": "{{minutes}} minutes",
+        "matchAgain": "Correspondance à nouveau",
+        "exit": "Quitter",
+        "message": "Vous avez eu une excellente conversation ! ☕",
+        "prompts": "{{count}} sujets utilisés",
+        "subtitle": "Ces moments construisent de vrais liens d'équipe."
+      },
+      "admin": {
+        "settings": {
+          "title": "Paramètres Café Roulette",
+          "gameConfiguration": "Configuration du jeu",
+          "configureDescription": "Configurez comment Café Roulette apparie les participants et sélectionne les sujets",
+          "basicSettings": "Paramètres de base",
+          "selectionStrategies": "Stratégies de sélection",
+          "advanced": "Avancé",
+          "chatDuration": "Durée du chat (minutes)",
+          "maxPrompts": "Nombre maximum de questions",
+          "topicStrategy": "Stratégie de sélection des sujets",
+          "questionStrategy": "Stratégie de sélection des questions",
+          "allowGeneral": "Autoriser les questions générales en secours",
+          "shuffleOnRepeat": "Mélanger les sujets à la répétition",
+          "random": "Aléatoire - Sélection complètement aléatoire à chaque fois",
+          "sequential": "Séquentiel - Rotation tour par tour à travers tous les éléments",
+          "weighted": "Pondéré - Basé sur les poids et probabilités des éléments",
+          "create": "Créer une configuration",
+          "update": "Mettre à jour la configuration",
+          "reset": "Réinitialiser",
+          "savedSuccessfully": "Configuration sauvegardée avec succès !",
+          "failedToLoad": "Impossible de charger la configuration",
+          "failedToCreate": "Impossible de créer la configuration",
+          "failedToUpdate": "Impossible de mettre à jour la configuration",
+          "configurationDetails": "Détails de la configuration",
+          "configurationId": "ID de configuration",
+          "eventId": "ID d'événement",
+          "createdAt": "Créée le",
+          "updatedAt": "Mise à jour"
+        },
+        "topics": {
+          "title": "Gestionnaire de sujets",
+          "addTopic": "Ajouter un sujet",
+          "createTopic": "Créer un sujet",
+          "editTopic": "Modifier le sujet",
+          "deleteTopic": "Supprimer le sujet",
+          "topicIcon": "Icône du sujet (emoji, max 2 caractères)",
+          "topicTitle": "Titre du sujet",
+          "topicDescription": "Description",
+          "weight": "Poids (plus élevé = plus susceptible d'être sélectionné)",
+          "active": "Actif",
+          "createdDate": "Créée le",
+          "updatedDate": "Mise à jour",
+          "noTopics": "Aucun sujet pour l'instant. Créez-en un pour commencer !",
+          "failedToLoad": "Impossible de charger les sujets",
+          "failedToCreate": "Impossible de créer le sujet",
+          "failedToUpdate": "Impossible de mettre à jour le sujet",
+          "failedToDelete": "Impossible de supprimer le sujet",
+          "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce sujet ?",
+          "confirmDelete": "Supprimer"
+        },
+        "questions": {
+          "title": "Gestionnaire de questions",
+          "addQuestion": "Ajouter une question",
+          "createQuestion": "Créer une question",
+          "editQuestion": "Modifier la question",
+          "deleteQuestion": "Supprimer la question",
+          "questionText": "Texte de la question",
+          "questionType": "Type",
+          "general": "Générale",
+          "topicSpecific": "Spécifique au sujet",
+          "difficulty": "Difficulté",
+          "easy": "Facile",
+          "moderate": "Moyen",
+          "challenging": "Difficile",
+          "category": "Catégorie",
+          "filterByType": "Filtrer par type",
+          "filterByDifficulty": "Filtrer par difficulté",
+          "all": "Tous",
+          "noQuestions": "Aucune question ne correspond aux filtres actuels. Créez-en une pour commencer !",
+          "failedToLoad": "Impossible de charger les questions",
+          "failedToCreate": "Impossible de créer la question",
+          "failedToUpdate": "Impossible de mettre à jour la question",
+          "failedToDelete": "Impossible de supprimer la question",
+          "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette question ?",
+          "confirmDelete": "Supprimer",
+          "subtitle": "Manage conversation questions for this event",
+          "noMatches": "No questions match the current filters. Create one to get started!",
+          "showing": "Showing {{count}} of {{total}} questions",
+          "id": "Question ID:",
+          "createdLabel": "Created:",
+          "updatedLabel": "Updated:"
+        },
+        "mapping": {
+          "title": "Cartographie des sujets-questions",
+          "selectTopic": "Sélectionner un sujet",
+          "selectQuestion": "Sélectionner une question",
+          "assignQuestion": "Assigner la question",
+          "removeQuestion": "Supprimer la question",
+          "reorderUp": "Déplacer vers le haut",
+          "reorderDown": "Déplacer vers le bas",
+          "noQuestionsAssigned": "Aucune question assignée pour l'instant",
+          "allAssigned": "Toutes les questions sont déjà assignées ou aucune question disponible",
+          "failedToLoad": "Impossible de charger les données",
+          "failedToAssign": "Impossible d'assigner la question",
+          "failedToRemove": "Impossible de supprimer la question",
+          "failedToReorder": "Impossible de réorganiser les questions",
+          "selectBoth": "Veuillez sélectionner un sujet et une question",
+          "questionsCount": "{{count}} question",
+          "questionsCounts": "{{count}} questions",
+          "subtitle": "Assign questions to topics and manage their order",
+          "assignTitle": "Assign Questions to Topics",
+          "assignDesc": "Select a topic and add questions to it",
+          "chooseTopic": "Choose a topic...",
+          "chooseQuestion": "Choose a question..."
+        },
+        "page": {
+          "title": "Configuration Café Roulette",
+          "back": "Retour aux événements",
+          "noConfig": "Aucune configuration",
+          "configActive": "Configuration active",
+          "helpTitle": "Pour commencer",
+          "step1": "1. Configurez les paramètres du jeu (durée, stratégies)",
+          "step2": "2. Ajoutez des sujets de discussion et des emojis",
+          "step3": "3. Créez des questions de conversation",
+          "step4": "4. Mappez les questions aux sujets",
+          "step5": "5. Lancez Café Roulette avec votre événement !"
+        }
+      },
+      "roleBasedPrompts": {
+        "manager": {
+          "p1": "En tant que manager, quel est votre plus grand défi dans l'engagement d'équipe ?",
+          "p2": "Quelle leçon de leadership avez-vous apprise à la dure ?",
+          "p3": "Comment construisez-vous la confiance avec votre équipe ?",
+          "p4": "Quelle est votre philosophie sur la dynamique d'équipe à distance ?"
+        },
+        "individual_contributor": {
+          "p1": "Quel est le projet le plus impactant sur lequel vous avez travaillé ?",
+          "p2": "Quelle compétence développez-vous avec enthousiasme ?",
+          "p3": "Comment restez-vous motivé en travaillant de manière asynchrone ?",
+          "p4": "Quel est votre environnement de travail idéal ?"
+        },
+        "designer": {
+          "p1": "Quels principes de conception guident votre travail ?",
+          "p2": "Quelle décision de conception récente êtes-vous fier ?",
+          "p3": "Comment équilibrez-vous l'esthétique et l'utilisabilité ?",
+          "p4": "Qu'inspire votre travail créatif ?"
+        },
+        "engineer": {
+          "p1": "Quelle est votre tech stack préféré et pourquoi ?",
+          "p2": "Quel bug difficile avez-vous résolu récemment ?",
+          "p3": "Comment approchez-vous la qualité du code ?",
+          "p4": "Quelle technologie vous enthousiasme en ce moment ?"
+        },
+        "product": {
+          "p1": "Quelles métriques guident votre prise de décision ?",
+          "p2": "Comment priorisez-vous les fonctionnalités concurrentes ?",
+          "p3": "Quel est votre processus de recherche utilisateur ?",
+          "p4": "Quel lancement de produit êtes-vous fier ?"
+        },
+        "sales": {
+          "p1": "Quelle est votre stratégie pour construire des relations ?",
+          "p2": "Comment gérez-vous les objections ?",
+          "p3": "Quel est l'aspect le plus gratifiant de votre rôle ?",
+          "p4": "Comment restez-vous énergisé dans un environnement compétitif ?"
+        }
+      },
+      "spin1": "Mélange des noms…",
+      "spin2": "Recherche de correspondances…",
+      "spin3": "Brassage…",
+      "spin4": "Presque prêt…",
+      "spin5": "Appairage en cours…",
+      "spin6": "Finalisation des paires…",
+      "spin7": "Verrouillage…",
+      "spin8": "Terminé !",
+      "rolePrompts": {
+        "title": "Suggested Conversation Starters",
+        "loading": "Loading suggestions...",
+        "description": "Based on your role as a {{role}}, here are some great conversation starters:",
+        "dismiss": "Close",
+        "ready": "Ready to chat!",
+        "empty": "No suggestions available at this time."
+      },
+      "suggestedPrompts": "View suggestions",
+      "roles": {
+        "manager": "Manager",
+        "individual_contributor": "Individual Contributor",
+        "designer": "Designer",
+        "engineer": "Engineer",
+        "product": "Product Manager",
+        "sales": "Sales"
+      },
+      "error": {
+        "notFound": "Paire Coffee Roulette non trouvée"
+      },
+      "unmatched": "Non apparié",
+      "currentPhase": "Phase : {{phase}}"
+    },
+    "winsOfWeek": {
+      "thisWeeksPrompt": "Le sujet de la semaine",
+      "contributions": "{{count}} contributions",
+      "ongoing": "En cours — partagez à tout moment",
+      "closed": "Fermé",
+      "timeAgo": {
+        "justNow": "À l’instant",
+        "minutes": "il y a {{count}} min",
+        "hours": "il y a {{count}} h",
+        "yesterday": "Hier",
+        "days": "il y a {{count}} j"
+      },
+      "endTime": {
+        "ended": "Terminé",
+        "minutesLeft": "{{count}} min restantes",
+        "hoursMinutesLeft": "{{hours}} h {{minutes}} min restantes",
+        "daysLeft": "{{count}} j restants"
+      },
+      "endsAt": "Se termine : {{time}}",
+      "endedAt": "Terminé : {{time}}",
+      "shareYourWin": "Partagez votre victoire...",
+      "readOnlyPlaceholder": "Les publications sont fermées pour cette activité.",
+      "share": "Partager",
+      "postingClosedTitle": "Publications fermées",
+      "postingClosedBody": "Cette activité est terminée. Vous pouvez toujours lire, mais les réactions sont désactivées.",
+      "reply": "Répondre",
+      "writeReply": "Écrire une réponse...",
+      "replyCount": "{{count}} réponse",
+      "repliesCount": "{{count}} réponses",
+      "defaultPrompt": "Partagez vos réussites de cette semaine !",
+      "emptyTitle": "Aucune réussite",
+      "emptySubtitle": "Aucune réussite n'a encore été partagée.",
+      "sharing": "Partage en cours…",
+      "newPosts": "{{count}} nouveau(x) post(s)",
+      "milestone": "🎉 Incroyable ! {{count}} victoires célébrées cette semaine !",
+      "reactionCount": "{{count}} réaction(s)",
+      "addReaction": "Ajouter une réaction {{type}}",
+      "postFailed": "Échec du partage. Veuillez réessayer."
+    },
+    "results": {
+      "gameComplete": "Partie terminée !",
+      "getReady": "Préparez-vous pour la révélation !",
+      "andTheResultsAre": "Et les résultats sont...",
+      "drumrollPlease": "Roulement de tambour...",
+      "skipToResults": "Passer aux résultats →",
+      "playAgain": "Rejouer",
+      "backToEvents": "Retour aux événements",
+      "champion": "Champion",
+      "runnerUp": "Deuxième",
+      "thirdPlace": "Troisième",
+      "pts": "pts",
+      "roundsPlayed": "{{count}} tours joués — voici le classement final"
+    },
+    "insights": {
+      "title": "Votre performance",
+      "accuracy": "Précision",
+      "accuracyDesc": "{{percentage}}% de bonnes réponses",
+      "improvement": "↑ par rapport à {{previousPercentage}}% la dernière fois",
+      "bestGuess": "🎯 Meilleure devinette",
+      "trickiestStatement": "😈 Affirmation la plus trompeuse",
+      "fooled": "{{percentage}}% des joueurs dupés",
+      "yourRanking": "📊 Comment vous vous comparez",
+      "topPercentile": "Top {{percentile}}% de tous les joueurs",
+      "noComparison": "Première fois ! Continuez comme ça.",
+      "viewDetails": "Afficher les détails",
+      "close": "Fermer"
+    },
+    "leaderboard": {
+      "title": "Classement",
+      "online": "{{count}} en ligne",
+      "pending": "En attente",
+      "empty": "No scores yet",
+      "onlineCount": "{{count}} online",
+      "teamProgressTitle": "Team progress"
+    },
+    "shell": {
+      "invite": "Inviter",
+      "end": "Terminer",
+      "duration": "Durée",
+      "joined": "Rejoint",
+      "pending": "En attente",
+      "participation": "Participation",
+      "copied": "Copié !",
+      "copy": "Copier",
+      "chat": "Chat",
+      "scores": "Scores",
+      "statusWaiting": "En attente de votre équipe",
+      "statusLive": "Session d'équipe en direct",
+      "statusAsync": "Session de check‑in asynchrone",
+      "userDisconnectedBadge_one": "{{count}} utilisateur déconnecté",
+      "userDisconnectedBadge_other": "{{count}} utilisateurs déconnectés",
+      "liveSession": "Live session",
+      "asyncSession": "Async session",
+      "readyToConnect": "Ready to connect!",
+      "inviteHelp": "Share this link with teammates you want to bring into this session.",
+      "chatLabel": "Chat",
+      "scoresLabel": "Scores",
+      "userJoinedToast": "{{name}} joined",
+      "back": "Retour",
+      "userDisconnectedBadge": "Déconnecté"
+    },
+    "phases": {
+      "waiting": "En attente",
+      "submit": "Soumettre",
+      "vote": "Vote",
+      "reveal": "Révélation",
+      "results": "Résultats",
+      "matching": "Association",
+      "chatting": "Discussion",
+      "complete": "Terminé"
+    },
+    "configs": {
+      "twoTruthsTitle": "Deux vérités et un mensonge",
+      "twoTruthsSubtitle": "Brise-glace · En direct",
+      "coffeeRouletteTitle": "Café Roulette",
+      "coffeeRouletteSubtitle": "Connexion · En direct",
+      "winsOfWeekTitle": "Victoires de la semaine",
+      "winsOfWeekSubtitle": "Bien-être · Asynchrone",
+      "defaultPrompt": "Partagez votre victoire de la semaine — travail ou personnel, grande ou petite !",
+      "strategicEscapeTitle": "Strategic Escape Challenge",
+      "strategicEscapeSubtitle": "Async crisis simulation where every role sees something different.",
+      "strategicEscapePrompt": "Your team faces a high‑stakes launch under pressure. Use your role’s lens to surface risks, trade‑offs, and bold moves."
+    },
+    "wins": {
+      "title": "Victoires",
+      "selectCategory": "Sélectionner une catégorie",
+      "category": "Catégorie",
+      "tags": "Étiquettes",
+      "filters": "Filtres",
+      "clearAll": "Effacer tout",
+      "noTags": "Aucune étiquette",
+      "noCategories": "Aucune catégorie disponible",
+      "noFilters": "Aucun filtre disponible",
+      "noFiltersAvailable": "Aucun filtre disponible",
+      "enterTag": "Entrer une étiquette...",
+      "removeTag": "Supprimer l'étiquette",
+      "addTag": "Ajouter une étiquette",
+      "maxTagsReached": "Nombre maximal d'étiquettes atteint",
+      "loadingFilters": "Chargement des filtres...",
+      "categories": {
+        "innovation": "Innovation",
+        "revenue": "Revenus",
+        "collaboration": "Collaboration",
+        "customer_success": "Succès client",
+        "personal_growth": "Croissance personnelle",
+        "general": "Général"
+      }
+    },
+    "errors": {
+      "socket": "Game connection error",
+      "joinRoomFailed": "Failed to join game room"
+    }
+  },
+  "analyticsPage": {
+    "lastMonth": "Dernier mois",
+    "threeMonths": "3 mois",
+    "sixMonths": "6 mois",
+    "oneYear": "1 an",
+    "totalSessions": "Sessions totales",
+    "participants": "Participants",
+    "completion": "Achèvement",
+    "activities": "Activités",
+    "noAnalyticsData": "Pas encore de données analytiques",
+    "noAnalyticsDataDesc": "Commencez à organiser des activités pour voir les analyses d'engagement ici.",
+    "sessionsOverTime": "Sessions dans le temps",
+    "byGameType": "Par type de jeu",
+    "participantsPerActivity": "Participants par activité",
+    "categorySplit": "Répartition par catégorie",
+    "distribution": "Distribution",
+    "completionRate": "Taux d'achèvement",
+    "sessionCompletion": "Achèvement des sessions",
+    "completionLabel": "achèvement",
+    "excellent": "Excellent",
+    "good": "Bon",
+    "improving": "En amélioration",
+    "topActivities": "Meilleures activités",
+    "bestPerforming": "Les plus performantes",
+    "noActivityData": "Pas de données d'activité",
+    "participantsSessions": "{{participants}} participants · {{sessions}} sessions",
+    "actions": "actions"
+  },
+  "orgDetail": {
+    "currentPlan": "Plan actuel",
+    "sending": "Envoi...",
+    "uploadImageError": "Veuillez téléverser un fichier image",
+    "logoSizeError": "Le logo doit faire moins de 5 Mo",
+    "logoUploadFailed": "Logo upload failed. Please try again."
+  },
+  "departments": {
+    "title": "Départements",
+    "name": "Département",
+    "placeholder": "ex. : Ingénierie",
+    "importHint": "Astuce : collez ou importez au format « email, département ». Le département par défaut est Général.",
+    "toast": {
+      "created": "Département créé",
+      "deleted": "Département supprimé",
+      "deleteFailed": "Échec de la suppression du département",
+      "updated": "Département mis à jour"
+    }
+  },
+  "templates": {
+    "avatars": {
+      "title": "Avatars",
+      "description": "{{count}} styles DiceBear disponibles. Tailles, groupes, fallbacks et composant AvatarPicker.",
+      "allStylesLabel": "Tous les {{count}} styles DiceBear",
+      "sizesLabel": "Tailles",
+      "withImagesLabel": "Avec images (Avataaars)",
+      "stackedGroupsLabel": "Groupes empilés",
+      "smallGroupShown": "Petit groupe ({{count}} affichés)",
+      "largeGroupShown": "Grand groupe ({{count}} affichés)",
+      "fallbackColorsLabel": "Couleurs de repli",
+      "statusIndicatorsLabel": "Avec indicateurs de statut",
+      "pickerTitle": "Composant Avatar Picker",
+      "pickerBadge": "{{styles}} styles · {{avatars}} avatars"
+    }
+  },
+  "notificationsPage": {
+    "allCaughtUp": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici.",
+    "total": "Toutes les notifications",
+    "unread": "Non lues",
+    "last7Days": "7 derniers jours",
+    "subtitle": "Stay up to date with what’s happening in your workspace."
+  },
+  "search": {
+    "noResults": "Aucun résultat pour \"{{query}}\"",
+    "people": "People",
+    "sessions": "Sessions",
+    "tryDifferent": "Try a different search"
+  },
+  "tour": {
+    "welcome": {
+      "title": "Bienvenue sur Flowkyn !",
+      "content": "Faisons un tour rapide pour vous aider à engager votre équipe à distance."
+    },
+    "dashboard": {
+      "title": "Votre Tableau de bord",
+      "content": "Ici, vous pouvez voir une vue d'ensemble de l'engagement de votre équipe, des sessions actives et des événements à venir."
+    },
+    "activities": {
+      "title": "Activités & Jeux",
+      "content": "Explorez notre bibliothèque de plus de 50 brise-glaces, jeux et rituels prêts à être lancés."
+    },
+    "organizations": {
+      "title": "Espaces de travail",
+      "content": "Gérez vos espaces, invitez des membres et configurez les permissions ici."
+    },
+    "analytics": {
+      "title": "Analytique",
+      "content": "Mesurez l'engagement et suivez l'impact de votre team building au fil du temps."
+    },
+    "next": "Suivant",
+    "back": "Retour",
+    "skip": "Passer",
+    "close": "Fermer",
+    "last": "Terminer"
+  },
+  "activityFeedback": {
+    "categories": {
+      "experience": "Expérience globale",
+      "ui": "Interface / design",
+      "gameplay": "Jeu",
+      "voice_audio": "Voix / audio",
+      "other": "Autre"
+    },
+    "modal": {
+      "title": "Aidez-nous à nous améliorer",
+      "subtitle": "Avant de partir, évaluez votre expérience et laissez un bref commentaire.",
+      "missingParticipant": "Impossible d'identifier votre participant. Vous pouvez quand même passer.",
+      "ratingLabel": "Note",
+      "ratingAria": "{{n}} étoiles",
+      "categoryLabel": "Catégorie",
+      "commentLabel": "Commentaire",
+      "commentPlaceholder": "Qu’est-ce qui a bien fonctionné ? Que pouvons-nous améliorer ?",
+      "skip": "Passer",
+      "submit": "Envoyer le feedback",
+      "submitting": "Envoi…",
+      "submitFailed": "Échec de l’envoi du feedback",
+      "successTitle": "Merci pour votre retour !",
+      "successDescription": "Retour vers l’événement."
+    },
+    "admin": {
+      "title": "Feedback d’activité",
+      "subtitle": "Notes et commentaires envoyés par les utilisateurs",
+      "searchPlaceholder": "Rechercher par nom, type de jeu ou commentaire...",
+      "filters": {
+        "rating": "Note",
+        "category": "Catégorie",
+        "all": "Tous"
+      },
+      "table": {
+        "reporter": "Signataire",
+        "rating": "Note",
+        "category": "Catégorie",
+        "comment": "Commentaire",
+        "game": "Jeu",
+        "source": "Source",
+        "createdAt": "Envoyé le",
+        "actions": "Actions",
+        "viewDetails": "Voir les détails"
+      },
+      "stats": {
+        "total": "Total retours",
+        "avgRating": "Note moyenne"
+      },
+      "buttons": {
+        "prev": "Préc.",
+        "next": "Suiv.",
+        "clearFilters": "Effacer les filtres"
+      },
+      "noResults": "Aucun feedback trouvé"
+    }
+  },
+  "brand": {
+    "name": "Flowkyn"
+  },
+  "event": {
+    "joinFailed": "Failed to join. Please try again."
+  },
+  "tickets": {
+    "myTicketsTitle": "My Tickets",
+    "myTicketsSubtitle": "Track your bug reports and feature requests",
+    "newTicket": "New Ticket",
+    "searchPlaceholder": "Search tickets by title, description...",
+    "statusLabel": "Status",
+    "allStatuses": "All Statuses",
+    "empty": "No tickets found",
+    "createFirst": "Create Your First Ticket",
+    "viewDetails": "View Details",
+    "assignedTo": "Assigned to {{name}}",
+    "attachmentsCount": "{{count}} file(s)",
+    "confirmDelete": "Are you sure you want to delete this ticket? This action cannot be undone.",
+    "allStatusesLabel": "All Statuses",
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "attachments": {
+      "tooLarge": "File \"{{name}}\" is too large",
+      "typeNotSupported": "File type \"{{type}}\" not supported for \"{{name}}\"",
+      "uploadFailed": "Failed to upload \"{{name}}\"",
+      "previewAlt": "attachment preview"
+    },
+    "typeOptions": {
+      "bugReport": "Bug Report",
+      "bugReportDesc": "Something isn't working correctly",
+      "featureRequest": "Feature Request",
+      "featureRequestDesc": "Suggest a new feature",
+      "issue": "Issue",
+      "issueDesc": "General problem or concern",
+      "generalFeedback": "General Feedback",
+      "generalFeedbackDesc": "General comment or suggestion"
+    },
+    "submit": {
+      "title": "Report Issue / Request Feature",
+      "subtitle": "Help us improve by letting us know about bugs, feature requests, or general feedback",
+      "typeLabel": "Type of Report *",
+      "priorityLabel": "Priority",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "e.g., Cannot upload images larger than 5MB",
+      "descriptionLabel": "Description *",
+      "descriptionPlaceholder": "Provide as much detail as possible…",
+      "attachmentsLabel": "Attachments (Screenshots, Logs, etc.)",
+      "dropzone": {
+        "title": "Drop files here or click to select",
+        "subtitle": "Max 10MB per file. Supported: Images, PDF, Word, Excel, Text"
+      },
+      "submitCta": "Submit Ticket",
+      "submitting": "Submitting…"
+    },
+    "toast": {
+      "submitted": "Ticket submitted successfully!",
+      "deleted": "Ticket deleted"
+    },
+    "errors": {
+      "loadFailed": "Failed to load tickets",
+      "submitFailed": "Failed to submit ticket",
+      "deleteFailed": "Failed to delete ticket"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "descriptionRequired": "Description is required"
+    }
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "moderator": "Moderator",
+    "member": "Member"
+  },
+  "plans": {
+    "free": "Free"
+  },
+  "timezones": {
+    "utc": "UTC",
+    "europeBerlin": "Europe/Berlin",
+    "europeParis": "Europe/Paris",
+    "americaNewYork": "America/New York",
+    "asiaTokyo": "Asia/Tokyo",
+    "europeBerlinGmt": "Europe/Berlin (GMT+1)",
+    "europeParisGmt": "Europe/Paris (GMT+1)",
+    "newYorkGmt": "New York (GMT-5)",
+    "tokyoGmt": "Tokyo (GMT+9)"
+  },
+  "departmentsSelected": "Départements sélectionnés",
+  "session": {
+    "duration": "Durée",
+    "participants": "Participants",
+    "messages": "Messages",
+    "actions": "Actions",
+    "timelineTab": "Chronologie",
+    "close": "Fermer la session",
+    "delete": "Supprimer la session",
+    "export": "Exporter",
+    "active": "Actif",
+    "guest": "Invité",
+    "joined": "Rejoint",
+    "left": "Parti",
+    "interactions": "Interactions",
+    "noParticipants": "Pas de participants pour le moment",
+    "noMessages": "Pas de messages pour le moment",
+    "noActions": "Aucune action pour le moment",
+    "noTimeline": "Aucun événement pour le moment",
+    "loadMore": "Charger plus",
+    "participant": "Participant",
+    "action": "Action",
+    "timestamp": "Horodatage",
+    "payload": "Détails",
+    "round": "Manche",
+    "started": "Commencé",
+    "ended": "Terminé",
+    "createdAt": "Créé",
+    "updatedAt": "Mis à jour",
+    "sessionNotFound": "Session non trouvée",
+    "roundCompleted": "Manches complétées",
+    "activeParticipants": "Actifs",
+    "completedParticipants": "Terminés",
+    "sessionId": "ID de la session",
+    "eventTitle": "Événement",
+    "gameName": "Jeu",
+    "gameType": "Type de jeu",
+    "currentRound": "Manche actuelle",
+    "totalRounds": "Nombre total de manches",
+    "gameStatus": "Statut",
+    "closeConfirm": {
+      "title": "Fermer la session ?",
+      "description": "Cela mettra fin à la session pour tous les participants. Cette action ne peut pas être annulée."
+    },
+    "deleteConfirm": {
+      "title": "Supprimer la session ?",
+      "description": "Cela supprimera définitivement la session et anonymisera tous les messages. Cette action ne peut pas être annulée."
+    },
+    "timeline": {
+      "joined": "{{name}} a rejoint",
+      "left": "{{name}} a quitté",
+      "roundStarted": "La manche {{number}} a commencé",
+      "roundEnded": "La manche {{number}} s'est terminée",
+      "action": "{{name}} a effectué {{action}}"
+    },
+    "exportSuccess": "Données de session exportées avec succès",
+    "closedSuccess": "Session fermée avec succès",
+    "deletedSuccess": "Session supprimée avec succès"
+  }
+}
