@@ -1,0 +1,476 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FLOWKYN DESIGN SYSTEM v5 — Discord × Linear
+   
+   Dense, layered surfaces. Neon purple brand. Sharp, developer-cool, alive.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* ─── Core surfaces — Cool gray, slightly blue-tinted ─── */
+    --background: 228 14% 95%;
+    --foreground: 224 71% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    /* ─── Brand — Electric purple, Flowkyn signature ─── */
+    --primary: 265 84% 58%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 265 85% 68%;
+    --primary-muted: 265 40% 92%;
+    --secondary: 228 14% 95%;
+    --secondary-foreground: 224 71% 4%;
+    --accent: 265 30% 94%;
+    --accent-foreground: 265 84% 48%;
+
+    /* ─── Semantic ─── */
+    --muted: 228 14% 95%;
+    --muted-foreground: 220 9% 46%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 38 92% 14%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+
+    /* ─── Chrome ─── */
+    --border: 228 13% 90%;
+    --input: 228 13% 90%;
+    --ring: 265 87% 58%;
+    --radius: 0.5rem;
+
+    /* ─── Auth panel ─── */
+    --auth-panel: 265 60% 50%;
+    --auth-panel-foreground: 0 0% 100%;
+
+    /* ─── Legacy brand aliases ─── */
+    --brand-pink: 265 70% 62%;
+    --brand-purple: 265 87% 58%;
+    --brand-violet: 270 72% 52%;
+    --brand-orange: 38 92% 50%;
+
+    /* ─── Sidebar — Deep charcoal with purple tint ─── */
+    --sidebar-background: 240 10% 8%;
+    --sidebar-foreground: 220 10% 55%;
+    --sidebar-primary: 265 87% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 265 20% 14%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 240 8% 14%;
+    --sidebar-ring: 265 87% 65%;
+    --sidebar-muted-foreground: 220 8% 42%;
+
+    /* ─── Charts ─── */
+    --chart-1: 265 87% 58%;
+    --chart-2: 160 84% 39%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 217 91% 60%;
+    --chart-5: 270 72% 52%;
+  }
+
+  .dark {
+    /* ─── Core surfaces — Deep, rich dark with cool undertone ─── */
+    --background: 240 10% 6%;
+    --foreground: 210 20% 92%;
+    --card: 240 10% 9%;
+    --card-foreground: 210 20% 92%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 210 20% 92%;
+
+    /* ─── Brand ─── */
+    --primary: 265 84% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 265 85% 72%;
+    --primary-muted: 265 30% 15%;
+    --secondary: 240 10% 12%;
+    --secondary-foreground: 210 20% 92%;
+    --accent: 265 20% 15%;
+    --accent-foreground: 265 80% 78%;
+
+    /* ─── Semantic ─── */
+    --muted: 240 10% 11%;
+    --muted-foreground: 220 7% 48%;
+    --destructive: 0 63% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 160 72% 46%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 80% 55%;
+    --warning-foreground: 38 92% 14%;
+    --info: 217 80% 64%;
+    --info-foreground: 0 0% 100%;
+
+    /* ─── Chrome ─── */
+    --border: 240 8% 14%;
+    --input: 240 8% 14%;
+    --ring: 265 87% 65%;
+
+    /* ─── Auth panel ─── */
+    --auth-panel: 240 10% 8%;
+    --auth-panel-foreground: 210 20% 92%;
+
+    /* ─── Legacy brand aliases ─── */
+    --brand-pink: 265 70% 62%;
+    --brand-purple: 265 87% 65%;
+    --brand-violet: 270 72% 60%;
+    --brand-orange: 38 80% 55%;
+
+    /* ─── Sidebar — Near-black with purple tint ─── */
+    --sidebar-background: 240 12% 5%;
+    --sidebar-foreground: 220 8% 45%;
+    --sidebar-primary: 265 87% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 265 14% 13%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 240 8% 10%;
+    --sidebar-ring: 265 87% 65%;
+    --sidebar-muted-foreground: 220 7% 38%;
+
+    /* ─── Charts ─── */
+    --chart-1: 265 87% 68%;
+    --chart-2: 160 72% 48%;
+    --chart-3: 38 80% 58%;
+    --chart-4: 217 80% 66%;
+    --chart-5: 270 72% 62%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: -0.011em;
+  }
+
+  h1 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; @apply text-2xl font-bold tracking-tight leading-tight; letter-spacing: -0.03em; }
+  h2 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; @apply text-xl font-bold tracking-tight leading-snug; letter-spacing: -0.025em; }
+  h3 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; @apply text-base font-semibold leading-snug; letter-spacing: -0.015em; }
+  h4 { @apply text-sm font-semibold leading-snug; }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring) / 0.4);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.15);
+    color: hsl(var(--foreground));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / 0.12); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.25); }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   UTILITY CLASSES — Premium SaaS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.brand-gradient {
+  background: linear-gradient(135deg, hsl(265 87% 58%), hsl(270 72% 52%));
+}
+.brand-gradient-text {
+  background: linear-gradient(135deg, hsl(265 87% 62%), hsl(270 72% 68%));
+  -webkit-background-clip: text;
+  color: transparent;
+  background-clip: text;
+}
+.brand-gradient-subtle {
+  background: linear-gradient(135deg, hsl(265 87% 58% / 0.08), hsl(270 72% 52% / 0.03));
+}
+
+/* ─── Lightning shimmer keyframe ─── */
+@keyframes btn-shimmer {
+  0% { background-position: 200% 50%; }
+  100% { background-position: -200% 50%; }
+}
+
+/* ─── Glassmorphism button styles ─── */
+.btn-glass-primary,
+.btn-glass-brand {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glass-primary::before,
+.btn-glass-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    hsl(265 90% 85% / 0.25) 42%,
+    hsl(265 95% 92% / 0.4) 48%,
+    hsl(265 90% 85% / 0.25) 54%,
+    transparent 61%
+  );
+  background-size: 250% 100%;
+  animation: btn-shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.btn-glass-primary > *,
+.btn-glass-brand > * {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-glass-primary {
+  background: linear-gradient(
+    145deg,
+    hsl(265 87% 62% / 0.95),
+    hsl(265 84% 54% / 0.85)
+  );
+  box-shadow:
+    inset 0 1px 0 0 hsl(265 90% 78% / 0.35),
+    inset 0 -1px 0 0 hsl(265 90% 40% / 0.2),
+    0 1px 3px 0 hsl(265 87% 30% / 0.25),
+    0 2px 8px -2px hsl(265 87% 50% / 0.2);
+  border: 1px solid hsl(265 85% 70% / 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.btn-glass-brand {
+  background: linear-gradient(
+    145deg,
+    hsl(265 87% 62% / 0.9),
+    hsl(270 72% 50% / 0.8)
+  );
+  box-shadow:
+    inset 0 1px 0 0 hsl(265 90% 80% / 0.4),
+    inset 0 -1px 0 0 hsl(270 72% 38% / 0.2),
+    0 1px 3px 0 hsl(265 87% 30% / 0.25),
+    0 2px 8px -2px hsl(270 72% 50% / 0.2);
+  border: 1px solid hsl(265 85% 72% / 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.dark .btn-glass-primary {
+  background: linear-gradient(
+    145deg,
+    hsl(265 87% 58% / 0.8),
+    hsl(265 84% 48% / 0.7)
+  );
+  box-shadow:
+    inset 0 1px 0 0 hsl(265 90% 75% / 0.25),
+    inset 0 -1px 0 0 hsl(265 90% 30% / 0.3),
+    0 1px 4px 0 hsl(265 87% 20% / 0.4),
+    0 4px 12px -3px hsl(265 87% 40% / 0.3);
+  border: 1px solid hsl(265 85% 65% / 0.2);
+}
+
+.dark .btn-glass-brand {
+  background: linear-gradient(
+    145deg,
+    hsl(265 87% 58% / 0.75),
+    hsl(270 72% 46% / 0.65)
+  );
+  box-shadow:
+    inset 0 1px 0 0 hsl(265 90% 78% / 0.3),
+    inset 0 -1px 0 0 hsl(270 72% 30% / 0.3),
+    0 1px 4px 0 hsl(270 72% 20% / 0.4),
+    0 4px 12px -3px hsl(270 72% 40% / 0.3);
+  border: 1px solid hsl(270 85% 62% / 0.2);
+}
+
+/* Neon glow — Discord-style active accent */
+.neon-glow {
+  box-shadow: 0 0 0 1px hsl(265 87% 58% / 0.15), 0 2px 12px hsl(265 87% 58% / 0.12);
+}
+.neon-glow-strong {
+  box-shadow: 0 0 0 1px hsl(265 87% 58% / 0.2), 0 4px 20px hsl(265 87% 58% / 0.18), 0 0 40px hsl(265 87% 58% / 0.06);
+}
+.neon-border {
+  border-color: hsl(265 87% 58% / 0.25);
+}
+
+/* Surface layering — deep, stacked panels */
+.surface-raised {
+  @apply bg-card border border-border;
+  box-shadow: 0 1px 3px hsl(240 7% 5% / 0.04), 0 1px 2px hsl(240 7% 5% / 0.02);
+}
+.dark .surface-raised {
+  box-shadow: 0 1px 4px hsl(240 7% 3% / 0.5), 0 0 0 1px hsl(0 0% 100% / 0.03);
+}
+.surface-inset {
+  @apply bg-muted/50 border border-border/50;
+  box-shadow: inset 0 1px 2px hsl(240 7% 5% / 0.06);
+}
+
+/* Glass — frosted premium panels */
+.glass-card {
+  background: hsl(var(--card) / 0.8);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+.dark .glass-card {
+  background: hsl(var(--card) / 0.6);
+  border-color: hsl(0 0% 100% / 0.06);
+}
+
+/* Shadow system — crisp, professional */
+.shadow-card {
+  box-shadow: 0 1px 2px hsl(var(--foreground) / 0.04), 0 2px 4px hsl(var(--foreground) / 0.02);
+}
+.shadow-card-hover {
+  box-shadow: 
+    0 2px 4px hsl(var(--foreground) / 0.04),
+    0 8px 16px hsl(var(--foreground) / 0.06),
+    0 0 0 1px hsl(var(--primary) / 0.08);
+}
+.shadow-elevated {
+  box-shadow: 
+    0 4px 8px hsl(var(--foreground) / 0.04),
+    0 12px 32px hsl(var(--foreground) / 0.1),
+    0 0 0 1px hsl(var(--border) / 0.5);
+}
+.shadow-neon {
+  box-shadow: 
+    0 4px 12px hsl(265 87% 58% / 0.1),
+    0 0 0 1px hsl(265 87% 58% / 0.1);
+}
+
+/* Premium card with neon hover */
+.premium-card {
+  @apply rounded-lg border border-border bg-card overflow-hidden;
+  @apply transition-all duration-200 ease-out;
+  box-shadow: 0 1px 3px hsl(var(--foreground) / 0.03);
+}
+.premium-card:hover {
+  @apply border-primary/25;
+  box-shadow: 
+    0 4px 12px hsl(var(--primary) / 0.08),
+    0 8px 24px hsl(var(--foreground) / 0.05),
+    0 0 0 1px hsl(var(--primary) / 0.1);
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, hsl(var(--primary) / 0.06) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(265 87% 58% / 0); }
+  50% { box-shadow: 0 0 16px 2px hsl(265 87% 58% / 0.15); }
+}
+.animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Label utility */
+.label-sm {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Interactive card — Linear-style */
+.interactive-card {
+  @apply rounded-lg border border-border bg-card overflow-hidden;
+  @apply transition-all duration-150 ease-out;
+  @apply hover:border-primary/20;
+}
+.interactive-card:hover {
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.06), 0 0 0 1px hsl(var(--primary) / 0.06);
+}
+
+/* Stat chip */
+.stat-chip {
+  @apply inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-caption font-medium;
+  @apply bg-muted/60 text-muted-foreground;
+}
+
+/* Screen Shake Animations */
+@keyframes screen-shake-light {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 2px); }
+  80% { transform: translate(1px, -1px); }
+}
+@keyframes screen-shake-heavy {
+  0%, 100% { transform: translate(0) rotate(0); }
+  10% { transform: translate(-4px, 2px) rotate(-0.5deg); }
+  20% { transform: translate(4px, -3px) rotate(0.5deg); }
+  30% { transform: translate(-3px, 4px) rotate(-0.3deg); }
+  40% { transform: translate(3px, -2px) rotate(0.4deg); }
+  50% { transform: translate(-2px, 3px) rotate(-0.2deg); }
+  60% { transform: translate(2px, -1px) rotate(0.3deg); }
+  70% { transform: translate(-1px, 2px) rotate(-0.1deg); }
+  80% { transform: translate(1px, -1px) rotate(0.1deg); }
+  90% { transform: translate(-1px, 1px); }
+}
+.screen-shake-light { animation: screen-shake-light 0.3s ease-out; }
+.screen-shake-heavy { animation: screen-shake-heavy 0.6s ease-out; }
+
+/* Motion toggle */
+.reduce-motion,
+.reduce-motion *::before,
+.reduce-motion *::after,
+.reduce-motion * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
