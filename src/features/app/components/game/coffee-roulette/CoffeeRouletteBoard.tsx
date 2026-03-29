@@ -110,6 +110,14 @@ export function CoffeeRouletteBoard({
     chatDurationSeconds,
     phase === 'chatting'
   );
+
+  // Track elapsed time so exit screen shows actual duration
+  useEffect(() => {
+    if (phase === 'chatting' && chatSecondsRemaining > 0) {
+      capturedElapsedRef.current = Math.max(0, chatDurationSeconds - chatSecondsRemaining);
+    }
+  }, [phase, chatSecondsRemaining, chatDurationSeconds]);
+
   const handleStartMatching = useCallback(async () => {
     try {
       await withLoading(() => onEmitAction('coffee:shuffle'));

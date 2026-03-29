@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { gamesApi } from '@/features/app/api/games';
 import { useGameStateSync } from '@/hooks/useGameStateSync';
 import { GAME_CONFIGS, GAME_KEY_TO_CONFIG_ID } from '../gameTypes';
-import type { GameDataPayload, EventNotificationPayload } from '@/features/app/types/socket';
+import type { EventNotificationPayload } from '@/features/app/types/socket';
 
 interface UseGameSessionOptions {
   eventId: string | undefined;
@@ -181,26 +181,9 @@ export function useGameSession({
     return () => { unsub?.(); };
   }, [eventsSocket.isConnected, eventId, refetchParticipants, refetchPosts, requestStateSync]);
 
-  // Game state sync from WebSocket
-  useEffect(() => {
-    if (!gamesSocket.isConnected || !sessionId) return;
-
-    let mounted = true;
-
-    const handleGameData = (...args: unknown[]) => {
-      const data = args[0] as GameDataPayload;
-      if (!mounted) return;
-      if (data.sessionId !== sessionId) return;
-      setGameData(data.gameData);
-    };
-
-    const unsub = gamesSocket.on('game:data', handleGameData);
-
-    return () => {
-      mounted = false;
-      unsub?.();
-    };
-  }, [gamesSocket.isConnected, sessionId]);
+  // NOTE: game:data is already handled by useGameStateSync (which applies revision guards).
+  // A duplicate listener here would cause double state updates and potential regressions.
+  // Removed to avoid conflicts.
 
   // Reset gameJoinAck when session changes
   useEffect(() => {

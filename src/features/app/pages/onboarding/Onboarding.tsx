@@ -190,7 +190,7 @@ export default function Onboarding() {
         className="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-[0.07]"
       />
       {/* Header */}
-      <header className="border-b border-border/40 bg-background/90 backdrop-blur-lg sticky top-0 z-40">
+      <header className="border-b border-border/40 bg-background sticky top-0 z-40">
         <div className="flex items-center justify-between px-6 h-14 max-w-2xl mx-auto w-full">
           <div className="flex items-center gap-2">
             <img src={logoImg} alt="Flowkyn" className="h-8 w-8 object-contain" />
@@ -249,7 +249,7 @@ export default function Onboarding() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-md">
+              <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-lg" style={{ backgroundColor: 'hsl(var(--card))' }}>
                 {renderStep()}
               </div>
             </motion.div>

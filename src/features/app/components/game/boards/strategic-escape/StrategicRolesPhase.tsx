@@ -10,6 +10,9 @@ import { StrategicRoleRevealCard } from './StrategicRoleRevealCard';
 import type { StrategicEscapeSnapshot } from '../strategicEscape.types';
 import type { EmitActionOpts } from '@/hooks/useGameActionEmitter';
 
+interface RevealStatus { total: number; acknowledged: number; allAcknowledged: boolean }
+interface ReadyStatus { total: number; ready: number; allReady: boolean }
+
 interface Props {
   isHost: boolean;
   eventId: string;
@@ -19,13 +22,14 @@ interface Props {
   currentUserName?: string;
   currentUserAvatar: string;
   currentUserAvatarUrl?: string | null;
+  gamesSocket?: { isConnected: boolean; on: (event: string, handler: (...args: unknown[]) => void) => (() => void) | void };
   onEmitSocketAction: (actionType: string, payload?: unknown, opts?: EmitActionOpts) => Promise<void>;
 }
 
 export function StrategicRolesPhase({
   isHost, eventId, sessionId, snapshot, currentUserId,
   currentUserName, currentUserAvatar, currentUserAvatarUrl,
-  onEmitSocketAction,
+  gamesSocket, onEmitSocketAction,
 }: Props) {
   const { t } = useTranslation();
   const rolesAssigned = !!snapshot?.rolesAssigned;
@@ -42,42 +46,37 @@ export function StrategicRolesPhase({
   const [notesSaving, setNotesSaving] = useState(false);
   const [notesSavedAt, setNotesSavedAt] = useState<string | null>(null);
   const lastSavedNotesRef = useRef('');
-  const [revealStatus, setRevealStatus] = useState<{ total: number; acknowledged: number; allAcknowledged: boolean } | null>(null);
-  const [readyStatus, setReadyStatus] = useState<{ total: number; ready: number; allReady: boolean } | null>(null);
+  const [revealStatus, setRevealStatus] = useState<RevealStatus | null>(null);
+  const [readyStatus, setReadyStatus] = useState<ReadyStatus | null>(null);
 
   const swapWindowSeconds = useCountdown(20, !!rolesAssigned);
 
-  // Load role
+  // Load role + helpers in a single effect to avoid redundant getMyStrategicRole call
   useEffect(() => {
     if (!sessionId || !rolesAssigned || !eventId) return;
     let cancelled = false;
     setRoleLoading(true);
     gamesApi.getMyStrategicRole(sessionId, eventId)
-      .then(res => { if (!cancelled) setMyRoleKey(res?.roleKey || null); })
+      .then(async (role) => {
+        if (cancelled) return;
+        const roleKey = role?.roleKey || null;
+        setMyRoleKey(roleKey);
+        if (role?.readyAt) setMyReady(true);
+
+        if (roleKey) {
+          const [ps, n] = await Promise.all([
+            gamesApi.getMyStrategicRolePromptState(sessionId, eventId).catch(() => null),
+            gamesApi.getMyStrategicNotes(sessionId, eventId).catch(() => null),
+          ]);
+          if (cancelled) return;
+          if (ps) setPromptState(ps);
+          if (n) { setNotes(n.content || ''); lastSavedNotesRef.current = n.content || ''; setNotesSavedAt(n.updatedAt || null); }
+        }
+      })
       .catch(() => { if (!cancelled) setMyRoleKey(null); })
       .finally(() => { if (!cancelled) setRoleLoading(false); });
     return () => { cancelled = true; };
   }, [sessionId, rolesAssigned, eventId]);
-
-  // Load helpers
-  useEffect(() => {
-    if (!sessionId || !eventId || !myRoleKey) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const [role, ps, n] = await Promise.all([
-          gamesApi.getMyStrategicRole(sessionId, eventId),
-          gamesApi.getMyStrategicRolePromptState(sessionId, eventId).catch(() => null),
-          gamesApi.getMyStrategicNotes(sessionId, eventId).catch(() => null),
-        ]);
-        if (cancelled) return;
-        if (role?.readyAt) setMyReady(true);
-        if (ps) setPromptState(ps);
-        if (n) { setNotes(n.content || ''); lastSavedNotesRef.current = n.content || ''; setNotesSavedAt(n.updatedAt || null); }
-      } catch {}
-    })();
-    return () => { cancelled = true; };
-  }, [sessionId, eventId, myRoleKey]);
 
   const myRoleName = myRoleKey ? t(`strategic.roles.${myRoleKey}.name`) : '';
   const myRoleBrief = myRoleKey ? t(`strategic.roles.${myRoleKey}.brief`) : '';
@@ -111,7 +110,7 @@ export function StrategicRolesPhase({
         setIsAdvancingPrompt(true);
         gamesApi.advanceMyStrategicRolePrompt(sessionId, eventId)
           .then(ps => setPromptState(ps))
-          .catch(() => {})
+          .catch(err => console.warn('[StrategicRolesPhase] Auto-advance prompt failed:', err))
           .finally(() => setIsAdvancingPrompt(false));
         return 90;
       });
@@ -126,29 +125,63 @@ export function StrategicRolesPhase({
       setNotesSaving(true);
       gamesApi.updateMyStrategicNotes(sessionId, notes, eventId)
         .then(res => { lastSavedNotesRef.current = res.content || ''; setNotesSavedAt(res.updatedAt || new Date().toISOString()); })
-        .catch(() => {})
+        .catch(err => {
+          console.warn('[StrategicRolesPhase] Notes autosave failed:', err);
+          toast.error(t('strategic.errors.notesSaveFailed', { defaultValue: 'Notes failed to save.' }));
+        })
         .finally(() => setNotesSaving(false));
     }, 800);
     return () => clearTimeout(timeout);
   }, [notes, sessionId, eventId, myRoleKey]);
 
-  // Host polls
+  // Fetch status via REST (used on mount and as fallback)
+  const fetchStatusViaRest = useCallback(async () => {
+    if (!sessionId || !rolesAssigned) return;
+    try {
+      const [rv, rd] = await Promise.all([
+        gamesApi.getStrategicRoleRevealStatus(sessionId, eventId),
+        gamesApi.getStrategicRoleReadyStatus(sessionId, eventId),
+      ]);
+      setRevealStatus(rv);
+      setReadyStatus(rd);
+    } catch {}
+  }, [sessionId, eventId, rolesAssigned]);
+
+  // Listen for WebSocket push events; fall back to REST polling if socket unavailable
   useEffect(() => {
     if (!isHost || !sessionId || !rolesAssigned) return;
-    let cancelled = false;
-    const tick = async () => {
-      try {
-        const [rv, rd] = await Promise.all([
-          gamesApi.getStrategicRoleRevealStatus(sessionId, eventId),
-          gamesApi.getStrategicRoleReadyStatus(sessionId, eventId),
-        ]);
-        if (!cancelled) { setRevealStatus(rv); setReadyStatus(rd); }
-      } catch {}
-    };
-    tick();
-    const interval = setInterval(tick, 2000);
-    return () => { cancelled = true; clearInterval(interval); };
-  }, [isHost, sessionId, eventId, rolesAssigned]);
+
+    // Initial fetch regardless of socket state
+    fetchStatusViaRest();
+
+    const cleanups: Array<() => void> = [];
+
+    if (gamesSocket?.isConnected) {
+      // WebSocket listeners
+      const unsubReveal = gamesSocket.on('strategic:reveal_status', (...args: unknown[]) => {
+        const data = args[0] as RevealStatus & { sessionId?: string };
+        if (data?.sessionId && data.sessionId !== sessionId) return;
+        setRevealStatus({ total: data.total, acknowledged: data.acknowledged, allAcknowledged: data.allAcknowledged });
+      });
+      const unsubReady = gamesSocket.on('strategic:ready_status', (...args: unknown[]) => {
+        const data = args[0] as ReadyStatus & { sessionId?: string };
+        if (data?.sessionId && data.sessionId !== sessionId) return;
+        setReadyStatus({ total: data.total, ready: data.ready, allReady: data.allReady });
+      });
+      if (typeof unsubReveal === 'function') cleanups.push(unsubReveal);
+      if (typeof unsubReady === 'function') cleanups.push(unsubReady);
+
+      // Slow fallback poll (every 15s) in case a socket event is missed
+      const fallbackInterval = setInterval(fetchStatusViaRest, 15000);
+      cleanups.push(() => clearInterval(fallbackInterval));
+    } else {
+      // No socket — poll via REST every 3s
+      const interval = setInterval(fetchStatusViaRest, 3000);
+      cleanups.push(() => clearInterval(interval));
+    }
+
+    return () => cleanups.forEach(fn => fn());
+  }, [isHost, sessionId, eventId, rolesAssigned, gamesSocket?.isConnected, fetchStatusViaRest]);
 
   const handleAssignRoles = useCallback(async () => {
     if (!isHost || !sessionId || rolesAssigned) return;
@@ -168,8 +201,13 @@ export function StrategicRolesPhase({
 
   const handleStartDiscussion = useCallback(async () => {
     if (!isHost || !sessionId || !rolesAssigned) return;
-    await onEmitSocketAction('strategic:start_discussion').catch(() => {});
-  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction]);
+    try {
+      await onEmitSocketAction('strategic:start_discussion');
+    } catch (err: unknown) {
+      if (ApiError.is(err)) toast.error(t(`apiErrors.${err.code}`, { defaultValue: err.message }));
+      else toast.error(t('strategic.errors.startDiscussionFailed', { defaultValue: 'Failed to start discussion.' }));
+    }
+  }, [isHost, sessionId, rolesAssigned, onEmitSocketAction, t]);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1.4fr)]">
@@ -228,7 +266,10 @@ export function StrategicRolesPhase({
                     setIsAdvancingPrompt(true);
                     gamesApi.advanceMyStrategicRolePrompt(sessionId, eventId)
                       .then(ps => setPromptState(ps))
-                      .catch(() => {})
+                      .catch(err => {
+                        console.warn('[StrategicRolesPhase] Advance prompt failed:', err);
+                        toast.error(t('strategic.errors.promptFailed', { defaultValue: 'Failed to load next prompt.' }));
+                      })
                       .finally(() => setIsAdvancingPrompt(false));
                   }}>
                   {isAdvancingPrompt ? t('strategic.afterReveal.advancingPrompt', { defaultValue: 'Updating…' }) : t('strategic.afterReveal.nextPrompt', { defaultValue: 'Next prompt' })}

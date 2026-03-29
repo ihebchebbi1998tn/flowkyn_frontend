@@ -300,7 +300,9 @@ export function TwoTruthsBoard({
             subtitle={t('gamePlay.results.roundsPlayed', { defaultValue: '{{count}} rounds played', count: totalRounds })}
             results={results}
             onPlayAgain={() => {
-              onEmitAction('two_truths:start');
+              onEmitAction('two_truths:start').catch(err => {
+                console.error('[TwoTruthsBoard] Play again failed:', err);
+              });
             }}
           />
           <div className="flex justify-center pt-4">
@@ -318,12 +320,12 @@ export function TwoTruthsBoard({
         open={insightsOpen}
         onOpenChange={setInsightsOpen}
         insights={{
-          accuracy: 70,
-          previousAccuracy: 60,
-          bestGuess: 'I learned Python in 2 weeks',
-          trickiestStatement: 'CEO spent $50K on office plants',
-          trickiestFoolPercentage: 95,
-          percentile: 75,
+          accuracy: results.length > 0 ? Math.round((results.filter(r => r.score > 0).length / results.length) * 100) : 0,
+          previousAccuracy: null,
+          bestGuess: null,
+          trickiestStatement: null,
+          trickiestFoolPercentage: null,
+          percentile: null,
         }}
       />
     </div>

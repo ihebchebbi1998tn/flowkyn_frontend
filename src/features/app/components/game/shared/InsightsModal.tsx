@@ -2,15 +2,14 @@ import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 export interface InsightsData {
   accuracy: number;
   previousAccuracy: number | null;
-  bestGuess: string;
-  trickiestStatement: string;
-  trickiestFoolPercentage: number;
-  percentile: number;
+  bestGuess: string | null;
+  trickiestStatement: string | null;
+  trickiestFoolPercentage: number | null;
+  percentile: number | null;
 }
 
 interface InsightsModalProps {
@@ -52,20 +51,20 @@ export function InsightsModal({ open, onOpenChange, insights }: InsightsModalPro
                 {Math.round(insights.accuracy)}%
               </span>
             </div>
-            {improvement !== null && (
+            {improvement !== null && insights.previousAccuracy !== null && (
               <div className="text-xs text-muted-foreground">
                 {improvement >= 0 ? (
-                  <span className="text-green-600">
+                  <span className="text-success">
                     {t('gamePlay.insights.improvement', {
                       defaultValue: '↑ from {{previousPercentage}}% last time',
-                      previousPercentage: Math.round(insights.previousAccuracy!),
+                      previousPercentage: Math.round(insights.previousAccuracy),
                     })}
                   </span>
                 ) : (
-                  <span className="text-amber-600">
-                    {t('gamePlay.insights.improvement', {
-                      defaultValue: '↑ from {{previousPercentage}}% last time',
-                      previousPercentage: Math.round(insights.previousAccuracy!),
+                  <span className="text-warning">
+                    {t('gamePlay.insights.decline', {
+                      defaultValue: '↓ from {{previousPercentage}}% last time',
+                      previousPercentage: Math.round(insights.previousAccuracy),
                     })}
                   </span>
                 )}
@@ -74,39 +73,47 @@ export function InsightsModal({ open, onOpenChange, insights }: InsightsModalPro
           </div>
 
           {/* Best Guess */}
-          <div className="space-y-2 rounded-lg bg-muted p-3">
-            <div className="text-sm font-medium">
-              {t('gamePlay.insights.bestGuess', { defaultValue: '🎯 Best Guess' })}
+          {insights.bestGuess && (
+            <div className="space-y-2 rounded-lg bg-muted p-3">
+              <div className="text-sm font-medium">
+                {t('gamePlay.insights.bestGuess', { defaultValue: '🎯 Best Guess' })}
+              </div>
+              <p className="text-sm text-muted-foreground italic">"{insights.bestGuess}"</p>
             </div>
-            <p className="text-sm text-muted-foreground italic">"{insights.bestGuess}"</p>
-          </div>
+          )}
 
           {/* Trickiest Statement */}
-          <div className="space-y-2 rounded-lg bg-muted p-3">
-            <div className="text-sm font-medium">
-              {t('gamePlay.insights.trickiestStatement', { defaultValue: '😈 Trickiest Statement' })}
+          {insights.trickiestStatement && (
+            <div className="space-y-2 rounded-lg bg-muted p-3">
+              <div className="text-sm font-medium">
+                {t('gamePlay.insights.trickiestStatement', { defaultValue: '😈 Trickiest Statement' })}
+              </div>
+              <p className="text-sm text-muted-foreground italic">"{insights.trickiestStatement}"</p>
+              {insights.trickiestFoolPercentage !== null && (
+                <div className="text-xs text-muted-foreground">
+                  {t('gamePlay.insights.fooled', {
+                    defaultValue: '{{percentage}}% of players fooled',
+                    percentage: Math.round(insights.trickiestFoolPercentage),
+                  })}
+                </div>
+              )}
             </div>
-            <p className="text-sm text-muted-foreground italic">"{insights.trickiestStatement}"</p>
-            <div className="text-xs text-muted-foreground">
-              {t('gamePlay.insights.fooled', {
-                defaultValue: '{{percentage}}% of players fooled',
-                percentage: Math.round(insights.trickiestFoolPercentage),
-              })}
-            </div>
-          </div>
+          )}
 
           {/* Ranking */}
-          <div className="space-y-2 rounded-lg bg-primary/5 p-3 border border-primary/20">
-            <div className="text-sm font-medium">
-              {t('gamePlay.insights.yourRanking', { defaultValue: '📊 How You Compare' })}
+          {insights.percentile !== null && (
+            <div className="space-y-2 rounded-lg bg-primary/5 p-3 border border-primary/20">
+              <div className="text-sm font-medium">
+                {t('gamePlay.insights.yourRanking', { defaultValue: '📊 How You Compare' })}
+              </div>
+              <div className="text-lg font-semibold text-primary">
+                {t('gamePlay.insights.topPercentile', {
+                  defaultValue: 'Top {{percentile}}% of all players',
+                  percentile: Math.max(1, Math.round(insights.percentile)),
+                })}
+              </div>
             </div>
-            <div className="text-lg font-semibold text-primary">
-              {t('gamePlay.insights.topPercentile', {
-                defaultValue: 'Top {{percentile}}% of all players',
-                percentile: Math.max(1, Math.round(insights.percentile)),
-              })}
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="flex gap-2 pt-4">

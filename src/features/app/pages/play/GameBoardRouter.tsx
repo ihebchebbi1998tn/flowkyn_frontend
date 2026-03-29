@@ -22,6 +22,7 @@ interface GameBoardRouterProps {
     promptKey?: string;
   };
   eventId?: string;
+  organizationId?: string;
   participants: GameParticipant[];
   participantId: string | null;
   currentUserName?: string | null;
@@ -58,6 +59,7 @@ interface GameBoardRouterProps {
 export function GameBoardRouter({
   config,
   eventId,
+  organizationId,
   participants,
   participantId,
   currentUserName,
@@ -148,7 +150,7 @@ export function GameBoardRouter({
       return (
         <GameErrorBoundary gameName={gameName}>
           <WinsOfTheWeekBoard
-            organizationId=""
+            organizationId={organizationId || ''}
             prompt={config.promptKey ? t(config.promptKey) : undefined}
             currentUserId={participantId || ''}
             currentUserName={currentUserName || ''}
@@ -203,6 +205,7 @@ export function GameBoardRouter({
             sessionId={sessionId}
             initialSnapshot={initialSnapshot}
             gameData={gameData}
+            gamesSocket={gamesSocket}
             onSessionCreated={(newSessionId: string) => {
               setSessionId(newSessionId);
             }}

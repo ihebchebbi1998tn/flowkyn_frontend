@@ -29,13 +29,15 @@ export function StrategicSetupPhase({ isHost, eventId, sessionId, snapshot, onSe
 
   const selectedDifficulty = ((snapshot?.difficultyKey || snapshot?.difficulty || 'medium') as 'easy' | 'medium' | 'hard');
 
-  const [localIndustry, setLocalIndustry] = useState<string | null>(null);
-  const [localCrisis, setLocalCrisis] = useState<string | null>(null);
+  const [localIndustry, setLocalIndustry] = useState<string | null>(snapshot?.industryKey || null);
+  const [localCrisis, setLocalCrisis] = useState<string | null>(snapshot?.crisisKey || null);
   const [localDifficulty, setLocalDifficulty] = useState<'easy' | 'medium' | 'hard'>(selectedDifficulty);
 
   useEffect(() => {
     if (selectedDifficulty) setLocalDifficulty(selectedDifficulty as 'easy' | 'medium' | 'hard');
-  }, [selectedDifficulty]);
+    if (snapshot?.industryKey && !localIndustry) setLocalIndustry(snapshot.industryKey);
+    if (snapshot?.crisisKey && !localCrisis) setLocalCrisis(snapshot.crisisKey);
+  }, [selectedDifficulty, snapshot?.industryKey, snapshot?.crisisKey]);
 
   const isConfigured = !!localIndustry && !!localCrisis && !!localDifficulty;
 
@@ -61,7 +63,9 @@ export function StrategicSetupPhase({ isHost, eventId, sessionId, snapshot, onSe
       onEmitSocketAction('strategic:configure', {
         industryKey: localIndustry!, crisisKey: localCrisis!, difficultyKey: localDifficulty,
         industryLabel, crisisLabel, difficultyLabel,
-      }, { sessionId: res.sessionId }).catch(() => {});
+      }, { sessionId: res.sessionId }).catch(err => {
+        console.warn('[StrategicSetupPhase] Configure emit failed:', err);
+      });
       toast.success(t('games.toasts.launching', {
         defaultValue: 'Launching {{gameName}}…',
         gameName: t('activities.strategicEscape.name', { defaultValue: 'Strategic Escape Challenge' }),

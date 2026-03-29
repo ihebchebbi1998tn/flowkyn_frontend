@@ -6,9 +6,25 @@ import { GameActionButton } from '../../shared';
 import { gamesApi } from '@/features/app/api/games';
 import { cn } from '@/lib/utils';
 
+interface DebriefRanking {
+  participantId: string;
+  name?: string;
+  roleKey?: string;
+  avatar?: string;
+  actionCount?: number;
+  score: number;
+  rank: number;
+}
+
 interface DebriefResults {
-  rankings?: Array<{ participantId: string; name: string; avatar?: string; score: number; rank: number }>;
+  rankings?: DebriefRanking[];
   stats?: { totalActions: number; avgScore: number; completionRate: number; topRole?: string };
+  sessionId?: string;
+  totalActions?: number;
+  participantCount?: number;
+  mostVocalRole?: string;
+  actionsByRole?: Record<string, number>;
+  rolesPresent?: string[];
 }
 
 interface Props {
@@ -29,7 +45,7 @@ export function StrategicDebriefPhase({ isHost, eventId, sessionId }: Props) {
     let cancelled = false;
     setIsLoading(true);
     gamesApi.getDebriefResults(sessionId)
-      .then(res => { if (!cancelled) { setResults(res as any); setHasStartedDebrief(true); } })
+      .then(res => { if (!cancelled) { setResults(res as DebriefResults); setHasStartedDebrief(true); } })
       .catch(() => { if (!cancelled) setResults(null); })
       .finally(() => { if (!cancelled) setIsLoading(false); });
     return () => { cancelled = true; };
@@ -40,9 +56,12 @@ export function StrategicDebriefPhase({ isHost, eventId, sessionId }: Props) {
     setIsLoading(true);
     try {
       const res = await gamesApi.startDebrief(sessionId);
-      setResults(res as any);
+      setResults(res as DebriefResults);
       setHasStartedDebrief(true);
-    } catch {
+    } catch (err: unknown) {
+      console.error('[StrategicDebriefPhase] Failed to start debrief:', err);
+      const { toast } = await import('sonner');
+      toast.error(t('strategic.debrief.startFailed', { defaultValue: 'Failed to calculate debrief results. Please try again.' }));
     } finally {
       setIsLoading(false);
     }

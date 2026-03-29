@@ -317,7 +317,7 @@ function GamePlayWithoutBoundary() {
       >
         <SocketReconnectionBanner status={gamesSocket.status} onReconnect={() => gamesSocket.connect()} className="mb-2" />
         <GameBoardRouter
-          config={activeConfig} eventId={eventId || ''} participants={participants}
+          config={activeConfig} eventId={eventId || ''} organizationId={typeof eventPublicObj?.organization_id === 'string' ? eventPublicObj.organization_id as string : undefined} participants={participants}
           participantId={participantId || null} currentUserName={currentUserName}
           currentUserAvatarUrl={currentUserAvatarUrl} sessionId={sessionId} setSessionId={setSessionId}
           activeRoundId={activeRoundId} setActiveRoundId={setActiveRoundId}

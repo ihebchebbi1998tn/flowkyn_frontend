@@ -39,7 +39,7 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({
 }) => {
   const { t } = useTranslation();
   const [categories, setCategories] = useState<WinCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!organizationId);
   const [error, setError] = useState<string | null>(null);
 
   const fetchCategories = async () => {
@@ -59,6 +59,8 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({
   useEffect(() => {
     if (organizationId) {
       fetchCategories();
+    } else {
+      setLoading(false);
     }
   }, [organizationId]);
 

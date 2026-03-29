@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Clock, MessageSquare } from 'lucide-react';
 import { GameActionButton, PhaseTimer } from '../../shared';
@@ -20,8 +21,13 @@ export function StrategicDiscussionPhase({ isHost, sessionId, snapshot, onEmitSo
 
   const handleEndDiscussion = useCallback(async () => {
     if (!isHost || !sessionId) return;
-    await onEmitSocketAction('strategic:end_discussion').catch(() => {});
-  }, [isHost, sessionId, onEmitSocketAction]);
+    try {
+      await onEmitSocketAction('strategic:end_discussion');
+    } catch (err: unknown) {
+      console.error('[StrategicDiscussionPhase] Failed to end discussion:', err);
+      toast.error(t('strategic.errors.endDiscussionFailed', { defaultValue: 'Failed to end discussion. Please try again.' }));
+    }
+  }, [isHost, sessionId, onEmitSocketAction, t]);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)]">

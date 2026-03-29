@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, Settings2 } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { PhaseBadge, type GamePhase } from '../shared';
 import { GameActionButton } from '../shared';
 import { HowItWorksModal } from '../shared/HowItWorksModal';
@@ -29,6 +29,7 @@ export function StrategicEscapeBoard({
   sessionId,
   initialSnapshot,
   gameData,
+  gamesSocket,
   onSessionCreated,
   onEmitSocketAction,
 }: StrategicEscapeBoardProps) {
@@ -63,13 +64,7 @@ export function StrategicEscapeBoard({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {isHost && phase === 'setup' && (
-            <GameActionButton variant="outline" size="sm" className="text-[11px] gap-1"
-              onClick={() => {}}>
-              <Settings2 className="h-3.5 w-3.5" />
-              {t('strategic.modal.openLabel', { defaultValue: 'Configure scenario' })}
-            </GameActionButton>
-          )}
+          {/* Configure button removed — it's inside StrategicSetupPhase */}
           <GameActionButton variant="ghost" size="sm" className="text-[11px]"
             onClick={() => setIsHowItWorksOpen(true)}>
             {t('gameHowItWorks.common.title', { defaultValue: 'How this works' })}
@@ -115,6 +110,7 @@ export function StrategicEscapeBoard({
           currentUserName={currentUserName}
           currentUserAvatar={currentUserAvatar}
           currentUserAvatarUrl={currentUserAvatarUrl}
+          gamesSocket={gamesSocket}
           onEmitSocketAction={onEmitSocketAction}
         />
       )}

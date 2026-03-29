@@ -60,7 +60,7 @@ export function useGameChat({
     };
 
     const unsub = eventsSocket.on('chat:typing', handleTyping);
-    return unsub;
+    return () => { if (typeof unsub === 'function') unsub(); };
   }, [eventsSocket.isConnected, currentUserId, isGuest]);
 
   // Send message via WebSocket

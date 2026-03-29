@@ -28,6 +28,7 @@ export interface StrategicEscapeBoardProps extends BaseGameBoardProps {
   currentUserAvatar: string;
   currentUserAvatarUrl?: string | null;
   eventId: string;
+  gamesSocket?: { isConnected: boolean; on: (event: string, handler: (...args: unknown[]) => void) => (() => void) | void };
   onSessionCreated: (sessionId: string) => void;
   onEmitSocketAction: (
     actionType: string,
