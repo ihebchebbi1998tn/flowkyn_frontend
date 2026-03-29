@@ -1,0 +1,116 @@
+/**
+ * @fileoverview Organizations API Module
+ *
+ * Manages organization lifecycle:
+ * - CRUD operations (create, get, update)
+ * - Member management (list, invite, accept, remove)
+ * - Logo upload via multipart/form-data
+ *
+ * Organizations are the top-level grouping entity.
+ * Every user belongs to at least one org (created during onboarding).
+ *
+ * @see NodejsBackend/src/routes/organizations.routes.ts
+ */
+
+import { api } from './client';
+import type { Organization, OrgMember, Department } from '@/types';
+
+export const organizationsApi = {
+  /**
+   * Create a new organization.
+   * The creating user automatically becomes the owner with a free plan.
+   */
+  create: (data: { name: string; description?: string; industry?: string; company_size?: string; goals?: string[] }) =>
+    api.post<Organization>('/organizations', data),
+
+  /** Get the current user's primary organization */
+  getCurrent: () =>
+    api.get<Organization>('/organizations/current'),
+
+  /** Get organization details by ID */
+  getById: (orgId: string) =>
+    api.get<Organization>(`/organizations/${orgId}`),
+
+  /** Update organization details */
+  update: (orgId: string, data: { name?: string; description?: string; industry?: string; company_size?: string; goals?: string[] }) =>
+    api.patch<Organization>(`/organizations/${orgId}`, data),
+
+  /** List active members with their roles */
+  listMembers: (orgId: string) =>
+    api.get<OrgMember[]>(`/organizations/${orgId}/members`),
+
+  /** List pending/previous invitations for an organization */
+  listInvitations: (orgId: string) =>
+    api.get<Array<{ id: string; email: string; status: string; created_at: string; expires_at: string; department?: string; department_id?: string; department_name?: string }>>(
+      `/organizations/${orgId}/invitations`
+    ),
+
+  /** Combined view of active members and pending invitations */
+  listPeople: (orgId: string) =>
+    api.get<{
+      members: OrgMember[];
+      invitations: Array<{
+        id: string;
+        email: string;
+        status: string;
+        created_at: string;
+        expires_at: string;
+        department?: string;
+        department_id?: string;
+        department_name?: string;
+      }>;
+    }>(`/organizations/${orgId}/people`),
+
+  /**
+   * Send an invitation email to join the organization.
+   * @param roleId - The role ID to assign (admin, member, moderator)
+   */
+  inviteMember: (orgId: string, email: string, roleId: string, lang?: string) =>
+    api.post<{ message: string }>(`/organizations/${orgId}/invitations`, { email, role_id: roleId, lang }),
+
+  /**
+   * Accept an organization invitation using its token.
+   * The invitation link format is: /invite/{token}?type=org
+   */
+  acceptInvitation: (token: string) =>
+    api.post<{ message: string }>('/organizations/invitations/accept', { token }),
+
+  /** Remove a member from the organization */
+  removeMember: (orgId: string, memberId: string) =>
+    api.del(`/organizations/${orgId}/members/${memberId}`),
+
+  /** List organization departments */
+  listDepartments: (orgId: string) =>
+    api.get<Department[]>(`/organizations/${orgId}/departments`),
+
+  /** Create an organization department */
+  createDepartment: (orgId: string, name: string) =>
+    api.post<Department>(`/organizations/${orgId}/departments`, { name }),
+
+  /** Update an organization department */
+  updateDepartment: (orgId: string, departmentId: string, name: string) =>
+    api.patch<Department>(`/organizations/${orgId}/departments/${departmentId}`, { name }),
+
+  /** Delete an organization department */
+  deleteDepartment: (orgId: string, departmentId: string) =>
+    api.del(`/organizations/${orgId}/departments/${departmentId}`),
+
+  /**
+   * Upload an organization logo.
+   * Accepts JPEG, PNG, GIF, WebP via multipart/form-data.
+   */
+  uploadLogo: (orgId: string, file: File) => {
+    const formData = new FormData();
+    formData.append('logo', file);
+    return api.upload<Organization>(`/organizations/${orgId}/logo`, formData);
+  },
+
+  /** Save onboarding pulse survey results */
+  savePulseSurvey: (orgId: string, data: {
+    team_connectedness: number;
+    relationship_quality: number;
+    team_familiarity: number;
+    expectations?: string;
+  }) =>
+    api.post<{ message: string }>(`/organizations/${orgId}/pulse-survey`, data),
+};
